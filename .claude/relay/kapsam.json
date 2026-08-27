@@ -1,0 +1,278 @@
+{
+  "docs/EXTRACT.md": {
+    "model": "claude-opus-5",
+    "effort": "low",
+    "t": "2026-08-27 22:41:09",
+    "ajan": "scribe"
+  },
+  "ui/hooks/guard.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:42:27",
+    "ajan": "builder"
+  },
+  "ui/hooks/hooks.json": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:42:27",
+    "ajan": "builder"
+  },
+  "scan.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:42:27",
+    "ajan": "builder"
+  },
+  "run.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:42:27",
+    "ajan": "builder"
+  },
+  "run2.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:42:27",
+    "ajan": "builder"
+  },
+  "ui/scripts/setup.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:43:12",
+    "ajan": "builder"
+  },
+  "ui/scripts/scan.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:22:26",
+    "ajan": "builder"
+  },
+  "ui/skills/teknesyum-ui/references/platform.md": {
+    "model": "claude-opus-5",
+    "effort": "low",
+    "t": "2026-08-27 22:44:22",
+    "ajan": "scribe"
+  },
+  "ui/scripts/generate.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:02:49",
+    "ajan": "builder"
+  },
+  "ui/skills/teknesyum-ui/assets/theme.tokens.json": {
+    "model": "claude-opus-5",
+    "effort": "low",
+    "t": "2026-08-27 22:50:40",
+    "ajan": "scribe"
+  },
+  "ui/skills/teknesyum-ui/assets/states.css": {
+    "model": "claude-opus-5",
+    "effort": "low",
+    "t": "2026-08-27 22:50:40",
+    "ajan": "scribe"
+  },
+  "tr.js": {
+    "model": "claude-opus-5",
+    "effort": "low",
+    "t": "2026-08-27 22:50:40",
+    "ajan": "scribe"
+  },
+  "ui/scripts/manifest-apply.js": {
+    "model": "claude-opus-5",
+    "effort": "low",
+    "t": "2026-08-27 22:50:40",
+    "ajan": "scribe"
+  },
+  "ui/scripts/manifest.js": {
+    "model": "claude-opus-5",
+    "effort": "low",
+    "t": "2026-08-27 22:50:40",
+    "ajan": "scribe"
+  },
+  "ui/scripts/rules/core.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:15:59",
+    "ajan": "ui-builder"
+  },
+  "ui/scripts/rules/forms.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:52:30",
+    "ajan": "builder"
+  },
+  "mkfix.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:52:30",
+    "ajan": "builder"
+  },
+  "runfix.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:52:30",
+    "ajan": "builder"
+  },
+  "smoke.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:52:30",
+    "ajan": "builder"
+  },
+  "docs/coverage/forms.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:52:30",
+    "ajan": "builder"
+  },
+  "ui/scripts/rules/colour.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:15:59",
+    "ajan": "ui-builder"
+  },
+  "ui/scripts/rules/__fixtures__/make.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:54:42",
+    "ajan": "builder"
+  },
+  "run-colour.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:54:42",
+    "ajan": "builder"
+  },
+  "docs/coverage/colour.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 22:54:42",
+    "ajan": "builder"
+  },
+  "ui/scripts/rules/states.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:15:59",
+    "ajan": "ui-builder"
+  },
+  "ui/scripts/rules/__fixtures__/states/_write.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:01:16",
+    "ajan": "builder"
+  },
+  "ui/scripts/rules/__fixtures__/states/_run.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:01:16",
+    "ajan": "builder"
+  },
+  "docs/coverage/states.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:01:16",
+    "ajan": "builder"
+  },
+  "patch_tokens.py": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:02:49",
+    "ajan": "builder"
+  },
+  "revert.py": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:02:49",
+    "ajan": "builder"
+  },
+  "docs/coverage/tokens.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:02:49",
+    "ajan": "builder"
+  },
+  "test/lib.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:09:42",
+    "ajan": "builder"
+  },
+  "test/cost.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:09:42",
+    "ajan": "builder"
+  },
+  "test/scanner.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:09:42",
+    "ajan": "builder"
+  },
+  "test/install.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:09:42",
+    "ajan": "builder"
+  },
+  "test/generate.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:09:42",
+    "ajan": "builder"
+  },
+  "test/all.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:09:42",
+    "ajan": "builder"
+  },
+  ".claude/agent-memory/teknesyum-builder/relay-contract-files-missing.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:09:42",
+    "ajan": "builder"
+  },
+  ".claude/agent-memory/teknesyum-builder/MEMORY.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:22:26",
+    "ajan": "builder"
+  },
+  ".claude/agent-memory/teknesyum-builder/ui-test-suite.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:09:42",
+    "ajan": "builder"
+  },
+  "ui/skills/teknesyum-ui/assets/forms.css": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:15:59",
+    "ajan": "ui-builder"
+  },
+  "ui/skills/teknesyum-ui/assets/Signature.tsx": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:15:59",
+    "ajan": "ui-builder"
+  },
+  ".claude/relay/contracts/L-tarayici-kapsami.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:22:26",
+    "ajan": "builder"
+  },
+  "docs/RULE-API.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:22:26",
+    "ajan": "builder"
+  },
+  ".claude/agent-memory/teknesyum-builder/ui-scanner-scope.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-27 23:22:26",
+    "ajan": "builder"
+  }
+}

@@ -1,0 +1,4 @@
+.tk-panel {
+  padding: 24px;
+  transition: opacity var(--tk-t-fast) var(--tk-e-out);
+}

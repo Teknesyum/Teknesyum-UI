@@ -1,0 +1,2 @@
+- [Teknesyum-UI standard state](project_teknesyum_ui_standard.md) — the repo IS the standard; generated vs static assets have different fix paths.
+- [Fixture harness](reference_fixture_harness.md) — test/all.js gates every rule on a bad/good pair; two fixture layouts, one file-set gotcha.

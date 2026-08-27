@@ -1,0 +1,6 @@
+<ControlTemplate TargetType="TabItem">
+  <Grid>
+    <Border BorderBrush="{StaticResource TkBorder}" BorderThickness="1" />
+    <ContentPresenter />
+  </Grid>
+</ControlTemplate>

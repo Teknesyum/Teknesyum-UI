@@ -1,4 +1,4 @@
-/* Teknesyum Neon — tek kaynak. Değerleri projede override etme. */
+/* Teknesyum Neon — single source. Do not override these values in a project. */
 
 @theme {
   --color-neon-blue: #00f3ff;
@@ -10,21 +10,23 @@
   --color-surface: #08090a;
   --color-dark-glass: rgba(10, 10, 15, 0.85);
 
-  /* Anlamsal rol katmanı — Tailwind tarafı. `--tk-*` katmanı ile bu katman
-     AYRI iki katmandır; birini güncelleyip ötekini bırakan `bg-danger` gibi bir
-     yardımcı sınıfın eski hex'te kalmasına yol açar. İkisi birlikte gezilir ve
-     denetimde eşitlikleri ölçülür (`test/u4-renk.js`).
-     Rolün Tailwind karşılığı marka adını değil rol adını taşır: `text-danger`,
-     `border-warning`. `--color-neon-success` rol adına çevrilmedi çünkü
-     `references/components.md` ona adıyla bağlı; rol adı `--tk-success`'tedir. */
+  /* Semantic role layer — Tailwind side. This and the `--tk-*` layer are TWO
+     SEPARATE layers; updating one and leaving the other strands a helper class
+     like `bg-danger` on an old hex. Walk both together; the audit measures their
+     equality.
+     A role's Tailwind name carries the role name, not the brand name:
+     `text-danger`, `border-warning`. `--color-neon-success` was not renamed
+     because `references/components.md` binds to that name; the role name lives
+     in `--tk-success`. */
   --color-danger: #ff00ea;
   --color-danger-text: #ff54eb;
   --color-warning: #fbbf24;
 
-  /* Zincirin tek kaynağı SKILL §3'tür; buradaki sıra oradaki sırayla aynıdır.
-     Atkinson Hyperlegible Next varsayılandır ve projeye gömülür, sistemde var
-     sayılmaz. Gömülü değilse zincir Segoe UI'ye düşer — bu bir kabul değil, bir
-     eksikliktir; gömme işi teslimin parçasıdır. */
+  /* The chain's only source is SKILL §3; the order here matches the order there.
+     Atkinson Hyperlegible Next is the default and is embedded in the project, not
+     assumed present on the system. Without embedding the chain falls back to
+     Segoe UI — that is not an acceptance, it is a gap; embedding is part of
+     delivery. */
   --font-sans: 'Atkinson Hyperlegible Next', 'Segoe UI', system-ui, -apple-system, sans-serif;
   --font-mono: Cascadia Mono, Consolas, ui-monospace, 'Courier New', monospace;
 }
@@ -35,11 +37,11 @@
   --tk-purple: #b026ff;
   --tk-success: #34d399;
   --tk-surface: #08090a;
-  --tk-bg-donus: 48s;
+  --tk-bg-rotate: 48s;
   --tk-bg-from: #000000;
   --tk-bg-to: #08090a;
   --tk-bg: linear-gradient(
-    var(--tk-bg-aci, 160deg),
+    var(--tk-bg-angle, 160deg),
     #000000 0%,
     #010101 10%,
     #020202 20%,
@@ -57,70 +59,75 @@
   --tk-pink-text: #ff54eb;
   --tk-purple-text: #c67eff;
 
-  /* --- anlamsal rol katmanı (SKILL §2) ---
-     ROL KAZANIR. Durum bildiren her bileşen — hata metni, form doğrulama,
-     uyarı kutusu, durum noktası, tehlike butonu — bu katmanı yazar. Marka ve
-     dekor (glow, scrollbar, hero, başlık) marka tokenını yazmayı sürdürür.
-     Rol tokenı marka tokenının DEĞERİNİ izler, kopyasını değil: hex elden
-     yazılmaz, `var()` ile bağlanır. Tek istisna `--tk-warning` — marka
-     üçlüsünde karşılığı yok, kendi hex'ini taşır.
-     `--tk-success` yukarıda tanımlı ve zaten rol tokenıdır; ikinci ad
-     verilmedi, çünkü iki adı olan tek değer er geç ayrışır.
-     `--tk-info` BİLEREK YOK: bilgi kutusu bugün yok ve kullanılmayan token
-     borçtur. Açılırsa maviye bağlanır (`var(--tk-blue)`) ve birincil butonla
-     aynı ekranda info dolgusu kullanılmaz — ikisi de mavi dolgu olur, kullanıcı
-     tıklanabilir olanı ayırt edemez. */
+  /* --- semantic role layer (SKILL §2) ---
+     THE ROLE WINS. Every component that reports state — error text, form
+     validation, warning box, status dot, danger button — writes this layer.
+     Brand and decoration (glow, scrollbar, hero, heading) keep writing the brand
+     token. A role token follows the VALUE of a brand token, not a copy of it:
+     the hex is never hand-written, it is bound with `var()`. The one exception
+     is `--tk-warning` — it has no counterpart in the brand triad and carries its
+     own hex.
+     `--tk-success` is defined above and is already a role token; no second name
+     was given, because a single value with two names eventually diverges.
+     `--tk-info` IS DELIBERATELY ABSENT: there is no info box today and an unused
+     token is debt. If one opens it binds to blue (`var(--tk-blue)`) and an info
+     fill is never used on the same screen as a primary button — both would be
+     blue fills and the user could not tell which one is clickable. */
   --tk-danger: var(--tk-pink);
-  /* Tehlikenin METİN rolü. Dolgu hex'i `#ff00ea` metinde 6.11:1 verir ve §2'nin
-     7:1 eşiğinin altındadır; hata metni bu yüzden dolgu tokenını değil bunu
-     yazar (7.33:1). Pembe/mor'un dolgu-metin ayrımı rol katmanında da sürer. */
+  /* The TEXT role of danger. The fill hex `#ff00ea` gives 6.11:1 as text, below
+     §2's 7:1 threshold; error text therefore writes this token rather than the
+     fill token (7.33:1). The pink/purple fill-vs-text split continues in the
+     role layer. */
   --tk-danger-text: var(--tk-pink-text);
 
-  /* `warning #fbbf24` — YALNIZCA UYARI YÜZEYİ: metin, çerçeve, ikon.
-     Dolgu ve buton yok. Kısıt `success`in kalıbının aynısıdır, yeni kalıp değil.
-     Yasağın gerekçesi ölçüldü: amber dolgu üstünde beyaz metin 1.67:1 — çöker.
-     Siyah metin 12.58:1 verirdi, ama dolguya izin veren bir kalıp yazının
-     rengini her seferinde yeniden tartışmaya açar; uyarı yüzeyi metin, çerçeve
-     ve ikonla kurulur.
-     YERİNE NE KONUR: uyarı metni `--tk-warning` (12.58:1 / 11.94:1), çerçeve
-     `--tk-warning-border` (`#08090a` üstünde 3.59:1 — 1.4.11'in 3:1 eşiğini
-     geçer; pembe /50 2.17, mor /50 1.82 ile bu merdiveni TAŞIMIYORDU, amber
-     taşıyor), ikon aynı renk. Eylem gerekiyorsa buton birincil (mavi) ya da
-     `danger` (pembe) olur — uyarı rengi butona girmez.
-     RENK TEK BAŞINA ANLAM TAŞIMAZ, amber için de baştan: amber ile `success`
-     protanopide ΔE2000 15.2 ile ayrışmıyor (`docs/olcumler/renk-korlugu.md`).
-     Uyarı satırı renge ek olarak ikon ya da metin taşır — istisnası yok.
-     ŞERH: `warning` hex'i `U9` ΔE ölçümüne tabidir. Kötü çıkarsa değişecek olan
-     bu iki satırdır; rol adı ve kısıt değişmez. */
+  /* `warning #fbbf24` — WARNING SURFACE ONLY: text, border, icon.
+     No fill, no button. The constraint is the same pattern as `success`, not a
+     new one. The ban was measured: white text on an amber fill is 1.67:1 — it
+     collapses. Black text would give 12.58:1, but a pattern that permits a fill
+     reopens the text-colour argument every time; a warning surface is built from
+     text, border and icon.
+     WHAT REPLACES IT: warning text `--tk-warning` (12.58:1 / 11.94:1), border
+     `--tk-warning-border` (3.59:1 on `#08090a` — clears 1.4.11's 3:1 threshold;
+     pink /50 at 2.17 and purple /50 at 1.82 did NOT carry this rung, amber does),
+     icon the same colour. If an action is needed the button is primary (blue) or
+     `danger` (pink) — the warning colour never enters a button.
+     COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does
+     not separate from `success` under protanopia, ΔE2000 15.2
+     A warning row carries an icon or text in
+     addition to colour — no exceptions.
+     CAVEAT: the `warning` hex is subject to the `U9` ΔE measurement. If it comes
+     out badly, these two lines are what change; the role name and the constraint
+     do not. */
   --tk-warning: #fbbf24;
   --tk-warning-border: rgba(251, 191, 36, 0.5);
 
   --tk-text: #ffffff;
   --tk-text-label: #00f3ff;
-  /* Devre dışı kontrol 7:1'den muaftır (SKILL §2) ve bu muafiyetin bedeli vardır:
-     renk körü kullanıcı griyi göremez. Bu yüzden `--tk-disabled` tek başına
-     kullanılmaz — devre dışı her kontrol griliğe ek olarak bir işaret taşır:
-     `title`/`ToolTip` metni zorunludur, yanına `cursor: not-allowed` ve mümkünse
-     bir ikon konur. Yalnız soluklaştırılmış kontrol eksik teslimdir. */
+  /* A disabled control is exempt from 7:1 (SKILL §2) and that exemption has a
+     price: a colour-blind user cannot see the grey. So `--tk-disabled` is never
+     used alone — every disabled control carries a marker in addition to the grey:
+     `title`/`ToolTip` text is mandatory, plus `cursor: not-allowed` and, where
+     possible, an icon. A merely dimmed control is an incomplete delivery. */
   --tk-disabled: #71717a;
 
   --tk-border: rgba(0, 243, 255, 0.5);
   --tk-border-strong: rgba(0, 243, 255, 0.6);
   --tk-border-decorative: rgba(0, 243, 255, 0.3);
 
-  /* Yarıçap tektir: 6px. Çelişki 23.08.2026'da `layout.md` lehine kapatıldı —
-     yuvarlatılmış dikdörtgen daha küçük köşe alır (SKILL §5). Eski 16/12/8/6
-     merdiveni kaldırıldı; aşağıdaki dört ad geriye dönük uyumluluk için durur ve
-     hepsi aynı tek değere bakar. Tek istisna dairedir (`?` rozeti, slider thumb,
-     durum noktası) — orada `border-radius: 50%`. */
+  /* There is one radius: 6px. The conflict was closed on 2026-08-23 in favour of
+     `layout.md` — a rounded rectangle takes the smaller corner (SKILL §5). The
+     old 16/12/8/6 scale was removed; the four names below remain for backward
+     compatibility and all point at the same single value. The one exception is
+     the circle (`?` badge, slider thumb, status dot) — there, `border-radius: 50%`. */
   --tk-r: 6px;
   --tk-r-box: var(--tk-r);
   --tk-r-btn: var(--tk-r);
   --tk-r-cell: var(--tk-r);
   --tk-r-chip: var(--tk-r);
 
-  /* Tipografi ölçeği — 1.25 major third, beş basamak. Ara boyut ekleme;
-     gerekiyorsa ölçeğin kendisi tartışılır, tek bir kullanım yeri değil. */
+  /* Type scale — 1.25 major third, five steps. Do not add an intermediate size;
+     if one is needed, the scale itself is up for discussion, not a single use
+     site. */
   --tk-fs-1: 14px;
   --tk-fs-2: 16px;
   --tk-fs-3: 20px;
@@ -137,6 +144,67 @@
   --tk-tr-h2: 0.02em;
   --tk-tr-hero: -0.01em;
 
+  /* 700 is forbidden outside hero (SKILL §3); hierarchy is carried by size. */
+  --tk-fw-body: 400;
+  --tk-fw-semi: 600;
+  --tk-fw-hero: 900;
+
+  /* Spacing ladder. Everything below it is a reference, not a second
+     measurement: a panel's padding IS step 5, it is not "24 by coincidence". */
+  --tk-sp-1: 4px;
+  --tk-sp-2: 8px;
+  --tk-sp-3: 12px;
+  --tk-sp-4: 16px;
+  --tk-sp-5: 24px;
+  --tk-panel-padding: var(--tk-sp-5);
+  --tk-section-gap: var(--tk-sp-5);
+  --tk-row-gap: var(--tk-sp-3);
+  --tk-field-gap: var(--tk-sp-2);
+  --tk-field-stack: var(--tk-sp-4);
+  --tk-input-padding-x: var(--tk-sp-3);
+  --tk-toast-inset: var(--tk-sp-5);
+  --tk-toast-gap: var(--tk-sp-3);
+
+  --tk-r-window: 12px;
+  --tk-border-w: 1px;
+  /* The focus ring is two layers and never animates (SKILL §5.3). */
+  --tk-focus-w: 2px;
+  --tk-focus-offset: 2px;
+
+  --tk-target-min: 24px;
+  --tk-scrollbar-w: 10px;
+  /* The title bar height is a range in the source, not one number; both ends
+     are tokens so a project can pick inside them and stay checkable. */
+  --tk-titlebar-h-min: 32px;
+  --tk-titlebar-h-max: 40px;
+  --tk-sidebar-w: 240px;
+  --tk-sidebar-collapsed-w: 48px;
+  --tk-input-h: 40px;
+  --tk-modal-w: min(560px, 90vw);
+  --tk-modal-max-ratio: 0.85;
+  --tk-toast-w: min(360px, calc(100vw - var(--tk-sp-5) * 2));
+  --tk-toast-max: 3;
+  /* Danger toasts never auto-dismiss; this life belongs to the others. */
+  --tk-toast-life: 6000ms;
+  --tk-icon-1: 14px;
+  --tk-icon-2: 16px;
+  --tk-icon-3: 22px;
+  --tk-icon-4: 56px;
+
+  --tk-scale-hover: 1.02;
+  --tk-scale-press: 0.98;
+  --tk-scale-icon-hover: 1.1;
+  --tk-entry-offset: var(--tk-sp-2);
+  --tk-overlay-offset: var(--tk-sp-1);
+  --tk-stagger: 40ms;
+  --tk-stagger-max: 6;
+  /* An outward glow needs this much clear space; otherwise use a /50 border. */
+  --tk-glow-margin: var(--tk-sp-5);
+  --tk-loading-loop-min: 1400ms;
+  --tk-frame-budget: 16ms;
+  --tk-bg-rotate-min: 40000ms;
+  --tk-bg-sweep-max: 20deg;
+
   --tk-t-instant: 90ms;
   --tk-t-fast: 160ms;
   --tk-t-base: 240ms;
@@ -148,20 +216,24 @@
   --tk-glow-blue: 0 0 20px rgba(0, 243, 255, 0.3);
   --tk-glow-pink: 0 0 20px rgba(255, 0, 234, 0.3);
   --tk-glow-purple: 0 0 20px rgba(176, 38, 255, 0.3);
-  /* Hero glow'u tek tokendır ve iki platformda aynı yoğunluğu verir:
-     blur 8, opaklık 0.8. XAML karşılığı `HeroGlow` (Theme.xaml). */
+  /* The hero glow is one token and gives the same intensity on both platforms:
+     blur 8, opacity 0.8. Its XAML counterpart is `HeroGlow` (Theme.xaml). */
   --tk-glow-hero: 0 0 8px rgba(0, 243, 255, 0.8);
+  /* A shadow is not a glow: it separates the panel from the background gradient
+     and takes no brand colour. */
+  --tk-shadow-panel: 0 0 40px rgba(0, 0, 0, 0.8);
+  --tk-scrim: rgba(0, 0, 0, 0.6);
 }
 
-@property --tk-bg-aci {
+@property --tk-bg-angle {
   syntax: '<angle>';
   inherits: false;
   initial-value: 160deg;
 }
 
-@keyframes tk-bg-donus {
-  from { --tk-bg-aci: 150deg; }
-  to   { --tk-bg-aci: 170deg; }
+@keyframes tk-bg-rotate {
+  from { --tk-bg-angle: 150deg; }
+  to   { --tk-bg-angle: 170deg; }
 }
 
 body {
@@ -170,15 +242,15 @@ body {
   font-family: var(--font-sans, 'Atkinson Hyperlegible Next', 'Segoe UI', system-ui, sans-serif);
   font-size: var(--tk-fs-2);
   line-height: var(--tk-lh-body);
-  /* Cümle içi sayı sans kalır ama hizalanır; veri sayısı `.tk-mono`'ya gider (§3). */
+  /* Numbers inside a sentence stay sans but align; data numbers go to `.tk-mono` (§3). */
   font-variant-numeric: tabular-nums;
   color: var(--tk-text);
   background: var(--tk-bg);
   background-attachment: fixed;
-  animation: tk-bg-donus var(--tk-bg-donus) linear infinite alternate;
+  animation: tk-bg-rotate var(--tk-bg-rotate) linear infinite alternate;
 }
 
-/* --- tipografi --- */
+/* --- typography --- */
 .tk-h2 {
   font-size: var(--tk-fs-4); font-weight: 600;
   line-height: var(--tk-lh-heading); letter-spacing: var(--tk-tr-h2);
@@ -209,12 +281,12 @@ body {
 .tk-hint {
   font-size: var(--tk-fs-1); line-height: var(--tk-lh-body); color: var(--tk-text);
 }
-/* Okunabilir satır uzunluğu. Uzun metin bloğu bu sınıfa sarılır (§3.2). */
+/* Readable line length. A long block of text is wrapped in this class (§3.2). */
 .tk-prose { max-width: var(--tk-measure); line-height: var(--tk-lh-body); }
-/* h3'ü etiketten ayıran ikinci sinyal — boyut yetmediğinde (§3). */
+/* The second signal separating h3 from a label — when size is not enough (§3). */
 .tk-h3-rule { border-bottom: 1px solid var(--tk-border-decorative); padding-bottom: 8px; }
 
-/* --- yüzeyler --- */
+/* --- surfaces --- */
 .tk-panel {
   background: rgba(8, 9, 10, 0.95);
   backdrop-filter: blur(16px);
@@ -225,7 +297,7 @@ body {
 }
 .tk-divider { border: 0; border-top: 1px solid var(--tk-border-decorative); margin: 24px 0; }
 
-/* --- odak: cift katman, gecissiz, yalniz klavye modalitesinde --- */
+/* --- focus: two layers, no transition, keyboard modality only --- */
 :focus-visible {
   outline: 2px solid var(--tk-blue);
   outline-offset: 2px;
@@ -235,7 +307,7 @@ body {
 :focus:not(:focus-visible) { outline: none; }
 [data-tk-scroll-target] { scroll-margin-top: 40px; scroll-margin-bottom: 24px; }
 
-/* --- butonlar --- */
+/* --- buttons --- */
 .tk-btn {
   font-weight: 600; letter-spacing: var(--tk-tr-h2);
   font-size: var(--tk-fs-2); line-height: var(--tk-lh-heading);
@@ -247,11 +319,18 @@ body {
               border-color var(--tk-t-instant) var(--tk-e-out);
 }
 .tk-btn:hover { transform: scale(1.02); }
-.tk-btn:active { transform: scale(0.98); transition-duration: var(--tk-t-instant); }
+/* The pressed state takes a SECOND carrier: under reduced motion `theme.css` writes
+   `transform: none !important` and `scale` disappears. The border stays. */
+.tk-btn:active {
+  transform: scale(0.98);
+  border-color: var(--tk-border-strong);
+  transition-duration: var(--tk-t-instant);
+}
 .tk-btn-primary   { background: var(--tk-blue);   color: #000; box-shadow: var(--tk-glow-blue); }
 .tk-btn-primary:hover   { background: rgba(0, 243, 255, 0.8); }
-/* Sınıf adı zaten rol dilindeydi; içi de rol tokenına geçti. Hale marka
-   tokenında kalır — glow dekordur, durum bildirmez. */
+/* The class name was already in role language; its contents moved to the role
+   token too. The glow stays on the brand token — a glow is decoration, it does
+   not report state. */
 .tk-btn-danger    { background: var(--tk-danger); color: #000; box-shadow: var(--tk-glow-pink); }
 .tk-btn-danger:hover    { background: rgba(255, 0, 234, 0.8); }
 .tk-btn-ghost {
@@ -260,7 +339,7 @@ body {
   color: var(--tk-purple-text);
 }
 .tk-btn-ghost:hover { background: rgba(176, 38, 255, 0.2); }
-/* Devre dışı hâl yalnız solmakla bitmez: `title` metni zorunludur (§2). */
+/* The disabled state does not end at dimming: `title` text is mandatory (§2). */
 .tk-btn:disabled {
   color: var(--tk-disabled);
   background: transparent;
@@ -276,40 +355,41 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--tk-purple); border-radius: 4px;
   box-shadow: 0 0 10px var(--tk-purple);
-  /* §5.4 `box-shadow` animasyonunu adıyla yasaklıyor ve istisnası yok; hale duruk
-     kalır, yalnız dolgu rengi geçer. Denetimde ölçüldü (23.08.2026). */
+  /* §5.4 bans animating `box-shadow` by name, with no exception; the glow stays
+     static and only the fill colour transitions. Measured in the audit (2026-08-23). */
   transition: background-color var(--tk-t-instant) var(--tk-e-out);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--tk-pink); box-shadow: 0 0 10px var(--tk-pink);
 }
 
-/* --- baslik cubugu ve imza (§4) --- */
+/* --- title bar and signature (§4) --- */
 .tk-titlebar { -webkit-app-region: drag; }
 .tk-titlebar a,
 .tk-titlebar button,
 .tk-no-drag { -webkit-app-region: no-drag; }
 
-/* --- durum noktasi: renk tek basina anlam tasimaz (WCAG 1.4.1, §2) --- */
+/* --- status dot: colour alone carries no meaning (WCAG 1.4.1, §2) --- */
 .tk-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 .tk-dot-on  { background: var(--tk-success); border: 0; }
-/* Durum bildiriyor, marka değil — rol tokenı yazar. Şekil farkı (dolu daire /
-   halka) rengin yanındaki ikinci taşıyıcıdır; renk kalksa da bilgi durur. */
+/* It reports state, not brand — so it writes a role token. The shape difference
+   (filled circle / ring) is the second carrier beside colour; strip the colour
+   and the information still stands. */
 .tk-dot-off { background: transparent; border: 2px solid var(--tk-danger); }
 
-/* --- uyari yuzeyi (§2) ---
-   `.tk-panel` uzerine modifier olarak kullanilir: <div class="tk-panel tk-warn">.
-   DOLGU YOK — panel zemini `surface` kalir, degisen sey cerceve ve metin rengi.
-   Kutu renge ek olarak bir ikon ya da "Uyari" metni tasimak zorunda; amber ile
-   success protanopide ayrismiyor (yukaridaki olcum). */
+/* --- warning surface (§2) ---
+   Used as a modifier on `.tk-panel`: <div class="tk-panel tk-warn">.
+   NO FILL — the panel background stays `surface`; what changes is the border and
+   text colour. The box must carry an icon or the word "Warning" in addition to
+   colour; amber does not separate from success under protanopia (measurement above). */
 .tk-warn { border-color: var(--tk-warning-border); color: var(--tk-warning); }
-/* Uyari metni tek basina, kutusuz da kullanilabilir. Glow yok: metne glow
-   verilmez (§2), tek istisna hero sayidir. */
+/* Warning text can also stand alone, without a box. No glow: text is never given
+   a glow (§2), the sole exception being hero. */
 .tk-warn-text { color: var(--tk-warning); }
-/* Hata metni dolgu pembesini degil metin pembesini yazar — 7:1 esigi. */
+/* Error text writes the text pink, not the fill pink — the 7:1 threshold. */
 .tk-danger-text { color: var(--tk-danger-text); }
 
-/* --- hareket: azaltilmis hareket ayari (ayrinti: references/motion.md) --- */
+/* --- motion: reduced-motion preference (detail: references/motion.md) --- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

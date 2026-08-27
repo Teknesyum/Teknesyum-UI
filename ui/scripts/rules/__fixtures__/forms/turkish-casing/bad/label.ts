@@ -1,0 +1,1 @@
+const head = title.toUpperCase();

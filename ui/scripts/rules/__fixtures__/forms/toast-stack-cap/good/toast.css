@@ -1,0 +1,2 @@
+.tk-toast-stack { display: grid; gap: 12px; }
+.tk-toast-stack > :nth-child(n + 4) { display: none; }

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Teknesyum.Theme;
 
-/// Teknesyum Neon — WinForms/konsol paleti. Değerleri değiştirme.
+/// Teknesyum Neon — WinForms/console palette. Do not change these values.
 public static class Palette
 {
     public static readonly Color NeonBlue   = ColorTranslator.FromHtml("#00F3FF");
@@ -15,40 +15,43 @@ public static class Palette
     public static readonly Color PinkText   = ColorTranslator.FromHtml("#FF54EB");
     public static readonly Color PurpleText = ColorTranslator.FromHtml("#C67EFF");
 
-    // --- anlamsal rol katmanı (SKILL §2) ---
+    // --- semantic role layer (SKILL §2) ---
     //
-    // ROL KAZANIR. Durum bildiren her kontrol — hata metni, form doğrulama,
-    // uyarı kutusu, durum noktası, tehlike düğmesi — bu alanları yazar. Marka ve
-    // dekor (glow, scrollbar, hero, başlık) marka alanını yazmayı sürdürür.
-    // C#'ta takma ad düz atamadır: rol alanı marka alanının DEĞERİNİ alır, hex'i
-    // kopyalanmaz. Tek istisna `Warning` — marka üçlüsünde karşılığı yok, kendi
-    // hex'ini taşır. Eşitlik denetimde ölçülür (`test/u4-renk.js`).
+    // THE ROLE WINS. Every control that reports state — error text, form
+    // validation, warning box, status dot, danger button — writes these fields.
+    // Brand and decoration (glow, scrollbar, hero, heading) keep writing the brand
+    // field. In C# an alias is a plain assignment: the role field takes the VALUE
+    // of the brand field, its hex is not copied. The one exception is `Warning` —
+    // it has no counterpart in the brand triad and carries its own hex. Equality
+    // is measured in the audit.
     //
-    // `Success` yukarıda tanımlı ve zaten rol alanıdır; ikinci ad verilmedi.
-    // `Info` BİLEREK YOK: bilgi kutusu bugün yok, kullanılmayan token borçtur.
-    // Açılırsa maviye bağlanır ve birincil düğmeyle aynı ekranda info dolgusu
-    // kullanılmaz.
+    // `Success` is defined above and is already a role field; no second name was
+    // given. `Info` IS DELIBERATELY ABSENT: there is no info box today, and an
+    // unused token is debt. If one opens it binds to blue, and an info fill is
+    // never used on the same screen as a primary button.
     public static readonly Color Danger     = NeonPink;
 
-    /// Tehlikenin METİN rolü. Dolgu hex'i `#FF00EA` metinde 6.11:1 verir ve §2'nin
-    /// 7:1 eşiğinin altındadır; hata metni dolgu alanını değil bunu yazar (7.33:1).
+    /// The TEXT role of danger. The fill hex `#FF00EA` gives 6.11:1 as text, below
+    /// §2's 7:1 threshold; error text writes this rather than the fill field (7.33:1).
     public static readonly Color DangerText = PinkText;
 
-    /// `warning #FBBF24` — YALNIZCA UYARI YÜZEYİ: metin, çerçeve, ikon.
-    /// DOLGU VE DÜĞME YOK. Kısıt `Success`in kalıbının aynısıdır, yeni kalıp değil.
+    /// `warning #FBBF24` — WARNING SURFACE ONLY: text, border, icon.
+    /// NO FILL, NO BUTTON. The constraint is the same pattern as `Success`, not a
+    /// new one.
     ///
-    /// Yasağın gerekçesi ölçüldü: amber dolgu üstünde beyaz metin 1.67:1 — çöker.
-    /// YERİNE NE KONUR: uyarı metni `Warning` (12.58:1 / 11.94:1), çerçeve
-    /// `Warning50` (`#08090A` üstünde 3.59:1, 1.4.11'in 3:1 eşiğini geçer — pembe
-    /// /50 2.17 ve mor /50 1.82 ile bu merdiveni taşımıyordu, amber taşıyor),
-    /// ikon aynı renk. Eylem gerekiyorsa düğme birincil (mavi) ya da `Danger`
-    /// (pembe) olur; uyarı rengi düğmeye girmez.
+    /// The ban was measured: white text on an amber fill is 1.67:1 — it collapses.
+    /// WHAT REPLACES IT: warning text `Warning` (12.58:1 / 11.94:1), border
+    /// `Warning50` (3.59:1 on `#08090A`, clears 1.4.11's 3:1 threshold — pink /50
+    /// at 2.17 and purple /50 at 1.82 did not carry this rung, amber does), icon
+    /// the same colour. If an action is needed the button is primary (blue) or
+    /// `Danger` (pink); the warning colour never enters a button.
     ///
-    /// RENK TEK BAŞINA ANLAM TAŞIMAZ, amber için de baştan: amber ile `Success`
-    /// protanopide ΔE2000 15.2 ile ayrışmıyor (`docs/olcumler/renk-korlugu.md`).
-    /// Uyarı satırı renge ek olarak ikon ya da metin taşır.
+    /// COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does
+    /// not separate from `Success` under protanopia, ΔE2000 15.2
+    /// A warning row carries an icon or text in
+    /// addition to colour.
     ///
-    /// ŞERH: bu hex `U9` ΔE ölçümüne tabidir.
+    /// CAVEAT: this hex is subject to the `U9` ΔE measurement.
     public static readonly Color Warning    = ColorTranslator.FromHtml("#FBBF24");
     public static readonly Color Warning50  = Color.FromArgb(0x80, 0xFB, 0xBF, 0x24);
 
@@ -67,55 +70,127 @@ public static class Palette
     public static readonly Color TextBody   = ColorTranslator.FromHtml("#FFFFFF");
     public static readonly Color TextLabel  = ColorTranslator.FromHtml("#00F3FF");
 
-    /// Devre dışı kontrol 7:1'den muaftır (SKILL §2) ve bedeli vardır: renk körü
-    /// kullanıcı griyi göremez. Bu renk tek başına kullanılmaz — devre dışı her
-    /// kontrol griliğe ek bir işaret taşır: `ToolTip` metni ZORUNLU, yanında
-    /// `Cursor = Cursors.No` ve mümkünse bir ikon. Yalnız soluklaştırılmış kontrol
-    /// eksik teslimdir.
+    /// A disabled control is exempt from 7:1 (SKILL §2) and there is a price: a
+    /// colour-blind user cannot see the grey. This colour is never used alone —
+    /// every disabled control carries a marker in addition to the grey: `ToolTip`
+    /// text is MANDATORY, plus `Cursor = Cursors.No` and, where possible, an icon.
+    /// A merely dimmed control is an incomplete delivery.
     ///
-    /// "Soluk metin" rolü 23.08.2026'da tamamen silindi: `TextBody` ile birebir aynı
-    /// değeri taşıyordu ve iki adı olan tek değer er geç ayrışır. İkincil metin için
-    /// çözüm gri vermek değil, metni silmektir (SKILL §2, "ara gri yok").
+    /// The "muted text" role was deleted outright on 2026-08-23: it carried exactly
+    /// the same value as `TextBody`, and a single value with two names eventually
+    /// diverges. For secondary text the answer is not to give grey, it is to delete
+    /// the text (SKILL §2, "no mid greys").
     public static readonly Color Disabled   = ColorTranslator.FromHtml("#71717A");
 
-    /// Yarıçap tektir: 6 DIP (SKILL §5, `layout.md` §5.1). Kart, panel, düğme ve
-    /// hücre aynı değeri alır. Tek istisna dairedir: `?` rozeti, slider thumb,
-    /// durum noktası.
+    /// There is one radius: 6 DIP (SKILL §5, `layout.md` §5.1). Card, panel, button
+    /// and cell take the same value. The one exception is the circle: `?` badge,
+    /// slider thumb, status dot.
     public const int Radius = 6;
 
-    /// Zincirin tek kaynağı SKILL §3'tür. WinForms `Font` yedek zincir almaz, bu
-    /// yüzden kurulu olan ilk aile seçilir. Atkinson Hyperlegible Next varsayılandır
-    /// ve projeye gömülür (`PrivateFontCollection`); gömülmediyse Segoe UI'ye düşer —
-    /// bu bir kabul değil, eksik teslimdir.
-    public static string Aile(params string[] adaylar)
+    /// Numeric tokens: the same values as the CSS `--tk-*` layer, in DIP.
+    /// Tracking is em, line height a multiplier, ratios unitless, times in ms.
+    public const int    WindowRadius = 12;
+    public const int    BorderWidth  = 1;
+    public const int    FocusWidth   = 2;
+    public const int    FocusOffset  = 2;
+
+    public const int    FontSize1 = 14;
+    public const int    FontSize2 = 16;
+    public const int    FontSize3 = 20;
+    public const int    FontSize4 = 24;
+    public const int    FontSize5 = 30;
+    public const double LineHeightBody    = 1.5;
+    public const double LineHeightHeading = 1.2;
+    public const double LineHeightMono    = 1.4;
+    public const int    MeasureCh    = 65;
+    public const double TrackingLabel = 0.15;
+    public const double TrackingH3    = 0.05;
+    public const double TrackingH2    = 0.02;
+    public const double TrackingHero  = -0.01;
+    public const int    WeightBody = 400;
+    public const int    WeightSemi = 600;
+    public const int    WeightHero = 900;
+
+    public const int Space1 = 4;
+    public const int Space2 = 8;
+    public const int Space3 = 12;
+    public const int Space4 = 16;
+    public const int Space5 = 24;
+    public const int PanelPadding  = 24;
+    public const int SectionGap    = 24;
+    public const int RowGap        = 12;
+    public const int FieldGap      = 8;
+    public const int FieldStack    = 16;
+    public const int InputPaddingX = 12;
+    public const int ToastInset    = 24;
+    public const int ToastGap      = 12;
+
+    public const int    TargetMin             = 24;
+    public const int    ScrollbarWidth        = 10;
+    public const int    TitleBarHeightMin     = 32;
+    public const int    TitleBarHeightMax     = 40;
+    public const int    SidebarWidth          = 240;
+    public const int    SidebarCollapsedWidth = 48;
+    public const int    InputHeight           = 40;
+    public const int    ModalWidth            = 560;
+    public const double ModalMaxRatio         = 0.85;
+    public const int    ToastWidth            = 360;
+    public const int    ToastMax              = 3;
+    public const int    ToastLifeMs           = 6000;
+    public const int    IconSize1 = 14;
+    public const int    IconSize2 = 16;
+    public const int    IconSize3 = 22;
+    public const int    IconSize4 = 56;
+
+    public const double ScaleHover     = 1.02;
+    public const double ScalePress     = 0.98;
+    public const double ScaleIconHover = 1.1;
+    public const int    EntryOffset    = 8;
+    public const int    OverlayOffset  = 4;
+    public const int    StaggerMs      = 40;
+    public const int    StaggerMax     = 6;
+    public const int    GlowMargin     = 24;
+    public const int    LoadingLoopMinMs = 1400;
+    public const int    FrameBudgetMs    = 16;
+    public const int    BgRotateMinMs    = 40000;
+    public const int    BgSweepMaxDeg    = 20;
+
+    /// The chain's only source is SKILL §3. A WinForms `Font` takes no fallback
+    /// chain, so the first installed family is selected. Atkinson Hyperlegible Next
+    /// is the default and is embedded in the project (`PrivateFontCollection`); if
+    /// it is not embedded it falls back to Segoe UI — that is not an acceptance, it
+    /// is an incomplete delivery.
+    public static string Family(params string[] candidates)
     {
-        using var kurulu = new InstalledFontCollection();
-        var adlar = kurulu.Families.Select(f => f.Name).ToHashSet();
-        return adaylar.FirstOrDefault(adlar.Contains) ?? adaylar[^1];
+        using var installed = new InstalledFontCollection();
+        var names = installed.Families.Select(f => f.Name).ToHashSet();
+        return candidates.FirstOrDefault(names.Contains) ?? candidates[^1];
     }
 
-    public static readonly string SansAdi = Aile("Atkinson Hyperlegible Next", "Segoe UI");
-    public static readonly string MonoAdi = Aile("Cascadia Mono", "Consolas");
+    public static readonly string SansName = Family("Atkinson Hyperlegible Next", "Segoe UI");
+    public static readonly string MonoName = Family("Cascadia Mono", "Consolas");
 
-    // Ölçek 1.25 major third — 14 / 16 / 20 / 24 / 30 DIP. Punto karşılığı 96 dpi'de
-    // DIP × 0.75'tir: 10.5 / 12 / 15 / 18 / 22.5.
+    // Scale 1.25 major third — 14 / 16 / 20 / 24 / 30 DIP. The point equivalent at
+    // 96 dpi is DIP × 0.75: 10.5 / 12 / 15 / 18 / 22.5.
     //
-    // AĞIRLIK TELAFİSİ: SKILL §3 başlık ve etikette 600 (SemiBold) istiyor;
-    // `FontStyle` yalnız Regular ve Bold tanıyor, ara ağırlık yok. Başlıklar burada
-    // Bold kalır ve fark boyutla kurulur (h2 18pt, h3 15pt, etiket 10.5pt) — üç
-    // seviye boyutla ayrıştığı için ağırlığın tek başına hiyerarşi taşıması
-    // gerekmiyor. Gerçek 600 isteniyorsa `GDI+` yerine `PrivateFontCollection` ile
-    // variable font'un SemiBold kesiti yüklenir; o zaman bu telafi kalkar.
+    // WEIGHT COMPENSATION: SKILL §3 asks for 600 (SemiBold) on headings and labels;
+    // `FontStyle` knows only Regular and Bold, there is no intermediate weight.
+    // Headings stay Bold here and the difference is built with size (h2 18pt,
+    // h3 15pt, label 10.5pt) — with three levels separated by size, weight does not
+    // need to carry the hierarchy alone. If a real 600 is wanted, load the variable
+    // font's SemiBold cut with `PrivateFontCollection` instead of `GDI+`; the
+    // compensation then lifts.
     //
-    // Satır yüksekliği de WinForms `Font` üzerinden verilemez; `TextRenderer` çizim
-    // yaparken satır aralığı elle 1.5 (gövde) / 1.2 (başlık) katsayısıyla kurulur.
-    public static readonly Font  H2         = new(SansAdi, 18f, FontStyle.Bold);
-    public static readonly Font  H3         = new(SansAdi, 15f, FontStyle.Bold);
-    public static readonly Font  LabelFont  = new(SansAdi, 10.5f, FontStyle.Bold);
-    public static readonly Font  Body       = new(SansAdi, 12f);
-    public static readonly Font  Hint       = new(SansAdi, 10.5f);
-    public static readonly Font  Mono       = new(MonoAdi, 12f, FontStyle.Bold);
-    public static readonly Font  Hero       = new(MonoAdi, 22.5f, FontStyle.Bold);
+    // Line height also cannot be set through a WinForms `Font`; when `TextRenderer`
+    // draws, the line spacing is applied by hand with a 1.5 (body) / 1.2 (heading)
+    // factor.
+    public static readonly Font  H2         = new(SansName, 18f, FontStyle.Bold);
+    public static readonly Font  H3         = new(SansName, 15f, FontStyle.Bold);
+    public static readonly Font  LabelFont  = new(SansName, 10.5f, FontStyle.Bold);
+    public static readonly Font  Body       = new(SansName, 12f);
+    public static readonly Font  Hint       = new(SansName, 10.5f);
+    public static readonly Font  Mono       = new(MonoName, 12f, FontStyle.Bold);
+    public static readonly Font  Hero       = new(MonoName, 22.5f, FontStyle.Bold);
 
     public const string Author     = "Teknesyum";
     public const string GitHubUrl  = "https://github.com/Teknesyum";
@@ -123,7 +198,7 @@ public static class Palette
     public const bool   SponsorActive = true;
 }
 
-/// ANSI konsol renkleri (Runly gibi CLI projeleri için).
+/// ANSI console colours (for CLI projects such as Runly).
 public static class Ansi
 {
     public const string Blue       = "[38;2;0;243;255m";
@@ -132,11 +207,13 @@ public static class Ansi
     public const string PinkText   = "[38;2;255;84;235m";
     public const string PurpleText = "[38;2;198;126;255m";
     public const string Success    = "[38;2;52;211;153m";
-    // Rol renkleri ANSI'ye de girer; girmezse terminal ciktisi paletten kopar.
-    // Danger ve DangerText marka sabitinin degerini alir, hex kopyalanmaz.
+    // Role colours enter ANSI too; without them the terminal output drifts from the
+    // palette. Danger and DangerText take the value of the brand constant, the hex
+    // is not copied.
     public const string Danger     = Pink;
     public const string DangerText = PinkText;
-    // Warning: yalniz uyari metni. Terminalde dolgu zaten yok, kisit kendiliginden tutar.
+    // Warning: warning text only. A terminal has no fill anyway, so the constraint
+    // holds by itself.
     public const string Warning    = "[38;2;251;191;36m";
     public const string Disabled   = "[38;2;113;113;122m";
     public const string Bold       = "[1m";

@@ -1,0 +1,10 @@
+<Style TargetType="{x:Type TabControl}">
+  <Setter Property="BorderBrush" Value="{StaticResource TkBorder}" />
+  <Setter Property="Template">
+    <Setter.Value>
+      <ControlTemplate TargetType="TabControl">
+        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" />
+      </ControlTemplate>
+    </Setter.Value>
+  </Setter>
+</Style>

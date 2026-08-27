@@ -1,0 +1,4 @@
+<Style TargetType="{x:Type TabControl}">
+  <Setter Property="BorderBrush" Value="{StaticResource TkBorder}" />
+  <Setter Property="BorderThickness" Value="1" />
+</Style>

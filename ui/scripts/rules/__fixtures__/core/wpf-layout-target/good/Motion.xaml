@@ -1,0 +1,3 @@
+<Storyboard>
+  <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)" To="1.02"/>
+</Storyboard>

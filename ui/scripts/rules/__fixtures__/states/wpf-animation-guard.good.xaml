@@ -1,0 +1,4 @@
+<!-- SystemParameters.ClientAreaAnimation is read before this storyboard starts -->
+<Storyboard RepeatBehavior="Forever">
+  <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" />
+</Storyboard>

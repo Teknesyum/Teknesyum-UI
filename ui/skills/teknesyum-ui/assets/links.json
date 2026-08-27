@@ -1,10 +1,10 @@
 {
-  "surum": "1.7.0",
-  "yazar": "Teknesyum",
+  "version": "1.7.0",
+  "author": "Teknesyum",
   "github": "https://github.com/Teknesyum",
   "sponsor": "https://github.com/sponsors/Teknesyum",
-  "sponsorAktif": true,
-  "imzaMetni": "by Teknesyum",
-  "destekMetni": "Buy me a coffee",
-  "_not": "Bu dosya varsayılandır. Kullanıcı ~/.claude/teknesyum-ui.json ile ezer; /uisetup komutu onu düzenler."
+  "sponsorEnabled": true,
+  "signatureText": "by Teknesyum",
+  "supportText": "Buy me a coffee",
+  "_note": "This file holds the defaults. The user overrides it with ~/.claude/teknesyum-ui.json; the /uisetup command edits that file."
 }

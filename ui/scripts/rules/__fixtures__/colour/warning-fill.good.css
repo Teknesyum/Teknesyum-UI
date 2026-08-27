@@ -1,0 +1,4 @@
+.tk-warn {
+  color: var(--tk-warning);
+  border-color: var(--tk-warning-border);
+}

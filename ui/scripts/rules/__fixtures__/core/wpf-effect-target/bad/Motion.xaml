@@ -1,0 +1,3 @@
+<Storyboard>
+  <DoubleAnimation Storyboard.TargetProperty="Effect.(BlurEffect.Radius)" To="8"/>
+</Storyboard>

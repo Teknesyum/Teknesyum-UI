@@ -1,0 +1,4 @@
+.tk-btn:disabled {
+  color: var(--tk-disabled);
+  cursor: not-allowed;
+}

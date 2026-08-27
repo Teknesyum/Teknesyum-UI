@@ -1,0 +1,3 @@
+.tk-badge {
+  animation: tk-pulse var(--tk-t-slow) var(--tk-e-out) infinite;
+}

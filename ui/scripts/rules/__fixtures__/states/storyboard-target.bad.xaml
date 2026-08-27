@@ -1,0 +1,3 @@
+<Storyboard>
+  <DoubleAnimation Storyboard.TargetProperty="Width" To="120" />
+</Storyboard>

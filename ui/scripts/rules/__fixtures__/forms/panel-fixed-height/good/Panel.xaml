@@ -1,0 +1,6 @@
+<Grid MinHeight="320">
+  <Border MinHeight="120" />
+  <Grid.RowDefinitions>
+    <RowDefinition Height="Auto" />
+  </Grid.RowDefinitions>
+</Grid>

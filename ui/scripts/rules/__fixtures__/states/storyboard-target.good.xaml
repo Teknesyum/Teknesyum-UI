@@ -1,0 +1,3 @@
+<Storyboard>
+  <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" />
+</Storyboard>

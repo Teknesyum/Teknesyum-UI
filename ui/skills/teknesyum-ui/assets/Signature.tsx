@@ -1,13 +1,3 @@
-/**
- * Teknesyum imza bloğu. Yeri pencere başlık çubuğu, küçült düğmesinin solu (SKILL.md §4).
- * Başlık çubuğu olmayan yüzeyde `SignatureFooter` kullanılır.
- *
- * Metinler `locale/tr.json` ve `locale/en.json` içindedir (§3.1). Bileşen bir `t(key)`
- * işlevi bekler; onu nereden aldığın projenin kararıdır (i18next, kendi sözlüğün, ne
- * kullanıyorsan). Şablon i18n kütüphanesi dayatmaz.
- *
- * Linkler `links.json` içinde. Ayarlar /uisetup ile ezilir.
- */
 
 import links from './links.json';
 
@@ -15,13 +5,10 @@ export type Translate = (key: string) => string;
 
 type Props = { t: Translate };
 
-// Duruk hâl tam opak, çerçeve tam token, hover sinyali `scale(1.02)`.
-// Gerekçe ve ölçüm tek yerde: `teknesyum-ui/SKILL.md` §4.
 const BASE =
   'inline-flex items-center justify-center min-h-6 min-w-6 no-underline select-none ' +
-  // Ağırlık 600 (`font-semibold`) — SKILL §3; 700 yalnız hero dışı hiçbir tipografi
-  // rolünde kalmadı. Yarıçap `rounded-md` = 6px, tek yarıçap değeri (§5).
-  'text-sm font-semibold tracking-[0.15em] rounded-md border bg-transparent ' +
+  'text-[length:var(--tk-fs-1)] font-semibold tracking-[var(--tk-tr-label)] ' +
+  'rounded-[var(--tk-r)] border bg-transparent ' +
   'px-2.5 py-1 ease-[--tk-e-out] duration-[--tk-t-instant] hover:scale-[1.02] ' +
   'transition-[transform]';
 
@@ -44,7 +31,7 @@ function CoffeeIcon() {
 }
 
 function Support({ t }: Props) {
-  if (!links.sponsorAktif) return null;
+  if (!links.sponsorEnabled) return null;
   return (
     <a
       href={links.sponsor}

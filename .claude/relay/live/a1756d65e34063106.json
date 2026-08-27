@@ -1,0 +1,25 @@
+{
+  "agent_id": "a1756d65e34063106",
+  "agent_type": "teknesyum:builder",
+  "contract": null,
+  "started": "2026-08-27 22:38:36",
+  "last_seen": "2026-08-27 22:43:20",
+  "steps": 26,
+  "last_action": "Bash",
+  "files": [
+    "ui/scripts/scan.js"
+  ],
+  "stop_reason": "end_turn",
+  "identity": "agent_id",
+  "transcript": "C:\\Users\\Administrator\\.claude\\projects\\C--Users-Administrator-Desktop-Projeler-Teknesyum-UI\\cdcbf652-ad16-421b-a018-c2bd7e306972\\subagents\\agent-a1756d65e34063106.jsonl",
+  "tekrar": 5,
+  "dongu_boy": 0,
+  "dongu_bildirildi": false,
+  "sessiz_bildirildi": false,
+  "boy": 0,
+  "last_error": "PowerShell: Exit code 2\n== off:true ==\r\nnode : teknesyum-ui is off in the machine config\r\nAt",
+  "ended": "2026-08-27 22:43:20",
+  "last_word": "`Teknesyum ▸ Debug ▸ PowerShell aracı hata verdi — builder ajanı · a1756d65e34063106`\n\nT teslim edildi · durum: submitted\nRapor: `C:\\Users\\Administrator\\Desktop\\Projeler\\Teknesyum-UI\\ui\\scripts\\scan.js` (712 satır, tek dosya, sadece `fs`/`os`/`path`)\n\n**Taşınan kurallar — 15**\n\nSatır kuralları: `tra",
+  "effort": "medium",
+  "model": "claude-opus-5"
+}

@@ -1,0 +1,7 @@
+<ItemsControl>
+  <ItemsControl.ItemTemplate>
+    <DataTemplate>
+      <Border BorderBrush="{StaticResource TkBorder}" />
+    </DataTemplate>
+  </ItemsControl.ItemTemplate>
+</ItemsControl>

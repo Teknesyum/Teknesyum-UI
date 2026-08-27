@@ -1,7 +1,7 @@
 # Teknesyum UI
 
-A neon interface standard for Claude Code: one palette, one type scale, one signature,
-across web, React, Electron, WPF and Avalonia.
+An interface standard for Claude Code, shipped as data plus a scanner rather than as a
+document the model has to read.
 
 Split out of Teknesyum Base so that [Teknesyum Core](../Teknesyum-Core) stays a work relay
 and nothing more. Core has no opinion about how anything looks; this project has all of it.
@@ -11,32 +11,87 @@ Installing the plugin changes nothing on its own.
 
 ---
 
-## Status
+## The idea
 
-Carried over from Base, not yet reworked. What is here:
+Most of what a "standard" document contains is either something the model already does, or
+a number. Neither belongs in its context window.
 
+| Kind of rule | Where it lives | What it costs |
+|---|---|---|
+| A value — colour, radius, duration, scale step | generated token files in your project | nothing; read one when you need one |
+| A mechanically checkable rule | `scan.js` | nothing; it runs, it does not get read |
+| Runs against the model's default, or a scan cannot see it | `SKILL.md`, 124 lines | paid once, when UI work starts |
+
+Base spent about 27,000 tokens on `SKILL.md` and 55,000 more on eight reference files
+every time an interface came up. This ships 86 scanner rules, one 124-line skill and one
+platform reference.
+
+## Install
+
+```bash
+/plugin marketplace add Teknesyum/Teknesyum-UI
 ```
-ui/skills/teknesyum-ui/   the standard: SKILL.md, 8 references, 18 assets
-ui/roles/ui-builder.md    the role an agent reads to build UI
-ui/scripts/uicheckup*.js  read-only conformance scan and its apply step
-docs/                     the two Base commands, kept as reference
+
+Then, in the project you want it in:
+
+```bash
+node <plugin>/scripts/setup.js
 ```
 
-## Before it ships
+Run in your own terminal it asks its own questions and costs nothing. Run inside Claude
+Code it prints what it needs, the model asks once, and calls `--apply` with the answers.
 
-1. **Language.** `SKILL.md` is Turkish. Everything that reaches git is English here too.
-2. **Size.** 60 KB of SKILL plus 8 references is a large load for one skill. It needs the
-   same treatment Core got: what the model already knows comes out, what is arbitrary —
-   token values, spacing scale, component anatomy — stays, as tables and one worked
-   example.
-3. **Cost.** The rules in [Core's cost model](../Teknesyum-Core/docs/COST-MODEL.md) apply
-   unchanged: nothing may write into context on an ordinary turn.
-4. **Surface.** Base drove this with `/uisetup` and `/uicheckup`. Core dropped commands;
-   decide whether this project keeps them or follows the same path.
+It writes `<project>/.claude/teknesyum-ui.json` and generates the theme into
+`<project>/teknesyum-ui/` for the targets you pick: `css`, `react`, `wpf`, `avalonia`,
+`winforms`.
+
+Neon is the ready answer, not the only one — `--template custom` takes three brand colours
+and a surface, and derives the rest on the same formulas.
+
+## Check your work
+
+```bash
+node <plugin>/scripts/scan.js <project-root>
+```
+
+`0` clean, `1` findings, `2` not configured or off. `--json` for machine output, `--fix`
+for the repairs that are safe to automate, `--list-rules` for what it enforces.
+
+A Stop hook runs the same scan when interface files changed and blocks on a violation. It
+exits before doing any work when no config exists or `off: true` is set, and it stands down
+after two blocks on the same file, so a real disagreement stops the gate rather than the work.
 
 ## Tests
 
-None yet.
+```bash
+npm test
+```
+
+88 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
+starts writing to `additionalContext` or `systemMessage`, if `SKILL.md` grows past 150
+lines, or if a slash command reappears.
+
+## Layout
+
+```
+ui/skills/teknesyum-ui/   SKILL.md, references/platform.md, assets/
+ui/scripts/setup.js       install and generate
+ui/scripts/generate.js    tokens -> theme.css, Theme.xaml, Theme.axaml, Palette.cs
+ui/scripts/scan.js        the scanner
+ui/scripts/rules/*.js     the rules, one module per domain
+ui/hooks/guard.js         the Stop hook
+ui/roles/ui-builder.md    the role an agent reads to build UI
+docs/DECISIONS.md         why it is shaped this way
+docs/RULE-API.md          how to write a rule
+docs/EXTRACT.md           every rule of the old standard, and where it went
+docs/coverage/            what the scanner enforces, and what it does not
+```
+
+## Turning it off
+
+```bash
+node <plugin>/scripts/setup.js --off
+```
 
 ## License
 

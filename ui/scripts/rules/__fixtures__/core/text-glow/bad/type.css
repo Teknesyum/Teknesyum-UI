@@ -1,0 +1,4 @@
+.tk-h2 {
+  font-size: var(--tk-fs-3);
+  text-shadow: 0 0 8px var(--tk-blue);
+}

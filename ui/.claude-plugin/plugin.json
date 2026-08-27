@@ -1,7 +1,7 @@
 {
   "name": "teknesyum-ui",
-  "version": "0.1.0",
-  "description": "Neon interface standard: palette, type scale, components, signature. Off until a teknesyum-ui.json exists.",
+  "version": "0.2.0",
+  "description": "Interface standard as generated tokens plus a scanner. Off until a teknesyum-ui.json exists.",
   "author": { "name": "Teknesyum", "url": "https://github.com/Teknesyum" },
   "homepage": "https://github.com/Teknesyum/Teknesyum-UI",
   "license": "AGPL-3.0-or-later"

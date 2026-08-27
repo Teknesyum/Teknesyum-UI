@@ -1,0 +1,4 @@
+{
+  "name": "fixture",
+  "dependencies": { "motion": "^11.0.0" }
+}

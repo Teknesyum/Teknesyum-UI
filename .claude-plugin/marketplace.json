@@ -5,7 +5,7 @@
     {
       "name": "teknesyum-ui",
       "source": "./ui",
-      "description": "Neon interface standard. Companion to Teknesyum Core."
+      "description": "Interface standard. Companion to Teknesyum Core."
     }
   ]
 }

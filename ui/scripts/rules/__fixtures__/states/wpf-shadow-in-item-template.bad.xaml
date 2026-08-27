@@ -1,0 +1,11 @@
+<ItemsControl>
+  <ItemsControl.ItemTemplate>
+    <DataTemplate>
+      <Border>
+        <Border.Effect>
+          <DropShadowEffect BlurRadius="20" />
+        </Border.Effect>
+      </Border>
+    </DataTemplate>
+  </ItemsControl.ItemTemplate>
+</ItemsControl>

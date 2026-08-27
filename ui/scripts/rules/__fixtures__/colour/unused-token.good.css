@@ -1,0 +1,7 @@
+:root {
+  --tk-card-gap: 12px;
+}
+
+.tk-card {
+  gap: var(--tk-card-gap);
+}

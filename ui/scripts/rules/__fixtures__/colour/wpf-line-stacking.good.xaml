@@ -1,0 +1,6 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+  <Style x:Key="Body" TargetType="TextBlock">
+    <Setter Property="LineHeight" Value="24"/>
+    <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+  </Style>
+</ResourceDictionary>

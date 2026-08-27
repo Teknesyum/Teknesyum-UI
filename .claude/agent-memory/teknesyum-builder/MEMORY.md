@@ -1,0 +1,3 @@
+- [Relay contract files missing](relay-contract-files-missing.md) — Teknesyum-UI has no contracts/ directory; contracts arrive inline, log the gap and proceed.
+- [UI test suite](ui-test-suite.md) — `node test/all.js` is the whole suite; no dependencies, exit 1 on failure.
+- [Scanner file scope](ui-scanner-scope.md) — widening scan.js extensions re-scopes every rule that omits `exts`; pin those first.

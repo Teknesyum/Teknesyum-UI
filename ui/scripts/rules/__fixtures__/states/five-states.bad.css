@@ -1,0 +1,10 @@
+[data-tk='cell'] {
+  color: var(--tk-text);
+}
+[data-tk='cell']:hover {
+  border-color: var(--tk-border-strong);
+}
+[data-tk='cell']:disabled {
+  color: var(--tk-disabled);
+  cursor: not-allowed;
+}

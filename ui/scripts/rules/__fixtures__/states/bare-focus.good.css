@@ -1,0 +1,6 @@
+.tk-btn:focus-visible {
+  outline: 2px solid var(--tk-blue);
+}
+.tk-btn:focus:not(:focus-visible) {
+  outline: none;
+}

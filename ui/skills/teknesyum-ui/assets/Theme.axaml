@@ -1,12 +1,12 @@
-<!-- Teknesyum Neon, Avalonia 11. Kok eleman Styles'tir, ResourceDictionary degil:
-     kaynaklar Styles.Resources icinde, genel kurallar Style Selector olarak asagida.
-     Baglama:
+<!-- Teknesyum Neon, Avalonia 11. The root element is Styles, not ResourceDictionary:
+     resources live in Styles.Resources, global rules are Style Selectors below.
+     Binding:
        <Application.Styles>
          <FluentTheme/>
-         <StyleInclude Source="avares://Uygulama/Assets/Theme.axaml"/>
+         <StyleInclude Source="avares://App/Assets/Theme.axaml"/>
        </Application.Styles>
-     Kullanim: Theme="{StaticResource H2}" (WPF'teki Style="{StaticResource H2}" yerine).
-     Ayrinti ve kural gerekcesi: references/avalonia.md -->
+     Usage: Theme="{StaticResource H2}" (instead of WPF's Style="{StaticResource H2}").
+     Detail and rule rationale: references/avalonia.md -->
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System;assembly=netstandard">
@@ -26,15 +26,15 @@
     <SolidColorBrush x:Key="Surface"     Color="#F208090A"/>
     <SolidColorBrush x:Key="AppBg"       Color="#FF000000"/>
 
-    <!-- Pencere zemini: duz renk degil, 11 durakli yumusak gradient (SKILL §2).
-         Iki fark var, ikisi de bilincli:
-         1) Avalonia'da x:Shared yok. Kaynak tek ornek olarak paylasilir; asagidaki
-            zemin animasyonu fircayi degil katmanin RenderTransform'unu oynattigi icin
-            paylasim sorun cikarmaz.
-         2) Avalonia'da ColorInterpolationMode yok, sRGB enterpolasyonu zorunlu.
-            WPF ScRgbLinearInterpolation ile birebir ayni degil; 11 durak zaten
-            bantlasmayi kapatmak icin var, gorunur fark olcumlenmedi
-            (varsayilan, olculmedi). -->
+    <!-- Window background: not a flat colour, an 11-stop soft gradient (SKILL §2).
+         Two differences, both deliberate:
+         1) Avalonia has no x:Shared. The resource is shared as a single instance;
+            the background animation below moves the layer's RenderTransform rather
+            than the brush, so sharing causes no trouble.
+         2) Avalonia has no ColorInterpolationMode, sRGB interpolation is forced.
+            Not identical to WPF's ScRgbLinearInterpolation; the 11 stops exist to
+            close banding anyway, and no visible difference was measured
+            (assumed, not measured). -->
     <LinearGradientBrush x:Key="AppBgGradient"
                          StartPoint="0%,0%" EndPoint="60%,100%">
       <GradientStop Offset="0.0" Color="#FF000000"/>
@@ -50,18 +50,19 @@
       <GradientStop Offset="1.0" Color="#FF08090A"/>
     </LinearGradientBrush>
 
-    <!-- WPF'teki AppBgDonus storyboard'unun kaynak karsiligi YOK, bilerek yok.
-         Avalonia'da Animation bir kaynak degil, Style.Animations icinde yasar ve
-         bir firca alt ozelligini (Background.EndPoint) enterpole edecek animator
-         bulunmuyor. Karsiligi asagidaki "Window.anim Panel.appbg" kuralidir. -->
+    <!-- There is NO resource counterpart to WPF's AppBgRotate storyboard, and that
+         is deliberate. In Avalonia an Animation is not a resource, it lives inside
+         Style.Animations, and no animator exists that interpolates a brush
+         sub-property (Background.EndPoint). The counterpart is the
+         "Window.anim Panel.appbg" rule below. -->
 
     <SolidColorBrush x:Key="PinkText"   Color="#FFFF54EB"/>
     <SolidColorBrush x:Key="PurpleText" Color="#FFC67EFF"/>
 
-    <!-- ANLAMSAL ROL KATMANI (SKILL §2). Theme.xaml ile birebir ayni, gerekcesi
-         orada yazili ve burada tekrar edilmiyor; hex tek dogruluk kaynagindan
-         gelir, elden degistirilmez. Success fircasi 23.08.2026'da NeonSuccess
-         adindan cevrildi ve bu dosya cevrilmis adi tasiyor. -->
+    <!-- SEMANTIC ROLE LAYER (SKILL §2). Identical to Theme.xaml; the rationale is
+         written there and is not repeated here. The hex comes from the single
+         source of truth and is never edited by hand. The Success brush was renamed
+         from NeonSuccess on 2026-08-23 and this file carries the new name. -->
     <SolidColorBrush x:Key="Danger"     Color="#FFFF00EA"/>
     <SolidColorBrush x:Key="DangerText" Color="#FFFF54EB"/>
     <SolidColorBrush x:Key="Warning"    Color="#FFFBBF24"/>
@@ -69,11 +70,12 @@
 
     <SolidColorBrush x:Key="TextBody"  Color="#FFFFFFFF"/>
     <SolidColorBrush x:Key="TextLabel" Color="#FF00F3FF"/>
-    <!-- Devre disi kontrol 7:1'den muaftir (SKILL §2) ve bedeli vardir: renk koru
-         kullanici griyi goremez. Bu firca tek basina kullanilmaz; devre disi her
-         kontrol grilige ek bir isaret tasir: ToolTip.Tip metni ZORUNLU, yaninda
-         Cursor="No" ve mumkunse bir ikon. Yalniz soluklastirilmis kontrol eksik
-         teslimdir. Ikincil metin icin cozum gri degil, metni silmektir. -->
+    <!-- A disabled control is exempt from 7:1 (SKILL §2) and there is a price: a
+         colour-blind user cannot see the grey. This brush is never used alone;
+         every disabled control carries a marker in addition to the grey:
+         ToolTip.Tip text is MANDATORY, plus Cursor="No" and, where possible, an
+         icon. A merely dimmed control is an incomplete delivery. For secondary
+         text the answer is not grey, it is deleting the text. -->
     <SolidColorBrush x:Key="Disabled"  Color="#FF71717A"/>
 
     <SolidColorBrush x:Key="NeonBlue10"   Color="#1A00F3FF"/>
@@ -101,43 +103,117 @@
     <SolidColorBrush x:Key="BorderStrong"     Color="#9900F3FF"/>
     <SolidColorBrush x:Key="BorderDecorative" Color="#4D00F3FF"/>
 
-    <!-- Zincirin tek kaynagi SKILL §3'tur; sira orayla ayni. Atkinson Hyperlegible
-         Next varsayilandir ve projeye GOMULUR, sistemde var sayilmaz. Avalonia'da
-         gomme yolu pack URI degil avares URI'dir; ornek references/avalonia.md'de. -->
+    <!-- The chain's only source is SKILL §3; the order matches. Atkinson
+         Hyperlegible Next is the default and is EMBEDDED in the project, not
+         assumed present on the system. In Avalonia the embed path is an avares
+         URI, not a pack URI; example in references/avalonia.md. -->
     <FontFamily x:Key="FontSans">Atkinson Hyperlegible Next, Segoe UI</FontFamily>
     <FontFamily x:Key="FontMono">Cascadia Mono, Consolas</FontFamily>
 
-    <!-- Avalonia'da Duration diye bir kaynak tipi yok; Transition.Duration ve
-         Animation.Duration TimeSpan alir. Ad birebir korundu, tip degisti. -->
+    <!-- Avalonia has no Duration resource type; Transition.Duration and
+         Animation.Duration take a TimeSpan. The names are kept verbatim, the type
+         changed. -->
     <sys:TimeSpan x:Key="TInstant">0:0:0.09</sys:TimeSpan>
     <sys:TimeSpan x:Key="TFast">0:0:0.16</sys:TimeSpan>
     <sys:TimeSpan x:Key="TBase">0:0:0.24</sys:TimeSpan>
     <sys:TimeSpan x:Key="TSlow">0:0:0.36</sys:TimeSpan>
 
-    <!-- Hero glow: CSS tokeni tk-glow-hero ile ayni yogunluk, blur 8, opaklik 0.8.
-         Konsey bu adi yasak dizgi listesine koymustu; gerekcesi WPF artigi
-         yakalamakti. Avalonia 11'de DropShadowEffect gercek bir API ve metne glow
-         veren tek yol bu. Sapma sozlesmenin Cikti bolumunde yazili. WPF'e ozgu
-         ShadowDepth ozelligi burada YOK ve test onu ariyor. -->
+    <!-- Hero glow: same intensity as the CSS token tk-glow-hero, blur 8, opacity
+         0.8. The council had put this name on the banned-string list; the reason
+         was catching WPF leftovers. In Avalonia 11 DropShadowEffect is a real API
+         and the only way to glow text. The deviation is recorded in the contract's
+         Output section. The WPF-specific ShadowDepth property is ABSENT here and
+         the test looks for it. -->
     <DropShadowEffect x:Key="HeroGlow" Color="#FF00F3FF"
                       BlurRadius="8" OffsetX="0" OffsetY="0" Opacity="0.8"/>
 
-    <!-- SKILL §5.4 tokenlari: e-out cubic-bezier(0.2,0,0,1), e-in (0.4,0,1,1).
-         SplineEasing CSS egrisini birebir tasir. Surumunuzde SplineEasing yoksa
-         karsiligi <CubicEaseOut/> ve <CubicEaseIn/> olur, egri yaklasik kalir. -->
+    <!-- SKILL §5.4 tokens: e-out cubic-bezier(0.2,0,0,1), e-in (0.4,0,1,1).
+         SplineEasing carries the CSS curve verbatim. If your version has no
+         SplineEasing the counterparts are <CubicEaseOut/> and <CubicEaseIn/>, and
+         the curve stays approximate. -->
     <SplineEasing x:Key="EOut" X1="0.2" Y1="0" X2="0" Y2="1"/>
     <SplineEasing x:Key="EIn"  X1="0.4" Y1="0" X2="1" Y2="1"/>
 
-    <!-- Olcek 1.25 major third: 14 / 16 / 20 / 24 / 30 DIP.
-         LineStackingStrategy Avalonia'da yok ve gerekmiyor: LineHeight burada
-         zaten kutu yuksekligi gibi davraniyor, WPF'in aksine CSS'e yakin.
-         Agirlik: baslik ve etiket SemiBold (600), yalniz hero Black (900).
-         TRACKING TELAFISI: Avalonia'da harf araligi VAR (TextBlock.LetterSpacing,
-         DIP cinsinden, em degil). CSS h2 0.02em, h3 0.05em, etiket 0.15em uygular.
-         Buraya YAZILMADI: em'den DIP'e cevrim punto basina degisir (etiket 14px
-         icin 0.15em = 2.1 DIP) ve bu deger olculmeden konursa uc platform ayrisir.
-         WPF telafisi (boyut, agirlik, renk) burada da gecerli; LetterSpacing eklemek
-         isteyen once SKILL §3'u guncellesin, sonra uc sablonu birlikte gezsin. -->
+    <!-- Numeric tokens: the same values as the CSS --tk-* layer, in DIP.
+         Tracking is em, line height a multiplier, ratios unitless. -->
+    <sys:Double x:Key="FontSize1">14</sys:Double>
+    <sys:Double x:Key="FontSize2">16</sys:Double>
+    <sys:Double x:Key="FontSize3">20</sys:Double>
+    <sys:Double x:Key="FontSize4">24</sys:Double>
+    <sys:Double x:Key="FontSize5">30</sys:Double>
+    <sys:Double x:Key="LineHeightBody">1.5</sys:Double>
+    <sys:Double x:Key="LineHeightHeading">1.2</sys:Double>
+    <sys:Double x:Key="LineHeightMono">1.4</sys:Double>
+    <sys:Double x:Key="MeasureCh">65</sys:Double>
+    <sys:Double x:Key="TrackingLabel">0.15</sys:Double>
+    <sys:Double x:Key="TrackingH3">0.05</sys:Double>
+    <sys:Double x:Key="TrackingH2">0.02</sys:Double>
+    <sys:Double x:Key="TrackingHero">-0.01</sys:Double>
+    <FontWeight x:Key="WeightBody">Normal</FontWeight>
+    <FontWeight x:Key="WeightSemi">SemiBold</FontWeight>
+    <FontWeight x:Key="WeightHero">Black</FontWeight>
+
+    <sys:Double x:Key="Space1">4</sys:Double>
+    <sys:Double x:Key="Space2">8</sys:Double>
+    <sys:Double x:Key="Space3">12</sys:Double>
+    <sys:Double x:Key="Space4">16</sys:Double>
+    <sys:Double x:Key="Space5">24</sys:Double>
+    <Thickness x:Key="PanelPadding">24</Thickness>
+    <Thickness x:Key="InputPadding">12,0</Thickness>
+    <sys:Double x:Key="SectionGap">24</sys:Double>
+    <sys:Double x:Key="RowGap">12</sys:Double>
+    <sys:Double x:Key="FieldGap">8</sys:Double>
+    <sys:Double x:Key="FieldStack">16</sys:Double>
+    <sys:Double x:Key="ToastInset">24</sys:Double>
+    <sys:Double x:Key="ToastGap">12</sys:Double>
+
+    <CornerRadius x:Key="Radius">6</CornerRadius>
+    <CornerRadius x:Key="WindowRadius">12</CornerRadius>
+    <Thickness x:Key="BorderWidth">1</Thickness>
+    <sys:Double x:Key="FocusWidth">2</sys:Double>
+    <sys:Double x:Key="FocusOffset">2</sys:Double>
+
+    <sys:Double x:Key="TargetMin">24</sys:Double>
+    <sys:Double x:Key="ScrollbarWidth">10</sys:Double>
+    <sys:Double x:Key="TitleBarHeightMin">32</sys:Double>
+    <sys:Double x:Key="TitleBarHeightMax">40</sys:Double>
+    <sys:Double x:Key="SidebarWidth">240</sys:Double>
+    <sys:Double x:Key="SidebarCollapsedWidth">48</sys:Double>
+    <sys:Double x:Key="InputHeight">40</sys:Double>
+    <sys:Double x:Key="ModalWidth">560</sys:Double>
+    <sys:Double x:Key="ModalMaxRatio">0.85</sys:Double>
+    <sys:Double x:Key="ToastWidth">360</sys:Double>
+    <sys:Double x:Key="ToastMax">3</sys:Double>
+    <sys:TimeSpan x:Key="ToastLife">0:0:6</sys:TimeSpan>
+    <sys:Double x:Key="IconSize1">14</sys:Double>
+    <sys:Double x:Key="IconSize2">16</sys:Double>
+    <sys:Double x:Key="IconSize3">22</sys:Double>
+    <sys:Double x:Key="IconSize4">56</sys:Double>
+
+    <sys:Double x:Key="ScaleHover">1.02</sys:Double>
+    <sys:Double x:Key="ScalePress">0.98</sys:Double>
+    <sys:Double x:Key="ScaleIconHover">1.1</sys:Double>
+    <sys:Double x:Key="EntryOffset">8</sys:Double>
+    <sys:Double x:Key="OverlayOffset">4</sys:Double>
+    <sys:Double x:Key="StaggerMax">6</sys:Double>
+    <sys:Double x:Key="GlowMargin">24</sys:Double>
+    <sys:Double x:Key="BgSweepMax">20</sys:Double>
+    <sys:TimeSpan x:Key="Stagger">0:0:0.04</sys:TimeSpan>
+    <sys:TimeSpan x:Key="LoadingLoopMin">0:0:1.4</sys:TimeSpan>
+    <sys:TimeSpan x:Key="FrameBudget">0:0:0.016</sys:TimeSpan>
+    <sys:TimeSpan x:Key="BgRotateMin">0:0:40</sys:TimeSpan>
+
+    <!-- Scale 1.25 major third: 14 / 16 / 20 / 24 / 30 DIP.
+         Avalonia has no LineStackingStrategy and does not need one: LineHeight
+         already behaves like a box height here, closer to CSS than WPF.
+         Weight: headings and labels SemiBold (600), only hero Black (900).
+         TRACKING COMPENSATION: Avalonia DOES have letter spacing
+         (TextBlock.LetterSpacing, in DIP, not em). CSS applies 0.02em on h2,
+         0.05em on h3, 0.15em on labels. NOT WRITTEN HERE: the em-to-DIP conversion
+         varies per size (0.15em on a 14px label = 2.1 DIP) and setting it unmeasured
+         would split the three platforms. The WPF compensation (size, weight,
+         colour) applies here too; whoever wants LetterSpacing should update
+         SKILL §3 first, then walk all three templates together. -->
 
     <ControlTheme x:Key="H2" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
@@ -163,12 +239,13 @@
       <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
     </ControlTheme>
 
-    <!-- Tabular rakam: WPF Typography.NumeralAlignment="Tabular" karsiligi
-         FontFeatures="+tnum" (Avalonia 11.1+). SURUM TEYIDI YAPILMADI, bu yuzden
-         satir KAPALI birakildi: ozellik yoksa XAML hic yuklenmez ve tema tumden
-         duser. Secilen ikame mono: hizalanmasi gereken her sayi MonoValue temasiyla
-         yazilir (SKILL §3, "her sayi mono"). Hedef surumu dogruladiysan asagidaki
-         satiri Body ve Hint icinde ac:
+    <!-- Tabular figures: the counterpart of WPF's Typography.NumeralAlignment="Tabular"
+         is FontFeatures="+tnum" (Avalonia 11.1+). THE VERSION WAS NOT CONFIRMED, so
+         the line is left OFF: if the feature is missing the XAML never loads at all
+         and the whole theme falls. The chosen substitute is mono: every number that
+         must align is written with the MonoValue theme (SKILL §3, "every number is
+         mono"). Once you have verified the target version, enable this line inside
+         Body and Hint:
            <Setter Property="FontFeatures" Value="+tnum"/> -->
 
     <ControlTheme x:Key="Body" TargetType="TextBlock">
@@ -178,7 +255,7 @@
       <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
     </ControlTheme>
 
-    <!-- Yardim / ipucu metni. CSS karsiligi .tk-hint. -->
+    <!-- Help / hint text. CSS counterpart .tk-hint. -->
     <ControlTheme x:Key="Hint" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
       <Setter Property="FontSize" Value="14"/>
@@ -193,7 +270,7 @@
       <Setter Property="FontWeight" Value="Black"/>
       <Setter Property="LineHeight" Value="36"/>
       <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
-      <!-- Metne glow verilen tek rol budur (SKILL §2). -->
+      <!-- This is the only role where text is given a glow (SKILL §2). -->
       <Setter Property="Effect" Value="{StaticResource HeroGlow}"/>
     </ControlTheme>
 
@@ -213,35 +290,38 @@
       <Setter Property="Padding" Value="24"/>
     </ControlTheme>
 
-    <!-- Uyari yuzeyi. Panel'den turer, degisen tek sey cercevedir: zemin Surface
-         kalir cunku amber dolgu yasaktir. Kutunun icine renge ek olarak bir ikon
-         ya da "Uyari" metni konur. Avalonia'da BasedOn ControlTheme'de de var. -->
+    <!-- Warning surface. Derives from Panel; the only change is the border. The
+         background stays Surface because an amber fill is banned. Put an icon or
+         the word "Warning" inside the box in addition to colour. Avalonia supports
+         BasedOn on ControlTheme too. -->
     <ControlTheme x:Key="WarningPanel" TargetType="Border"
                   BasedOn="{StaticResource Panel}">
       <Setter Property="BorderBrush" Value="{StaticResource Warning50}"/>
     </ControlTheme>
 
-    <!-- Uyari metni. Glow yok: metne glow verilmez (SKILL §2), tek istisna hero. -->
+    <!-- Warning text. No glow: text is never given a glow (SKILL §2), the sole
+         exception being hero. -->
     <ControlTheme x:Key="WarningBody" TargetType="TextBlock"
                   BasedOn="{StaticResource Body}">
       <Setter Property="Foreground" Value="{StaticResource Warning}"/>
     </ControlTheme>
 
-    <!-- Hata metni dolgu pembesini degil metin pembesini yazar, 7:1 esigi. -->
+    <!-- Error text writes the text pink, not the fill pink — the 7:1 threshold. -->
     <ControlTheme x:Key="DangerBody" TargetType="TextBlock"
                   BasedOn="{StaticResource Body}">
       <Setter Property="Foreground" Value="{StaticResource DangerText}"/>
     </ControlTheme>
 
-    <!-- U1 DERSININ AVALONIA KARSILIGI.
-         WPF'te ScaleTransform'u Style Setter degeri olarak vermek iki hataya yol
-         acmisti: nesne butun ornekler arasinda paylasilir ve muhurlenince yazilamaz.
-         Avalonia'da Freezable ve muhurleme yok, yani o tuzak yok; ama akrabasi var,
-         Setter degeri olarak verilen bir transform nesnesi yine paylasilir.
-         Kacinma dogal: bu dosyada RenderTransform'a HICBIR YERDE nesne verilmiyor.
-         Deger her zaman metindir ("scale(0.98)", "none") ve TransformOperations
-         olarak her ogeye ayri ayri cozulur. Ayni kural sana da gecerli:
-         <Setter Property="RenderTransform"><ScaleTransform .../></Setter> yazma. -->
+    <!-- THE AVALONIA COUNTERPART OF LESSON U1.
+         In WPF, giving a ScaleTransform as a Style Setter value caused two bugs:
+         the object is shared across all instances, and once frozen it cannot be
+         written. Avalonia has no Freezable and no freezing, so that trap is gone;
+         but its relative remains — a transform object given as a Setter value is
+         still shared. The avoidance is natural: this file gives NO object to
+         RenderTransform ANYWHERE. The value is always text ("scale(0.98)", "none")
+         and is resolved per element as TransformOperations. The same rule applies
+         to you: do not write
+         <Setter Property="RenderTransform"><ScaleTransform .../></Setter>. -->
     <ControlTheme x:Key="PrimaryButton" TargetType="Button">
       <Setter Property="Background" Value="{StaticResource NeonBlue}"/>
       <Setter Property="Foreground" Value="Black"/>
@@ -254,9 +334,10 @@
       <Setter Property="VerticalContentAlignment" Value="Center"/>
       <Setter Property="Template">
         <ControlTemplate TargetType="Button">
-          <!-- Glow kutuya verilir (SKILL §2). WPF karsiligi DropShadowEffect
-               BlurRadius=20 Opacity=0.35; BoxShadow'da opaklik ayri ozellik degil,
-               renk alfasidir: 0.35 * 255 = 89 = 0x59. Cevrim hesaplandi, olculmedi. -->
+          <!-- The glow is given to the box (SKILL §2). The WPF counterpart is
+               DropShadowEffect BlurRadius=20 Opacity=0.35; in BoxShadow opacity is
+               not a separate property but the colour alpha: 0.35 * 255 = 89 = 0x59.
+               The conversion was calculated, not measured. -->
           <Border Name="bd"
                   Background="{TemplateBinding Background}"
                   BorderBrush="{TemplateBinding BorderBrush}"
@@ -265,9 +346,10 @@
                   CornerRadius="6"
                   RenderTransformOrigin="50%,50%"
                   BoxShadow="0 0 20 0 #5900F3FF">
-            <!-- Hover ve basma icin keyframe animasyonu YAZILMAZ. Avalonia bir
-                 pseudo-class'tan cikarken keyframe'i geri sarmaz; dugme son karede
-                 takili kalir. Dogru arac Transitions, cift yonlu calisir. -->
+            <!-- Do NOT write keyframe animations for hover and press. Avalonia does
+                 not rewind a keyframe when leaving a pseudo-class; the button stays
+                 stuck on the last frame. The right tool is Transitions, which run
+                 in both directions. -->
             <Border.Transitions>
               <Transitions>
                 <DoubleTransition Property="Opacity"
@@ -287,9 +369,9 @@
         </ControlTemplate>
       </Setter>
 
-      <!-- Transitions cift yonlu oldugu icin WPF'in EIn/EOut ayrimi tek Easing'e
-           iniyor. Girise ve cikisa ayri egri verilemiyor; kabul edilen sadelesme,
-           sozlesmenin Cikti bolumune not dusuldu. -->
+      <!-- Because Transitions are bidirectional, WPF's EIn/EOut split collapses to
+           a single Easing. Separate curves for entry and exit are not possible; an
+           accepted simplification, noted in the contract's Output section. -->
       <Style Selector="^:pointerover /template/ Border#bd">
         <Setter Property="Opacity" Value="0.85"/>
       </Style>
@@ -312,13 +394,14 @@
 
   </Styles.Resources>
 
-  <!-- ODAK HALKASI, uygulama geneli.
-       WPF'te bu is {x:Static SystemParameters.FocusVisualStyleKey} anahtarli bir
-       stille yapiliyordu; Avalonia'da o anahtar yok, karsiligi Control uzerindeki
-       FocusAdorner ozelligidir. Avalonia halkayi zaten yalniz klavye modalitesinde
-       cizer, CSS'teki :focus-visible karsiligi hazir gelir.
-       Yaricap 6 DIP tabanindan turetildi: ic katman ogenin 1 DIP disinda (6+1=7),
-       dis katman 3 DIP disinda (6+3=9). Elle secilmis sayi degil. -->
+  <!-- FOCUS RING, application wide.
+       In WPF this was done with a style keyed on
+       {x:Static SystemParameters.FocusVisualStyleKey}; Avalonia has no such key,
+       its counterpart is the FocusAdorner property on Control. Avalonia already
+       draws the ring only in keyboard modality, so the CSS :focus-visible
+       behaviour comes for free.
+       The radii derive from the 6 DIP base: the inner layer sits 1 DIP outside the
+       element (6+1=7), the outer 3 DIP outside (6+3=9). Not hand-picked numbers. -->
   <Style Selector="Control">
     <Setter Property="FocusAdorner">
       <FocusAdornerTemplate>
@@ -332,26 +415,30 @@
     </Setter>
   </Style>
 
-  <!-- UYGULAMA ZEMINI.
-       Pencerenin kendi Background'i degil, pencereyi dolduran BOS bir Panel:
-       <Panel Classes="appbg"/> icerigin arkasinda kardes olarak durur.
-       Panel'in icine cocuk koyma, donen katman cocuklarini da dondurur. -->
+  <!-- APPLICATION BACKGROUND.
+       Not the window's own Background, but an EMPTY Panel filling the window:
+       <Panel Classes="appbg"/> sits behind the content as a sibling.
+       Do not put children inside the Panel; the rotating layer rotates its
+       children too. -->
   <Style Selector="Panel.appbg">
     <Setter Property="Background" Value="{StaticResource AppBgGradient}"/>
     <Setter Property="RenderTransformOrigin" Value="50%,50%"/>
     <Setter Property="IsHitTestVisible" Value="False"/>
   </Style>
 
-  <!-- ZEMIN DONUSU, sonsuz dongu yasaginin adi konmus tek istisnasi (SKILL §5.4).
-       WPF'te EndPoint 0.5,1'den 0.7,1'e kayiyordu, duruk deger 0.6,1'di. Avalonia bir
-       gradient fircasinin alt ozelligini enterpole edemez (firca animatoru yalniz duz
-       rengi tasir), bu yuzden ayni gorunum katmanin cok yavas donmesiyle uretiliyor.
-       Aci hesabi, dikeyden sapma: atan(0.5)=26.57, atan(0.6)=30.96, atan(0.7)=34.99
-       derece. Duruk 0.6'ya gore uclar -4.39 ve +4.03 derece; toplam oynama 8.42
-       derece, motion.md M10 tavani olan 20 derecenin altinda.
-       Donen dikdortgenin kose bosluk birakmamasi icin olcek 1.12; 16:9 pencerede
-       8.42 derece icin gereken en kucuk olcek 1.09 hesaplandi, 1.12 pay birakir.
-       Butun bu sayilar hesaplandi, ekranda olculmedi (varsayilan, olculmedi). -->
+  <!-- BACKGROUND ROTATION, the one named exception to the infinite-loop ban
+       (SKILL §5.4). In WPF the EndPoint shifted from 0.5,1 to 0.7,1 with a static
+       value of 0.6,1. Avalonia cannot interpolate a gradient brush sub-property
+       (the brush animator only carries flat colour), so the same look is produced
+       by rotating the layer very slowly.
+       Angle maths, deviation from vertical: atan(0.5)=26.57, atan(0.6)=30.96,
+       atan(0.7)=34.99 degrees. Against the static 0.6 the ends are -4.39 and +4.03
+       degrees; total travel 8.42 degrees, under the 20-degree ceiling of motion.md
+       M10.
+       So the rotating rectangle leaves no corner gap the scale is 1.12; for 8.42
+       degrees in a 16:9 window the smallest required scale was calculated at 1.09,
+       and 1.12 leaves margin. All of these numbers were calculated, not measured on
+       screen (assumed, not measured). -->
   <Style Selector="Window.anim Panel.appbg">
     <Style.Animations>
       <Animation Duration="0:0:48" IterationCount="Infinite"
@@ -366,27 +453,29 @@
     </Style.Animations>
   </Style>
 
-  <!-- AZALTILMIS HAREKET, sablonda uygulanir.
-       Kuralin dosyada yazili olup sablonun uygulamamasi bu standardin en sinsi hata
-       sinifi (motion.md M4); WPF tarafinda tam bu olmustu. Avalonia'da hazir bir API
-       yok, o yuzden mekanizma sudur:
+  <!-- REDUCED MOTION, applied in the template.
+       A rule written in a file that the template does not apply is this standard's
+       sneakiest class of bug (motion.md M4); that is exactly what happened on the
+       WPF side. Avalonia has no ready API, so the mechanism is:
 
-         Pencere acilirken azaltilmis hareket tercihi okunur.
-         Tercih KAPALIYSA Window'a "anim" sinifi eklenir, aciksa EKLENMEZ.
+         On window open, read the reduced-motion preference.
+         If the preference is OFF, add the "anim" class to the Window; if ON, DO NOT.
 
-       Sinif tek yerde durur, pencerenin kendisinde; asagidaki kurallar ona bakar.
-       Okuma kodu references/avalonia.md'de, kopyalanmaya hazir.
-       "anim" sinifi yoksa iki sey birden duser:
-         1) "Window.anim Panel.appbg" eslesmez, zemin dongusu hic baslamaz.
-         2) Asagidaki kural basma olcegini iptal eder.
-       Opaklik gecisi kalir; arayuz cansizlasmaz ama bas dondurmez (M4). -->
+       The class lives in one place, on the window itself; the rules below look at
+       it. The reading code is in references/avalonia.md, ready to copy.
+       Without the "anim" class two things fall at once:
+         1) "Window.anim Panel.appbg" does not match and the background loop never
+            starts.
+         2) The rule below cancels the press scale.
+       The opacity transition remains; the interface is not lifeless, but it does
+       not make you dizzy (M4). -->
   <Style Selector="Window:not(.anim) Button:pressed /template/ Border#bd">
     <Setter Property="RenderTransform" Value="none"/>
   </Style>
 
-  <!-- Ayni iptal, imza cipleri icin (Signature.axaml, Classes="sigchip"). Kural
-       burada duruyor cunku Signature.axaml'in kendi Styles koleksiyonu yalniz kendi
-       alt agacini gorur, ustundeki Window'u goremez. -->
+  <!-- The same cancellation for signature chips (Signature.axaml, Classes="sigchip").
+       The rule lives here because Signature.axaml's own Styles collection sees only
+       its own subtree, not the Window above it. -->
   <Style Selector="Window:not(.anim) Button.sigchip:pointerover /template/ Border#bd">
     <Setter Property="RenderTransform" Value="none"/>
   </Style>

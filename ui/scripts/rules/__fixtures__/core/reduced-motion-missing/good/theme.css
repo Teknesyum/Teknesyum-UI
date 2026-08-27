@@ -1,0 +1,9 @@
+.tk-card {
+  transition: opacity var(--tk-t-fast) var(--tk-e-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: var(--tk-t-instant) !important;
+    transform: none !important;
+  }
+}

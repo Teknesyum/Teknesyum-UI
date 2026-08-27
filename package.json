@@ -1,0 +1,13 @@
+{
+  "name": "teknesyum-ui",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Interface standard as generated tokens plus a scanner.",
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "test": "node test/all.js",
+    "setup": "node ui/scripts/setup.js",
+    "scan": "node ui/scripts/scan.js .",
+    "generate": "node ui/scripts/generate.js"
+  }
+}

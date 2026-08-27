@@ -1,0 +1,8 @@
+.tk-hero {
+  filter: drop-shadow(var(--tk-glow-hero));
+}
+@media (forced-colors: active) {
+  .tk-hero {
+    filter: none;
+  }
+}

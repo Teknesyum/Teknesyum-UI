@@ -1,0 +1,6 @@
+.tk-panel {
+  backdrop-filter: blur(16px);
+}
+.tk-modal {
+  backdrop-filter: blur(16px);
+}

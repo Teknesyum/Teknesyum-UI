@@ -1,0 +1,3 @@
+[data-tk='toggle']:hover {
+  border-color: var(--tk-border-strong);
+}

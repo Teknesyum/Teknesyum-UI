@@ -1,0 +1,4 @@
+.tk-chip:hover,
+.tk-chip:focus-visible {
+  border-color: var(--tk-pink);
+}

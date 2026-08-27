@@ -1,0 +1,6 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+  <LinearGradientBrush x:Key="Shell" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="#FF000000" Offset="0"/>
+    <GradientStop Color="#FF08090A" Offset="1"/>
+  </LinearGradientBrush>
+</ResourceDictionary>

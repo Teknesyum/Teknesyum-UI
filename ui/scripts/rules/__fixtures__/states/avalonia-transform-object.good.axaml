@@ -1,0 +1,3 @@
+<Style Selector="Button:pointerover">
+  <Setter Property="RenderTransform" Value="scale(1.02)" />
+</Style>

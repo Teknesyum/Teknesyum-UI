@@ -1,0 +1,3 @@
+.tk-hero {
+  filter: drop-shadow(var(--tk-glow-hero));
+}

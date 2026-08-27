@@ -1,6 +1,7 @@
-<!-- Teknesyum Neon — WPF. App.xaml > Application.Resources > MergedDictionaries içine ekle. -->
+<!-- Teknesyum Neon — WPF. Add inside App.xaml > Application.Resources > MergedDictionaries. -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
   <Color x:Key="NeonBlueColor">#FF00F3FF</Color>
   <Color x:Key="NeonPinkColor">#FFFF00EA</Color>
@@ -15,7 +16,7 @@
   <SolidColorBrush x:Key="Surface"     Color="#F208090A"/>
   <SolidColorBrush x:Key="AppBg"       Color="#FF000000"/>
 
-  <!-- Pencere zemini: duz renk degil, 11 durakli yumusak gradient (SKILL §2). -->
+  <!-- Window background: not a flat colour, an 11-stop soft gradient (SKILL §2). -->
   <LinearGradientBrush x:Key="AppBgGradient" x:Shared="False"
                        StartPoint="0,0" EndPoint="0.6,1"
                        ColorInterpolationMode="ScRgbLinearInterpolation">
@@ -32,54 +33,70 @@
     <GradientStop Offset="1.0" Color="#FF08090A"/>
   </LinearGradientBrush>
 
-  <Storyboard x:Key="AppBgDonus" RepeatBehavior="Forever" AutoReverse="True">
-    <PointAnimation Storyboard.TargetProperty="Background.EndPoint"
-                    From="0.5,1" To="0.7,1" Duration="0:0:48"/>
+  <!-- MOTION GUARD. WPF has no prefers-reduced-motion; the Windows counterpart is
+       SystemParameters.ClientAreaAnimation and reading it is NOT optional. The consumer
+       starts this storyboard only when that property is true, and stops it when
+       SystemParameters.StaticPropertyChanged reports it turned false.
+       ANIMATION TARGET. A storyboard drives RenderTransform and Opacity only. The
+       earlier version animated Background.EndPoint: retargeting the brush leaves the
+       composition thread and repaints the whole window on every frame for 48 seconds.
+       The drift is now a RotateTransform on the background LAYER — a dedicated element
+       behind the content, named "bgLayer", oversized so the rotated corners stay off
+       screen. The sweep is motion.bg-sweep-max, the same 20
+       degrees the CSS keyframe walks. -->
+  <Storyboard x:Key="AppBgRotate" RepeatBehavior="Forever" AutoReverse="True">
+    <DoubleAnimation Storyboard.TargetName="bgLayer"
+                     Storyboard.TargetProperty="RenderTransform.(RotateTransform.Angle)"
+                     From="0" To="20"
+                     Duration="0:0:48"/>
   </Storyboard>
 
   <SolidColorBrush x:Key="PinkText"   Color="#FFFF54EB"/>
   <SolidColorBrush x:Key="PurpleText" Color="#FFC67EFF"/>
 
-  <!-- ANLAMSAL ROL KATMANI (SKILL §2).
-       ROL KAZANIR: durum bildiren her kontrol (hata metni, form dogrulama,
-       uyari kutusu, durum noktasi, tehlike dugmesi) bu fircalari yazar. Marka
-       ve dekor (glow, scrollbar, hero, baslik) marka fircasini yazmayi surdurur.
-       XAML'da takma ad yoktur; her rol AYRI bir firca nesnesidir ve marka
-       fircasiyla ayni hex'i tasir. Tek dogruluk kaynagi hex tablosudur, hex
-       elden degistirilmez; esitlik denetimde olculur (test/u4-renk.js).
-       `Success` fircasi 23.08.2026'da `NeonSuccess` adindan cevrildi: success bir
-       marka rengi degil, bir roldur. Ayni cevrim Theme.axaml'da da yapilmali
-       (U7'nin dosyasi).
-       `Info` BILEREK YOK: bilgi kutusu bugun yok, kullanilmayan token borctur.
-       Acilirsa maviye baglanir ve birincil dugmeyle ayni ekranda info dolgusu
-       kullanilmaz. -->
+  <!-- SEMANTIC ROLE LAYER (SKILL §2).
+       THE ROLE WINS: every control that reports state (error text, form
+       validation, warning box, status dot, danger button) writes these brushes.
+       Brand and decoration (glow, scrollbar, hero, heading) keep writing the
+       brand brush. XAML has no aliases; each role is a SEPARATE brush object
+       carrying the same hex as the brand brush. The hex table is the single
+       source of truth and is never edited by hand; equality is measured in the
+       audit.
+       The `Success` brush was renamed from `NeonSuccess` on 2026-08-23: success
+       is not a brand colour, it is a role. The same rename applies in
+       Theme.axaml (U7's file).
+       `Info` IS DELIBERATELY ABSENT: there is no info box today, and an unused
+       token is debt. If one opens it binds to blue, and an info fill is never
+       used on the same screen as a primary button. -->
   <SolidColorBrush x:Key="Danger"     Color="#FFFF00EA"/>
-  <!-- Tehlikenin METIN rolu. Dolgu hex'i metinde 6.11:1 verir, 7:1 esiginin
-       altinda; hata metni bu fircayi yazar (7.33:1). -->
+  <!-- The TEXT role of danger. The fill hex gives 6.11:1 as text, below the 7:1
+       threshold; error text writes this brush (7.33:1). -->
   <SolidColorBrush x:Key="DangerText" Color="#FFFF54EB"/>
 
-  <!-- warning #FBBF24 — YALNIZCA UYARI YUZEYI: metin, cerceve, ikon.
-       DOLGU VE DUGME YOK. Kisit success'in kalibinin aynisidir.
-       Yasagin gerekcesi olculdu: amber dolgu ustunde beyaz metin 1.67:1, coker.
-       YERINE NE KONUR: uyari metni `Warning` (12.58:1 / 11.94:1), cerceve
-       `Warning50` (#08090a ustunde 3.59:1, 3:1 esigini gecer), ikon ayni renk.
-       Eylem gerekiyorsa dugme birincil (mavi) ya da `Danger` (pembe) olur.
-       RENK TEK BASINA ANLAM TASIMAZ, amber icin de bastan: amber ile success
-       protanopide dE2000 15.2 ile ayrismiyor (docs/olcumler/renk-korlugu.md).
-       Uyari satiri renge ek olarak ikon ya da metin tasir.
-       SERH: bu hex U9 dE olcumune tabidir. -->
+  <!-- warning #FBBF24 — WARNING SURFACE ONLY: text, border, icon.
+       NO FILL, NO BUTTON. The constraint is the same pattern as success.
+       The ban was measured: white text on an amber fill is 1.67:1, it collapses.
+       WHAT REPLACES IT: warning text `Warning` (12.58:1 / 11.94:1), border
+       `Warning50` (3.59:1 on #08090a, clears the 3:1 threshold), icon same colour.
+       If an action is needed the button is primary (blue) or `Danger` (pink).
+       COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does
+       not separate from success under protanopia, dE2000 15.2
+       A warning row carries an icon or text in
+       addition to colour.
+       CAVEAT: this hex is subject to the U9 dE measurement. -->
   <SolidColorBrush x:Key="Warning"    Color="#FFFBBF24"/>
   <SolidColorBrush x:Key="Warning50"  Color="#80FBBF24"/>
 
   <SolidColorBrush x:Key="TextBody"  Color="#FFFFFFFF"/>
   <SolidColorBrush x:Key="TextLabel" Color="#FF00F3FF"/>
-  <!-- Devre disi kontrol 7:1'den muaftir (SKILL §2) ve bedeli vardir: renk koru
-       kullanici griyi goremez. Bu firca tek basina kullanilmaz — devre disi her
-       kontrol grilige ek bir isaret tasir: ToolTip metni ZORUNLU, yaninda
-       Cursor="No" ve mumkunse bir ikon. Yalniz soluklastirilmis kontrol eksik
-       teslimdir. "Soluk metin" fircasi 23.08.2026'da silindi: beyazla birebir ayni
-       degeri tasiyordu ve iki adi olan tek deger er gec ayrisir. Ikincil metin
-       icin cozum gri degil, metni silmektir (SKILL §2, "ara gri yok"). -->
+  <!-- A disabled control is exempt from 7:1 (SKILL §2) and there is a price: a
+       colour-blind user cannot see the grey. This brush is never used alone —
+       every disabled control carries a marker in addition to the grey: ToolTip
+       text is MANDATORY, plus Cursor="No" and, where possible, an icon. A merely
+       dimmed control is an incomplete delivery. The "muted text" brush was
+       deleted on 2026-08-23: it carried exactly the same value as white, and a
+       single value with two names eventually diverges. For secondary text the
+       answer is not grey, it is deleting the text (SKILL §2, "no mid greys"). -->
   <SolidColorBrush x:Key="Disabled"  Color="#FF71717A"/>
 
   <SolidColorBrush x:Key="NeonBlue10"   Color="#1A00F3FF"/>
@@ -107,8 +124,9 @@
   <SolidColorBrush x:Key="BorderStrong"     Color="#9900F3FF"/>
   <SolidColorBrush x:Key="BorderDecorative" Color="#4D00F3FF"/>
 
-  <!-- Zincirin tek kaynagi SKILL §3'tur; sira orayla ayni. Atkinson Hyperlegible
-       Next varsayilandir ve projeye GOMULUR (pack URI), sistemde var sayilmaz. -->
+  <!-- The chain's only source is SKILL §3; the order matches. Atkinson
+       Hyperlegible Next is the default and is EMBEDDED in the project (pack URI),
+       not assumed present on the system. -->
   <FontFamily x:Key="FontSans">Atkinson Hyperlegible Next, Segoe UI</FontFamily>
   <FontFamily x:Key="FontMono">Cascadia Mono, Consolas</FontFamily>
 
@@ -116,20 +134,90 @@
   <Duration x:Key="TFast">0:0:0.16</Duration>
   <Duration x:Key="TBase">0:0:0.24</Duration>
   <Duration x:Key="TSlow">0:0:0.36</Duration>
-  <!-- Hero glow: CSS tokeni `tk-glow-hero` ile ayni yogunluk — blur 8, opaklik 0.8. -->
+  <!-- Hero glow: same intensity as the CSS token `tk-glow-hero` — blur 8, opacity 0.8. -->
   <DropShadowEffect x:Key="HeroGlow" x:Shared="False" Color="#FF00F3FF"
                     BlurRadius="8" ShadowDepth="0" Opacity="0.8"/>
 
   <CubicEase x:Key="EOut" EasingMode="EaseOut"/>
   <CubicEase x:Key="EIn" EasingMode="EaseIn"/>
 
+  <!-- Numeric tokens: the same values as the CSS --tk-* layer, in DIP.
+       Tracking is em, line height a multiplier, ratios unitless. -->
+  <sys:Double x:Key="FontSize1">14</sys:Double>
+  <sys:Double x:Key="FontSize2">16</sys:Double>
+  <sys:Double x:Key="FontSize3">20</sys:Double>
+  <sys:Double x:Key="FontSize4">24</sys:Double>
+  <sys:Double x:Key="FontSize5">30</sys:Double>
+  <sys:Double x:Key="LineHeightBody">1.5</sys:Double>
+  <sys:Double x:Key="LineHeightHeading">1.2</sys:Double>
+  <sys:Double x:Key="LineHeightMono">1.4</sys:Double>
+  <sys:Double x:Key="MeasureCh">65</sys:Double>
+  <sys:Double x:Key="TrackingLabel">0.15</sys:Double>
+  <sys:Double x:Key="TrackingH3">0.05</sys:Double>
+  <sys:Double x:Key="TrackingH2">0.02</sys:Double>
+  <sys:Double x:Key="TrackingHero">-0.01</sys:Double>
+  <FontWeight x:Key="WeightBody">Normal</FontWeight>
+  <FontWeight x:Key="WeightSemi">SemiBold</FontWeight>
+  <FontWeight x:Key="WeightHero">Black</FontWeight>
+
+  <sys:Double x:Key="Space1">4</sys:Double>
+  <sys:Double x:Key="Space2">8</sys:Double>
+  <sys:Double x:Key="Space3">12</sys:Double>
+  <sys:Double x:Key="Space4">16</sys:Double>
+  <sys:Double x:Key="Space5">24</sys:Double>
+  <Thickness x:Key="PanelPadding">24</Thickness>
+  <Thickness x:Key="InputPadding">12,0</Thickness>
+  <sys:Double x:Key="SectionGap">24</sys:Double>
+  <sys:Double x:Key="RowGap">12</sys:Double>
+  <sys:Double x:Key="FieldGap">8</sys:Double>
+  <sys:Double x:Key="FieldStack">16</sys:Double>
+  <sys:Double x:Key="ToastInset">24</sys:Double>
+  <sys:Double x:Key="ToastGap">12</sys:Double>
+
+  <CornerRadius x:Key="Radius">6</CornerRadius>
+  <CornerRadius x:Key="WindowRadius">12</CornerRadius>
+  <Thickness x:Key="BorderWidth">1</Thickness>
+  <sys:Double x:Key="FocusWidth">2</sys:Double>
+  <sys:Double x:Key="FocusOffset">2</sys:Double>
+
+  <sys:Double x:Key="TargetMin">24</sys:Double>
+  <sys:Double x:Key="ScrollbarWidth">10</sys:Double>
+  <sys:Double x:Key="TitleBarHeightMin">32</sys:Double>
+  <sys:Double x:Key="TitleBarHeightMax">40</sys:Double>
+  <sys:Double x:Key="SidebarWidth">240</sys:Double>
+  <sys:Double x:Key="SidebarCollapsedWidth">48</sys:Double>
+  <sys:Double x:Key="InputHeight">40</sys:Double>
+  <sys:Double x:Key="ModalWidth">560</sys:Double>
+  <sys:Double x:Key="ModalMaxRatio">0.85</sys:Double>
+  <sys:Double x:Key="ToastWidth">360</sys:Double>
+  <sys:Double x:Key="ToastMax">3</sys:Double>
+  <Duration x:Key="ToastLife">0:0:6</Duration>
+  <sys:Double x:Key="IconSize1">14</sys:Double>
+  <sys:Double x:Key="IconSize2">16</sys:Double>
+  <sys:Double x:Key="IconSize3">22</sys:Double>
+  <sys:Double x:Key="IconSize4">56</sys:Double>
+
+  <sys:Double x:Key="ScaleHover">1.02</sys:Double>
+  <sys:Double x:Key="ScalePress">0.98</sys:Double>
+  <sys:Double x:Key="ScaleIconHover">1.1</sys:Double>
+  <sys:Double x:Key="EntryOffset">8</sys:Double>
+  <sys:Double x:Key="OverlayOffset">4</sys:Double>
+  <sys:Double x:Key="StaggerMax">6</sys:Double>
+  <sys:Double x:Key="GlowMargin">24</sys:Double>
+  <sys:Double x:Key="BgSweepMax">20</sys:Double>
+  <Duration x:Key="Stagger">0:0:0.04</Duration>
+  <Duration x:Key="LoadingLoopMin">0:0:1.4</Duration>
+  <Duration x:Key="FrameBudget">0:0:0.016</Duration>
+  <Duration x:Key="BgRotateMin">0:0:40</Duration>
+
   <Style x:Key="{x:Static SystemParameters.FocusVisualStyleKey}">
     <Setter Property="Control.Template">
       <Setter.Value>
         <ControlTemplate>
           <Grid Margin="-5" SnapsToDevicePixels="True" UseLayoutRounding="True">
-            <!-- Yaricap 6 DIP tabanindan turetildi: ic katman ogenin 1 DIP disinda
-                 (6+1=7), dis katman 3 DIP disinda (6+3=9). Elle secilmis sayi degil. -->
+            <!-- The radii derive from the 6 DIP base: the inner layer sits 1 DIP
+                 outside the element (6+1=7), the outer 3 DIP outside (6+3=9).
+                 Not hand-picked numbers. -->
             <Rectangle Margin="4" RadiusX="7" RadiusY="7"
                        Stroke="#FF000000" StrokeThickness="2"/>
             <Rectangle Margin="2" RadiusX="9" RadiusY="9"
@@ -140,14 +228,15 @@
     </Setter>
   </Style>
 
-  <!-- Olcek 1.25 major third: 14 / 16 / 20 / 24 / 30 DIP. Satir yuksekligi
-       LineHeight + LineStackingStrategy="BlockLineHeight" ile kurulur; ikincisi
-       yazilmazsa WPF satir kutusunu en uzun harfe gore buyutur ve CSS'ten ayrisir.
-       Agirlik: baslik ve etiket SemiBold (600), yalniz hero Black (900).
-       TRACKING TELAFISI: WPF'te harf araligi yok. CSS h2 0.02em, h3 0.05em, etiket
-       0.15em uygular; burada uygulanamaz. Telafi SKILL §3'te yazili — WPF'te etiketi
-       govdeden ayiran sey boyut, agirlik ve renktir, aralik degil. Attached behavior
-       yazilirsa telafi kalkar ve CSS degerleri birebir kullanilir. -->
+  <!-- Scale 1.25 major third: 14 / 16 / 20 / 24 / 30 DIP. Line height is set with
+       LineHeight + LineStackingStrategy="BlockLineHeight"; without the second,
+       WPF grows the line box to the tallest glyph and diverges from CSS.
+       Weight: headings and labels SemiBold (600), only hero Black (900).
+       TRACKING COMPENSATION: WPF has no letter spacing. CSS applies 0.02em on h2,
+       0.05em on h3, 0.15em on labels; that cannot be applied here. The
+       compensation is written in SKILL §3 — in WPF what separates a label from
+       body text is size, weight and colour, not spacing. Write an attached
+       behavior and the compensation lifts, with the CSS values used verbatim. -->
 
   <Style x:Key="H2" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
@@ -185,7 +274,7 @@
     <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
   </Style>
 
-  <!-- Yardim / ipucu metni. CSS karsiligi .tk-hint. -->
+  <!-- Help / hint text. CSS counterpart .tk-hint. -->
   <Style x:Key="Hint" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
     <Setter Property="FontSize" Value="14"/>
@@ -223,19 +312,20 @@
     <Setter Property="Padding" Value="24"/>
   </Style>
 
-  <!-- Uyari yuzeyi. `Panel`den turer, degisen tek sey cercevedir: zemin
-       `Surface` kalir cunku amber dolgu yasaktir. Kutunun icine renge ek olarak
-       bir ikon ya da "Uyari" metni konur. -->
+  <!-- Warning surface. Derives from `Panel`; the only change is the border. The
+       background stays `Surface` because an amber fill is banned. Put an icon or
+       the word "Warning" inside the box in addition to colour. -->
   <Style x:Key="WarningPanel" TargetType="Border" BasedOn="{StaticResource Panel}">
     <Setter Property="BorderBrush" Value="{StaticResource Warning50}"/>
   </Style>
 
-  <!-- Uyari metni. Glow yok: metne glow verilmez (SKILL §2), tek istisna hero. -->
+  <!-- Warning text. No glow: text is never given a glow (SKILL §2), the sole
+       exception being hero. -->
   <Style x:Key="WarningBody" TargetType="TextBlock" BasedOn="{StaticResource Body}">
     <Setter Property="Foreground" Value="{StaticResource Warning}"/>
   </Style>
 
-  <!-- Hata metni dolgu pembesini degil metin pembesini yazar — 7:1 esigi. -->
+  <!-- Error text writes the text pink, not the fill pink — the 7:1 threshold. -->
   <Style x:Key="DangerBody" TargetType="TextBlock" BasedOn="{StaticResource Body}">
     <Setter Property="Foreground" Value="{StaticResource DangerText}"/>
   </Style>

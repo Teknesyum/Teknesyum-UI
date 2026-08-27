@@ -1,0 +1,10 @@
+{
+  "surum": "1.7.0",
+  "yazar": "Teknesyum",
+  "github": "https://github.com/Teknesyum",
+  "sponsor": "https://github.com/sponsors/Teknesyum",
+  "sponsorAktif": true,
+  "imzaMetni": "by Teknesyum",
+  "destekMetni": "Buy me a coffee",
+  "_not": "Bu dosya varsayılandır. Kullanıcı ~/.claude/teknesyum-ui.json ile ezer; /uisetup komutu onu düzenler."
+}

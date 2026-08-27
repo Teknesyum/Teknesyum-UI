@@ -1,0 +1,11 @@
+{
+  "name": "teknesyum",
+  "owner": { "name": "Teknesyum", "url": "https://github.com/Teknesyum" },
+  "plugins": [
+    {
+      "name": "teknesyum-ui",
+      "source": "./ui",
+      "description": "Neon interface standard. Companion to Teknesyum Core."
+    }
+  ]
+}

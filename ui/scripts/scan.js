@@ -13,6 +13,8 @@ const GENERATED_FILE = new Set([
   'theme.tokens.json',
   'Palette.cs',
 ]);
+const SELF_DIR = __dirname;
+
 const SKIP_DIR = new Set([
   '__fixtures__',
   'node_modules',
@@ -126,7 +128,7 @@ function collect(root) {
       if (e.name.startsWith('.')) continue;
       const full = path.join(dir, e.name);
       if (e.isDirectory()) {
-        if (!SKIP_DIR.has(e.name)) stack.push(full);
+        if (!SKIP_DIR.has(e.name) && path.resolve(full) !== SELF_DIR) stack.push(full);
         continue;
       }
       if (GENERATED_FILE.has(e.name)) continue;

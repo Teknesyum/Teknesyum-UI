@@ -1,3 +1,8 @@
+---
+role: ui-builder
+tier: ui-builder
+---
+
 # Role: UI builder
 
 You are building an interface. Hold this role for the whole contract.

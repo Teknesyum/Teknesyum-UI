@@ -1,0 +1,4 @@
+{
+  "platformlar": ["windows", "macos", "linux"],
+  "platformNeden": "Windows birincil hedef ve tek sınanan platform. Eklentinin tamamı düz node çekirdeği — fs, path, os — olduğu için macOS ve Linux'ta da çalışması beklenir; yol birleştirme ve satır sonu dışında platforma bağlı kod yok. Diğer ikisi desteklenir ama sınanmamıştır."
+}

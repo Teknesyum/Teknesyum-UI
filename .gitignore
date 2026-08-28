@@ -3,3 +3,4 @@ trash/
 *.tmp
 *.log
 Teknesyum-Base/
+.claude/relay/live/

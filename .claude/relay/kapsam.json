@@ -274,5 +274,89 @@
     "effort": "medium",
     "t": "2026-08-27 23:22:26",
     "ajan": "builder"
+  },
+  "tiers.json": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 10:37:21",
+    "ajan": "builder"
+  },
+  "risk.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 10:37:21",
+    "ajan": "builder"
+  },
+  "tier-block.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 10:37:21",
+    "ajan": "builder"
+  },
+  "splice.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 10:37:21",
+    "ajan": "builder"
+  },
+  "roles.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 10:37:21",
+    "ajan": "builder"
+  },
+  "scribe.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 10:37:21",
+    "ajan": "builder"
+  },
+  "statusline.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 10:37:21",
+    "ajan": "builder"
+  },
+  "SKILL.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 13:32:48",
+    "ajan": "builder"
+  },
+  "d8.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 10:37:21",
+    "ajan": "builder"
+  },
+  "test-block.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 10:37:21",
+    "ajan": "builder"
+  },
+  "all.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 13:32:48",
+    "ajan": "builder"
+  },
+  ".claude/agent-memory/teknesyum-builder/bash-heredoc-backslashes.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 10:37:21",
+    "ajan": "builder"
+  },
+  "contract.js": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 11:02:43",
+    "ajan": "builder"
+  },
+  "d9.md": {
+    "model": "claude-opus-5",
+    "effort": "medium",
+    "t": "2026-08-28 13:32:48",
+    "ajan": "builder"
   }
 }

@@ -274,6 +274,18 @@ function brokenModuleSurvives(dirty) {
   L.ok('the planted module is gone', !fs.existsSync(planted));
 }
 
+function dogfood() {
+  const repo = path.resolve(__dirname, '..');
+  const config = path.join(repo, '.claude', 'teknesyum-ui.json');
+  const had = fs.existsSync(config);
+  if (!had) L.write(config, JSON.stringify(CONFIG, null, 2));
+  const r = L.node(L.SCAN, [repo], { env: L.cleanEnv() });
+  if (!had) fs.rmSync(config, { force: true });
+  L.ok('the standard passes its own scanner', r.status === 0, r.stdout + r.stderr);
+  L.ok('the scanner skips gitignored files', !/Teknesyum-Base/.test(r.stdout));
+  L.ok('the scanner skips its own source', !/scripts\/rules\//.test(r.stdout));
+}
+
 module.exports = function scanner() {
   listRules();
   shape();
@@ -281,4 +293,5 @@ module.exports = function scanner() {
   const dirty = exitCodes();
   jsonShape(dirty);
   brokenModuleSurvives(dirty);
+  dogfood();
 };

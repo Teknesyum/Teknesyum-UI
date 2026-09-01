@@ -19,8 +19,8 @@ function tokenColours(value, out) {
   return found;
 }
 
-function normalise(raw) {
-  let h = raw.toLowerCase().slice(1);
+function normalise(hex) {
+  let h = hex.toLowerCase().slice(1);
   if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
   if (h.length === 4) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
   if (h.length === 8) h = h.slice(2);

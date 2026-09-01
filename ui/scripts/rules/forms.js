@@ -1,6 +1,19 @@
 'use strict';
 
 const CODE = ['.js', '.jsx', '.ts', '.tsx', '.cs'];
+
+function nearbyNumber(line) {
+  const bare = String(line)
+    .replace(/`[^`]*`/g, ' ')
+    .replace(/\bWCAG\s+\d+(?:\.\d+)*/gi, ' ');
+  const m = /\bdefaults?\b/i.exec(bare);
+  if (!m) return false;
+  const from = Math.max(0, m.index - 25);
+  return /\d/.test(bare.slice(from, m.index + m[0].length + 25));
+}
+
+const MACHINE_TEXT =
+  /\b(?:extname|basename|dirname|extension|mimeType|MimeType|charset|slug|hex|guid|sha|hash|token|scheme|protocol|host|origin)\b|\b(?:ext|url|uri|href|path|key|tag|code|lang|locale|culture)\b\s*[.)=,]|\.(?:ext|extension|scheme|protocol|host|hostname)\b/;
 const MARKUP = ['.jsx', '.tsx', '.html'];
 const XAML = ['.xaml', '.axaml'];
 const STYLE = ['.css', '.scss'];
@@ -224,6 +237,7 @@ module.exports = {
       exts: CODE,
       test(line, ctx) {
         if (/toLocaleUpperCase|toLocaleLowerCase|CultureInfo/.test(line)) return null;
+        if (MACHINE_TEXT.test(line)) return null;
         if (/\.(?:toUpperCase|toLowerCase)\(\s*\)/.test(line)) {
           return "Turkish casing: use toLocaleUpperCase('tr') / toLocaleLowerCase('tr').";
         }
@@ -542,6 +556,7 @@ module.exports = {
             if (!/\bdefaults?\b/i.test(line) || !/\d/.test(line)) continue;
             if (/\(default, unmeasured\)/.test(line)) continue;
             if (/\bmeasured\b/i.test(line)) continue;
+            if (!nearbyNumber(line)) continue;
             out.push({ file: rel, line: i + 1, message: 'Unmeasured number: carry the (default, unmeasured) label.' });
           }
         }

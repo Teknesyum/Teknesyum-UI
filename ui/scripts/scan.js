@@ -4,6 +4,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { spawnSync } = require('child_process');
 
 const UI_EXT = new Set(['.css', '.tsx', '.jsx', '.vue', '.svelte', '.xaml', '.axaml']);
 const CODE_EXT = new Set(['.cs', '.ts', '.js', '.mjs', '.cjs', '.md']);
@@ -112,6 +113,23 @@ function customProperties(css) {
   return out;
 }
 
+function gitIgnored(root, files) {
+  const out = new Set();
+  if (!files.length) return out;
+  const r = spawnSync('git', ['-C', root, 'check-ignore', '--stdin'], {
+    encoding: 'utf8',
+    input: files.map((f) => rel(root, f)).join('\n'),
+    windowsHide: true,
+    timeout: 20000,
+    maxBuffer: 32 * 1024 * 1024,
+  });
+  if (r.error || r.status > 1) return out;
+  for (const line of String(r.stdout || '').split(/\r?\n/)) {
+    if (line.trim()) out.add(path.resolve(root, line.trim()));
+  }
+  return out;
+}
+
 function collect(root) {
   const ui = [];
   const modules = [];
@@ -137,7 +155,11 @@ function collect(root) {
       if (MODULE_EXT.has(ext)) modules.push(full);
     }
   }
-  return { ui: ui.sort(), modules: modules.sort() };
+  const ignored = gitIgnored(root, ui.concat(modules));
+  return {
+    ui: ui.filter((f) => !ignored.has(f)).sort(),
+    modules: modules.filter((f) => !ignored.has(f)).sort(),
+  };
 }
 
 function buildContext(root, config, notes) {

@@ -29,8 +29,10 @@ platform reference.
 ## Install
 
 ```bash
-/plugin marketplace add Teknesyum/Teknesyum-UI
+/plugin marketplace add Teknesyum/Teknesyum-Core
 ```
+
+One marketplace carries both plugins. Then `/plugin install teknesyum-ui@teknesyum`.
 
 Then, in the project you want it in:
 
@@ -67,7 +69,7 @@ after two blocks on the same file, so a real disagreement stops the gate rather 
 npm test
 ```
 
-88 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
+91 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
 starts writing to `additionalContext` or `systemMessage`, if `SKILL.md` grows past 150
 lines, or if a slash command reappears.
 

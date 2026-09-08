@@ -1,9 +1,13 @@
+<!-- lang -->
+
+[<img src="assets/badge-lang.svg" alt="English selected, switch to Türkçe" width="124" height="44">](README.tr.md)
+
 # Teknesyum UI
 
 An interface standard for Claude Code, shipped as data plus a scanner rather than as a
 document the model has to read.
 
-Split out of Teknesyum Base so that [Teknesyum Core](../Teknesyum-Core) stays a work relay
+Split out of Teknesyum Base so that [Teknesyum Core](https://github.com/Teknesyum/Teknesyum-Core) stays a work relay
 and nothing more. Core has no opinion about how anything looks; this project has all of it.
 
 **Off until you ask for it.** The standard applies only where a `teknesyum-ui.json` exists.
@@ -32,7 +36,7 @@ platform reference.
 /plugin marketplace add Teknesyum/Teknesyum-Core
 ```
 
-One marketplace carries both plugins. Then `/plugin install teknesyum-ui@teknesyum`.
+One marketplace carries both plugins: the Core marketplace lists this plugin as a `git-subdir` source pointing at the `ui/` folder of this repository, and the `.claude-plugin/marketplace.json` here only lets the repository be added as a standalone marketplace for local development. Then `/plugin install teknesyum-ui@teknesyum`.
 
 Then, in the project you want it in:
 
@@ -94,6 +98,20 @@ docs/coverage/            what the scanner enforces, and what it does not
 ```bash
 node <plugin>/scripts/setup.js --off
 ```
+
+## Contributing
+
+Open an issue before writing code, so nobody spends an evening on something already in
+progress. Keep the pull request to one concern — a fix and a feature do not belong in the
+same branch — and match the surrounding code.
+
+The repository language is English: code, commit messages, README and issues. Run
+`npm test` before opening the pull request; nothing merges red.
+
+Contributions are accepted under the project's own licence, AGPL-3.0-or-later. Every commit
+must be signed off under the Developer Certificate of Origin 1.1, reproduced in
+[`DCO`](DCO) — add it with `git commit -s`. The longer version of all this is in
+[`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## License
 

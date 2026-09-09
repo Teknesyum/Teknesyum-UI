@@ -8,3 +8,8 @@ Merkezi GitHub denetimi bu depoda şunları değiştirdi:
 - CONTRIBUTING.md ve DCO eklendi (VidShrink'ten), README'ye Contributing bölümü geldi.
 - README.tr.md ve dil rozetleri (assets/badge-lang*.svg) Core düzeniyle eklendi.
 - Wiki kapatıldı.
+
+## Kalan (kullanıcı onayı gerekir)
+
+- Git'ten çıkan trash/ kopyası: Teknesyum-Private `teknesyum-ui/git-disi-2026-09-08-trash/`.
+- `.claude/relay/`, `.claude/agent-memory/` public'te; kapsam dışı bırakıldı.

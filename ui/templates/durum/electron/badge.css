@@ -1,0 +1,68 @@
+.tk-sync {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tk-target-min);
+  padding: 0 var(--tk-sp-2);
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-chip);
+  background: transparent;
+  color: var(--tk-text);
+  font-size: var(--tk-fs-1);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  transition:
+    color var(--tk-t-fast) var(--tk-e-out),
+    border-color var(--tk-t-fast) var(--tk-e-out),
+    transform var(--tk-t-instant) var(--tk-e-out);
+}
+
+.tk-sync:hover {
+  border-color: var(--tk-border-strong);
+  transform: scale(var(--tk-scale-hover));
+}
+
+.tk-sync:focus-visible {
+  outline: var(--tk-focus-w) solid var(--tk-blue);
+  outline-offset: var(--tk-focus-offset);
+  box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg-from);
+}
+
+.tk-sync:active {
+  border-color: var(--tk-border-strong);
+  transform: scale(var(--tk-scale-press));
+}
+
+.tk-sync:disabled {
+  color: var(--tk-disabled);
+  cursor: not-allowed;
+}
+
+.tk-sync[data-state='syncing'] {
+  color: var(--tk-text-label);
+}
+
+.tk-sync-progress {
+  animation: tk-sync-progress var(--tk-loading-loop-min) var(--tk-e-out) infinite;
+}
+
+.tk-sync[data-state='synced'] {
+  color: var(--tk-success);
+}
+
+.tk-sync[data-state='offline'] {
+  color: var(--tk-warning);
+  border-color: var(--tk-warning-border);
+}
+
+@keyframes tk-sync-progress {
+  50% {
+    transform: scale(var(--tk-scale-hover));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tk-sync-progress {
+    animation: none;
+  }
+}

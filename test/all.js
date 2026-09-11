@@ -9,6 +9,7 @@ const SUITES = [
   ['scanner', require('./scanner')],
   ['install', require('./install')],
   ['generate', require('./generate')],
+  ['scaffold', require('./scaffold')],
 ];
 
 function main() {

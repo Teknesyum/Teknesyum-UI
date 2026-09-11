@@ -1,0 +1,193 @@
+.tk-titlebar {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: var(--tk-sp-5);
+  height: var(--tk-titlebar-h-min);
+  padding-left: var(--tk-sp-4);
+  background: var(--tk-surface);
+  border-bottom: var(--tk-border-w) solid var(--tk-border-strong);
+  user-select: none;
+  -webkit-app-region: drag;
+}
+
+.tk-titlebar a,
+.tk-titlebar button,
+.tk-titlebar__language {
+  -webkit-app-region: no-drag;
+}
+
+.tk-titlebar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--tk-sp-2);
+  min-width: 0;
+}
+
+.tk-titlebar__logo {
+  width: var(--tk-icon-3);
+  height: var(--tk-icon-3);
+  object-fit: contain;
+}
+
+.tk-titlebar__name {
+  color: var(--tk-text);
+  font-size: var(--tk-fs-3);
+  font-weight: var(--tk-fw-semi);
+  line-height: var(--tk-lh-heading);
+  letter-spacing: var(--tk-tr-h2);
+  white-space: nowrap;
+}
+
+.tk-titlebar__accent {
+  color: var(--tk-pink-text);
+}
+
+.tk-titlebar__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--tk-sp-1);
+}
+
+.tk-titlebar__language {
+  display: flex;
+  align-items: center;
+  gap: var(--tk-sp-1);
+}
+
+.tk-titlebar__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tk-sp-2);
+  min-height: var(--tk-target-min);
+  padding: var(--tk-sp-1) var(--tk-sp-3);
+  border: var(--tk-border-w) solid var(--tk-border-strong);
+  border-radius: var(--tk-r-btn);
+  color: var(--tk-blue);
+  font-size: var(--tk-fs-1);
+  font-weight: var(--tk-fw-semi);
+  text-decoration: none;
+  transition:
+    color var(--tk-t-instant) var(--tk-e-out),
+    border-color var(--tk-t-instant) var(--tk-e-out),
+    transform var(--tk-t-instant) var(--tk-e-out);
+}
+
+.tk-titlebar__chip--support {
+  color: var(--tk-purple-text);
+  border-color: var(--tk-purple-text);
+}
+
+.tk-titlebar__chip:hover {
+  color: var(--tk-pink-text);
+  border-color: var(--tk-pink-text);
+  transform: scale(var(--tk-scale-hover));
+}
+
+.tk-titlebar__chip:focus-visible {
+  outline: var(--tk-focus-w) solid var(--tk-blue);
+  outline-offset: var(--tk-focus-offset);
+  box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg-from);
+}
+
+.tk-titlebar__chip:active {
+  border-color: var(--tk-pink);
+  transform: scale(var(--tk-scale-press));
+}
+
+.tk-titlebar__chip[aria-disabled='true'] {
+  color: var(--tk-disabled);
+  border-color: var(--tk-disabled);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.tk-titlebar__icon {
+  width: var(--tk-icon-2);
+  height: var(--tk-icon-2);
+}
+
+.tk-titlebar__window {
+  display: flex;
+  align-self: stretch;
+  margin-left: var(--tk-sp-1);
+}
+
+.tk-titlebar__control {
+  display: grid;
+  place-items: center;
+  width: var(--tk-titlebar-h-max);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--tk-blue);
+  cursor: pointer;
+  transition:
+    color var(--tk-t-instant) var(--tk-e-out),
+    background-color var(--tk-t-instant) var(--tk-e-out);
+}
+
+.tk-titlebar__control--close {
+  color: var(--tk-text);
+}
+
+.tk-titlebar__control:hover {
+  background-color: var(--tk-purple);
+  color: var(--tk-surface);
+}
+
+.tk-titlebar__control--close:hover {
+  background-color: var(--tk-danger);
+}
+
+.tk-titlebar__control:focus-visible {
+  outline: var(--tk-focus-w) solid var(--tk-pink-text);
+  outline-offset: calc(var(--tk-focus-w) * -1);
+  box-shadow: inset 0 0 0 calc(var(--tk-focus-w) * 2) var(--tk-bg-from);
+}
+
+.tk-titlebar__control:active {
+  background-color: var(--tk-pink);
+  color: var(--tk-surface);
+}
+
+.tk-titlebar__control:disabled {
+  color: var(--tk-disabled);
+  cursor: not-allowed;
+}
+
+.tk-titlebar__minimize {
+  width: var(--tk-sp-3);
+  height: var(--tk-focus-w);
+  border-radius: var(--tk-border-w);
+  background: currentColor;
+}
+
+.tk-titlebar__maximize {
+  width: var(--tk-sp-3);
+  height: var(--tk-sp-3);
+  border: var(--tk-border-w) solid currentColor;
+}
+
+.tk-titlebar__close {
+  position: relative;
+  width: var(--tk-sp-3);
+  height: var(--tk-sp-3);
+}
+
+.tk-titlebar__close::before,
+.tk-titlebar__close::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 100%;
+  height: var(--tk-border-w);
+  background: currentColor;
+  transform: rotate(45deg);
+}
+
+.tk-titlebar__close::after {
+  transform: rotate(-45deg);
+}

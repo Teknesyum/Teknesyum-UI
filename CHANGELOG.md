@@ -8,6 +8,10 @@ All notable changes to this project are documented here. The format follows
 ### Added
 - CHANGELOG, CONTRIBUTING and DCO.
 - Turkish README (README.tr.md) with language badges.
+- `scaffold.js` with three templates: `kur` (USB installer window), `ustcubuk` (React
+  title bar) and `durum` (Electron git sync badge).
+- Scanner rules `process/sync-child-process` and `process/send-sync`.
+- Skill section "The Best Program Shows It Is Working".
 
 ### Changed
 - README links Teknesyum Core by full URL and explains the marketplace layout.

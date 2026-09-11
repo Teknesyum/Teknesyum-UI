@@ -24,10 +24,10 @@ a number. Neither belongs in its context window.
 |---|---|---|
 | A value — colour, radius, duration, scale step | generated token files in your project | nothing; read one when you need one |
 | A mechanically checkable rule | `scan.js` | nothing; it runs, it does not get read |
-| Runs against the model's default, or a scan cannot see it | `SKILL.md`, 124 lines | paid once, when UI work starts |
+| Runs against the model's default, or a scan cannot see it | `SKILL.md`, 132 lines | paid once, when UI work starts |
 
 Base spent about 27,000 tokens on `SKILL.md` and 55,000 more on eight reference files
-every time an interface came up. This ships 86 scanner rules, one 124-line skill and one
+every time an interface came up. This ships 88 scanner rules, one 132-line skill and one
 platform reference.
 
 ## Install
@@ -67,13 +67,31 @@ A Stop hook runs the same scan when interface files changed and blocks on a viol
 exits before doing any work when no config exists or `off: true` is set, and it stands down
 after two blocks on the same file, so a real disagreement stops the gate rather than the work.
 
+## Templates
+
+```bash
+node <plugin>/scripts/scaffold.js kur <AppName> [--simge app/simge.ico] [--anahtar usb-01]
+node <plugin>/scripts/scaffold.js ustcubuk
+node <plugin>/scripts/scaffold.js durum
+```
+
+| Target | Writes | What it is |
+|---|---|---|
+| `kur` | `Kur.bat`, `kur-<name>.ps1` | A USB installer window: creeping progress bar, live log, finish and error screens, `-Prova` dry run. Updates in place; `-Onar` or the finish screen's Onar button rebuilds. Each stick carries its own deploy key under `.kurulum/anahtar/`. |
+| `ustcubuk` | `teknesyum-ui/ustcubuk/` | A React title bar: logo, two-part name, language slot, sponsor and brand links, window controls, drag region for Electron and Tauri. |
+| `durum` | `teknesyum-ui/durum/` | An Electron git sync with a title-bar badge: syncing, synced with the time, offline; click to sync now. |
+
+An existing file is never overwritten. Project-specific install steps go in with
+`--adimlar <file>`; the default installs npm packages and a desktop shortcut. Keep
+`.kurulum/` and `.araclar/` out of the project's git.
+
 ## Tests
 
 ```bash
 npm test
 ```
 
-91 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
+116 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
 starts writing to `additionalContext` or `systemMessage`, if `SKILL.md` grows past 150
 lines, or if a slash command reappears.
 
@@ -85,6 +103,8 @@ ui/scripts/setup.js       install and generate
 ui/scripts/generate.js    tokens -> theme.css, Theme.xaml, Theme.axaml, Palette.cs
 ui/scripts/scan.js        the scanner
 ui/scripts/rules/*.js     the rules, one module per domain
+ui/scripts/scaffold.js    copies a template into a project
+ui/templates/             installer, title bar, sync badge
 ui/hooks/guard.js         the Stop hook
 ui/roles/ui-builder.md    the role an agent reads to build UI
 docs/DECISIONS.md         why it is shaped this way

@@ -11,6 +11,7 @@ const ASSETS = path.join(SKILL, 'assets');
 const SCAN = path.join(UI, 'scripts', 'scan.js');
 const SETUP = path.join(UI, 'scripts', 'setup.js');
 const GENERATE = path.join(UI, 'scripts', 'generate.js');
+const SCAFFOLD = path.join(UI, 'scripts', 'scaffold.js');
 const GUARD = path.join(UI, 'hooks', 'guard.js');
 const RULE_DIR = path.join(UI, 'scripts', 'rules');
 const FIXTURES = path.join(RULE_DIR, '__fixtures__');
@@ -100,6 +101,7 @@ module.exports = {
   SCAN,
   SETUP,
   GENERATE,
+  SCAFFOLD,
   GUARD,
   RULE_DIR,
   FIXTURES,

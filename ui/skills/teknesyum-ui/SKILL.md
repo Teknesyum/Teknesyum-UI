@@ -95,6 +95,14 @@ see, and what you would otherwise get wrong.
   minimise. Not the footer, not settings. Fully opaque at rest; hover is `scale(1.02)`,
   never opacity.
 
+### The Best Program Shows It Is Working
+
+- Never block the UI thread. A UI process runs child processes async; `scan.js` enforces it.
+- Work past ~1 s shows progress: the bar creeps inside its step, the step name is visible.
+- Background state — sync, update, connection — is always on screen (`scaffold.js durum`).
+- Announce the outcome: success a short toast, failure a human sentence plus the log path.
+- Installation is part of the product: `scaffold.js kur <Name>` writes the installer window.
+
 ## Verification
 
 Compiling proves nothing, and a static scan cannot see a render.

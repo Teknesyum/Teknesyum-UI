@@ -25,10 +25,10 @@ bir sayıdır. İkisinin de bağlam penceresinde yeri yoktur.
 |---|---|---|
 | Bir değer — renk, yarıçap, süre, ölçek adımı | projenizdeki üretilmiş token dosyaları | hiç; gerektiğinde birini okursunuz |
 | Mekanik olarak denetlenebilir bir kural | `scan.js` | hiç; çalışır, okunmaz |
-| Modelin varsayılanına ters düşen ya da tarayıcının göremediği | `SKILL.md`, 124 satır | bir kez, arayüz işi başladığında |
+| Modelin varsayılanına ters düşen ya da tarayıcının göremediği | `SKILL.md`, 132 satır | bir kez, arayüz işi başladığında |
 
 Base, her arayüz konusu açıldığında `SKILL.md` için yaklaşık 27.000 ve sekiz referans dosyası
-için 55.000 token daha harcıyordu. Bu proje 86 tarayıcı kuralı, 124 satırlık tek bir skill ve
+için 55.000 token daha harcıyordu. Bu proje 88 tarayıcı kuralı, 132 satırlık tek bir skill ve
 tek bir platform referansı ile gelir.
 
 ## Kurulum
@@ -72,13 +72,31 @@ Arayüz dosyaları değiştiğinde bir Stop kancası aynı taramayı çalıştı
 Yapılandırma yoksa ya da `off: true` ayarlıysa hiç iş yapmadan çıkar; aynı dosyada iki
 engelden sonra geri çekilir, böylece gerçek bir anlaşmazlık işi değil kapıyı durdurur.
 
+## Şablonlar
+
+```bash
+node <plugin>/scripts/scaffold.js kur <UygulamaAdı> [--simge app/simge.ico] [--anahtar usb-01]
+node <plugin>/scripts/scaffold.js ustcubuk
+node <plugin>/scripts/scaffold.js durum
+```
+
+| Hedef | Yazdığı | Ne olduğu |
+|---|---|---|
+| `kur` | `Kur.bat`, `kur-<ad>.ps1` | USB kurulum penceresi: adım içinde ilerleyen çubuk, canlı günlük, bitiş ve hata ekranları, `-Prova` deneme kipi. Yerinde günceller; `-Onar` ya da bitiş ekranındaki Onar düğmesi baştan kurar. Her USB kendi deploy anahtarını `.kurulum/anahtar/` altında taşır. |
+| `ustcubuk` | `teknesyum-ui/ustcubuk/` | React başlık çubuğu: logo, iki parçalı ad, dil yuvası, sponsor ve marka bağlantıları, pencere düğmeleri, Electron ve Tauri için sürükleme alanı. |
+| `durum` | `teknesyum-ui/durum/` | Başlık çubuğu rozetli Electron git eşitlemesi: eşitleniyor, saatiyle eşitlendi, çevrimdışı; tıklayınca hemen eşitler. |
+
+Var olan dosyanın üzerine asla yazılmaz. Projeye özgü kurulum adımları `--adimlar <dosya>`
+ile girer; varsayılan npm paketlerini ve bir masaüstü kısayolunu kurar. `.kurulum/` ve
+`.araclar/` projenin git'ine girmesin.
+
 ## Testler
 
 ```bash
 npm test
 ```
 
-91 assertion, bağımlılık yok. Yedisi maliyet assertion'ıdır: bir kanca `additionalContext`
+116 assertion, bağımlılık yok. Yedisi maliyet assertion'ıdır: bir kanca `additionalContext`
 ya da `systemMessage` yazmaya başlarsa, `SKILL.md` 150 satırı geçerse ya da bir slash komutu
 yeniden belirirse başarısız olurlar.
 
@@ -90,6 +108,8 @@ ui/scripts/setup.js       kurulum ve üretim
 ui/scripts/generate.js    token -> theme.css, Theme.xaml, Theme.axaml, Palette.cs
 ui/scripts/scan.js        tarayıcı
 ui/scripts/rules/*.js     kurallar, her alan için bir modül
+ui/scripts/scaffold.js    bir şablonu projeye kopyalar
+ui/templates/             kurulum, başlık çubuğu, eşitleme rozeti
 ui/hooks/guard.js         Stop kancası
 ui/roles/ui-builder.md    bir ajanın arayüz kurmak için okuduğu rol
 docs/DECISIONS.md         neden bu biçimde

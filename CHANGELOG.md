@@ -5,7 +5,18 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-09-12
+
 ### Added
+- Config `ignore` array: `[{ rule, file, line?, reason }]` silences a named finding.
+  `reason` is required; an entry without one is refused on stderr and does not apply.
+  The summary line ends with `N ignored` and `--json` keeps the row as
+  `"ignored": true` with its `"reason"`.
+- Avalonia tooltip forms recognised by `states/disabled-affordance`: the `ToolTip.Tip`
+  attribute, a `<ToolTip.Tip>` body element, and a `Setter Property="ToolTip.Tip"`
+  inside a `:disabled` style.
+- Fixtures for the Avalonia tooltip forms, fenced evidence blocks, `default=` flags,
+  `Get("key", a + b)`, and a named scrim `LinearGradientBrush`.
 - CHANGELOG, CONTRIBUTING and DCO.
 - Turkish README (README.tr.md) with language badges.
 - `scaffold.js` with three templates: `kur` (USB installer window), `ustcubuk` (React
@@ -16,6 +27,19 @@ All notable changes to this project are documented here. The format follows
 ### Changed
 - README links Teknesyum Core by full URL and explains the marketplace layout.
 - `trash/` is no longer tracked.
+
+### Fixed
+- `states/disabled-affordance` no longer demands a WPF-only `ToolTip` attribute on
+  Avalonia markup; it reads the element body as well.
+- `forms/unmeasured-label` skips lines inside fenced code blocks — raw evidence is not
+  a claim — and no longer counts `default=` flag values or the literal `(Default)`
+  registry value name.
+- `forms/no-sentence-concat` anchors the `t(` call on a word boundary, so `Get(`,
+  `Format(` and `Print(` no longer read as locale calls.
+- `colour/background-gradient` judges only shell backdrop brushes in XAML — an
+  `x:Key` matching app/shell/window background, or a brush inside
+  `<Window.Background>` / `<Application.Background>` — and counts distinct colours
+  rather than `<GradientStop>` elements.
 
 ## [0.2.0] - 2026-09-01
 

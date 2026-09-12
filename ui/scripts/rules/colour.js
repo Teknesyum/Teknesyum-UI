@@ -682,6 +682,32 @@ const whiteBackground = {
   },
 };
 
+const SHELL_BACKDROP_KEY = /(app|shell|window)[-_]?back(ground|drop)/i;
+
+function shellBackdropBrush(src, index, attrs) {
+  const key = /x:Key\s*=\s*"([^"]*)"/.exec(attrs);
+  if (key && SHELL_BACKDROP_KEY.test(key[1])) return true;
+  const before = src.slice(0, index);
+  const open = /<(?:Window|Application)\.Background\s*>/g;
+  let last = -1;
+  let m;
+  while ((m = open.exec(before))) last = m.index + m[0].length;
+  if (last < 0) return false;
+  return !/<\/(?:Window|Application)\.Background\s*>/.test(before.slice(last));
+}
+
+function gradientColours(block) {
+  const out = new Set();
+  for (const g of block.matchAll(/<GradientStop\b[^>]*>/g)) {
+    const c = /\bColor\s*=\s*"([^"]*)"/.exec(g[0]);
+    if (!c) continue;
+    const raw = c[1].trim();
+    const res = /\{\s*(?:Dynamic|Static)Resource\s+([^}]+)\}/.exec(raw);
+    out.add((res ? res[1].trim() : raw).toLowerCase());
+  }
+  return out;
+}
+
 const backgroundGradient = {
   id: 'background-gradient',
   severity: 'error',
@@ -714,12 +740,13 @@ const backgroundGradient = {
     }
     if (XAML.indexOf(extOf(file)) >= 0) {
       const src = String(text);
-      for (const m of src.matchAll(/<LinearGradientBrush\b[\s\S]*?<\/LinearGradientBrush>/g)) {
-        const count = (m[0].match(/<GradientStop\b/g) || []).length;
+      for (const m of src.matchAll(/<LinearGradientBrush\b([^>]*)>[\s\S]*?<\/LinearGradientBrush>/g)) {
+        if (!shellBackdropBrush(src, m.index, m[1])) continue;
+        const count = gradientColours(m[0]).size;
         if (count > 1 && count < s.stops) {
           out.push({
             line: (src.slice(0, m.index).match(/\n/g) || []).length + 1,
-            message: count + ' gradient stops — the shell gradient has ' + s.stops,
+            message: count + ' distinct gradient colours — the shell gradient has ' + s.stops,
           });
         }
       }

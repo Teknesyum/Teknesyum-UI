@@ -6,10 +6,16 @@ function nearbyNumber(line) {
   const bare = String(line)
     .replace(/`[^`]*`/g, ' ')
     .replace(/\bWCAG\s+\d+(?:\.\d+)*/gi, ' ');
-  const m = /\bdefaults?\b/i.exec(bare);
-  if (!m) return false;
-  const from = Math.max(0, m.index - 25);
-  return /\d/.test(bare.slice(from, m.index + m[0].length + 25));
+  const re = /\bdefaults?\b/gi;
+  let m;
+  while ((m = re.exec(bare))) {
+    const end = m.index + m[0].length;
+    if (/^\s*=/.test(bare.slice(end))) continue;
+    if (bare.slice(Math.max(0, m.index - 1), end + 1) === '(Default)') continue;
+    const from = Math.max(0, m.index - 25);
+    if (/\d/.test(bare.slice(from, end + 25))) return true;
+  }
+  return false;
 }
 
 const MACHINE_TEXT =
@@ -260,8 +266,8 @@ module.exports = {
       exts: CODE,
       test(line) {
         if (!/\+/.test(line)) return null;
-        const concat = /t\(\s*['"][^'"]+['"][^)]*\)\s*\+/.test(line)
-          || /\+\s*t\(\s*['"][^'"]+['"]/.test(line);
+        const concat = /(?<![\w$.])t\(\s*['"][^'"]+['"][^)]*\)\s*\+/.test(line)
+          || /\+\s*(?<![\w$.])t\(\s*['"][^'"]+['"]/.test(line);
         if (!concat) return null;
         return 'Do not concatenate sentence fragments: one locale key with a named placeholder.';
       },
@@ -551,8 +557,14 @@ module.exports = {
           if (!/\.md$/i.test(rel)) continue;
           const text = typeof file.text === 'string' ? file.text : '';
           const lines = text.split('\n');
+          let fenced = false;
           for (let i = 0; i < lines.length; i += 1) {
             const line = lines[i];
+            if (/^\s*```/.test(line)) {
+              fenced = !fenced;
+              continue;
+            }
+            if (fenced) continue;
             if (!/\bdefaults?\b/i.test(line) || !/\d/.test(line)) continue;
             if (/\(default, unmeasured\)/.test(line)) continue;
             if (/\bmeasured\b/i.test(line)) continue;

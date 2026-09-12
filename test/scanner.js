@@ -274,6 +274,57 @@ function brokenModuleSurvives(dirty) {
   L.ok('the planted module is gone', !fs.existsSync(planted));
 }
 
+function ignorePath() {
+  const env = L.cleanEnv();
+  const root = cleanProject();
+  const configPath = path.join(root, '.claude', 'teknesyum-ui.json');
+  L.write(path.join(root, 'panel.css'), '.panel { color: #ff00ea; }\n');
+
+  const before = L.node(L.SCAN, [root], { env });
+  L.ok('a raw colour is open with no ignore entry', /colour\/raw-colour/.test(before.stdout), before.stdout);
+
+  const entry = {
+    rule: 'colour/raw-colour',
+    file: 'panel.css',
+    line: 1,
+    reason: 'Vendor swatch pinned by a test.',
+  };
+  L.write(configPath, JSON.stringify(Object.assign({}, CONFIG, { ignore: [entry] }), null, 2));
+  const after = L.node(L.SCAN, [root], { env });
+  L.ok('an ignore entry drops the finding', !/colour\/raw-colour/.test(after.stdout), after.stdout);
+  L.ok('the summary counts what was ignored', /·\s1 ignored/.test(after.stdout), after.stdout);
+
+  const json = L.node(L.SCAN, [root, '--json'], { env });
+  let rows = [];
+  try {
+    rows = JSON.parse(json.stdout);
+  } catch {
+    rows = [];
+  }
+  const hit = rows.find((f) => f.rule === 'colour/raw-colour');
+  L.ok(
+    '--json keeps the ignored finding with its reason',
+    !!hit && hit.ignored === true && /Vendor swatch/.test(hit.reason || ''),
+    JSON.stringify(hit || {})
+  );
+
+  L.write(
+    configPath,
+    JSON.stringify(
+      Object.assign({}, CONFIG, { ignore: [{ rule: 'colour/raw-colour', file: 'panel.css' }] }),
+      null,
+      2
+    )
+  );
+  const bare = L.node(L.SCAN, [root], { env });
+  L.ok(
+    'an ignore entry without a reason is refused on stderr',
+    /ignore entry without a reason: colour\/raw-colour panel\.css/.test(bare.stderr),
+    bare.stderr
+  );
+  L.ok('the refused entry leaves the finding open', /colour\/raw-colour/.test(bare.stdout), bare.stdout);
+}
+
 function dogfood() {
   const repo = path.resolve(__dirname, '..');
   const config = path.join(repo, '.claude', 'teknesyum-ui.json');
@@ -293,5 +344,6 @@ module.exports = function scanner() {
   const dirty = exitCodes();
   jsonShape(dirty);
   brokenModuleSurvives(dirty);
+  ignorePath();
   dogfood();
 };

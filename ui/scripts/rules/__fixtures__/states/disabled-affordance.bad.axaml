@@ -1,0 +1,9 @@
+<StackPanel xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Button IsEnabled="False" Content="{loc:Text main.action.start}" />
+
+  <Button IsEnabled="False">
+    <TextBlock Text="{loc:Text main.action.cancel}" />
+  </Button>
+
+  <CheckBox IsEnabled="False" Content="{loc:Text main.option.hdr}" />
+</StackPanel>

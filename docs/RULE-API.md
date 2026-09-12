@@ -67,3 +67,42 @@ Rules never throw. A rule that cannot evaluate returns nothing.
 
 Colour, size and duration comparisons read `ctx.tokens` / `ctx.theme`. Never hardcode a
 value in a rule; if the token is missing, the rule returns nothing.
+
+## Ignoring a finding
+
+The merged `teknesyum-ui.json` may carry an `ignore` array. Each entry names one rule in
+one file, and says why:
+
+```json
+{
+  "ignore": [
+    {
+      "rule": "forms/no-ui-string-literal",
+      "file": "src/VidShrink.App/MainWindow.axaml",
+      "line": 85,
+      "reason": "The brand name is spelled the same in every language; BrandSpellingTests pins it."
+    }
+  ]
+}
+```
+
+| Field | Required | Value |
+|---|---|---|
+| `rule` | yes | `<module id>/<rule id>`, exactly as the scanner prints it |
+| `file` | yes | project-relative path, forward slashes |
+| `line` | no | 1-based line; omitted, the entry covers that rule in that whole file |
+| `reason` | yes | non-empty string — why the rule does not apply here |
+
+An entry without a non-empty `reason` is not an exemption: the scanner writes
+`ignore entry without a reason: <rule> <file>` to stderr and the entry is dropped.
+
+Matching runs after the scan and before the open count. An ignored finding is neither
+printed nor counted, does not reach `--fix`, and does not affect the exit code. The
+summary line ends with how many were ignored:
+
+```
+642 files · 0 open · 0 fixed · 0 error(s) · 2 ignored
+```
+
+Under `--json` the finding is still present, carrying `"ignored": true` and its
+`"reason"`, so a reviewer can see what was waived.

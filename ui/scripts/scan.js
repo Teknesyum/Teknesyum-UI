@@ -93,6 +93,52 @@ function uiConfig(root) {
   };
 }
 
+function normalisePath(value) {
+  return String(value).replace(/\\/g, '/').replace(/^\.\//, '');
+}
+
+function ignoreRules(merged) {
+  const raw = merged && Array.isArray(merged.ignore) ? merged.ignore : [];
+  const out = [];
+  for (const entry of raw) {
+    if (!entry || typeof entry !== 'object') continue;
+    const rule = typeof entry.rule === 'string' ? entry.rule.trim() : '';
+    const file = typeof entry.file === 'string' ? entry.file.trim() : '';
+    if (!rule || !file) continue;
+    const reason = typeof entry.reason === 'string' ? entry.reason.trim() : '';
+    if (!reason) {
+      process.stderr.write('ignore entry without a reason: ' + rule + ' ' + file + '\n');
+      continue;
+    }
+    const line = entry.line === undefined || entry.line === null ? null : Number(entry.line);
+    out.push({
+      rule,
+      file: normalisePath(file),
+      line: Number.isFinite(line) ? line : null,
+      reason,
+    });
+  }
+  return out;
+}
+
+function markIgnored(findings, rules) {
+  if (!rules.length) return 0;
+  let n = 0;
+  for (const f of findings) {
+    const file = normalisePath(f.file || '');
+    for (const r of rules) {
+      if (r.rule !== f.rule) continue;
+      if (r.file !== file) continue;
+      if (r.line !== null && r.line !== f.line) continue;
+      f.ignored = true;
+      f.reason = r.reason;
+      n += 1;
+      break;
+    }
+  }
+  return n;
+}
+
 function customProperties(css) {
   const body = css.replace(/\/\*[\s\S]*?\*\//g, ' ');
   const out = {};
@@ -269,7 +315,7 @@ function accepts(rule, ext) {
 }
 
 function finding(severity, rule, file, line, message, fix) {
-  return { severity, rule, file, line, message, fix: fix || null, fixed: false };
+  return { severity, rule, file, line, message, fix: fix || null, fixed: false, ignored: false, reason: null };
 }
 
 function runScan(ctx, modules, broken) {
@@ -412,6 +458,7 @@ const HELP = [
   '',
   'Exit: 0 clean · 1 findings · 2 not configured or off · 3 internal error',
   'Config: <root>/.claude/teknesyum-ui.json, then ~/.claude/teknesyum-ui.json',
+  'Ignore: config "ignore": [{ rule, file, line?, reason }] — reason is required',
   'Rules: ui/scripts/rules/*.js — see docs/RULE-API.md',
 ].join('\n');
 
@@ -480,12 +527,14 @@ function main(argv) {
   const broken = new Map();
   const ctx = buildContext(root, config.merged, notes);
   const findings = runScan(ctx, modules, broken);
-  const applied = fix ? applyFixes(ctx, findings, fixTable(modules)) : [];
+  const ignored = markIgnored(findings, ignoreRules(config.merged));
+  const live = findings.filter((f) => !f.ignored);
+  const applied = fix ? applyFixes(ctx, live, fixTable(modules)) : [];
   for (const n of notes) process.stderr.write(n + '\n');
   for (const [id, message] of broken)
     process.stderr.write('rule skipped: ' + id + ' — ' + message + '\n');
 
-  const open = findings.filter((f) => !f.fixed);
+  const open = live.filter((f) => !f.fixed);
 
   if (asJson) {
     process.stdout.write(
@@ -498,6 +547,8 @@ function main(argv) {
           message: f.message,
           fix: f.fix,
           fixed: f.fixed,
+          ignored: f.ignored,
+          reason: f.reason,
         })),
         null,
         2
@@ -518,7 +569,9 @@ function main(argv) {
       applied.length +
       ' fixed · ' +
       open.filter((f) => f.severity === 'error').length +
-      ' error(s)'
+      ' error(s) · ' +
+      ignored +
+      ' ignored'
   );
   process.stdout.write(lines.join('\n') + '\n');
   return open.length ? 1 : 0;

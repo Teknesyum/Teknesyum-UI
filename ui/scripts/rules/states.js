@@ -79,6 +79,23 @@ function lineAt(text, index) {
   return n;
 }
 
+function xamlBody(text, name, from) {
+  const tag = name.replace(/\./g, '\\.');
+  const re = new RegExp('<' + tag + '(?![\\w.])[^>]*?(\\/?)>|<\\/' + tag + '\\s*>', 'g');
+  re.lastIndex = from;
+  let depth = 1;
+  let m;
+  while ((m = re.exec(text))) {
+    if (m[0][1] === '/') {
+      depth -= 1;
+      if (depth === 0) return text.slice(from, m.index);
+    } else if (m[1] !== '/') {
+      depth += 1;
+    }
+  }
+  return text.slice(from);
+}
+
 function oneLine(text) {
   return String(text).replace(/\s+/g, ' ').trim();
 }
@@ -594,10 +611,15 @@ module.exports = {
           }
         }
         if (XAML.includes(ext)) {
-          for (const m of text.matchAll(/<([A-Z][\w.]*)\b([^>]*)>/g)) {
+          for (const m of text.matchAll(/<([A-Z][\w.]*)\b([^>]*?)(\/?)>/g)) {
             if (!XAML_CONTROL.test(m[1])) continue;
             if (!/IsEnabled\s*=\s*"False"/.test(m[2])) continue;
-            if (/ToolTip\s*=/.test(m[2])) continue;
+            if (/\bToolTip(?:\.Tip)?\s*=/.test(m[2])) continue;
+            if (m[3] !== '/') {
+              const body = xamlBody(text, m[1], m.index + m[0].length);
+              if (/<ToolTip\.Tip\b/.test(body)) continue;
+              if (/Property\s*=\s*"ToolTip\.Tip"/.test(body)) continue;
+            }
             out.push({
               line: lineAt(text, m.index),
               message: '<' + m[1] + '> IsEnabled="False" without a ToolTip explaining why',

@@ -1,0 +1,19 @@
+<StackPanel xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Button IsEnabled="False" ToolTip.Tip="{loc:Text main.action.start.disabled-tip}" />
+
+  <Button IsEnabled="False">
+    <ToolTip.Tip>
+      <TextBlock Text="{loc:Text main.action.cancel.disabled-tip}" />
+    </ToolTip.Tip>
+  </Button>
+
+  <Button IsEnabled="False">
+    <Button.Styles>
+      <Style Selector="Button:disabled">
+        <Setter Property="ToolTip.Tip" Value="{loc:Text main.action.reset.disabled-tip}" />
+      </Style>
+    </Button.Styles>
+  </Button>
+
+  <CheckBox IsEnabled="False" ToolTip.Tip="{loc:Text main.option.hdr.disabled-tip}" />
+</StackPanel>

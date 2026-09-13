@@ -25,11 +25,33 @@ bir sayıdır. İkisinin de bağlam penceresinde yeri yoktur.
 |---|---|---|
 | Bir değer — renk, yarıçap, süre, ölçek adımı | projenizdeki üretilmiş token dosyaları | hiç; gerektiğinde birini okursunuz |
 | Mekanik olarak denetlenebilir bir kural | `scan.js` | hiç; çalışır, okunmaz |
-| Modelin varsayılanına ters düşen ya da tarayıcının göremediği | `SKILL.md`, 132 satır | bir kez, arayüz işi başladığında |
+| Yazılı standardın kendisi, düz metin | özel raf, konu başına bir kitap | hiç; kitap, işi başladığında bir kez okunur |
+| Rafa nasıl gidilir ve ne koşulur | `SKILL.md`, 80 satır | bir kez, arayüz işi başladığında |
 
 Base, her arayüz konusu açıldığında `SKILL.md` için yaklaşık 27.000 ve sekiz referans dosyası
-için 55.000 token daha harcıyordu. Bu proje 88 tarayıcı kuralı, 132 satırlık tek bir skill ve
+için 55.000 token daha harcıyordu. Bu proje 91 tarayıcı kuralı, 80 satırlık tek bir skill ve
 tek bir platform referansı ile gelir.
+
+## Kurallar nerede yaşar
+
+Standardın düz metin yarısı bu depoda değil.
+[Teknesyum Core](https://github.com/Teknesyum/Teknesyum-Core)'un tuttuğu özel rafta duruyor —
+`TEKNESYUM_PRIVATE` ya da `<yapılandırma>/teknesyum-private/private/tercihler/` — konu başına
+bir kitap. Bir kuralı orada bir kez anlatırsınız; hem skill hem şablon üreteci onu izler.
+
+```bash
+node <plugin>/scripts/raf.js                     # kitapları listeler
+node <plugin>/scripts/raf.js guncelleme-paneli   # birini okur
+```
+
+| İş | Kitap |
+|---|---|
+| Herhangi bir arayüz değişikliği | `ui-duzeni` |
+| Güncelleme, kurulum ya da eşitleme yüzeyi | `guncelleme-paneli` |
+| README ya da depo belgesi | `readme-protokolu` |
+
+Bir kitap oturum başına bir kez okunur. Skill bunu söyler, Stop kancası da kendi belleğini
+tutar: bir bulguyu dosya başına bir kez söyler ve sohbet compact edilene kadar tekrarlamaz.
 
 ## Kurulum
 
@@ -66,11 +88,12 @@ node <plugin>/scripts/scan.js <proje-kökü>
 
 `0` temiz, `1` bulgu var, `2` yapılandırılmamış ya da kapalı. Makine çıktısı için `--json`,
 güvenle otomatikleştirilebilen onarımlar için `--fix`, neyi uyguladığını görmek için
-`--list-rules`.
+`--list-rules`, yalnız dokunulan dosyalara bakması için `--files a.css,b.tsx`.
 
 Arayüz dosyaları değiştiğinde bir Stop kancası aynı taramayı çalıştırır ve ihlalde durdurur.
 Yapılandırma yoksa ya da `off: true` ayarlıysa hiç iş yapmadan çıkar; aynı dosyada iki
 engelden sonra geri çekilir, böylece gerçek bir anlaşmazlık işi değil kapıyı durdurur.
+Yalnız o turda değişen dosyaları tarar ve aynı sohbette söylediği bulguyu bir daha söylemez.
 
 ## Şablonlar
 
@@ -86,7 +109,8 @@ node <plugin>/scripts/scaffold.js durum
 | `ustcubuk` | `teknesyum-ui/ustcubuk/` | React başlık çubuğu: logo, iki parçalı ad, dil yuvası, sponsor ve marka bağlantıları, pencere düğmeleri, Electron ve Tauri için sürükleme alanı. |
 | `durum` | `teknesyum-ui/durum/` | Başlık çubuğu rozetli Electron git eşitlemesi: eşitleniyor, saatiyle eşitlendi, çevrimdışı; tıklayınca hemen eşitler. |
 
-Var olan dosyanın üzerine asla yazılmaz. Projeye özgü kurulum adımları `--adimlar <dosya>`
+Her hedef, yazdığı şeyi yöneten raf kitabının adını söyleyerek biter; raf ya da kitap yoksa
+bunu açıkça söyler. Var olan dosyanın üzerine asla yazılmaz. Projeye özgü kurulum adımları `--adimlar <dosya>`
 ile girer; varsayılan npm paketlerini ve bir masaüstü kısayolunu kurar. `.kurulum/` ve
 `.araclar/` projenin git'ine girmesin.
 
@@ -96,7 +120,7 @@ ile girer; varsayılan npm paketlerini ve bir masaüstü kısayolunu kurar. `.ku
 npm test
 ```
 
-116 assertion, bağımlılık yok. Yedisi maliyet assertion'ıdır: bir kanca `additionalContext`
+147 assertion, bağımlılık yok. Yedisi maliyet assertion'ıdır: bir kanca `additionalContext`
 ya da `systemMessage` yazmaya başlarsa, `SKILL.md` 150 satırı geçerse ya da bir slash komutu
 yeniden belirirse başarısız olurlar.
 
@@ -106,6 +130,7 @@ yeniden belirirse başarısız olurlar.
 ui/skills/teknesyum-ui/   SKILL.md, references/platform.md, assets/
 ui/scripts/setup.js       kurulum ve üretim
 ui/scripts/generate.js    token -> theme.css, Theme.xaml, Theme.axaml, Palette.cs
+ui/scripts/raf.js         özel rafı okur
 ui/scripts/scan.js        tarayıcı
 ui/scripts/rules/*.js     kurallar, her alan için bir modül
 ui/scripts/scaffold.js    bir şablonu projeye kopyalar

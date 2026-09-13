@@ -24,11 +24,34 @@ a number. Neither belongs in its context window.
 |---|---|---|
 | A value — colour, radius, duration, scale step | generated token files in your project | nothing; read one when you need one |
 | A mechanically checkable rule | `scan.js` | nothing; it runs, it does not get read |
-| Runs against the model's default, or a scan cannot see it | `SKILL.md`, 132 lines | paid once, when UI work starts |
+| The written standard, in prose | the private shelf, one book per subject | nothing; a book is read once, when its work starts |
+| How to reach the shelf and what to run | `SKILL.md`, 80 lines | paid once, when UI work starts |
 
 Base spent about 27,000 tokens on `SKILL.md` and 55,000 more on eight reference files
-every time an interface came up. This ships 88 scanner rules, one 132-line skill and one
+every time an interface came up. This ships 91 scanner rules, one 80-line skill and one
 platform reference.
+
+## Where the rules live
+
+The prose half of the standard is not in this repository. It sits on the private shelf that
+[Teknesyum Core](https://github.com/Teknesyum/Teknesyum-Core) keeps — `TEKNESYUM_PRIVATE`, or
+`<config>/teknesyum-private/private/tercihler/` — one book per subject. You describe a rule
+once, there, and both the skill and the scaffolder follow it.
+
+```bash
+node <plugin>/scripts/raf.js                     # list the books
+node <plugin>/scripts/raf.js guncelleme-paneli   # read one
+```
+
+| Work | Book |
+|---|---|
+| Any interface change | `ui-duzeni` |
+| An update, installer or sync surface | `guncelleme-paneli` |
+| A README or repository document | `readme-protokolu` |
+
+A book is read once per session. The skill says so, and the Stop hook keeps its own memory:
+it names a finding once per file and stays quiet on a repeat until the conversation is
+compacted.
 
 ## Install
 
@@ -61,11 +84,14 @@ node <plugin>/scripts/scan.js <project-root>
 ```
 
 `0` clean, `1` findings, `2` not configured or off. `--json` for machine output, `--fix`
-for the repairs that are safe to automate, `--list-rules` for what it enforces.
+for the repairs that are safe to automate, `--list-rules` for what it enforces, `--files
+a.css,b.tsx` to look only at the files that were touched.
 
 A Stop hook runs the same scan when interface files changed and blocks on a violation. It
 exits before doing any work when no config exists or `off: true` is set, and it stands down
 after two blocks on the same file, so a real disagreement stops the gate rather than the work.
+It scans only the files the turn changed, and it does not repeat a finding it has already
+made in the same conversation.
 
 ## Templates
 
@@ -81,7 +107,8 @@ node <plugin>/scripts/scaffold.js durum
 | `ustcubuk` | `teknesyum-ui/ustcubuk/` | A React title bar: logo, two-part name, language slot, sponsor and brand links, window controls, drag region for Electron and Tauri. |
 | `durum` | `teknesyum-ui/durum/` | An Electron git sync with a title-bar badge: syncing, synced with the time, offline; click to sync now. |
 
-An existing file is never overwritten. Project-specific install steps go in with
+Each target ends by naming the shelf book that governs what it just wrote, and says so
+plainly when the shelf or the book is missing. An existing file is never overwritten. Project-specific install steps go in with
 `--adimlar <file>`; the default installs npm packages and a desktop shortcut. Keep
 `.kurulum/` and `.araclar/` out of the project's git.
 
@@ -91,7 +118,7 @@ An existing file is never overwritten. Project-specific install steps go in with
 npm test
 ```
 
-116 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
+147 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
 starts writing to `additionalContext` or `systemMessage`, if `SKILL.md` grows past 150
 lines, or if a slash command reappears.
 
@@ -101,6 +128,7 @@ lines, or if a slash command reappears.
 ui/skills/teknesyum-ui/   SKILL.md, references/platform.md, assets/
 ui/scripts/setup.js       install and generate
 ui/scripts/generate.js    tokens -> theme.css, Theme.xaml, Theme.axaml, Palette.cs
+ui/scripts/raf.js         reads the private shelf
 ui/scripts/scan.js        the scanner
 ui/scripts/rules/*.js     the rules, one module per domain
 ui/scripts/scaffold.js    copies a template into a project

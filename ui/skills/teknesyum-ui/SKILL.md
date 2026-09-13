@@ -1,6 +1,6 @@
 ---
 name: teknesyum-ui
-description: Interface standard — palette, type scale, motion baseline, states, signature. Use when writing or changing an interface: component, panel, page, window, CSS, XAML, theme. Web, React, Electron, WPF, Avalonia. Applies only where a teknesyum-ui.json exists.
+description: Interface standard — the rules live on the private shelf, this skill reads them and the scanner enforces them. Use when changing an interface, adding an update or installer surface, or editing a README. React, Electron, WPF, Avalonia. Needs a teknesyum-ui.json.
 ---
 
 # Teknesyum UI
@@ -14,7 +14,30 @@ The project file overrides the machine file field by field.
 |---|---|
 | Neither | **Do not apply this standard.** Keep the project's own style. If the turn produced UI, say once: `node <plugin>/scripts/setup.js` installs one. Do not repeat it. |
 | `off: true` | Same, and do not offer. |
-| A file, not off | In force. Its `note:` field beats every rule below. |
+| A file, not off | In force. Its `note:` field beats everything below. |
+
+## Where the rules are
+
+The written standard is not in this file. It lives on the owner's private shelf and is
+read on demand:
+
+```
+node <plugin>/scripts/raf.js <book>
+```
+
+| Work | Book |
+|---|---|
+| Any interface: colour, motion, forms, text, desktop window, verification, report | `ui-duzeni` |
+| Update, auto-update, sync surface, installer window | `guncelleme-paneli` |
+| README or repository document | `readme-protokolu` |
+| Which preference books exist | no argument, it lists them |
+
+Read a book **once per session**, when the work actually touches it. If it is already in
+this conversation and no compact has happened since, do not read it again. The shelf is
+the single source: never restate its rules here, in a project file, or in a comment.
+
+If `raf.js` exits 1 there is no shelf on this machine. Then only the scanner's mechanical
+rules apply — say so once, and do not invent a rule the scanner does not hold.
 
 ## Values
 
@@ -31,102 +54,27 @@ the project; read the one you need.
 
 ```
 node <plugin>/scripts/scan.js <project-root>
+node <plugin>/scripts/scan.js <project-root> --files a.css,b.tsx
 ```
 
-That scanner holds the mechanical rules — tokens, states, motion properties, accessible
-names, locale keys. It is the rule set. This file carries only what a static scan cannot
-see, and what you would otherwise get wrong.
+The scanner is the mechanical rule set — tokens, states, motion properties, accessible
+names, locale keys, and the update panel's contract. `--files` limits it to the files the
+turn touched; the whole tree is only worth scanning when the work was broad.
 
-## Overrides
+## Update work
 
-### Colour
-
-- Dark only. Ignore `prefers-color-scheme: light`. A light theme means measuring all
-  eleven colours again.
-- Filled neon buttons take black text. White on neon is 1.38:1.
-- No mid greys. If text is worth showing, show it white; otherwise delete it.
-- Hierarchy is size, not weight or brightness: one step up the scale, never embolden.
-- Pink and purple measure ΔE 5.8 apart — never the sole difference between two things on
-  one screen. Make one blue, or add a second carrier.
-- There is no `info` colour. A neutral notice takes the default border and white text.
-- `warning` is text, border and icon. Never a fill, never a button.
-- Glow goes on boxes, never on text. One exception: the hero number.
-- Any outward glow needs 24px of clear space, or use a `/50` border instead.
-- Never glow a list row, table row, cell, or anything from `.map()` / `ItemsControl`.
-  Glow the container. The cost is scroll repaint, not element count.
-- Under `forced-colors`, hand the UI to the system palette. Do not defend the neon.
-
-### Motion
-
-- Motion is the baseline, not decoration. Panels, tabs, list changes, notifications,
-  value changes and loading animate. "Didn't seem necessary" is not a reason.
-- The focus ring appears in 0 ms — the one exception.
-- Loading shows a skeleton holding the incoming layout, not a spinner.
-
-### Forms and dialogs
-
-- No placeholders. Visible label, help text below the field.
-- Confirmation modals ignore backdrop clicks; info modals close on them. `Esc` closes both.
-- Do not confirm a reversible action. Do it, then offer undo.
-- Error toasts never auto-dismiss. Others live 6 s; hover and keyboard focus pause it.
-
-### Text
-
-- Table headers and cells centre both ways.
-- Every visible label, sentences included: first letter capital, rest lowercase.
-  Conjunctions stay lowercase. Turkish needs its own casing map — `toLocaleUpperCase('tr')`.
-- UI copy follows the config's `language` (default `tr`). Repository README and technical
-  docs are English regardless.
-
-### Scope
-
-- Take behaviour libraries. Never visual theme libraries — no MUI, WPF UI, MahApps,
-  HandyControl.
-- Check the licence before copying a component; unlicensed means owned. Record every
-  borrow in `docs/licenses.md`.
-- Showy effects — WebGL, particles, scroll scenes, `gsap` — belong on a separate promo
-  page, never in the application.
-
-### Desktop
-
-- Remove the system title bar and draw your own, then restore what you broke: drag,
-  double-click maximise, Aero Snap, edge resize, `Alt+F4`.
-- The signature block from the config's `signature` field sits in the title bar, left of
-  minimise. Not the footer, not settings. Fully opaque at rest; hover is `scale(1.02)`,
-  never opacity.
-
-### The Best Program Shows It Is Working
-
-- Never block the UI thread. A UI process runs child processes async; `scan.js` enforces it.
-- Work past ~1 s shows progress: the bar creeps inside its step, the step name is visible.
-- Background state — sync, update, connection — is always on screen (`scaffold.js durum`).
-- Announce the outcome: success a short toast, failure a human sentence plus the log path.
-- Installation is part of the product: `scaffold.js kur <Name>` writes the installer window.
-
-## Verification
-
-Compiling proves nothing, and a static scan cannot see a render.
-
-Open the application once per stage, screenshot it, and confirm the captured window's
-process path is this repository's binary. In that one pass walk: minimum window size,
-every tab, hover / focus / selected / disabled / open-dropdown, panel bottom edges, the
-motion baseline, keyboard traversal, and a language switch. Error and empty screens
-included.
-
-For a suspect edge, crop and magnify at least 4× nearest-neighbour. Blurred scaling hides
-a half-drawn stroke; 1 DIP is invisible at 1:1.
-
-## Report
-
-End a UI task with an impact block: `file:line`, the rule, what changed — and the rules
-you did **not** apply, with the reason. The user cannot read that out of the diff.
+Asked for an update, auto-update or sync surface: read `guncelleme-paneli`, then write it
+with `scaffold.js kur <Name>` / `scaffold.js durum`. Never hand-write the panel — the
+template already carries the step contract, the creeping ceiling and the 16 ms timer, and
+`scan.js --rules guncelleme` checks that what is in the project still matches.
 
 ## Precedence
 
 1. The config's `note:` field.
-2. This file.
+2. The shelf book for the work at hand.
 3. `scan.js` findings.
 4. `references/platform.md`.
 5. The project's existing style.
 
-A rule that is not here and not in the scanner is not part of the standard. Do not infer one.
+A rule that is not on the shelf and not in the scanner is not part of the standard. Do not
+infer one.

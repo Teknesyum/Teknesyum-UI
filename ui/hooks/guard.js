@@ -62,6 +62,10 @@ function stateFile(session) {
   return path.join(configRoot(), 'teknesyum-ui', 'guard-' + safe(session || 'main') + '.json');
 }
 
+function compacted(chunk) {
+  return /"isCompactSummary"\s*:\s*true/.test(chunk);
+}
+
 function touched(transcript, state) {
   let size = 0;
   try {
@@ -103,8 +107,10 @@ function touched(transcript, state) {
   return out;
 }
 
-function scan(script, root) {
-  const r = spawnSync(process.execPath, [script, root, '--json'], {
+function scan(script, root, files) {
+  const args = [script, root, '--json'];
+  if (files && files.length) args.push('--files', files.join(','));
+  const r = spawnSync(process.execPath, args, {
     encoding: 'utf8',
     timeout: 30000,
     windowsHide: true,
@@ -147,27 +153,33 @@ function decide(j) {
   const transcript = j.transcript_path || '';
   if (!transcript) return;
   const file = stateFile(j.session_id);
-  const state = read(file) || { offset: 0, blocks: {} };
+  const state = read(file) || { offset: 0, blocks: {}, said: {} };
   const changed = touched(transcript, state);
   if (!changed || !changed.length) return write(file, state);
   write(file, state);
 
   const script = path.join(__dirname, '..', 'scripts', 'scan.js');
   if (!fs.existsSync(script)) return;
-  const findings = scan(script, root);
+  const findings = scan(script, root, changed);
   if (!findings) return;
 
   if (!state.blocks || typeof state.blocks !== 'object') state.blocks = {};
+  if (!state.said || typeof state.said !== 'object') state.said = {};
   let spot = null;
+  let mark = '';
   for (const f of findings) {
     const w = where(f);
     if (!w) continue;
+    const key = safe(String(f.rule || '') + '@' + w.file);
+    if (state.said[key]) continue;
     if ((state.blocks[safe(w.file)] || 0) >= MAX_BLOCKS) continue;
     spot = w;
+    mark = key;
     break;
   }
-  if (!spot) return;
+  if (!spot) return write(file, state);
 
+  state.said[mark] = true;
   state.blocks[safe(spot.file)] = (state.blocks[safe(spot.file)] || 0) + 1;
   write(file, state);
   process.stderr.write(text(findings.length, spot.at, script, root));

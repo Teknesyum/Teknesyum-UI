@@ -10,6 +10,7 @@ const SUITES = [
   ['install', require('./install')],
   ['generate', require('./generate')],
   ['scaffold', require('./scaffold')],
+  ['raf', require('./raf')],
 ];
 
 function main() {

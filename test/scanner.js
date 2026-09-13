@@ -337,6 +337,29 @@ function dogfood() {
   L.ok('the scanner skips its own source', !/scripts\/rules\//.test(r.stdout));
 }
 
+function onlyFiles() {
+  const env = L.cleanEnv();
+  const root = cleanProject();
+  L.write(path.join(root, 'panel.css'), '.panel { color: #ff00ea; }\n');
+  L.write(path.join(root, 'kart.css'), '.kart { color: #00ffd0; }\n');
+
+  const parse = (r) => {
+    try {
+      return JSON.parse(r.stdout);
+    } catch {
+      return [];
+    }
+  };
+  const every = parse(L.node(L.SCAN, [root, '--json'], { env }));
+  const picked = parse(L.node(L.SCAN, [root, '--json', '--files', 'panel.css'], { env }));
+  const named = picked.filter((f) => f.file);
+  L.ok('--files narrows the scan to the named file', named.length > 0 && named.every((f) => /panel\.css$/.test(f.file)), JSON.stringify(named.map((f) => f.file)));
+  L.ok('without --files both files are seen', every.some((f) => /kart\.css$/.test(f.file)), JSON.stringify(every.map((f) => f.file)));
+
+  const none = L.node(L.SCAN, [root, '--json', '--files', 'yok.css'], { env });
+  L.ok('--files with an untouched file exits 0', none.status === 0, none.stdout + none.stderr);
+}
+
 module.exports = function scanner() {
   listRules();
   shape();
@@ -345,5 +368,6 @@ module.exports = function scanner() {
   jsonShape(dirty);
   brokenModuleSurvives(dirty);
   ignorePath();
+  onlyFiles();
   dogfood();
 };

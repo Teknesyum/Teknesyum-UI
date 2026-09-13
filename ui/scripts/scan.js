@@ -208,13 +208,26 @@ function collect(root) {
   };
 }
 
-function buildContext(root, config, notes) {
+function chosen(root, list) {
+  if (!list) return null;
+  const out = new Set();
+  for (const raw of list.split(',')) {
+    const one = raw.trim();
+    if (one) out.add(path.resolve(root, one));
+  }
+  return out.size ? out : null;
+}
+
+function buildContext(root, config, notes, pick) {
   const theme = customProperties(read(path.join(ASSETS, 'theme.css')) || '');
   const tokens = readJson(path.join(ASSETS, 'theme.tokens.json'));
   if (!Object.keys(theme).length && !tokens)
     notes.push('theme assets unreadable at ' + ASSETS + ' — colour and duration rules skipped');
 
-  const found = collect(root);
+  const all = collect(root);
+  const found = pick
+    ? { ui: all.ui.filter((f) => pick.has(path.resolve(f))), modules: all.modules.filter((f) => pick.has(path.resolve(f))) }
+    : all;
   const files = [];
   for (const full of found.ui) {
     const text = read(full);
@@ -449,11 +462,12 @@ function applyFixes(ctx, findings, fixes) {
 }
 
 const HELP = [
-  'Usage: node scan.js <root> [--json] [--fix] [--rules <a,b>] [--list-rules] [--help]',
+  'Usage: node scan.js <root> [--json] [--fix] [--rules <a,b>] [--files <a,b>] [--list-rules] [--help]',
   '',
   '  --json         print findings as a JSON array',
   '  --fix          apply the mechanical fixes, then report what changed',
   '  --rules <a,b>  run only these rule modules',
+  '  --files <a,b>  scan only these files; project rules still see the whole tree',
   '  --list-rules   print every rule id and severity',
   '',
   'Exit: 0 clean · 1 findings · 2 not configured or off · 3 internal error',
@@ -483,6 +497,7 @@ function main(argv) {
   const fix = args.includes('--fix');
   const list = args.includes('--list-rules');
   const pick = flagValue(args, '--rules');
+  const picked = flagValue(args, '--files');
   const only = pick
     ? new Set(
         pick
@@ -505,7 +520,7 @@ function main(argv) {
     return 0;
   }
 
-  const skip = new Set([pick, ...args.filter((a) => a.startsWith('-'))]);
+  const skip = new Set([pick, picked, ...args.filter((a) => a.startsWith('-'))]);
   const positional = args.filter((a) => !a.startsWith('-') && !skip.has(a));
   const root = path.resolve(positional[0] || process.cwd());
   if (!fs.existsSync(root)) {
@@ -525,7 +540,7 @@ function main(argv) {
 
   const notes = [];
   const broken = new Map();
-  const ctx = buildContext(root, config.merged, notes);
+  const ctx = buildContext(root, config.merged, notes, chosen(root, picked));
   const findings = runScan(ctx, modules, broken);
   const ignored = markIgnored(findings, ignoreRules(config.merged));
   const live = findings.filter((f) => !f.ignored);

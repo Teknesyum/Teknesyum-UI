@@ -4,6 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const raf = require('./raf');
 
 const TEMPLATES = path.resolve(__dirname, '..', 'templates');
 const BOM = '﻿';
@@ -133,6 +134,16 @@ function emit(root, plan) {
   return lines.join('\n');
 }
 
+const BOOKS = { kur: 'guncelleme-paneli', durum: 'guncelleme-paneli', ustcubuk: 'ui-duzeni' };
+
+function shelfNote(target) {
+  const book = BOOKS[target];
+  if (!book) return '';
+  if (!raf.var()) return 'shelf missing at ' + raf.dir() + ' - the written standard is not on this machine';
+  if (raf.oku(book) === null) return 'shelf has no ' + book + '.md - write the standard there before editing the panel';
+  return 'shelf: node <plugin>/scripts/raf.js ' + book + ' - follow it before editing the generated files';
+}
+
 function main(argv) {
   const args = argv.slice(2);
   if (!args.length || args.includes('--help') || args.includes('-h')) {
@@ -153,6 +164,7 @@ function main(argv) {
     return 2;
   }
   process.stdout.write(emit(root, plan) + '\n');
+  process.stdout.write(shelfNote(target) + '\n');
   return 0;
 }
 

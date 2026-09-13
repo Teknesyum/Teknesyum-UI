@@ -67,8 +67,33 @@ function usage() {
   L.ok('a refused run writes nothing', fs.readdirSync(root).length === 0, fs.readdirSync(root).join(' '));
 }
 
+function rafNotu() {
+  const home = L.tmp('tkui-sc-raf-');
+  const dir = path.join(home, 'private', 'tercihler');
+  fs.mkdirSync(dir, { recursive: true });
+
+  const bos = L.tmp('tkui-sc-bos-');
+  const yok = L.node(L.SCAFFOLD, ['kur', 'Deneme', '--project', bos], { env: L.cleanEnv({ TEKNESYUM_PRIVATE: path.join(home, 'yok') }) });
+  L.ok('kur says the shelf is missing', /shelf missing/.test(yok.stdout), yok.stdout);
+
+  const eksik = L.tmp('tkui-sc-eksik-');
+  const kitapsiz = L.node(L.SCAFFOLD, ['kur', 'Deneme', '--project', eksik], { env: L.cleanEnv({ TEKNESYUM_PRIVATE: home }) });
+  L.ok('kur says the update book is missing', /no guncelleme-paneli\.md/.test(kitapsiz.stdout), kitapsiz.stdout);
+
+  fs.writeFileSync(path.join(dir, 'guncelleme-paneli.md'), '# Panel\n', 'utf8');
+  const dolu = L.tmp('tkui-sc-dolu-');
+  const varsa = L.node(L.SCAFFOLD, ['kur', 'Deneme', '--project', dolu], { env: L.cleanEnv({ TEKNESYUM_PRIVATE: home }) });
+  L.ok('kur points at the update book on the shelf', /raf\.js guncelleme-paneli/.test(varsa.stdout), varsa.stdout);
+
+  fs.writeFileSync(path.join(dir, 'ui-duzeni.md'), '# Düzen\n', 'utf8');
+  const cubuk = L.tmp('tkui-sc-cubuk-');
+  const bar = L.node(L.SCAFFOLD, ['ustcubuk', '--project', cubuk], { env: L.cleanEnv({ TEKNESYUM_PRIVATE: home }) });
+  L.ok('ustcubuk points at the layout book', /raf\.js ui-duzeni/.test(bar.stdout), bar.stdout);
+}
+
 module.exports = function scaffoldSuite() {
   kur();
   copies();
   usage();
+  rafNotu();
 };

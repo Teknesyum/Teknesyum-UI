@@ -5,6 +5,26 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-13
+
+### Added
+- `raf.js`: reads the private shelf (`TEKNESYUM_PRIVATE`, else
+  `<config>/teknesyum-private/private/tercihler/`). No argument lists the books, a name
+  prints one. Exit `0` fine, `1` no shelf, `2` no such book.
+- Rule module `guncelleme`: `panel-yok` (an app with updater code and no `kur-*.ps1`),
+  `panel-sozlesmesiz` (an installer without the `Adim` contract, the ceiling or the 16 ms
+  timer) and `rozet-token-disi` (a sync badge painted with a fixed colour).
+- `scan.js --files a.css,b.tsx` limits the scan to the named files.
+- `scaffold.js` ends each target by naming the shelf book that governs it, and says so when
+  the shelf or the book is missing.
+- Test suite `raf` and cases for `--files` and the scaffolder's shelf note.
+
+### Changed
+- `SKILL.md` no longer carries the prose standard. It says where the shelf is, which book
+  belongs to which work, and that a book is read once per session. 132 lines to 80.
+- The Stop hook scans only the files the turn changed and does not repeat a finding it has
+  already made; the memory is cleared when the conversation is compacted.
+
 ## [0.2.1] - 2026-09-12
 
 ### Added
@@ -57,5 +77,6 @@ First release after the split from Teknesyum Base on 2026-08-28.
 - Core contracts and leftovers moved out of this repository.
 - Scanner reports exactly what it scans and no longer scans itself.
 
-[Unreleased]: https://github.com/Teknesyum/Teknesyum-UI/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/Teknesyum/Teknesyum-UI/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/Teknesyum/Teknesyum-UI/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Teknesyum/Teknesyum-UI/releases/tag/v0.2.0

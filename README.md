@@ -28,8 +28,8 @@ a number. Neither belongs in its context window.
 | How to reach the shelf and what to run | `SKILL.md`, 80 lines | paid once, when UI work starts |
 
 Base spent about 27,000 tokens on `SKILL.md` and 55,000 more on eight reference files
-every time an interface came up. This ships 91 scanner rules, one 80-line skill and one
-platform reference.
+every time an interface came up. This ships 96 scanner rules, one 80-line skill and two
+reference files.
 
 ## Where the rules live
 
@@ -118,21 +118,21 @@ plainly when the shelf or the book is missing. An existing file is never overwri
 npm test
 ```
 
-147 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
+148 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
 starts writing to `additionalContext` or `systemMessage`, if `SKILL.md` grows past 150
 lines, or if a slash command reappears.
 
 ## Layout
 
 ```
-ui/skills/teknesyum-ui/   SKILL.md, references/platform.md, assets/
+ui/skills/teknesyum-ui/   SKILL.md, references/, assets/
 ui/scripts/setup.js       install and generate
 ui/scripts/generate.js    tokens -> theme.css, Theme.xaml, Theme.axaml, Palette.cs
 ui/scripts/raf.js         reads the private shelf
 ui/scripts/scan.js        the scanner
 ui/scripts/rules/*.js     the rules, one module per domain
 ui/scripts/scaffold.js    copies a template into a project
-ui/templates/             installer, title bar, sync badge
+ui/templates/             installer, title bar, sync badge, progress bar
 ui/hooks/guard.js         the Stop hook
 ui/roles/ui-builder.md    the role an agent reads to build UI
 docs/DECISIONS.md         why it is shaped this way

@@ -1,0 +1,12 @@
+{
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "resizable": false,
+        "maximizable": false,
+        "visible": false
+      }
+    ]
+  }
+}

@@ -71,11 +71,11 @@ function skillBudget() {
 function referenceBudget() {
   const dir = path.join(L.SKILL, 'references');
   const names = fs.readdirSync(dir).sort();
-  L.ok('references/ holds platform.md only', names.length === 1 && names[0] === 'platform.md', names.join(' '));
-  if (names.includes('platform.md')) {
-    const count = L.lines(path.join(dir, 'platform.md'));
+  L.ok('references/ holds only .md files', names.every((n) => n.endsWith('.md')), names.join(' '));
+  for (const name of names) {
+    const count = L.lines(path.join(dir, name));
     L.ok(
-      'platform.md is at most ' + REFERENCE_MAX_LINES + ' lines',
+      name + ' is at most ' + REFERENCE_MAX_LINES + ' lines',
       count <= REFERENCE_MAX_LINES,
       count + ' lines'
     );

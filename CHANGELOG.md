@@ -5,6 +5,23 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+- Template `ilerleme`: `templates/ilerleme/react/ProgressBar.tsx` + `progressbar.css`, a
+  determinate progress bar filled with `transform: scaleX`, a scanning light on
+  `::after`/`translateX` gated by `prefers-reduced-motion`, and a percentage shown beside the
+  bar. Scans clean against the repo's own rules. Optional Rust setup snippet
+  `templates/ilerleme/tauri/setup.rs` pairs with `core/tauri-hidden-launch`.
+- Rule `core/tauri-hidden-launch`: a `tauri.conf.json` window without `"visible": false`.
+- Rules `core/fixed-window-no-shrink` and `core/fixed-window-maximize-open`: a fixed-size
+  window (`resizable: false` / `CanResize="False"`) with no shrinkable body area, or one
+  that still leaves its maximize control on.
+- Rules `guncelleme/uzun-cagri-ilerlemesiz` and `guncelleme/sessiz-dongu`: a long call
+  (`invoke`/`ipcRenderer.invoke`/`spawn`/`Command`) with no progress or busy state in the
+  same file, and a background `setInterval` loop with no status indicator.
+- Reference `skills/teknesyum-ui/references/primary-action-visibility.md`: a
+  `getBoundingClientRect` rehearsal for checking a primary button sits inside the window's
+  real inner size, at 100/125/150% OS scale.
+
 ## [0.3.0] - 2026-09-13
 
 ### Added

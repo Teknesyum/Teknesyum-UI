@@ -49,6 +49,7 @@ the project; read the one you need.
 | Any token | the project's `theme.tokens.json`, or `--tk-*` in its `theme.css` |
 | WPF / Avalonia resource names | its `Theme.xaml` / `Theme.axaml` |
 | Framework quirks | `references/platform.md` |
+| Checking a fixed window is actually usable in the real build | `references/primary-action-visibility.md` |
 
 ## Check
 
@@ -67,6 +68,12 @@ Asked for an update, auto-update or sync surface: read `guncelleme-paneli`, then
 with `scaffold.js kur <Name>` / `scaffold.js durum`. Never hand-write the panel — the
 template already carries the step contract, the creeping ceiling and the 16 ms timer, and
 `scan.js --rules guncelleme` checks that what is in the project still matches.
+
+A determinate progress bar takes `templates/ilerleme/react/ProgressBar.tsx` +
+`progressbar.css`; a Tauri window checks `core/tauri-hidden-launch`,
+`core/fixed-window-no-shrink` and `core/fixed-window-maximize-open`, a long `invoke`/`spawn`
+call with no feedback checks `guncelleme/uzun-cagri-ilerlemesiz`, and a silent background
+loop checks `guncelleme/sessiz-dongu`.
 
 ## Precedence
 

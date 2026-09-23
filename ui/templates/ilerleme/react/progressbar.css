@@ -1,0 +1,80 @@
+.tk-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tk-sp-1);
+}
+
+.tk-progress__step {
+  color: var(--tk-text);
+  font-size: var(--tk-fs-1);
+}
+
+.tk-progress__row {
+  display: flex;
+  align-items: center;
+  gap: var(--tk-sp-2);
+}
+
+.tk-progress__track {
+  position: relative;
+  flex: 1;
+  height: var(--tk-sp-2);
+  overflow: hidden;
+  border-radius: var(--tk-r-chip);
+  background: var(--tk-border-decorative);
+}
+
+.tk-progress__track::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, var(--tk-text) 50%, transparent);
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+[data-status='running'] .tk-progress__track::after {
+  opacity: 1;
+  animation: tk-progress-scan var(--tk-loading-loop-min) var(--tk-e-in) infinite;
+}
+
+.tk-progress__fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  transform-origin: left center;
+  transform: scaleX(var(--tk-progress-value, 0));
+  background: linear-gradient(90deg, var(--tk-blue), var(--tk-purple));
+  border-radius: inherit;
+  transition: transform var(--tk-t-base) var(--tk-e-out);
+}
+
+[data-status='done'] .tk-progress__fill {
+  background: var(--tk-success);
+}
+
+[data-status='error'] .tk-progress__fill {
+  background: var(--tk-danger);
+}
+
+.tk-progress__percent {
+  color: var(--tk-blue);
+  font-size: var(--tk-fs-1);
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes tk-progress-scan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(430%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tk-progress__track::after {
+    animation: none;
+  }
+}

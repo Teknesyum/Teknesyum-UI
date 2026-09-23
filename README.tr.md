@@ -29,8 +29,8 @@ bir sayıdır. İkisinin de bağlam penceresinde yeri yoktur.
 | Rafa nasıl gidilir ve ne koşulur | `SKILL.md`, 80 satır | bir kez, arayüz işi başladığında |
 
 Base, her arayüz konusu açıldığında `SKILL.md` için yaklaşık 27.000 ve sekiz referans dosyası
-için 55.000 token daha harcıyordu. Bu proje 91 tarayıcı kuralı, 80 satırlık tek bir skill ve
-tek bir platform referansı ile gelir.
+için 55.000 token daha harcıyordu. Bu proje 96 tarayıcı kuralı, 80 satırlık tek bir skill ve
+iki referans dosyası ile gelir.
 
 ## Kurallar nerede yaşar
 
@@ -120,21 +120,21 @@ ile girer; varsayılan npm paketlerini ve bir masaüstü kısayolunu kurar. `.ku
 npm test
 ```
 
-147 assertion, bağımlılık yok. Yedisi maliyet assertion'ıdır: bir kanca `additionalContext`
+148 assertion, bağımlılık yok. Yedisi maliyet assertion'ıdır: bir kanca `additionalContext`
 ya da `systemMessage` yazmaya başlarsa, `SKILL.md` 150 satırı geçerse ya da bir slash komutu
 yeniden belirirse başarısız olurlar.
 
 ## Düzen
 
 ```
-ui/skills/teknesyum-ui/   SKILL.md, references/platform.md, assets/
+ui/skills/teknesyum-ui/   SKILL.md, references/, assets/
 ui/scripts/setup.js       kurulum ve üretim
 ui/scripts/generate.js    token -> theme.css, Theme.xaml, Theme.axaml, Palette.cs
 ui/scripts/raf.js         özel rafı okur
 ui/scripts/scan.js        tarayıcı
 ui/scripts/rules/*.js     kurallar, her alan için bir modül
 ui/scripts/scaffold.js    bir şablonu projeye kopyalar
-ui/templates/             kurulum, başlık çubuğu, eşitleme rozeti
+ui/templates/             kurulum, başlık çubuğu, eşitleme rozeti, ilerleme çubuğu
 ui/hooks/guard.js         Stop kancası
 ui/roles/ui-builder.md    bir ajanın arayüz kurmak için okuduğu rol
 docs/DECISIONS.md         neden bu biçimde

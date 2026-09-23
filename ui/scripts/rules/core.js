@@ -9,6 +9,7 @@ const MOTION_TRACE =
   /transition|animate|animation|motion\.|AnimatePresence|@keyframes|Storyboard|useSpring/i;
 const LIST_MOTION = /AnimatePresence|autoAnimate|auto-animate|@keyframes|transition|layout[ =}]/i;
 const STYLE_NAME = /^(theme|global|globals|index|app|main|style|styles)\.css$/i;
+const TAURI_CONF_PATH = ['src-tauri/tauri.conf.json', 'tauri.conf.json'];
 const REDUCED_MOTION_BLOCK = [
   '@media (prefers-reduced-motion: reduce) {',
   '  *, *::before, *::after {',
@@ -322,6 +323,64 @@ function styleTarget(ctx) {
     )[0].rel;
 }
 
+function tauriConfig(ctx) {
+  for (const file of TAURI_CONF_PATH) {
+    const text = ctx.read(file);
+    if (text === null) continue;
+    let json = null;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      return null;
+    }
+    return { file, json };
+  }
+  return null;
+}
+
+function tauriWindows(json) {
+  if (!json) return [];
+  const app = json.app && Array.isArray(json.app.windows) ? json.app.windows : null;
+  const legacy = json.tauri && Array.isArray(json.tauri.windows) ? json.tauri.windows : null;
+  return app || legacy || [];
+}
+
+const WINDOW_CODE_EXT = new Set(['.ts', '.js', '.tsx', '.jsx']);
+const WINDOW_XAML_EXT = new Set(['.xaml', '.axaml']);
+
+function windowFixedSize(ctx) {
+  const found = tauriConfig(ctx);
+  if (found && tauriWindows(found.json).some((w) => w && w.resizable === false)) return true;
+  for (const f of ctx.files) {
+    if (WINDOW_XAML_EXT.has(f.ext) && /\bCanResize\s*=\s*"False"/i.test(f.text)) return true;
+    if (WINDOW_CODE_EXT.has(f.ext) && /\bresizable\s*:\s*false\b/.test(f.text)) return true;
+  }
+  return false;
+}
+
+function windowShrinkableArea(ctx) {
+  for (const f of ctx.files) {
+    if (f.ext !== '.css') continue;
+    if (/\boverflow\s*:\s*(?:auto|hidden)\b/.test(f.text)) return true;
+    if (/\bmin-height\s*:\s*0\b/.test(f.text)) return true;
+  }
+  return false;
+}
+
+function windowMaximizeDisabled(ctx) {
+  const found = tauriConfig(ctx);
+  if (found && tauriWindows(found.json).some((w) => w && w.maximizable === false)) return true;
+  for (const f of ctx.files) {
+    if (
+      WINDOW_XAML_EXT.has(f.ext) &&
+      /\bCanMaximize\s*=\s*"False"|\bSystemDecorations\s*=\s*"None"/i.test(f.text)
+    )
+      return true;
+    if (WINDOW_CODE_EXT.has(f.ext) && /\bmaximizable\s*:\s*false\b/.test(f.text)) return true;
+  }
+  return false;
+}
+
 module.exports = {
   id: 'core',
 
@@ -511,6 +570,61 @@ module.exports = {
   ],
 
   projectRules: [
+    {
+      id: 'tauri-hidden-launch',
+      severity: 'error',
+      check(ctx) {
+        const found = tauriConfig(ctx);
+        if (!found) return [];
+        const windows = tauriWindows(found.json);
+        if (!windows.length) return [];
+        const out = [];
+        windows.forEach((w, i) => {
+          if (w && w.visible === false) return;
+          out.push({
+            file: found.file,
+            line: 0,
+            message:
+              'window ' +
+              (w && w.label ? w.label : i) +
+              ' does not launch hidden: set "visible": false and call show() once setup positions it.',
+          });
+        });
+        return out;
+      },
+    },
+    {
+      id: 'fixed-window-no-shrink',
+      severity: 'warn',
+      check(ctx) {
+        if (!windowFixedSize(ctx)) return [];
+        if (windowShrinkableArea(ctx)) return [];
+        return [
+          {
+            file: '',
+            line: 0,
+            message:
+              'the window is fixed-size but no CSS marks a shrinkable area (overflow: auto/hidden, or min-height: 0 on a flex child) — content clips instead of scrolling.',
+          },
+        ];
+      },
+    },
+    {
+      id: 'fixed-window-maximize-open',
+      severity: 'warn',
+      check(ctx) {
+        if (!windowFixedSize(ctx)) return [];
+        if (windowMaximizeDisabled(ctx)) return [];
+        return [
+          {
+            file: '',
+            line: 0,
+            message:
+              'the window cannot be resized but its maximize control was not turned off (maximizable / CanMaximize) — it dangles doing nothing.',
+          },
+        ];
+      },
+    },
     {
       id: 'installed-unused',
       severity: 'warn',

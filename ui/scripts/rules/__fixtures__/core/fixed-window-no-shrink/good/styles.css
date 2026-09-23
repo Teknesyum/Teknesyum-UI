@@ -1,0 +1,10 @@
+.tk-app {
+  display: flex;
+  flex-direction: column;
+}
+
+.tk-log {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}

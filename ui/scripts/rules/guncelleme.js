@@ -11,6 +11,13 @@ const TAVAN = /\$S\.tavan/;
 const ZAMAN = /\$zaman\.Interval\s*=\s*16\b/;
 const RENK_SABIT = /#[0-9a-f]{3,8}\b/i;
 const ROZET = /\.(?:tk-sync|basbar-senk)\b/;
+const UZUN_CAGRI =
+  /\binvoke\s*\(|ipcRenderer\.invoke\s*\(|\.spawn\s*\(|\bspawn\s*\(|new\s+Command\s*\(/;
+const ILERLEME_GOSTERGESI = /progress|loading|busy|pending|aria-busy|role\s*=\s*["']?progressbar/i;
+const ARKAPLAN_DONGUSU = /\bsetInterval\s*\(/;
+const DURUM_GOSTERGESI = /role\s*=\s*["']?status|aria-live|badge|rozet|\bstate\b|\bdurum\b/i;
+const WEB_KOD = ['.ts', '.tsx', '.js', '.jsx'];
+const KOPRU_DOSYASI = /contextBridge\.exposeInMainWorld/;
 
 function kok(ctx) {
   return ctx.root;
@@ -46,6 +53,42 @@ function rozetDosyalari(ctx) {
 
 module.exports = {
   id: 'guncelleme',
+
+  fileRules: [
+    {
+      id: 'uzun-cagri-ilerlemesiz',
+      severity: 'warn',
+      exts: WEB_KOD,
+      check(file, text) {
+        if (KOPRU_DOSYASI.test(text)) return [];
+        if (!UZUN_CAGRI.test(text)) return [];
+        if (ILERLEME_GOSTERGESI.test(text)) return [];
+        return [
+          {
+            line: 1,
+            message:
+              'this file makes a call that can take a while (invoke/ipcRenderer.invoke/spawn/Command) with no progress, loading or busy state anywhere in it.',
+          },
+        ];
+      },
+    },
+    {
+      id: 'sessiz-dongu',
+      severity: 'warn',
+      exts: WEB_KOD,
+      check(file, text) {
+        if (!ARKAPLAN_DONGUSU.test(text)) return [];
+        if (DURUM_GOSTERGESI.test(text)) return [];
+        return [
+          {
+            line: 1,
+            message:
+              'this file runs a background loop (setInterval) with no status indicator (role="status", aria-live, a badge) in it.',
+          },
+        ];
+      },
+    },
+  ],
 
   projectRules: [
     {

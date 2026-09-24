@@ -28,7 +28,7 @@ a number. Neither belongs in its context window.
 | How to reach the shelf and what to run | `SKILL.md`, 80 lines | paid once, when UI work starts |
 
 Base spent about 27,000 tokens on `SKILL.md` and 55,000 more on eight reference files
-every time an interface came up. This ships 96 scanner rules, one 80-line skill and two
+every time an interface came up. This ships 97 scanner rules, one 80-line skill and two
 reference files.
 
 ## Where the rules live
@@ -93,12 +93,43 @@ after two blocks on the same file, so a real disagreement stops the gate rather 
 It scans only the files the turn changed, and it does not repeat a finding it has already
 made in the same conversation.
 
+### Contrast
+
+Every fill in the tokens carries an `on` pair, the text colour that goes on it. `generate.js`
+measures each pair, a translucent fill composited over the surface first, and stops at the
+first one under 7:1 with the pair and its ratio. It writes them out as `--tk-on-*` in CSS and
+`On*` brushes in XAML.
+
+The `okunurluk/pair-contrast` rule looks for a fill and a text colour on the same element and
+measures them. It reads hex, `var(--tk-*)`, Tailwind classes (arbitrary values too), XAML
+`Background`/`Foreground` with Static and Dynamic resources from any file, style setters and
+triggers, and C# painting: `FillPath`/`FillRectangle` and `TextRenderer.DrawText` in a paint
+method, plus WinForms `BackColor`/`ForeColor` pairs. A finding reads
+`bg X on fg Y — 2.1:1, below 7:1`. `core/contrast` now measures fill colours used as text;
+only the approved text cuts are exempt.
+
+The scanner cannot see a colour computed at run time. For that, audit the running page:
+
+```bash
+node <plugin>/scripts/denetim.js http://localhost:5173 [--esik 7] [--hedef 24] [--snippet out.js]
+```
+
+It prints a standalone script. The agent hands that script to the browser's
+`javascript_tool` (Claude in Chrome or the preview pane) on the open page. The script checks
+each visible text against its real ground, composited up the parent chain, and returns JSON
+with the pairs under the threshold and the clickable targets under 24 px. No axe-core, no
+install.
+
+For a desktop app, `scaffold.js denetim <Namespace>` writes a headless xUnit test that opens
+the window and measures every text the same way (see Templates).
+
 ## Templates
 
 ```bash
 node <plugin>/scripts/scaffold.js kur <AppName> [--simge app/simge.ico] [--anahtar usb-01]
 node <plugin>/scripts/scaffold.js ustcubuk
 node <plugin>/scripts/scaffold.js durum
+node <plugin>/scripts/scaffold.js denetim <Namespace> [--wpf|--avalonia] [--pencere MainWindow] [--esik 7]
 ```
 
 | Target | Writes | What it is |
@@ -106,6 +137,7 @@ node <plugin>/scripts/scaffold.js durum
 | `kur` | `Kur.bat`, `kur-<name>.ps1` | A USB installer window: creeping progress bar, live log, finish and error screens, `-Prova` dry run. Updates in place; `-Onar` or the finish screen's Onar button rebuilds. Each stick carries its own deploy key under `.kurulum/anahtar/`. |
 | `ustcubuk` | `teknesyum-ui/ustcubuk/` | A React title bar: logo, two-part name, language slot, sponsor and brand links, window controls, drag region for Electron and Tauri. |
 | `durum` | `teknesyum-ui/durum/` | An Electron git sync with a title-bar badge: syncing, synced with the time, offline; click to sync now. |
+| `denetim` | `teknesyum-ui/denetim/KontrastTests.cs` | A headless contrast test: Avalonia.Headless.XUnit when the project has `.axaml`, otherwise WPF on an STA thread with `VisualTreeHelper`. It fails with every text under the threshold. |
 
 Each target ends by naming the shelf book that governs what it just wrote, and says so
 plainly when the shelf or the book is missing. An existing file is never overwritten. Project-specific install steps go in with
@@ -118,7 +150,7 @@ plainly when the shelf or the book is missing. An existing file is never overwri
 npm test
 ```
 
-148 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
+185 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
 starts writing to `additionalContext` or `systemMessage`, if `SKILL.md` grows past 150
 lines, or if a slash command reappears.
 

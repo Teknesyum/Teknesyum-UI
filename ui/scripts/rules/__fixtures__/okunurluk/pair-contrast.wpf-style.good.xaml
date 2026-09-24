@@ -1,0 +1,15 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Color x:Key="SoftBlue">#6FA8DC</Color>
+  <SolidColorBrush x:Key="SoftBlueBrush" Color="{StaticResource SoftBlue}"/>
+  <SolidColorBrush x:Key="InkBrush" Color="#000000"/>
+  <Style x:Key="SaveButton" TargetType="Button">
+    <Setter Property="Background" Value="{StaticResource SoftBlueBrush}"/>
+    <Setter Property="Foreground" Value="{StaticResource InkBrush}"/>
+    <Style.Triggers>
+      <Trigger Property="IsEnabled" Value="False">
+        <Setter Property="Foreground" Value="#1F4E79"/>
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+</ResourceDictionary>

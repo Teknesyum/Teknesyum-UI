@@ -1,0 +1,7 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Border Background="#6FA8DC">
+    <TextBlock Foreground="#000000" Text="Kaydet"/>
+    <TextBlock Foreground="#1F4E79" IsEnabled="False" Text="Kapalı"/>
+  </Border>
+</Window>

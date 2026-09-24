@@ -29,7 +29,7 @@ bir sayıdır. İkisinin de bağlam penceresinde yeri yoktur.
 | Rafa nasıl gidilir ve ne koşulur | `SKILL.md`, 80 satır | bir kez, arayüz işi başladığında |
 
 Base, her arayüz konusu açıldığında `SKILL.md` için yaklaşık 27.000 ve sekiz referans dosyası
-için 55.000 token daha harcıyordu. Bu proje 96 tarayıcı kuralı, 80 satırlık tek bir skill ve
+için 55.000 token daha harcıyordu. Bu proje 97 tarayıcı kuralı, 80 satırlık tek bir skill ve
 iki referans dosyası ile gelir.
 
 ## Kurallar nerede yaşar
@@ -95,12 +95,41 @@ Yapılandırma yoksa ya da `off: true` ayarlıysa hiç iş yapmadan çıkar; ayn
 engelden sonra geri çekilir, böylece gerçek bir anlaşmazlık işi değil kapıyı durdurur.
 Yalnız o turda değişen dosyaları tarar ve aynı sohbette söylediği bulguyu bir daha söylemez.
 
+### Kontrast
+
+Token'lardaki her dolgunun bir `on` eşi vardır: üstüne gelen yazı rengi. `generate.js` her
+eşi ölçer, saydam dolguyu önce yüzeyin üstüne bindirir, 7:1'in altındaki ilk eşte durur ve eşi
+oranıyla yazar. Eşler CSS'e `--tk-on-*`, XAML'e `On*` fırçaları olarak çıkar.
+
+`okunurluk/pair-contrast` kuralı aynı öğedeki dolguyu ve yazı rengini bulup ölçer. Hex,
+`var(--tk-*)`, Tailwind sınıfları (keyfi değerler dahil), başka dosyadaki Static ve Dynamic
+kaynaklarla XAML `Background`/`Foreground`, stil setter'ları ve tetikleri, C# çizimi (boyama
+yöntemindeki `FillPath`/`FillRectangle` ve `TextRenderer.DrawText`) ve WinForms
+`BackColor`/`ForeColor` eşlerini okur. Bulgu şöyle görünür: `bg X on fg Y — 2.1:1, below 7:1`.
+`core/contrast` artık yazı olarak kullanılan dolgu renklerini de ölçer; yalnız onaylı yazı
+kesimleri muaftır.
+
+Tarayıcı çalışma anında hesaplanan rengi göremez. Onun için çalışan sayfayı denetleyin:
+
+```bash
+node <plugin>/scripts/denetim.js http://localhost:5173 [--esik 7] [--hedef 24] [--snippet out.js]
+```
+
+Bağımsız bir betik basar. Ajan bu betiği açık sayfada tarayıcının `javascript_tool`'una
+verir (Claude in Chrome ya da önizleme paneli). Betik her görünen yazıyı, üst zincir boyunca
+bindirilmiş gerçek zeminine karşı ölçer ve eşiğin altındaki eşleri, 24 px'ten küçük tıklanır
+hedefleri JSON olarak döndürür. axe-core yok, kurulum yok.
+
+Masaüstü uygulaması için `scaffold.js denetim <Namespace>` pencereyi açıp her yazıyı aynı
+biçimde ölçen başsız bir xUnit testi yazar (bkz. Şablonlar).
+
 ## Şablonlar
 
 ```bash
 node <plugin>/scripts/scaffold.js kur <UygulamaAdı> [--simge app/simge.ico] [--anahtar usb-01]
 node <plugin>/scripts/scaffold.js ustcubuk
 node <plugin>/scripts/scaffold.js durum
+node <plugin>/scripts/scaffold.js denetim <Namespace> [--wpf|--avalonia] [--pencere MainWindow] [--esik 7]
 ```
 
 | Hedef | Yazdığı | Ne olduğu |
@@ -108,6 +137,7 @@ node <plugin>/scripts/scaffold.js durum
 | `kur` | `Kur.bat`, `kur-<ad>.ps1` | USB kurulum penceresi: adım içinde ilerleyen çubuk, canlı günlük, bitiş ve hata ekranları, `-Prova` deneme kipi. Yerinde günceller; `-Onar` ya da bitiş ekranındaki Onar düğmesi baştan kurar. Her USB kendi deploy anahtarını `.kurulum/anahtar/` altında taşır. |
 | `ustcubuk` | `teknesyum-ui/ustcubuk/` | React başlık çubuğu: logo, iki parçalı ad, dil yuvası, sponsor ve marka bağlantıları, pencere düğmeleri, Electron ve Tauri için sürükleme alanı. |
 | `durum` | `teknesyum-ui/durum/` | Başlık çubuğu rozetli Electron git eşitlemesi: eşitleniyor, saatiyle eşitlendi, çevrimdışı; tıklayınca hemen eşitler. |
+| `denetim` | `teknesyum-ui/denetim/KontrastTests.cs` | Başsız kontrast testi: projede `.axaml` varsa Avalonia.Headless.XUnit, yoksa STA iş parçacığında `VisualTreeHelper` ile WPF. Eşiğin altındaki her yazıyı sayarak başarısız olur. |
 
 Her hedef, yazdığı şeyi yöneten raf kitabının adını söyleyerek biter; raf ya da kitap yoksa
 bunu açıkça söyler. Var olan dosyanın üzerine asla yazılmaz. Projeye özgü kurulum adımları `--adimlar <dosya>`
@@ -120,7 +150,7 @@ ile girer; varsayılan npm paketlerini ve bir masaüstü kısayolunu kurar. `.ku
 npm test
 ```
 
-148 assertion, bağımlılık yok. Yedisi maliyet assertion'ıdır: bir kanca `additionalContext`
+185 assertion, bağımlılık yok. Yedisi maliyet assertion'ıdır: bir kanca `additionalContext`
 ya da `systemMessage` yazmaya başlarsa, `SKILL.md` 150 satırı geçerse ya da bir slash komutu
 yeniden belirirse başarısız olurlar.
 

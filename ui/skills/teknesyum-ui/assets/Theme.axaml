@@ -78,6 +78,28 @@
          text the answer is not grey, it is deleting the text. -->
     <SolidColorBrush x:Key="Disabled"  Color="#FF71717A"/>
 
+    <!-- On pairs: the text brush each fill takes, measured by generate.js at 7:1
+         after compositing a translucent fill over Surface. A fill with no On brush
+         carries no text. -->
+    <SolidColorBrush x:Key="OnBlue"        Color="#FF000000"/>
+    <SolidColorBrush x:Key="OnSuccess"     Color="#FF000000"/>
+    <SolidColorBrush x:Key="OnDangerText"  Color="#FF000000"/>
+    <SolidColorBrush x:Key="OnPanel"       Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnGlass"       Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnBlue10"      Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnBlue20"      Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnBlue30"      Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnPink10"      Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnPink20"      Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnPink30"      Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnPink50"      Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnPink60"      Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnPurple10"    Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnPurple20"    Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnPurple30"    Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnPurple50"    Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="OnPurple60"    Color="#FFFFFFFF"/>
+
     <SolidColorBrush x:Key="NeonBlue10"   Color="#1A00F3FF"/>
     <SolidColorBrush x:Key="NeonBlue20"   Color="#3300F3FF"/>
     <SolidColorBrush x:Key="NeonBlue30"   Color="#4D00F3FF"/>

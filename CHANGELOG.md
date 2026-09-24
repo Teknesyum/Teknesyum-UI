@@ -3,6 +3,21 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+- Contrast gate: every fill in the tokens carries an `on` text colour; `generate.js` measures
+  each pair (translucent fills composited over the surface) and stops under 7:1, then emits
+  `--tk-on-*` in CSS and `On*` brushes in XAML. Rule `okunurluk/pair-contrast` measures fill
+  and text on the same element across CSS, Tailwind, JSX, XAML styles and triggers, and C#
+  paint code; `scripts/denetim.js` prints a live-page audit snippet for `javascript_tool`;
+  scaffold target `denetim` writes a headless Avalonia or WPF contrast test.
+
+### Changed
+- `core/contrast` exempts only the approved text colours; fill cuts used as text are measured.
+  The danger button, ghost hover, title-bar hover and `TkIconButton` states take their `on`
+  colours, since the old pairs measured under 7:1.
+
 ## [0.4.0] - 2026-09-23
 
 ### Added

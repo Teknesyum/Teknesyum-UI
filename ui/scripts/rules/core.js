@@ -25,6 +25,8 @@ const UI = ['.css', '.tsx', '.jsx', '.vue', '.svelte', '.xaml', '.axaml'];
 const STORYBOARD = ['.xaml', '.axaml', '.cs'];
 const MANIFEST_NAME = /^package(?:-lock)?\.json$/i;
 const cache = new WeakMap();
+const textCache = new WeakMap();
+const TEXT_COLOURS = ['text', 'text-label', 'pink-text', 'purple-text', 'success', 'warning', 'danger-text', 'disabled'];
 
 function normHex(value, argb) {
   const v = String(value).toLowerCase();
@@ -63,6 +65,32 @@ function paletteFromTokens(json) {
     }
   };
   walk(json);
+  return out;
+}
+
+function tokenValue(tokens, name, depth) {
+  if (!tokens || depth > 8) return null;
+  for (const group of ['brand', 'role', 'derived']) {
+    const e = tokens[group] && tokens[group][name];
+    if (!e) continue;
+    if (e.alpha !== undefined && e.alpha < 1) return null;
+    if (typeof e.value === 'string') return e.value;
+    if (typeof e.ref === 'string') return tokenValue(tokens, e.ref, depth + 1);
+  }
+  return null;
+}
+
+function textColours(ctx) {
+  if (textCache.has(ctx)) return textCache.get(ctx);
+  const out = new Set();
+  const on = (ctx.tokens && ctx.tokens.on) || {};
+  const names = TEXT_COLOURS.concat(Object.values(on).map((e) => e && e.on).filter((n) => typeof n === 'string'));
+  for (const name of names) {
+    const v = tokenValue(ctx.tokens, name, 0) || (ctx.theme && ctx.theme['--tk-' + name]);
+    const m = v && /#[0-9a-fA-F]{3,8}\b/.exec(String(v));
+    if (m) out.add(normHex(m[0]));
+  }
+  textCache.set(ctx, out);
   return out;
 }
 
@@ -455,10 +483,12 @@ module.exports = {
       exts: UI,
       test(line, ctx) {
         const fg = line.match(/(?:^|[^-\w])(?:color|Foreground)\s*[:=]\s*"?(#[0-9a-fA-F]{3,8})\b/i);
-        if (!fg) return null;
-        const state = motion(ctx);
+        if (!fg || /(?:^|[^-\w])background(?:-color)?\s*[:=]/i.test(line)) return null;
+        if (!isWeb(ctx.ext) && !/Foreground/i.test(fg[0])) return null;
+        const approved = textColours(ctx);
         const h = normHex(fg[1], !isWeb(ctx.ext));
-        if (h.length !== 7 || (state && state.palette.has(h))) return null;
+        if (h.length !== 7) return null;
+        if (approved.size ? approved.has(h) : (motion(ctx) || { palette: new Set() }).palette.has(h)) return null;
         const ratio = contrastOnBlack(h);
         return ratio < 7 ? fg[1] + ' — ' + ratio.toFixed(1) + ':1 on black, below 7:1' : null;
       },

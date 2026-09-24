@@ -11,6 +11,7 @@ const SUITES = [
   ['generate', require('./generate')],
   ['scaffold', require('./scaffold')],
   ['raf', require('./raf')],
+  ['okunurluk', require('./okunurluk')],
 ];
 
 function main() {

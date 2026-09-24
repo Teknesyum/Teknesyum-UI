@@ -110,6 +110,28 @@
      possible, an icon. A merely dimmed control is an incomplete delivery. */
   --tk-disabled: #71717a;
 
+  /* On pairs: the text colour each fill takes, measured by generate.js at 7:1
+     after compositing a translucent fill over surface. A fill with no on pair
+     carries no text. */
+  --tk-on-blue: #000000;
+  --tk-on-success: #000000;
+  --tk-on-danger-text: #000000;
+  --tk-on-panel: #ffffff;
+  --tk-on-glass: #ffffff;
+  --tk-on-blue-10: #ffffff;
+  --tk-on-blue-20: #ffffff;
+  --tk-on-blue-30: #ffffff;
+  --tk-on-pink-10: #ffffff;
+  --tk-on-pink-20: #ffffff;
+  --tk-on-pink-30: #ffffff;
+  --tk-on-pink-50: #ffffff;
+  --tk-on-pink-60: #ffffff;
+  --tk-on-purple-10: #ffffff;
+  --tk-on-purple-20: #ffffff;
+  --tk-on-purple-30: #ffffff;
+  --tk-on-purple-50: #ffffff;
+  --tk-on-purple-60: #ffffff;
+
   --tk-border: rgba(0, 243, 255, 0.5);
   --tk-border-strong: rgba(0, 243, 255, 0.6);
   --tk-border-decorative: rgba(0, 243, 255, 0.3);
@@ -330,15 +352,17 @@ body {
 .tk-btn-primary:hover   { background: rgba(0, 243, 255, 0.8); }
 /* The class name was already in role language; its contents moved to the role
    token too. The glow stays on the brand token — a glow is decoration, it does
-   not report state. */
-.tk-btn-danger    { background: var(--tk-danger); color: #000; box-shadow: var(--tk-glow-pink); }
-.tk-btn-danger:hover    { background: rgba(255, 0, 234, 0.8); }
+   not report state. The fill is the danger TEXT cut: black on the fill pink is
+   6.44:1, below 7:1, so pink carries no text (tokens: on.danger); black on
+   danger-text is 7.72:1. Hover is carried by scale alone — danger-text at /80 under
+   black text measured 5.21:1. */
+.tk-btn-danger    { background: var(--tk-danger-text); color: #000; box-shadow: var(--tk-glow-pink); }
 .tk-btn-ghost {
   background: rgba(176, 38, 255, 0.1);
   border-color: var(--tk-purple-text);
   color: var(--tk-purple-text);
 }
-.tk-btn-ghost:hover { background: rgba(176, 38, 255, 0.2); }
+.tk-btn-ghost:hover { background: rgba(176, 38, 255, 0.2); color: var(--tk-on-purple-20, var(--tk-text)); }
 /* The disabled state does not end at dimming: `title` text is mandatory (§2). */
 .tk-btn:disabled {
   color: var(--tk-disabled);

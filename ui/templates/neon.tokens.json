@@ -155,6 +155,32 @@
       "rationale": "Not a flat colour but an 11-stop gradient (SKILL §2); the stops are linearly interpolated in the script, which closes banding."
     }
   },
+  "on": {
+    "_": ["Which text colour sits on each fill. on names an existing colour; null means the fill carries no text.","generate.js composites a translucent fill over surface, measures the pair and refuses to generate below 7:1."],
+    "blue": { "on": "black", "rationale": "black on blue: 15.26:1." },
+    "pink": { "on": null, "rationale": "Carries no text: the best pair, black on pink, is 6.44:1, below 7:1." },
+    "purple": { "on": null, "rationale": "Carries no text: the best pair, text on purple, is 4.60:1, below 7:1." },
+    "success": { "on": "black", "rationale": "black on success: 10.92:1." },
+    "danger": { "on": null, "rationale": "Carries no text: the best pair, black on danger, is 6.44:1, below 7:1. The danger button fills with danger-text instead." },
+    "danger-text": { "on": "black", "rationale": "black on danger-text: 7.72:1." },
+    "panel": { "on": "text", "rationale": "text on panel over surface: 19.93:1." },
+    "glass": { "on": "text", "rationale": "text on glass over surface: 19.78:1." },
+    "blue-10": { "on": "text", "rationale": "text on blue 10% over surface: 16.88:1." },
+    "blue-20": { "on": "text", "rationale": "text on blue 20% over surface: 12.86:1." },
+    "blue-30": { "on": "text", "rationale": "text on blue 30% over surface: 9.30:1." },
+    "blue-50": { "on": null, "rationale": "Carries no text: the best pair, text on blue 50% over surface, is 4.86:1, below 7:1." },
+    "blue-60": { "on": null, "rationale": "Carries no text: the best pair, black on blue 60% over surface, is 5.82:1, below 7:1." },
+    "pink-10": { "on": "text", "rationale": "text on pink 10% over surface: 18.75:1." },
+    "pink-20": { "on": "text", "rationale": "text on pink 20% over surface: 16.64:1." },
+    "pink-30": { "on": "text", "rationale": "text on pink 30% over surface: 14.05:1." },
+    "pink-50": { "on": "text", "rationale": "text on pink 50% over surface: 9.24:1." },
+    "pink-60": { "on": "text", "rationale": "text on pink 60% over surface: 7.40:1." },
+    "purple-10": { "on": "text", "rationale": "text on purple 10% over surface: 18.81:1." },
+    "purple-20": { "on": "text", "rationale": "text on purple 20% over surface: 17.11:1." },
+    "purple-30": { "on": "text", "rationale": "text on purple 30% over surface: 15.07:1." },
+    "purple-50": { "on": "text", "rationale": "text on purple 50% over surface: 10.95:1." },
+    "purple-60": { "on": "text", "rationale": "text on purple 60% over surface: 9.19:1." }
+  },
   "duration": {
     "instant": { "ms": 90, "rationale": "Press/release response." },
     "fast": { "ms": 160, "rationale": "Hover and small transitions." },

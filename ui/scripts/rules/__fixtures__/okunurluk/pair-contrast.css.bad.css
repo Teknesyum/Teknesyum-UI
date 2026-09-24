@@ -1,0 +1,8 @@
+.save {
+  background: var(--tk-pink);
+  color: #000;
+}
+.note {
+  background-color: rgba(111, 168, 220, 0.5);
+  color: #1f4e79;
+}

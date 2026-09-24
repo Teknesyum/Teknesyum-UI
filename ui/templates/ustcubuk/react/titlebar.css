@@ -133,12 +133,13 @@
 }
 
 .tk-titlebar__control:hover {
-  background-color: var(--tk-purple);
-  color: var(--tk-surface);
+  background-color: color-mix(in srgb, var(--tk-purple) 30%, transparent);
+  color: var(--tk-on-purple-30, var(--tk-text));
 }
 
 .tk-titlebar__control--close:hover {
-  background-color: var(--tk-danger);
+  background-color: var(--tk-danger-text);
+  color: var(--tk-on-danger-text, #000);
 }
 
 .tk-titlebar__control:focus-visible {
@@ -148,8 +149,8 @@
 }
 
 .tk-titlebar__control:active {
-  background-color: var(--tk-pink);
-  color: var(--tk-surface);
+  background-color: color-mix(in srgb, var(--tk-pink) 30%, transparent);
+  color: var(--tk-on-pink-30, var(--tk-text));
 }
 
 .tk-titlebar__control:disabled {

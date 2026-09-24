@@ -1,0 +1,12 @@
+.save {
+  background: var(--tk-danger-text);
+  color: #000;
+}
+.save:disabled {
+  background: var(--tk-pink);
+  color: #000;
+}
+.card {
+  background: var(--tk-glass);
+  color: var(--tk-text);
+}

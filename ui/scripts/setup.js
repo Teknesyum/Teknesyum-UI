@@ -6,6 +6,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const K = require('./kontrast');
 
 const argv = process.argv.slice(2);
 const VERSION = '1.1.0';
@@ -220,6 +221,58 @@ function textCut(colour, surface, dark) {
   return hexOf(target);
 }
 
+function tokenColour(T, name, trail) {
+  const seen = trail || [];
+  if (seen.includes(name)) return null;
+  for (const group of ['brand', 'role', 'derived']) {
+    const e = T[group] && T[group][name];
+    if (!e) continue;
+    const base = e.value !== undefined ? K.parse(e.value) : e.ref ? tokenColour(T, e.ref, seen.concat(name)) : null;
+    if (!base) return null;
+    return e.alpha !== undefined ? { r: base.r, g: base.g, b: base.b, a: e.alpha } : base;
+  }
+  return null;
+}
+
+function fillColour(T, name) {
+  const tone = T.derived && T.derived['tone-scale'];
+  const m = /^(.+)-(\d+)$/.exec(name);
+  if (m && tone && tone.bases.includes(m[1]) && tone.steps.includes(Number(m[2]))) {
+    const c = tokenColour(T, m[1]);
+    return c ? { r: c.r, g: c.g, b: c.b, a: Number(m[2]) / 100 } : null;
+  }
+  return tokenColour(T, name);
+}
+
+function measureOnPairs(T) {
+  if (!T.on) return;
+  const g = tokenColour(T, 'surface');
+  if (!g) return;
+  const ground = { r: g.r, g: g.g, b: g.b, a: 1 };
+  for (const name of Object.keys(T.on)) {
+    if (name === '_') continue;
+    const fill = fillColour(T, name);
+    if (!fill) continue;
+    let best = null;
+    for (const on of ['black', 'text', 'surface']) {
+      const c = tokenColour(T, on);
+      if (!c) continue;
+      const r = K.pair(fill, c, ground).ratio;
+      if (!best || r > best.r) best = { on, r };
+    }
+    if (!best) continue;
+    const label = name.replace(/-(\d+)$/, ' $1%') + (fill.a < 1 ? ' over surface' : '');
+    T.on[name] =
+      best.r >= K.THRESHOLD
+        ? { on: best.on, rationale: best.on + ' on ' + label + ': ' + best.r.toFixed(2) + ':1.' }
+        : {
+            on: null,
+            rationale:
+              'Carries no text: the best pair, ' + best.on + ' on ' + label + ', is ' + best.r.toFixed(2) + ':1, below ' + K.THRESHOLD + ':1.',
+          };
+  }
+}
+
 function buildTokens(palette, name) {
   const neon = read(templateFile('neon'));
   if (!neon) throw new Error('neon template not found; cannot derive a custom one');
@@ -268,6 +321,7 @@ function buildTokens(palette, name) {
     'Glass surface base: the surface nudged 2% toward the tertiary colour.'
   );
   set('role', 'text', body, 'Body text; the higher contrast of black and white on this surface.');
+  measureOnPairs(T);
 
   return T;
 }

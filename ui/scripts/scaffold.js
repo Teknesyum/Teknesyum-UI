@@ -22,6 +22,10 @@ const HELP = [
   '      --adimlar <file>    project steps fragment (default templates/kur/adimlar.ps1)',
   '  ustcubuk        TitleBar.tsx + titlebar.css into teknesyum-ui/ustcubuk',
   '  durum           Electron sync badge into teknesyum-ui/durum',
+  '  denetim <Namespace>  headless contrast test into teknesyum-ui/denetim/KontrastTests.cs',
+  '      --wpf | --avalonia  test flavour (default: avalonia when the project has .axaml)',
+  '      --pencere <Class>   window to open (default MainWindow)',
+  '      --esik <ratio>      threshold (default 7)',
   '',
   'An existing file is never overwritten.',
   'Exit: 0 done · 2 usage error',
@@ -97,6 +101,40 @@ function kur(root, args, name) {
   ];
 }
 
+function hasAxaml(dir, depth) {
+  let entries;
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return false;
+  }
+  for (const e of entries) {
+    if (e.isFile() && e.name.toLowerCase().endsWith('.axaml')) return true;
+    if (e.isDirectory() && depth < 4 && !/^(\.|node_modules$|bin$|obj$)/.test(e.name) && hasAxaml(path.join(dir, e.name), depth + 1))
+      return true;
+  }
+  return false;
+}
+
+function denetim(root, args, name) {
+  if (!name) throw new Error('denetim needs the application namespace, e.g. denetim Runly');
+  const ident = /^[A-Za-z_]\w*(\.[A-Za-z_]\w*)*$/;
+  const pencere = flag(args, 'pencere') || 'MainWindow';
+  if (!ident.test(name)) throw new Error('namespace is not a C# name: ' + name);
+  if (!/^[A-Za-z_]\w*$/.test(pencere)) throw new Error('window class is not a C# name: ' + pencere);
+  const esik = flag(args, 'esik') || '7';
+  if (!/^\d+(\.\d+)?$/.test(esik) || Number(esik) < 1) throw new Error('--esik takes a ratio of 1 or more');
+  const kind = args.includes('--wpf') ? 'wpf' : args.includes('--avalonia') ? 'avalonia' : hasAxaml(root, 0) ? 'avalonia' : 'wpf';
+  const values = { AD: name, PENCERE: pencere, ESIK: esik.includes('.') ? esik : esik + '.0' };
+  return [
+    {
+      to: path.join(root, 'teknesyum-ui', 'denetim', 'KontrastTests.cs'),
+      text: fill(template('denetim/' + kind + '/KontrastTests.cs'), values),
+      crlf: true,
+    },
+  ];
+}
+
 function copies(root, dir, names) {
   return names.map((n) => ({ to: path.join(root, 'teknesyum-ui', dir, n), text: template(dir + '/' + n) }));
 }
@@ -108,6 +146,7 @@ const TARGETS = {
       ...f,
       to: f.to.replace(path.sep + 'react' + path.sep, path.sep),
     })),
+  denetim: (root, args, name) => denetim(root, args, name),
   durum: (root) =>
     copies(root, 'durum', ['electron/sync.js', 'electron/preload.js', 'electron/badge.js', 'electron/badge.css']).map(
       (f) => ({ ...f, to: f.to.replace(path.sep + 'electron' + path.sep, path.sep) })

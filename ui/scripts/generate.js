@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const K = require('./kontrast');
 const assetsDir = path.resolve(__dirname, '..', 'skills', 'teknesyum-ui', 'assets');
 const tokensPath = process.argv[2] ? path.resolve(process.argv[2]) : path.join(assetsDir, 'theme.tokens.json');
 const outDir = process.argv[3] ? path.resolve(process.argv[3]) : assetsDir;
@@ -91,6 +92,64 @@ function scaleXaml(indent) {
   const groups = tone.bases.map(base => tone.steps.map(step => row(base, step)).join('\n'));
   groups.push(text.bases.map(base => text.steps.map(step => row(base, step)).join('\n')).join('\n'));
   return groups.join('\n\n');
+}
+
+function onPairs() {
+  const table = T.on || {};
+  return Object.keys(table)
+    .filter(k => k !== '_')
+    .map(name => ({ name, on: table[name].on === undefined ? null : table[name].on, rationale: String(table[name].rationale || '') }));
+}
+function fillColour(name) {
+  const tone = T.derived && T.derived['tone-scale'];
+  const m = /^(.+)-(\d+)$/.exec(name);
+  if (m && tone && tone.bases.includes(m[1]) && tone.steps.includes(Number(m[2]))) {
+    const c = resolve(m[1]);
+    return { r: c.r, g: c.g, b: c.b, a: Number(m[2]) / 100 };
+  }
+  return resolve(name);
+}
+function onGate() {
+  const g = resolve('surface');
+  const ground = { r: g.r, g: g.g, b: g.b, a: 1 };
+  const bad = [];
+  for (const p of onPairs()) {
+    if (p.on === null) continue;
+    let fill, text;
+    try {
+      fill = fillColour(p.name);
+      text = resolve(p.on);
+    } catch (e) {
+      bad.push(p.name + ' on ' + p.on + ' — ' + e.message);
+      continue;
+    }
+    const r = K.pair(fill, text, ground).ratio;
+    if (r < K.THRESHOLD) {
+      bad.push(p.on + ' on ' + p.name + ' — ' + r.toFixed(2) + ':1, below ' + K.THRESHOLD + ':1');
+      continue;
+    }
+    const said = /(\d+(?:\.(\d+))?):1/.exec(p.rationale);
+    if (said && said[1] !== r.toFixed(said[2] ? said[2].length : 0))
+      bad.push(p.on + ' on ' + p.name + ' — rationale says ' + said[1] + ':1, measured ' + r.toFixed(2) + ':1');
+  }
+  return bad;
+}
+function pascal(name) { return name.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(''); }
+function onCss() {
+  const rows = onPairs().filter(p => p.on !== null);
+  if (!rows.length) return '';
+  return '\n  /* On pairs: the text colour each fill takes, measured by generate.js at 7:1\n' +
+    '     after compositing a translucent fill over surface. A fill with no on pair\n' +
+    '     carries no text. */\n' +
+    rows.map(p => '  --tk-on-' + p.name + ': ' + h(p.on) + ';').join('\n') + '\n';
+}
+function onXaml(indent) {
+  const rows = onPairs().filter(p => p.on !== null);
+  if (!rows.length) return '';
+  return '\n' + indent + '<!-- On pairs: the text brush each fill takes, measured by generate.js at 7:1\n' +
+    indent + '     after compositing a translucent fill over Surface. A fill with no On brush\n' +
+    indent + '     carries no text. -->\n' +
+    rows.map(p => indent + '<SolidColorBrush x:Key=' + ('"On' + pascal(p.name) + '"').padEnd(16) + 'Color="' + x(p.on) + '"/>').join('\n') + '\n';
 }
 
 function glowCss(base) {
@@ -339,7 +398,7 @@ ${gradientCss()}
      \`title\`/\`ToolTip\` text is mandatory, plus \`cursor: not-allowed\` and, where
      possible, an icon. A merely dimmed control is an incomplete delivery. */
   --tk-disabled: ${h('disabled')};
-
+${onCss()}
   --tk-border: ${rgba('border')};
   --tk-border-strong: ${rgba('border-strong')};
   --tk-border-decorative: ${rgba('border-decorative')};
@@ -560,15 +619,17 @@ body {
 .tk-btn-primary:hover   { background: ${rgba('blue', 0.8)}; }
 /* The class name was already in role language; its contents moved to the role
    token too. The glow stays on the brand token — a glow is decoration, it does
-   not report state. */
-.tk-btn-danger    { background: var(--tk-danger); color: #000; box-shadow: var(--tk-glow-pink); }
-.tk-btn-danger:hover    { background: ${rgba('pink', 0.8)}; }
+   not report state. The fill is the danger TEXT cut: black on the fill pink is
+   6.44:1, below 7:1, so pink carries no text (tokens: on.danger); black on
+   danger-text is 7.72:1. Hover is carried by scale alone — danger-text at /80 under
+   black text measured 5.21:1. */
+.tk-btn-danger    { background: var(--tk-danger-text); color: #000; box-shadow: var(--tk-glow-pink); }
 .tk-btn-ghost {
   background: ${rgba('purple', 0.1)};
   border-color: var(--tk-purple-text);
   color: var(--tk-purple-text);
 }
-.tk-btn-ghost:hover { background: ${rgba('purple', 0.2)}; }
+.tk-btn-ghost:hover { background: ${rgba('purple', 0.2)}; color: var(--tk-on-purple-20, var(--tk-text)); }
 /* The disabled state does not end at dimming: \`title\` text is mandatory (§2). */
 .tk-btn:disabled {
   color: var(--tk-disabled);
@@ -723,7 +784,7 @@ ${gradientXaml('    ')}
        single value with two names eventually diverges. For secondary text the
        answer is not grey, it is deleting the text (SKILL §2, "no mid greys"). -->
   <SolidColorBrush x:Key="Disabled"  Color="${x('disabled')}"/>
-
+${onXaml('  ')}
 ${scaleXaml('  ')}
 
   <SolidColorBrush x:Key="BorderDefault"    Color="${xa('border')}"/>
@@ -1021,7 +1082,7 @@ ${gradientXaml('      ')}
          icon. A merely dimmed control is an incomplete delivery. For secondary
          text the answer is not grey, it is deleting the text. -->
     <SolidColorBrush x:Key="Disabled"  Color="${x('disabled')}"/>
-
+${onXaml('    ')}
 ${scaleXaml('    ')}
 
     <SolidColorBrush x:Key="BorderDefault"    Color="${xa('border')}"/>
@@ -1565,6 +1626,12 @@ public static class Ansi
     public const string Reset      = "\x1b[0m";
 }
 `;
+}
+
+const gateFailures = onGate();
+if (gateFailures.length) {
+  process.stderr.write('contrast gate: theme not generated from ' + path.basename(tokensPath) + '\n' + gateFailures.map(s => '  ' + s).join('\n') + '\n');
+  process.exit(1);
 }
 
 const outputs = [

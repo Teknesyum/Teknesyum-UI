@@ -88,7 +88,8 @@ node <plugin>/scripts/scan.js <proje-kökü>
 
 `0` temiz, `1` bulgu var, `2` yapılandırılmamış ya da kapalı. Makine çıktısı için `--json`,
 güvenle otomatikleştirilebilen onarımlar için `--fix`, neyi uyguladığını görmek için
-`--list-rules`, yalnız dokunulan dosyalara bakması için `--files a.css,b.tsx`.
+`--list-rules`, yalnız dokunulan dosyalara bakması için `--files a.css,b.tsx`. `--fix` sonsuz
+bir animasyonun süresine dokunmaz, yalnız raporlar: döngünün düzeltmesi süresi değil tekrarıdır.
 
 Arayüz dosyaları değiştiğinde bir Stop kancası aynı taramayı çalıştırır ve ihlalde durdurur.
 Yapılandırma yoksa ya da `off: true` ayarlıysa hiç iş yapmadan çıkar; aynı dosyada iki
@@ -137,7 +138,7 @@ node <plugin>/scripts/scaffold.js denetim <Namespace> [--wpf|--avalonia] [--penc
 | `kur` | `Kur.bat`, `kur-<ad>.ps1` | USB kurulum penceresi: adım içinde ilerleyen çubuk, canlı günlük, bitiş ve hata ekranları, `-Prova` deneme kipi. Yerinde günceller; `-Onar` ya da bitiş ekranındaki Onar düğmesi baştan kurar. Her USB kendi deploy anahtarını `.kurulum/anahtar/` altında taşır. |
 | `ustcubuk` | `teknesyum-ui/ustcubuk/` | React başlık çubuğu: logo, iki parçalı ad, dil yuvası, sponsor ve marka bağlantıları, pencere düğmeleri, Electron ve Tauri için sürükleme alanı. |
 | `durum` | `teknesyum-ui/durum/` | Başlık çubuğu rozetli Electron git eşitlemesi: eşitleniyor, saatiyle eşitlendi, çevrimdışı; tıklayınca hemen eşitler. |
-| `denetim` | `teknesyum-ui/denetim/KontrastTests.cs` | Başsız kontrast testi: projede `.axaml` varsa Avalonia.Headless.XUnit, yoksa STA iş parçacığında `VisualTreeHelper` ile WPF. Eşiğin altındaki her yazıyı sayarak başarısız olur. |
+| `denetim` | `teknesyum-ui/denetim/KontrastTests.cs` | Başsız kontrast testi: projede `.axaml` varsa Avalonia.Headless.XUnit (test projesi xunit v3 ister), yoksa STA iş parçacığında `VisualTreeHelper` ile WPF. Her yazı parçasını ve simgeyi, her düğmeyi dinlenik, üstünde, basılı, odakta ve edilgen hâlde, degrade zeminin en kötü durağını ölçer; `tmp/uc/kontrast-*.txt` ile %100/125/150 pencere görüntülerini yazar ve eşiğin altındaki her eşi sayarak başarısız olur. |
 
 Her hedef, yazdığı şeyi yöneten raf kitabının adını söyleyerek biter; raf ya da kitap yoksa
 bunu açıkça söyler. Var olan dosyanın üzerine asla yazılmaz. Projeye özgü kurulum adımları `--adimlar <dosya>`

@@ -15,8 +15,8 @@
 [data-tk='toggle']:focus-visible:not(:disabled) {
   border-color: var(--tk-border-strong);
 }
-/* The second carrier of the pressed state is the border: under reduced motion `scale`
-   falls away, because `theme.css` writes `transform: none !important`. */
+/* The second carrier of the pressed state is the border: under reduced motion `theme.css`
+   stops the transition, so `scale` snaps without travel and barely reads. */
 [data-tk='toggle']:active:not(:disabled) {
   border-color: var(--tk-border-strong);
   transform: scale(0.98);
@@ -106,7 +106,7 @@
   border-color: color-mix(in srgb, var(--tk-pink) 50%, transparent);
 }
 /* Pressed: fill 1.06 → 1.42, border 2.17 → 6.11. The border carries the jump, not
-   `scale` — under reduced motion `transform` falls away and the border remains. */
+   `scale` — under reduced motion the scale snaps without travel and the border remains. */
 [data-tk='icon-button']:active:not(:disabled) {
   color: var(--tk-pink-text);
   background-color: color-mix(in srgb, var(--tk-pink) 30%, transparent);

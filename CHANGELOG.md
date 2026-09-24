@@ -3,6 +3,26 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Changed
+- Scaffold target `denetim`: the Avalonia and WPF contrast tests now measure every button at
+  rest, hover, pressed, focus and disabled (disabled is reported, not failed), each run of a
+  multi-colour text and every icon (`Shape` fill or stroke), and take the worst stop of a
+  gradient ground or text brush. They write `tmp/uc/kontrast-<UC_ETIKET>.txt` and window
+  captures at 100/125/150 %. The scaffold output names the test project's packages; the
+  Avalonia test needs xunit v3.
+
+### Fixed
+- Reduced motion no longer writes `transform: none !important` on `*`. It cleared positioning
+  transforms, so a modal centred with `translate(-50%, -50%)` slid to the lower right; motion
+  now stops through animation and transition duration and a single iteration.
+- `scan.js --fix`: `core/duration-ceiling` and `core/hardcoded-duration` no longer rewrite the
+  period of an infinite animation (`animation-iteration-count: infinite` or the `infinite`
+  shorthand); they report it without a fix.
+- `scan.js --fix`: a leading-dot duration such as `.8s` was read as `8s` and rewritten to
+  `.var(--tk-t-*)`; it now reads as 800 ms and becomes `var(--tk-t-*)`.
+
 ## [0.5.0] - 2026-09-24
 
 ### Added

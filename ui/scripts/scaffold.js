@@ -126,14 +126,33 @@ function denetim(root, args, name) {
   if (!/^\d+(\.\d+)?$/.test(esik) || Number(esik) < 1) throw new Error('--esik takes a ratio of 1 or more');
   const kind = args.includes('--wpf') ? 'wpf' : args.includes('--avalonia') ? 'avalonia' : hasAxaml(root, 0) ? 'avalonia' : 'wpf';
   const values = { AD: name, PENCERE: pencere, ESIK: esik.includes('.') ? esik : esik + '.0' };
-  return [
+  const plan = [
     {
       to: path.join(root, 'teknesyum-ui', 'denetim', 'KontrastTests.cs'),
       text: fill(template('denetim/' + kind + '/KontrastTests.cs'), values),
       crlf: true,
     },
   ];
+  plan.note = DENETIM_NOTE[kind];
+  return plan;
 }
+
+const DENETIM_OUTPUT =
+  'output: tmp/uc/kontrast-<UC_ETIKET>.txt and ana-<scale>-<UC_ETIKET>.png beside the .sln (UC_CIKTI overrides the folder)';
+
+const DENETIM_NOTE = {
+  avalonia: [
+    'test project: xunit.v3 - Avalonia.Headless.XUnit does not run on xunit 2',
+    '  packages: xunit.v3, xunit.runner.visualstudio 3+, Avalonia.Headless.XUnit and Avalonia.Skia at the app\'s Avalonia version',
+    '  OutputType Exe, a ProjectReference to the app, and the file linked in:',
+    '  <Compile Include="../../teknesyum-ui/denetim/*.cs" Link="Denetim/%(Filename)%(Extension)" />',
+    DENETIM_OUTPUT,
+  ].join('\n'),
+  wpf: [
+    'test project: net*-windows with UseWPF, xunit 2 or xunit.v3, a ProjectReference to the app',
+    DENETIM_OUTPUT,
+  ].join('\n'),
+};
 
 function copies(root, dir, names) {
   return names.map((n) => ({ to: path.join(root, 'teknesyum-ui', dir, n), text: template(dir + '/' + n) }));
@@ -203,6 +222,7 @@ function main(argv) {
     return 2;
   }
   process.stdout.write(emit(root, plan) + '\n');
+  if (plan.note) process.stdout.write(plan.note + '\n');
   process.stdout.write(shelfNote(target) + '\n');
   return 0;
 }

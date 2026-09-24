@@ -109,7 +109,7 @@
 | Only `opacity` and `transform` animated | `transition-property` / animated props include size, color-shadow, filter | error | SKILL §5.4 |
 | No duration above 360 ms except `bg-donus` | numeric compare | error | SKILL §5.4 |
 | No raw durations/easings | literal `ms`/`s`/`cubic-bezier` outside token file | error | SKILL §5.4 |
-| `prefers-reduced-motion` block exists and contains `transition-property: opacity` and `transform: none` on `*` | block parse | error | SKILL §5.4, motion.md M4 |
+| `prefers-reduced-motion` block exists and contains `transition-property: opacity` and zero animation duration on `*`, never `transform: none` (it breaks positioning transforms) | block parse | error | SKILL §5.4, motion.md M4 |
 | React root has `<MotionConfig reducedMotion="user">` | AST search | error | motion.md M13 |
 | Infinite loops only under `motion-safe:` and only for progress or app background | `animation-iteration-count: infinite` audit | error | SKILL §5.4 |
 | WPF storyboards read `SystemParameters.ClientAreaAnimation` | reference present per infinite storyboard | error | motion.md M4 |

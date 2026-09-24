@@ -138,10 +138,27 @@ function scaffold() {
 
   const ava = L.tmp('tkui-den-');
   L.write(path.join(ava, 'Views', 'MainWindow.axaml'), '<Window/>\n');
-  L.node(L.SCAFFOLD, ['denetim', 'VidShrink', '--pencere', 'ShellWindow', '--project', ava], { env: L.cleanEnv() });
+  const ar = L.node(L.SCAFFOLD, ['denetim', 'VidShrink', '--pencere', 'ShellWindow', '--project', ava], { env: L.cleanEnv() });
   const at = path.join(ava, 'teknesyum-ui', 'denetim', 'KontrastTests.cs');
   const atext = fs.existsSync(at) ? fs.readFileSync(at, 'utf8') : '';
   L.ok('an Avalonia project gets the headless test', /AvaloniaFact/.test(atext) && /ShellWindow/.test(atext));
+  L.ok(
+    'the Avalonia test drives hover, pressed, focus and disabled',
+    /":pointerover"/.test(atext) && /":pressed"/.test(atext) && /":focus-visible"/.test(atext) && /IsEnabled = false/.test(atext)
+  );
+  L.ok(
+    'the Avalonia test measures runs, icons and the worst gradient stop',
+    /OfType<Run>\(\)/.test(atext) && /is Shape/.test(atext) && /IGradientBrush/.test(atext)
+  );
+  L.ok('an Avalonia scaffold names xunit v3', /xunit\.v3/.test(ar.stdout), ar.stdout);
+  L.ok(
+    'the WPF test drives hover, pressed, focus and disabled',
+    /IsMouseOverPropertyKey/.test(text) && /SetIsPressed/.test(text) && /IsKeyboardFocusedPropertyKey/.test(text) && /IsEnabled = false/.test(text)
+  );
+  L.ok(
+    'the WPF test measures runs, icons and the worst gradient stop',
+    /OfType<Run>\(\)/.test(text) && /is Shape/.test(text) && /GradientBrush/.test(text)
+  );
   L.ok('a bad namespace exits 2', L.node(L.SCAFFOLD, ['denetim', 'Bad-Name', '--project', ava], { env: L.cleanEnv() }).status === 2);
 }
 

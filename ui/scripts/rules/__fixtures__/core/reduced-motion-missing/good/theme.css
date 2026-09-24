@@ -4,6 +4,6 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     transition-duration: var(--tk-t-instant) !important;
-    transform: none !important;
+    animation-iteration-count: 1 !important;
   }
 }

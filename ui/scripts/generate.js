@@ -608,8 +608,10 @@ body {
               border-color var(--tk-t-instant) var(--tk-e-out);
 }
 .tk-btn:hover { transform: scale(1.02); }
-/* The pressed state takes a SECOND carrier: under reduced motion \`theme.css\` writes
-   \`transform: none !important\` and \`scale\` disappears. The border stays. */
+/* The pressed state takes a SECOND carrier: under reduced motion \`theme.css\` stops the
+   transition, so \`scale\` snaps without travel and 0.98 barely reads. The border carries it.
+   Reduced motion never writes \`transform: none\`: positioning transforms
+   (a modal centred with translate(-50%, -50%)) must stay where they are. */
 .tk-btn:active {
   transform: scale(0.98);
   border-color: var(--tk-border-strong);
@@ -688,7 +690,6 @@ body {
     transition-property: opacity !important;
     transition-duration: var(--tk-t-instant) !important;
   }
-  *, *::before, *::after { transform: none !important; }
 }
 `;
 }

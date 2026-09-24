@@ -353,15 +353,27 @@ function runScan(ctx, modules, broken) {
     ctx.ext = file.ext;
     const lines = file.text.split(/\r?\n/);
     const active = lineRules.filter((x) => accepts(x.r, file.ext));
+    ctx.lines = lines;
     for (let i = 0; i < lines.length; i++) {
+      ctx.lineIndex = i;
       for (const x of active) {
-        const message = guard(x.id, () => x.r.test(lines[i], ctx));
-        if (typeof message === 'string' && message)
+        const result = guard(x.id, () => x.r.test(lines[i], ctx));
+        const row = result && typeof result === 'object' ? result : { message: result };
+        if (typeof row.message === 'string' && row.message)
           findings.push(
-            finding(x.r.severity || 'error', x.id, file.rel, i + 1, message, x.r.fix)
+            finding(
+              x.r.severity || 'error',
+              x.id,
+              file.rel,
+              i + 1,
+              row.message,
+              row.fix === undefined ? x.r.fix : row.fix
+            )
           );
       }
     }
+    ctx.lines = null;
+    ctx.lineIndex = -1;
     for (const x of fileRules) {
       if (!accepts(x.r, file.ext)) continue;
       const rows = guard(x.id, () => x.r.check(file.rel, file.text, ctx));

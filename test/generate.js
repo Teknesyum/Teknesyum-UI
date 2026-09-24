@@ -88,4 +88,18 @@ module.exports = function generate() {
     }
     L.ok(name + ' has no colour outside the token file', stray.size === 0, [...stray].slice(0, 5).join(' '));
   }
+
+  const cssFile = path.join(out, 'theme.css');
+  const css = fs.existsSync(cssFile) ? fs.readFileSync(cssFile, 'utf8') : '';
+  const reduced = (/@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\n\}/.exec(css) || [''])[0];
+  L.ok('theme.css carries a reduced-motion block', reduced.length > 0);
+  L.ok('reduced motion never clears transform', !/transform\s*:\s*none/.test(reduced), reduced);
+  L.ok(
+    'reduced motion stops animation by duration and repeat',
+    /animation-duration:\s*0\.01ms !important/.test(reduced) &&
+      /animation-iteration-count:\s*1 !important/.test(reduced),
+    reduced
+  );
+  const shipped = fs.readFileSync(path.join(L.ASSETS, 'theme.css'), 'utf8');
+  L.ok('the shipped theme.css matches the generator', shipped.replace(/\r\n/g, '\n') === css.replace(/\r\n/g, '\n'));
 };

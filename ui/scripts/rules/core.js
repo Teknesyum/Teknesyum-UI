@@ -168,6 +168,23 @@ function nearestToken(ms, state) {
   return best.name;
 }
 
+const TIME = /(?<![\w.-])(\d*\.?\d+)(ms|s)\b/g;
+
+function loopAt(ctx) {
+  const lines = ctx.lines;
+  const i = ctx.lineIndex;
+  if (!Array.isArray(lines) || !(i >= 0)) return false;
+  let start = i;
+  while (start > 0 && !lines[start].includes('{') && !lines[start - 1].includes('}')) start--;
+  let end = i;
+  while (end < lines.length - 1 && !lines[end].includes('}') && !lines[end + 1].includes('{')) end++;
+  const block = lines.slice(start, end + 1).join('\n');
+  return (
+    /animation-iteration-count\s*:[^;{}]*\binfinite\b/i.test(block) ||
+    /\banimation\s*:[^;{}]*\binfinite\b/i.test(block)
+  );
+}
+
 function tokenizeDuration(line, state) {
   const y = line.replace(
     /\bduration-(\d+(?:\.\d+)?)\b/g,
@@ -175,7 +192,7 @@ function tokenizeDuration(line, state) {
   );
   return y.replace(/\b(?:transition|animation)(?:-duration)?\s*:\s*([^;{}]*)/gi, (whole, value) => {
     const next = value.replace(
-      /(\d+(?:\.\d+)?)(ms|s)\b/g,
+      TIME,
       (_, n, unit) => 'var(' + nearestToken(unit === 's' ? Number(n) * 1000 : Number(n), state) + ')'
     );
     return whole.slice(0, whole.length - value.length) + next;
@@ -187,7 +204,7 @@ function durationsIn(line) {
   for (const m of line.matchAll(/\bduration-(\d+(?:\.\d+)?)\b/g))
     out.push({ text: m[0], ms: Number(m[1]) });
   for (const m of line.matchAll(/\b(?:transition|animation)(?:-duration)?\s*:\s*([^;{}]*)/gi))
-    for (const d of m[1].matchAll(/(\d+(?:\.\d+)?)(ms|s)\b/g)) {
+    for (const d of m[1].matchAll(TIME)) {
       const ms = d[2] === 's' ? Number(d[1]) * 1000 : Number(d[1]);
       if (ms < 1) continue;
       out.push({ text: d[0], ms });
@@ -446,7 +463,17 @@ module.exports = {
         const state = motion(ctx);
         if (!state) return null;
         const over = durationsIn(line).filter((d) => d.ms > state.ceiling);
-        return over.length ? over[0].text + ' — above the ' + state.ceiling + ' ms ceiling' : null;
+        if (!over.length) return null;
+        if (loopAt(ctx))
+          return {
+            message:
+              over[0].text +
+              ' — infinite loop period above the ' +
+              state.ceiling +
+              ' ms ceiling; reported only, a loop is fixed by its repeat, not its duration',
+            fix: null,
+          };
+        return over[0].text + ' — above the ' + state.ceiling + ' ms ceiling';
       },
     },
     {
@@ -460,7 +487,13 @@ module.exports = {
         const found = durationsIn(line);
         if (found.some((d) => d.ms > state.ceiling)) return null;
         const fixed = found.filter((d) => d.ms <= state.ceiling);
-        return fixed.length ? fixed[0].text + ' — literal duration, not a token' : null;
+        if (!fixed.length) return null;
+        if (loopAt(ctx))
+          return {
+            message: fixed[0].text + ' — literal loop period, not a token; reported only',
+            fix: null,
+          };
+        return fixed[0].text + ' — literal duration, not a token';
       },
     },
     {

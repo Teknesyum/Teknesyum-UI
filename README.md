@@ -85,7 +85,8 @@ node <plugin>/scripts/scan.js <project-root>
 
 `0` clean, `1` findings, `2` not configured or off. `--json` for machine output, `--fix`
 for the repairs that are safe to automate, `--list-rules` for what it enforces, `--files
-a.css,b.tsx` to look only at the files that were touched.
+a.css,b.tsx` to look only at the files that were touched. `--fix` leaves the period of an
+infinite animation alone and only reports it: a loop is fixed by its repeat, not its duration.
 
 A Stop hook runs the same scan when interface files changed and blocks on a violation. It
 exits before doing any work when no config exists or `off: true` is set, and it stands down
@@ -137,7 +138,7 @@ node <plugin>/scripts/scaffold.js denetim <Namespace> [--wpf|--avalonia] [--penc
 | `kur` | `Kur.bat`, `kur-<name>.ps1` | A USB installer window: creeping progress bar, live log, finish and error screens, `-Prova` dry run. Updates in place; `-Onar` or the finish screen's Onar button rebuilds. Each stick carries its own deploy key under `.kurulum/anahtar/`. |
 | `ustcubuk` | `teknesyum-ui/ustcubuk/` | A React title bar: logo, two-part name, language slot, sponsor and brand links, window controls, drag region for Electron and Tauri. |
 | `durum` | `teknesyum-ui/durum/` | An Electron git sync with a title-bar badge: syncing, synced with the time, offline; click to sync now. |
-| `denetim` | `teknesyum-ui/denetim/KontrastTests.cs` | A headless contrast test: Avalonia.Headless.XUnit when the project has `.axaml`, otherwise WPF on an STA thread with `VisualTreeHelper`. It fails with every text under the threshold. |
+| `denetim` | `teknesyum-ui/denetim/KontrastTests.cs` | A headless contrast test: Avalonia.Headless.XUnit when the project has `.axaml` (the test project needs xunit v3), otherwise WPF on an STA thread with `VisualTreeHelper`. It measures every text run and icon, every button at rest, hover, pressed, focus and disabled, and the worst stop of a gradient ground; it writes `tmp/uc/kontrast-*.txt` plus window captures at 100/125/150 % and fails with every pair under the threshold. |
 
 Each target ends by naming the shelf book that governs what it just wrote, and says so
 plainly when the shelf or the book is missing. An existing file is never overwritten. Project-specific install steps go in with

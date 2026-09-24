@@ -544,7 +544,7 @@ module.exports = {
               line: r.line,
               message:
                 oneLine(r.selector) +
-                ' — pressed carried by transform alone; reduced motion removes it',
+                ' — pressed carried by transform alone; under reduced motion the scale snaps and barely reads',
             });
         }
         return out;

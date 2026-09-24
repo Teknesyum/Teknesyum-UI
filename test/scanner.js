@@ -130,10 +130,16 @@ function findingsFor(rule, kind, ctx) {
     if (!accepts(rule, file.ext)) continue;
     ctx.ext = file.ext;
     if (kind === 'line') {
-      file.text.split(/\r?\n/).forEach((line, i) => {
-        const message = rule.test(line, ctx);
+      const lines = file.text.split(/\r?\n/);
+      ctx.lines = lines;
+      lines.forEach((line, i) => {
+        ctx.lineIndex = i;
+        const result = rule.test(line, ctx);
+        const message = result && typeof result === 'object' ? result.message : result;
         if (typeof message === 'string' && message) out.push({ file: file.rel, line: i + 1, message });
       });
+      ctx.lines = null;
+      ctx.lineIndex = -1;
     } else {
       for (const row of rule.check(file.rel, file.text, ctx) || []) if (row && row.message) out.push(row);
     }
@@ -217,6 +223,38 @@ function cleanProject() {
   L.write(path.join(root, 'locale', 'en.json'), JSON.stringify({ ok: 'Save' }, null, 2) + '\n');
   L.write(path.join(root, 'locale', 'tr.json'), JSON.stringify({ ok: 'Kaydet' }, null, 2) + '\n');
   return root;
+}
+
+function fixDurations() {
+  const env = L.cleanEnv();
+  const root = cleanProject();
+  const loops = [
+    '.spin { animation: spin 2s linear infinite; }',
+    '.pulse {',
+    '  animation-name: pulse;',
+    '  animation-duration: 1.2s;',
+    '  animation-iteration-count: infinite;',
+    '}',
+    '.blink { animation: blink 200ms steps(2) infinite; }',
+    '',
+  ].join('\n');
+  L.write(path.join(root, 'loops.css'), loops);
+  L.write(path.join(root, 'fade.css'), '.fade { transition: opacity .8s ease, transform 0.2s ease; }\n');
+  const r = L.node(L.SCAN, [root, '--fix', '--rules', 'core'], { env });
+  const loopsAfter = fs.readFileSync(path.join(root, 'loops.css'), 'utf8');
+  const fadeAfter = fs.readFileSync(path.join(root, 'fade.css'), 'utf8');
+  L.ok('--fix leaves infinite loop durations alone', loopsAfter === loops, loopsAfter);
+  L.ok(
+    'infinite loops are still reported by duration-ceiling',
+    /loops\.css:\d+\s+core\/duration-ceiling/.test(r.stdout) && /reported only/.test(r.stdout),
+    r.stdout
+  );
+  L.ok('--fix never writes .var(', !/\.var\(/.test(fadeAfter), fadeAfter);
+  L.ok(
+    '--fix reads .8s as 800 ms and tokenises both durations',
+    /opacity var\(--tk-t-[a-z]+\) ease, transform var\(--tk-t-[a-z]+\) ease/.test(fadeAfter),
+    fadeAfter
+  );
 }
 
 function exitCodes() {
@@ -364,6 +402,7 @@ module.exports = function scanner() {
   listRules();
   shape();
   fixtures();
+  fixDurations();
   const dirty = exitCodes();
   jsonShape(dirty);
   brokenModuleSurvives(dirty);

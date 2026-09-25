@@ -7,13 +7,13 @@ namespace Teknesyum.Theme;
 /// Teknesyum Neon — WinForms/console palette. Do not change these values.
 public static class Palette
 {
-    public static readonly Color NeonBlue   = ColorTranslator.FromHtml("#00F3FF");
-    public static readonly Color NeonPink   = ColorTranslator.FromHtml("#FF00EA");
-    public static readonly Color NeonPurple = ColorTranslator.FromHtml("#B026FF");
-    public static readonly Color Success    = ColorTranslator.FromHtml("#34D399");
+    public static readonly Color NeonBlue   = ColorTranslator.FromHtml("#3DDBE8");
+    public static readonly Color NeonPink   = ColorTranslator.FromHtml("#D236BF");
+    public static readonly Color NeonPurple = ColorTranslator.FromHtml("#9455EA");
+    public static readonly Color Success    = ColorTranslator.FromHtml("#4ADE80");
 
-    public static readonly Color PinkText   = ColorTranslator.FromHtml("#FF54EB");
-    public static readonly Color PurpleText = ColorTranslator.FromHtml("#C67EFF");
+    public static readonly Color PinkText   = ColorTranslator.FromHtml("#FFA3EE");
+    public static readonly Color PurpleText = ColorTranslator.FromHtml("#D4B3FF");
 
     // --- semantic role layer (SKILL §2) ---
     //
@@ -31,18 +31,18 @@ public static class Palette
     // never used on the same screen as a primary button.
     public static readonly Color Danger     = NeonPink;
 
-    /// The TEXT role of danger. The fill hex `#FF00EA` gives 6.11:1 as text, below
-    /// §2's 7:1 threshold; error text writes this rather than the fill field (7.33:1).
+    /// The TEXT role of danger. The fill pink falls below §2's 7:1 threshold as text;
+    /// error text writes this rather than the fill field.
     public static readonly Color DangerText = PinkText;
 
     /// `warning #FBBF24` — WARNING SURFACE ONLY: text, border, icon.
     /// NO FILL, NO BUTTON. The constraint is the same pattern as `Success`, not a
     /// new one.
     ///
-    /// The ban was measured: white text on an amber fill is 1.67:1 — it collapses.
-    /// WHAT REPLACES IT: warning text `Warning` (12.58:1 / 11.94:1), border
-    /// `Warning50` (3.59:1 on `#08090A`, clears 1.4.11's 3:1 threshold — pink /50
-    /// at 2.17 and purple /50 at 1.82 did not carry this rung, amber does), icon
+    /// The ban was measured: white text on an amber fill is 1.50:1 — it collapses.
+    /// WHAT REPLACES IT: warning text `Warning` (11.30:1), border
+    /// `Warning50` (3.60:1 on `#101115`, clears 1.4.11's 3:1 threshold — pink /50
+    /// at 1.94 and purple /50 at 1.92 did not carry this rung, amber does), icon
     /// the same colour. If an action is needed the button is primary (blue) or
     /// `Danger` (pink); the warning colour never enters a button.
     ///
@@ -55,20 +55,20 @@ public static class Palette
     public static readonly Color Warning    = ColorTranslator.FromHtml("#FBBF24");
     public static readonly Color Warning50  = Color.FromArgb(0x80, 0xFB, 0xBF, 0x24);
 
-    public static readonly Color Surface    = ColorTranslator.FromHtml("#08090A");
-    public static readonly Color AppBg      = ColorTranslator.FromHtml("#000000");
-    public static readonly Color AppBgFrom  = ColorTranslator.FromHtml("#000000");
-    public static readonly Color AppBgTo    = ColorTranslator.FromHtml("#08090A");
+    public static readonly Color Surface    = ColorTranslator.FromHtml("#101115");
+    public static readonly Color AppBg      = ColorTranslator.FromHtml("#0A0B0E");
+    public static readonly Color AppBgFrom  = ColorTranslator.FromHtml("#0A0B0E");
+    public static readonly Color AppBgTo    = ColorTranslator.FromHtml("#101115");
 
-    public static readonly Color BorderDefault    = Color.FromArgb(0x80, 0x00, 0xF3, 0xFF);
-    public static readonly Color BorderStrong     = Color.FromArgb(0x99, 0x00, 0xF3, 0xFF);
-    public static readonly Color BorderDecorative = Color.FromArgb(0x4D, 0x00, 0xF3, 0xFF);
+    public static readonly Color BorderDefault    = Color.FromArgb(0x73, 0x3D, 0xDB, 0xE8);
+    public static readonly Color BorderStrong     = Color.FromArgb(0x8C, 0x3D, 0xDB, 0xE8);
+    public static readonly Color BorderDecorative = Color.FromArgb(0x33, 0x3D, 0xDB, 0xE8);
 
-    public static readonly Color FocusRing      = ColorTranslator.FromHtml("#00F3FF");
-    public static readonly Color FocusRingInner = ColorTranslator.FromHtml("#000000");
+    public static readonly Color FocusRing      = ColorTranslator.FromHtml("#3DDBE8");
+    public static readonly Color FocusRingInner = ColorTranslator.FromHtml("#0A0B0E");
 
-    public static readonly Color TextBody   = ColorTranslator.FromHtml("#FFFFFF");
-    public static readonly Color TextLabel  = ColorTranslator.FromHtml("#00F3FF");
+    public static readonly Color TextBody   = ColorTranslator.FromHtml("#F2F3F6");
+    public static readonly Color TextLabel  = ColorTranslator.FromHtml("#3DDBE8");
 
     /// A disabled control is exempt from 7:1 (SKILL §2) and there is a price: a
     /// colour-blind user cannot see the grey. This colour is never used alone —
@@ -80,7 +80,7 @@ public static class Palette
     /// the same value as `TextBody`, and a single value with two names eventually
     /// diverges. For secondary text the answer is not to give grey, it is to delete
     /// the text (SKILL §2, "no mid greys").
-    public static readonly Color Disabled   = ColorTranslator.FromHtml("#71717A");
+    public static readonly Color Disabled   = ColorTranslator.FromHtml("#7C7F88");
 
     /// There is one radius: 6 DIP (SKILL §5, `layout.md` §5.1). Card, panel, button
     /// and cell take the same value. The one exception is the circle: `?` badge,
@@ -98,18 +98,18 @@ public static class Palette
     public const int    FontSize2 = 16;
     public const int    FontSize3 = 20;
     public const int    FontSize4 = 24;
-    public const int    FontSize5 = 30;
-    public const double LineHeightBody    = 1.5;
-    public const double LineHeightHeading = 1.2;
-    public const double LineHeightMono    = 1.4;
+    public const int    FontSize5 = 32;
+    public const double LineHeightBody    = 1.6;
+    public const double LineHeightHeading = 1.25;
+    public const double LineHeightMono    = 1.5;
     public const int    MeasureCh    = 65;
-    public const double TrackingLabel = 0.15;
-    public const double TrackingH3    = 0.05;
-    public const double TrackingH2    = 0.02;
-    public const double TrackingHero  = -0.01;
+    public const double TrackingLabel = 0.08;
+    public const double TrackingH3    = 0.02;
+    public const double TrackingH2    = 0;
+    public const double TrackingHero  = -0.015;
     public const int    WeightBody = 400;
     public const int    WeightSemi = 600;
-    public const int    WeightHero = 900;
+    public const int    WeightHero = 800;
 
     public const int Space1 = 4;
     public const int Space2 = 8;
@@ -201,12 +201,12 @@ public static class Palette
 /// ANSI console colours (for CLI projects such as Runly).
 public static class Ansi
 {
-    public const string Blue       = "[38;2;0;243;255m";
-    public const string Pink       = "[38;2;255;0;234m";
-    public const string Purple     = "[38;2;176;38;255m";
-    public const string PinkText   = "[38;2;255;84;235m";
-    public const string PurpleText = "[38;2;198;126;255m";
-    public const string Success    = "[38;2;52;211;153m";
+    public const string Blue       = "[38;2;61;219;232m";
+    public const string Pink       = "[38;2;210;54;191m";
+    public const string Purple     = "[38;2;148;85;234m";
+    public const string PinkText   = "[38;2;255;163;238m";
+    public const string PurpleText = "[38;2;212;179;255m";
+    public const string Success    = "[38;2;74;222;128m";
     // Role colours enter ANSI too; without them the terminal output drifts from the
     // palette. Danger and DangerText take the value of the brand constant, the hex
     // is not copied.
@@ -215,7 +215,7 @@ public static class Ansi
     // Warning: warning text only. A terminal has no fill anyway, so the constraint
     // holds by itself.
     public const string Warning    = "[38;2;251;191;36m";
-    public const string Disabled   = "[38;2;113;113;122m";
+    public const string Disabled   = "[38;2;124;127;136m";
     public const string Bold       = "[1m";
     public const string Reset      = "[0m";
 }

@@ -29,7 +29,7 @@ const SKIPPED_NAMES = new Set(['node_modules', '.git', 'build', 'dist', 'bin', '
 
 const SUGGESTIONS = {
   palette: 'Replace the colour with a palette token — no in-between tones (teknesyum-ui §2).',
-  ground: 'A white ground is not allowed; use bg (#000000) or surface (#0a0a0c).',
+  ground: 'A white ground is not allowed; use black (#0a0b0e) or surface (#101115).',
   textCase: 'Visible text is sentence case; UPPERCASE and Title Case are not used.',
   motion: 'Layout properties are not animated; use opacity or transform.',
   typeScale: 'The type scale is 10 · 13 · 14 · 18 · 24; smaller than that is unreadable.',
@@ -189,14 +189,18 @@ function makeFinding(file, line, rule, severity, suggestion) {
 }
 
 const PALETTE = new Set([
-  '#00f3ff',
-  '#ff00ea',
-  '#b026ff',
-  '#34d399',
-  '#000000',
-  '#0a0a0c',
-  '#ffffff',
-  '#71717a',
+  '#3ddbe8',
+  '#d236bf',
+  '#9455ea',
+  '#ffa3ee',
+  '#d4b3ff',
+  '#4ade80',
+  '#fbbf24',
+  '#0a0b0e',
+  '#101115',
+  '#14151a',
+  '#f2f3f6',
+  '#7c7f88',
 ]);
 const TYPE_SCALE = new Set([10, 13, 14, 18, 24]);
 const FINDING_CAP = 200;

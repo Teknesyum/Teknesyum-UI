@@ -151,10 +151,11 @@ plainly when the shelf or the book is missing. An existing file is never overwri
 ## Preview
 
 ```bash
-node ui/scripts/onizleme.js [--port 4317] [--no-open]
+node ui/scripts/onizleme.js [--tarayici [--port 4317] [--no-open]]
 ```
 
-A local, dependency-free page for trying new brand colours before touching the tokens. It
+Opens in its own Electron window (`ui/onizleme/masaustu/`, Electron is installed there on
+the first run); `--tarayici` serves the same page on `127.0.0.1` instead. A page for trying new brand colours before touching the tokens. It
 starts from `ui/templates/neon.tokens.json` and measures with the same `kontrast.js` the
 scanner uses, served to the browser as is. The left panel sets blue, pink, their text cuts,
 purple, surface and the background (flat, token gradient, glass, grid, glow; stops and

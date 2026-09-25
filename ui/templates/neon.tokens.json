@@ -16,41 +16,41 @@
   },
   "brand": {
     "blue": {
-      "value": "#00f3ff",
+      "value": "#3ddbe8",
       "rationale": "Primary brand colour: primary button fill, heading, label, focus ring."
     },
     "pink": {
-      "value": "#ff00ea",
-      "rationale": "The FILL cut of the secondary brand colour; as text it gives 6.11:1, so text work goes to pink-text."
+      "value": "#d236bf",
+      "rationale": "The FILL cut of the secondary brand colour; as text it gives 4.51:1, so text work goes to pink-text."
     },
     "purple": {
-      "value": "#b026ff",
+      "value": "#9455ea",
       "rationale": "Tertiary brand colour: decoration, scrollbar, ghost button."
     },
     "pink-text": {
-      "value": "#ff54eb",
-      "rationale": "The TEXT cut of pink: 7.33:1 on #08090a, clears §2's 7:1 threshold."
+      "value": "#ffa3ee",
+      "rationale": "The TEXT cut of pink: 10.53:1 on #101115, clears §2's 7:1 threshold."
     },
     "purple-text": {
-      "value": "#c67eff",
+      "value": "#d4b3ff",
       "rationale": "The TEXT cut of purple; the fill purple does not clear the 7:1 text threshold."
     },
     "surface": {
-      "value": "#08090a",
+      "value": "#101115",
       "rationale": "The dark end of the background and the panel base; every contrast measurement is against this ground."
     },
     "black": {
-      "value": "#000000",
+      "value": "#0a0b0e",
       "rationale": "The opening end of the background gradient and the inner layer of the focus ring."
     },
     "glass-base": {
-      "value": "#0a0a0f",
+      "value": "#14151a",
       "rationale": "The base colour of the glass surface; never used alone, it lives through the glass derivation."
     }
   },
   "role": {
     "success": {
-      "value": "#34d399",
+      "value": "#4ade80",
       "rationale": "Success role; it has no counterpart in the brand triad and carries its own hex. Renamed from NeonSuccess to a role on 2026-08-23."
     },
     "danger": {
@@ -59,19 +59,19 @@
     },
     "danger-text": {
       "ref": "pink-text",
-      "rationale": "Error text writes the text pink, not the fill pink — the 7:1 threshold (7.33:1)."
+      "rationale": "Error text writes the text pink, not the fill pink — the 7:1 threshold (10.53:1)."
     },
     "warning": {
       "value": "#fbbf24",
-      "rationale": "WARNING SURFACE ONLY: text (12.58:1), border, icon. No fill, no button — white text on an amber fill is 1.67:1. The hex is subject to the U9 ΔE measurement."
+      "rationale": "WARNING SURFACE ONLY: text (11.30:1), border, icon. No fill, no button — white text on an amber fill is 1.50:1. The hex is subject to the U9 ΔE measurement."
     },
     "warning-border": {
       "ref": "warning",
       "alpha": 0.5,
-      "rationale": "3.59:1 on #08090a — clears 1.4.11's 3:1 threshold; pink /50 (2.17) and purple /50 (1.82) did not."
+      "rationale": "3.60:1 on #101115 — clears 1.4.11's 3:1 threshold; pink /50 (1.94) and purple /50 (1.92) did not."
     },
     "text": {
-      "value": "#ffffff",
+      "value": "#f2f3f6",
       "rationale": "Body text. No mid greys; for secondary text the answer is not grey, it is deleting the text (SKILL §2)."
     },
     "text-label": {
@@ -79,34 +79,34 @@
       "rationale": "Label and h3 colour; bound to blue, not a copy of it."
     },
     "disabled": {
-      "value": "#71717a",
+      "value": "#7c7f88",
       "rationale": "The only colour exempt from 7:1 (SKILL §2); never used alone — title/ToolTip is mandatory, plus a cursor and, where possible, an icon."
     }
   },
   "derived": {
     "panel": {
       "ref": "surface",
-      "alpha": 0.95,
+      "alpha": 0.96,
       "rationale": "Panel background; the XAML Surface brush and .tk-panel take the same value from here."
     },
     "glass": {
       "ref": "glass-base",
-      "alpha": 0.85,
+      "alpha": 0.9,
       "rationale": "Glass surface (dark-glass); title bar and translucent layers."
     },
     "border": {
       "ref": "blue",
-      "alpha": 0.5,
+      "alpha": 0.45,
       "rationale": "Default border."
     },
     "border-strong": {
       "ref": "blue",
-      "alpha": 0.6,
+      "alpha": 0.55,
       "rationale": "Emphasised border."
     },
     "border-decorative": {
       "ref": "blue",
-      "alpha": 0.3,
+      "alpha": 0.2,
       "rationale": "Decorative rule; carries no information, outside the scope of 1.4.11."
     },
     "tone-scale": {
@@ -121,8 +121,8 @@
     },
     "glow": {
       "bases": ["blue", "pink", "purple"],
-      "alpha": 0.3,
-      "blur": 20,
+      "alpha": 0.18,
+      "blur": 16,
       "rationale": "Box glow; text is never given a glow, the sole exception being hero (SKILL §2)."
     },
     "glow-hero": {
@@ -151,35 +151,35 @@
     "bg-gradient": {
       "from": "black",
       "to": "surface",
-      "stops": 11,
+      "stops": 16,
       "rationale": "Not a flat colour but an 11-stop gradient (SKILL §2); the stops are linearly interpolated in the script, which closes banding."
     }
   },
   "on": {
     "_": ["Which text colour sits on each fill. on names an existing colour; null means the fill carries no text.","generate.js composites a translucent fill over surface, measures the pair and refuses to generate below 7:1."],
-    "blue": { "on": "black", "rationale": "black on blue: 15.26:1." },
-    "pink": { "on": null, "rationale": "Carries no text: the best pair, black on pink, is 6.44:1, below 7:1." },
-    "purple": { "on": null, "rationale": "Carries no text: the best pair, text on purple, is 4.60:1, below 7:1." },
-    "success": { "on": "black", "rationale": "black on success: 10.92:1." },
-    "danger": { "on": null, "rationale": "Carries no text: the best pair, black on danger, is 6.44:1, below 7:1. The danger button fills with danger-text instead." },
-    "danger-text": { "on": "black", "rationale": "black on danger-text: 7.72:1." },
-    "panel": { "on": "text", "rationale": "text on panel over surface: 19.93:1." },
-    "glass": { "on": "text", "rationale": "text on glass over surface: 19.78:1." },
-    "blue-10": { "on": "text", "rationale": "text on blue 10% over surface: 16.88:1." },
-    "blue-20": { "on": "text", "rationale": "text on blue 20% over surface: 12.86:1." },
-    "blue-30": { "on": "text", "rationale": "text on blue 30% over surface: 9.30:1." },
-    "blue-50": { "on": null, "rationale": "Carries no text: the best pair, text on blue 50% over surface, is 4.86:1, below 7:1." },
-    "blue-60": { "on": null, "rationale": "Carries no text: the best pair, black on blue 60% over surface, is 5.82:1, below 7:1." },
-    "pink-10": { "on": "text", "rationale": "text on pink 10% over surface: 18.75:1." },
-    "pink-20": { "on": "text", "rationale": "text on pink 20% over surface: 16.64:1." },
-    "pink-30": { "on": "text", "rationale": "text on pink 30% over surface: 14.05:1." },
-    "pink-50": { "on": "text", "rationale": "text on pink 50% over surface: 9.24:1." },
-    "pink-60": { "on": "text", "rationale": "text on pink 60% over surface: 7.40:1." },
-    "purple-10": { "on": "text", "rationale": "text on purple 10% over surface: 18.81:1." },
-    "purple-20": { "on": "text", "rationale": "text on purple 20% over surface: 17.11:1." },
-    "purple-30": { "on": "text", "rationale": "text on purple 30% over surface: 15.07:1." },
-    "purple-50": { "on": "text", "rationale": "text on purple 50% over surface: 10.95:1." },
-    "purple-60": { "on": "text", "rationale": "text on purple 60% over surface: 9.19:1." }
+    "blue": { "on": "black", "rationale": "black on blue: 11.71:1." },
+    "pink": { "on": null, "rationale": "Carries no text: the best pair, black on pink, is 4.70:1, below 7:1." },
+    "purple": { "on": null, "rationale": "Carries no text: the best pair, black on purple, is 4.45:1, below 7:1." },
+    "success": { "on": "black", "rationale": "black on success: 11.29:1." },
+    "danger": { "on": null, "rationale": "Carries no text: the best pair, black on danger, is 4.70:1, below 7:1. The danger button fills with danger-text instead." },
+    "danger-text": { "on": "black", "rationale": "black on danger-text: 10.99:1." },
+    "panel": { "on": "text", "rationale": "text on panel over surface: 17.00:1." },
+    "glass": { "on": "text", "rationale": "text on glass over surface: 16.49:1." },
+    "blue-10": { "on": "text", "rationale": "text on blue 10% over surface: 14.21:1." },
+    "blue-20": { "on": "text", "rationale": "text on blue 20% over surface: 11.09:1." },
+    "blue-30": { "on": "text", "rationale": "text on blue 30% over surface: 8.37:1." },
+    "blue-50": { "on": null, "rationale": "Carries no text: the best pair, text on blue 50% over surface, is 4.76:1, below 7:1." },
+    "blue-60": { "on": null, "rationale": "Carries no text: the best pair, black on blue 60% over surface, is 4.85:1, below 7:1." },
+    "pink-10": { "on": "text", "rationale": "text on pink 10% over surface: 15.69:1." },
+    "pink-20": { "on": "text", "rationale": "text on pink 20% over surface: 14.01:1." },
+    "pink-30": { "on": "text", "rationale": "text on pink 30% over surface: 12.18:1." },
+    "pink-50": { "on": "text", "rationale": "text on pink 50% over surface: 8.78:1." },
+    "pink-60": { "on": "text", "rationale": "text on pink 60% over surface: 7.37:1." },
+    "purple-10": { "on": "text", "rationale": "text on purple 10% over surface: 15.57:1." },
+    "purple-20": { "on": "text", "rationale": "text on purple 20% over surface: 13.86:1." },
+    "purple-30": { "on": "text", "rationale": "text on purple 30% over surface: 12.08:1." },
+    "purple-50": { "on": "text", "rationale": "text on purple 50% over surface: 8.84:1." },
+    "purple-60": { "on": "text", "rationale": "text on purple 60% over surface: 7.50:1." }
   },
   "duration": {
     "instant": { "ms": 90, "rationale": "Press/release response." },
@@ -198,18 +198,18 @@
     "fs-2": { "value": 16, "unit": "px", "rationale": "Body and button text." },
     "fs-3": { "value": 20, "unit": "px", "rationale": "h3." },
     "fs-4": { "value": 24, "unit": "px", "rationale": "h2." },
-    "fs-5": { "value": 30, "unit": "px", "rationale": "Hero number. 1.25 major third; do not add an intermediate step." },
-    "lh-body": { "value": 1.5, "rationale": "Body and hint line height." },
-    "lh-heading": { "value": 1.2, "rationale": "Heading, label, hero and button line height." },
-    "lh-mono": { "value": 1.4, "rationale": "Mono value line height." },
+    "fs-5": { "value": 32, "unit": "px", "rationale": "Hero number; 32 sets the hero clear of fs-4 (readability pass, 2026-09-25). Do not add an intermediate step." },
+    "lh-body": { "value": 1.6, "rationale": "Body and hint line height." },
+    "lh-heading": { "value": 1.25, "rationale": "Heading, label, hero and button line height." },
+    "lh-mono": { "value": 1.5, "rationale": "Mono value line height." },
     "measure": { "value": 65, "unit": "ch", "rationale": "Maximum readable line length for a prose block (SKILL \u00a73)." },
-    "tr-label": { "value": 0.15, "unit": "em", "rationale": "Label tracking; the widest cut, it separates a label from an h3 at the same size." },
-    "tr-h3": { "value": 0.05, "unit": "em", "rationale": "h3 tracking." },
-    "tr-h2": { "value": 0.02, "unit": "em", "rationale": "h2 and button tracking." },
-    "tr-hero": { "value": -0.01, "unit": "em", "rationale": "Hero tracking; the only negative cut, large mono digits fall apart without it." },
+    "tr-label": { "value": 0.08, "unit": "em", "rationale": "Label tracking; the widest cut, it separates a label from an h3 at the same size." },
+    "tr-h3": { "value": 0.02, "unit": "em", "rationale": "h3 tracking." },
+    "tr-h2": { "value": 0, "unit": "em", "rationale": "h2 and button tracking." },
+    "tr-hero": { "value": -0.015, "unit": "em", "rationale": "Hero tracking; the only negative cut, large mono digits fall apart without it." },
     "fw-body": { "value": 400, "xaml": "Normal", "rationale": "Body weight. 700 is forbidden outside hero (SKILL \u00a73)." },
     "fw-semi": { "value": 600, "xaml": "SemiBold", "rationale": "h2, h3, label and mono weight." },
-    "fw-hero": { "value": 900, "xaml": "Black", "rationale": "Hero number only." }
+    "fw-hero": { "value": 800, "xaml": "ExtraBold", "rationale": "Hero number only." }
   },
   "space": {
     "1": { "value": 4, "unit": "px", "rationale": "Spacing ladder step 1; also the menu and tooltip entry offset." },

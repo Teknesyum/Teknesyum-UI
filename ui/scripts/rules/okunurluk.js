@@ -250,8 +250,8 @@ function xamlTexts(ctx, exts) {
 function state(ctx) {
   if (cache.has(ctx)) return cache.get(ctx);
   const vars = cssVars(ctx);
-  const surfaceRaw = tokenHex(ctx.tokens, 'surface') || vars['--tk-surface'] || '#08090a';
-  const surface = K.parse(surfaceRaw) || K.parse('#08090a');
+  const surfaceRaw = tokenHex(ctx.tokens, 'surface') || vars['--tk-surface'] || '#101115';
+  const surface = K.parse(surfaceRaw) || K.parse('#101115');
   const disabledRaw = tokenHex(ctx.tokens, 'disabled') || vars['--tk-disabled'] || null;
   const st = {
     vars,

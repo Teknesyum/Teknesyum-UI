@@ -139,7 +139,7 @@
 
 .tk-titlebar__control--close:hover {
   background-color: var(--tk-danger-text);
-  color: var(--tk-on-danger-text, #000);
+  color: var(--tk-on-danger-text);
 }
 
 .tk-titlebar__control:focus-visible {

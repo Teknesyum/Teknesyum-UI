@@ -363,21 +363,21 @@ ${gradientCss()}
      fill is never used on the same screen as a primary button — both would be
      blue fills and the user could not tell which one is clickable. */
   --tk-danger: var(--tk-pink);
-  /* The TEXT role of danger. The fill hex \`#ff00ea\` gives 6.11:1 as text, below
-     §2's 7:1 threshold; error text therefore writes this token rather than the
-     fill token (7.33:1). The pink/purple fill-vs-text split continues in the
+  /* The TEXT role of danger. The fill pink falls below §2's 7:1 threshold as
+     text; error text therefore writes this token rather than the fill token.
+     The pink/purple fill-vs-text split continues in the
      role layer. */
   --tk-danger-text: var(--tk-pink-text);
 
   /* \`warning #fbbf24\` — WARNING SURFACE ONLY: text, border, icon.
      No fill, no button. The constraint is the same pattern as \`success\`, not a
-     new one. The ban was measured: white text on an amber fill is 1.67:1 — it
-     collapses. Black text would give 12.58:1, but a pattern that permits a fill
+     new one. The ban was measured: white text on an amber fill is 1.50:1 — it
+     collapses. Black text would give 11.30:1, but a pattern that permits a fill
      reopens the text-colour argument every time; a warning surface is built from
      text, border and icon.
-     WHAT REPLACES IT: warning text \`--tk-warning\` (12.58:1 / 11.94:1), border
-     \`--tk-warning-border\` (3.59:1 on \`#08090a\` — clears 1.4.11's 3:1 threshold;
-     pink /50 at 2.17 and purple /50 at 1.82 did NOT carry this rung, amber does),
+     WHAT REPLACES IT: warning text \`--tk-warning\` (11.30:1), border
+     \`--tk-warning-border\` (3.60:1 on \`#101115\` — clears 1.4.11's 3:1 threshold;
+     pink /50 at 1.94 and purple /50 at 1.92 did NOT carry this rung, amber does),
      icon the same colour. If an action is needed the button is primary (blue) or
      \`danger\` (pink) — the warning colour never enters a button.
      COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does
@@ -563,7 +563,7 @@ body {
 }
 .tk-hero {
   font-family: var(--font-mono, monospace);
-  font-size: var(--tk-fs-5); font-weight: 900;
+  font-size: var(--tk-fs-5); font-weight: var(--tk-fw-hero);
   line-height: var(--tk-lh-heading); letter-spacing: var(--tk-tr-hero);
   color: var(--tk-blue); filter: drop-shadow(var(--tk-glow-hero));
 }
@@ -617,7 +617,7 @@ body {
   border-color: var(--tk-border-strong);
   transition-duration: var(--tk-t-instant);
 }
-.tk-btn-primary   { background: var(--tk-blue);   color: #000; box-shadow: var(--tk-glow-blue); }
+.tk-btn-primary   { background: var(--tk-blue);   color: var(--tk-on-blue); box-shadow: var(--tk-glow-blue); }
 .tk-btn-primary:hover   { background: ${rgba('blue', 0.8)}; }
 /* The class name was already in role language; its contents moved to the role
    token too. The glow stays on the brand token — a glow is decoration, it does
@@ -625,7 +625,7 @@ body {
    6.44:1, below 7:1, so pink carries no text (tokens: on.danger); black on
    danger-text is 7.72:1. Hover is carried by scale alone — danger-text at /80 under
    black text measured 5.21:1. */
-.tk-btn-danger    { background: var(--tk-danger-text); color: #000; box-shadow: var(--tk-glow-pink); }
+.tk-btn-danger    { background: var(--tk-danger-text); color: var(--tk-on-danger-text); box-shadow: var(--tk-glow-pink); }
 .tk-btn-ghost {
   background: ${rgba('purple', 0.1)};
   border-color: var(--tk-purple-text);
@@ -646,14 +646,14 @@ body {
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: ${rgba('black', 0.3)}; border-radius: 4px; }
 ::-webkit-scrollbar-thumb {
-  background: var(--tk-purple); border-radius: 4px;
+  background: var(--tk-purple-text); border-radius: 4px;
   box-shadow: 0 0 10px var(--tk-purple);
   /* §5.4 bans animating \`box-shadow\` by name, with no exception; the glow stays
      static and only the fill colour transitions. Measured in the audit (2026-08-23). */
   transition: background-color var(--tk-t-instant) var(--tk-e-out);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--tk-pink); box-shadow: 0 0 10px var(--tk-pink);
+  background: var(--tk-pink-text); box-shadow: 0 0 10px var(--tk-pink);
 }
 
 /* --- title bar and signature (§4) --- */
@@ -756,15 +756,15 @@ ${gradientXaml('    ')}
        token is debt. If one opens it binds to blue, and an info fill is never
        used on the same screen as a primary button. -->
   <SolidColorBrush x:Key="Danger"     Color="${x('danger')}"/>
-  <!-- The TEXT role of danger. The fill hex gives 6.11:1 as text, below the 7:1
-       threshold; error text writes this brush (7.33:1). -->
+  <!-- The TEXT role of danger. The fill pink falls below the 7:1 threshold as
+       text; error text writes this brush. -->
   <SolidColorBrush x:Key="DangerText" Color="${x('danger-text')}"/>
 
   <!-- warning #FBBF24 — WARNING SURFACE ONLY: text, border, icon.
        NO FILL, NO BUTTON. The constraint is the same pattern as success.
-       The ban was measured: white text on an amber fill is 1.67:1, it collapses.
-       WHAT REPLACES IT: warning text \`Warning\` (12.58:1 / 11.94:1), border
-       \`Warning50\` (3.59:1 on #08090a, clears the 3:1 threshold), icon same colour.
+       The ban was measured: white text on an amber fill is 1.50:1, it collapses.
+       WHAT REPLACES IT: warning text \`Warning\` (11.30:1), border
+       \`Warning50\` (3.60:1 on #101115, clears the 3:1 threshold), icon same colour.
        If an action is needed the button is primary (blue) or \`Danger\` (pink).
        COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does
        not separate from success under protanopia, dE2000 15.2
@@ -1438,18 +1438,18 @@ public static class Palette
     // never used on the same screen as a primary button.
     public static readonly Color Danger     = NeonPink;
 
-    /// The TEXT role of danger. The fill hex \`#FF00EA\` gives 6.11:1 as text, below
-    /// §2's 7:1 threshold; error text writes this rather than the fill field (7.33:1).
+    /// The TEXT role of danger. The fill pink falls below §2's 7:1 threshold as text;
+    /// error text writes this rather than the fill field.
     public static readonly Color DangerText = PinkText;
 
     /// \`warning #FBBF24\` — WARNING SURFACE ONLY: text, border, icon.
     /// NO FILL, NO BUTTON. The constraint is the same pattern as \`Success\`, not a
     /// new one.
     ///
-    /// The ban was measured: white text on an amber fill is 1.67:1 — it collapses.
-    /// WHAT REPLACES IT: warning text \`Warning\` (12.58:1 / 11.94:1), border
-    /// \`Warning50\` (3.59:1 on \`#08090A\`, clears 1.4.11's 3:1 threshold — pink /50
-    /// at 2.17 and purple /50 at 1.82 did not carry this rung, amber does), icon
+    /// The ban was measured: white text on an amber fill is 1.50:1 — it collapses.
+    /// WHAT REPLACES IT: warning text \`Warning\` (11.30:1), border
+    /// \`Warning50\` (3.60:1 on \`#101115\`, clears 1.4.11's 3:1 threshold — pink /50
+    /// at 1.94 and purple /50 at 1.92 did not carry this rung, amber does), icon
     /// the same colour. If an action is needed the button is primary (blue) or
     /// \`Danger\` (pink); the warning colour never enters a button.
     ///

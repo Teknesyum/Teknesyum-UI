@@ -77,8 +77,29 @@ function ac(url) {
   c.unref();
 }
 
+function masaustu(argv) {
+  const kok = path.join(SAYFA, 'masaustu');
+  let exe;
+  try {
+    exe = require(path.join(kok, 'node_modules', 'electron'));
+  } catch {
+    process.stdout.write('Electron kuruluyor (ilk açılış, bir kez)…\n');
+    const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+    const k = require('child_process').spawnSync(npm, ['install', '--no-audit', '--no-fund'], { cwd: kok, stdio: 'inherit', shell: true });
+    if (k.status !== 0) throw new Error('Electron kurulamadı; --tarayici ile açın.');
+    delete require.cache[require.resolve(path.join(kok, 'node_modules', 'electron'))];
+    exe = require(path.join(kok, 'node_modules', 'electron'));
+  }
+  const bekle = argv.includes('--bekle');
+  const c = spawn(exe, [kok], { detached: !bekle, stdio: bekle ? 'inherit' : 'ignore', windowsHide: false });
+  if (bekle) c.on('exit', (kod) => (process.exitCode = kod || 0));
+  else c.unref();
+  process.stdout.write('Önizleme penceresi açıldı.\n');
+}
+
 async function main() {
   const argv = process.argv.slice(2);
+  if (!argv.includes('--tarayici')) return masaustu(argv);
   const i = argv.indexOf('--port');
   const port = i >= 0 ? Number(argv[i + 1]) : PORT;
   const s = await baslat(Number.isFinite(port) ? port : PORT);

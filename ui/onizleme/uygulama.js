@@ -72,7 +72,7 @@
     for (const [k, v] of Object.entries(t.role)) if (v && v.value) renk[k] = v.value.toLocaleLowerCase('tr');
     return {
       renk,
-      arka: { tur: 'degrade', durak: t.derived['bg-gradient'].stops, aci: 160, don: true },
+      arka: { tur: 'degrade', durak: t.derived['bg-gradient'].stops, aci: 160, don: false },
       yazi: {
         aile: 'sans',
         carpan: 1,
@@ -81,8 +81,8 @@
         kahraman: t.size['fw-hero'].value,
       },
       sekil: { r: t.shape.r.value, rPencere: t.shape['r-window'].value },
-      kaydir: { kalinlik: t.metric['scrollbar-w'].value, renk: 'purple', davranis: 'smooth' },
-      hareketAz: false,
+      kaydir: { kalinlik: t.metric['scrollbar-w'].value, renk: 'purple-text', davranis: 'auto' },
+      hareketAz: true,
     };
   }
 

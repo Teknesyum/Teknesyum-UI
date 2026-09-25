@@ -3,6 +3,22 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Changed
+- Readability pass on the neon tokens, from a fable consult (`docs/danisma/001-*`): text
+  `#f2f3f6` on surface `#101115` (17.00:1) instead of pure white on near-black; blue
+  `#3ddbe8`, pink `#d236bf`, purple `#9455ea`, pink-text `#ffa3ee`, purple-text `#d4b3ff`,
+  black `#0a0b0e`, glass-base `#14151a`, success `#4ade80`, disabled `#7c7f88`. Borders
+  45 / 55 / 20 %, panel 96 %, glass 90 %, glow 18 % blur 16, gradient 16 stops. Type: hero
+  32 px at 800, line height 1.6 / 1.25 / 1.5, tracking label 0.08em, h3 0.02em, h2 0, hero
+  -0.015em. Every `on` pair still clears 7:1; the narrowest is text on pink-60 at 7.37:1.
+- The primary and danger button text, hero weight and scrollbar thumb read their tokens
+  instead of `#000`, `900` and purple; the thumb is purple-text, pink-text on hover.
+- `setup.js`, `manifest.js` and the installer template carry the new palette.
+- Preview: opens in an Electron window by default (`--tarayici` keeps the local server);
+  its defaults are background swing off, instant scrolling and reduced motion on.
+
 ## [0.7.0] - 2026-09-25
 
 ### Added

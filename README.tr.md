@@ -151,10 +151,12 @@ ile girer; varsayılan npm paketlerini ve bir masaüstü kısayolunu kurar. `.ku
 ## Önizleme
 
 ```bash
-node ui/scripts/onizleme.js [--port 4317] [--no-open]
+node ui/scripts/onizleme.js [--tarayici [--port 4317] [--no-open]]
 ```
 
-Token'a dokunmadan önce yeni marka renklerini denemek için yerel, bağımlılıksız bir sayfa.
+Kendi Electron penceresinde açılır (`ui/onizleme/masaustu/`, Electron ilk açılışta oraya
+kurulur); `--tarayici` aynı sayfayı `127.0.0.1` üstünden sunar. Token'a dokunmadan önce yeni
+marka renklerini denemek için bir sayfa.
 `ui/templates/neon.tokens.json` değerleriyle açılır ve tarayıcıya olduğu gibi sunulan,
 `scan.js`'in kullandığı `kontrast.js` ile ölçer. Sol panel mavi, pembe, yazı kesimleri,
 mor, yüzey ve arka planı (düz, token degradesi, cam, ızgara, hale; durak ve açı), yazı

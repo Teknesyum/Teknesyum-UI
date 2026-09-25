@@ -33,9 +33,9 @@ function gate() {
   L.ok('the neon tokens pass the contrast gate', ok.status === 0, ok.stderr);
   const css = fs.existsSync(path.join(out, 'theme.css')) ? fs.readFileSync(path.join(out, 'theme.css'), 'utf8') : '';
   const xaml = fs.existsSync(path.join(out, 'Theme.xaml')) ? fs.readFileSync(path.join(out, 'Theme.xaml'), 'utf8') : '';
-  L.ok('theme.css carries --tk-on-<fill> for every on pair', /--tk-on-blue: #000000;/.test(css) && /--tk-on-blue-10: #ffffff;/.test(css));
+  L.ok('theme.css carries --tk-on-<fill> for every on pair', /--tk-on-blue: #0a0b0e;/.test(css) && /--tk-on-blue-10: #f2f3f6;/.test(css));
   L.ok('a fill without an on pair gets no --tk-on var', !/--tk-on-pink:/.test(css));
-  L.ok('Theme.xaml carries On<Fill> brushes', /x:Key="OnBlue"\s+Color="#FF000000"/.test(xaml) && /x:Key="OnPurple60"/.test(xaml));
+  L.ok('Theme.xaml carries On<Fill> brushes', /x:Key="OnBlue"\s+Color="#FF0A0B0E"/.test(xaml) && /x:Key="OnPurple60"/.test(xaml));
 
   const bad = JSON.parse(JSON.stringify(tokens));
   bad.on.pink = { on: 'black', rationale: 'black on pink: 6.44:1.' };
@@ -44,14 +44,14 @@ function gate() {
   const badOut = L.tmp('tkui-gate-bad-');
   const r = L.node(L.GENERATE, [badFile, badOut], { env: L.cleanEnv() });
   L.ok('a pair below 7:1 stops generation', r.status === 1 && !fs.existsSync(path.join(badOut, 'theme.css')), r.stderr);
-  L.ok('the gate names the pair and its ratio', /black on pink — 6\.44:1, below 7:1/.test(r.stderr), r.stderr);
+  L.ok('the gate names the pair and its ratio', /black on pink — 4\.70:1, below 7:1/.test(r.stderr), r.stderr);
 
   const lie = JSON.parse(JSON.stringify(tokens));
   lie.on.blue = { on: 'black', rationale: 'black on blue: 9.99:1.' };
   const lieFile = path.join(out, 'lie.json');
   fs.writeFileSync(lieFile, JSON.stringify(lie, null, 2));
   const l = L.node(L.GENERATE, [lieFile, L.tmp('tkui-gate-lie-')], { env: L.cleanEnv() });
-  L.ok('a rationale that misstates the ratio stops generation', l.status === 1 && /rationale says 9\.99:1, measured 15\.26:1/.test(l.stderr), l.stderr);
+  L.ok('a rationale that misstates the ratio stops generation', l.status === 1 && /rationale says 9\.99:1, measured 11\.71:1/.test(l.stderr), l.stderr);
 }
 
 function contrast() {
@@ -100,7 +100,7 @@ function pairs() {
   });
   const rows = scan(more, 'okunurluk');
   const paint = rows.filter((f) => /NeonButton\.cs$/.test(f.file));
-  L.ok('pair-contrast follows a C# paint method through locals, branches and symbols', paint.length === 1 && /bg Palette\.NeonPurple @30 .* on fg Palette\.PurpleText .* 6\.9:1/.test(paint[0].message), JSON.stringify(rows));
+  L.ok('pair-contrast follows a C# paint method through locals, branches and symbols', paint.length === 1 && /bg Palette\.NeonPurple @30 .* on fg Palette\.PurpleText .* 6\.5:1/.test(paint[0].message), JSON.stringify(rows));
   L.ok('a var scoped to another selector yields to the fallback', !rows.some((f) => /a\.css$/.test(f.file)));
   L.ok('a template state style takes the text of its sibling state style', !rows.some((f) => /Theme\.axaml$/.test(f.file)), JSON.stringify(rows));
 }

@@ -1,0 +1,31 @@
+== oneri
+text / surface                     #f2f3f6 #101115 17.00
+black / blue                       #0a0b0e #3ddbe8 11.71
+#000 / blue                        #000000 #3ddbe8 12.50
+black / success                    #0a0b0e #4ade80 11.29
+#000 / success                     #000000 #4ade80 12.05
+pink-text / surface                #ffa3ee #101115 10.53
+purple-text / surface              #d4b3ff #101115 10.50
+black / danger-text(pinkText)      #000000 #ffa3ee 11.73
+#000 / warning                     #000000 #fbbf24 12.58
+text / panel(surface95)            #f2f3f6 #101115 17.00
+text / glass(glass85 on surface)   #f2f3f6 #131419 16.58
+warning-border(50) / surface       #86681d #101115 3.60
+border(blue50) / surface           #27767f #101115 3.58
+text / blue-10                     #f2f3f6 #15252a 14.23
+text / blue-20                     #f2f3f6 #19393f 11.14
+text / blue-30                     #f2f3f6 #1e4e54 8.33
+text / pink-10                     #f2f3f6 #231526 15.68
+text / pink-20                     #f2f3f6 #371837 14.04
+text / pink-30                     #f2f3f6 #4a1c48 12.20
+text / pink-50                     #f2f3f6 #71246a 8.75
+text / pink-60                     #f2f3f6 #84277b 7.40
+text / purple-10                   #f2f3f6 #1d182a 15.56
+text / purple-20                   #f2f3f6 #2a1f40 13.83
+text / purple-30                   #f2f3f6 #382555 12.10
+text / purple-50                   #f2f3f6 #523380 8.83
+text / purple-60                   #f2f3f6 #5f3a95 7.49
+disabled / surface                 #7c7f88 #101115 4.72
+blue / surface                     #3ddbe8 #101115 11.23
+text / black(gradient start)       #f2f3f6 #0a0b0e 17.74
+L: blue=0.5748 pink=0.2010 purple=0.1873 pinkText=0.5363 purpleText=0.5346 surface=0.0057 black=0.0034 glass=0.0076 success=0.5526 warning=0.5790 text=0.8963 disabled=0.2124

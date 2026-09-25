@@ -183,9 +183,9 @@ function Renk([string]$h, [int]$a = 255) { [System.Drawing.Color]::FromArgb($a, 
 function Yazi([int]$px, [string]$stil = "Regular", [string]$aile = "Segoe UI") { New-Object System.Drawing.Font($aile, $px, [System.Drawing.FontStyle]$stil, [System.Drawing.GraphicsUnit]::Pixel) }
 
 $R = @{
-  zemin = Renk "#08090a"; metin = Renk "#ffffff"; mavi = Renk "#00f3ff"; mor = Renk "#b026ff"
-  basari = Renk "#34d399"; tehlike = Renk "#ff54eb"; sonuk = Renk "#71717a"
-  kenar = Renk "#00f3ff" 128; iz = Renk "#00f3ff" 77
+  zemin = Renk "#101115"; metin = Renk "#f2f3f6"; mavi = Renk "#3ddbe8"; mor = Renk "#9455ea"
+  basari = Renk "#4ade80"; tehlike = Renk "#ffa3ee"; sonuk = Renk "#7c7f88"
+  kenar = Renk "#3ddbe8" 115; iz = Renk "#3ddbe8" 51
 }
 $YZ = @{ baslik = Yazi 24 "Bold"; adim = Yazi 16; kucuk = Yazi 14; log = Yazi 14 "Regular" "Consolas"; dugme = Yazi 14 "Bold" }
 $B = @{}

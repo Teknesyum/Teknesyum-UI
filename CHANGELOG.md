@@ -6,6 +6,11 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- Preview **Kaydet**: writes the changed fields into `neon.tokens.json` and its copy,
+  re-measures `on` pairs and ratio rationales, swaps the palette in the installer and fixtures,
+  regenerates, tests, bumps the minor version, writes this file, commits, tags, pushes and
+  publishes a GitHub release (`ui/scripts/kaydet.js`; `POST /kaydet`, `GET /kaydet/durum`,
+  `GET /surum`). Progress is drawn with the installer panel.
 - Preview: an "Uygulama Parçaları" tab next to "Renkler" draws the shipped components from the
   standard's own CSS (`/standart.css` concatenates `theme.css`, `forms.css`, `states.css`, the
   title bar, progress bar, badge and installer panel): title bar, the five sync states, the
@@ -19,6 +24,8 @@ All notable changes to this project are documented here. The format follows
   waiting and local states.
 
 ### Changed
+- Ratio comments in `generate.js` are measured, not literal; the manifest palette, `setup.js`
+  fallbacks and the readability tests read their colours from the tokens.
 - Blue `#5aa8ff` (a true blue, no longer cyan) and pink `#c82ee0` (fuchsia), pink-text
   `#f0abfc`. Border alpha 55 %, strong border 70 %. Every ratio in the rationales re-measured.
 - Ghost button: colour only in the border, body text; hover purple-10 with its `on` text. The

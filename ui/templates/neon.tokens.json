@@ -63,12 +63,12 @@
     },
     "warning": {
       "value": "#fbbf24",
-      "rationale": "WARNING SURFACE ONLY: text (11.30:1), border, icon. No fill, no button — white text on an amber fill is 1.50:1. The hex is subject to the U9 ΔE measurement."
+      "rationale": "WARNING SURFACE ONLY: text (11.30:1), border, icon. No fill, no button — white text on an amber fill is 1.67:1. The hex is subject to the U9 ΔE measurement."
     },
     "warning-border": {
       "ref": "warning",
       "alpha": 0.5,
-      "rationale": "3.60:1 on #101115 — clears 1.4.11's 3:1 threshold; pink /50 (1.94) and purple /50 (1.92) did not."
+      "rationale": "3.60:1 on #101115 — clears 1.4.11's 3:1 threshold; pink /50 (1.91) and purple /50 (1.92) did not."
     },
     "text": {
       "value": "#f2f3f6",
@@ -161,7 +161,7 @@
     "pink": { "on": null, "rationale": "Carries no text: the best pair, black on pink, is 4.61:1, below 7:1." },
     "purple": { "on": null, "rationale": "Carries no text: the best pair, black on purple, is 4.45:1, below 7:1." },
     "success": { "on": "black", "rationale": "black on success: 11.29:1." },
-    "danger": { "on": null, "rationale": "Carries no text: the best pair, black on danger, is 4.70:1, below 7:1. The danger button fills with danger-text instead." },
+    "danger": { "on": null, "rationale": "Carries no text: the best pair, black on danger, is 4.61:1, below 7:1. The danger button fills with danger-text instead." },
     "danger-text": { "on": "black", "rationale": "black on danger-text: 11.19:1." },
     "panel": { "on": "text", "rationale": "text on panel over surface: 17.00:1." },
     "glass": { "on": "text", "rationale": "text on glass over surface: 16.49:1." },

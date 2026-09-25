@@ -87,13 +87,13 @@
 
   /* `warning #fbbf24` — WARNING SURFACE ONLY: text, border, icon.
      No fill, no button. The constraint is the same pattern as `success`, not a
-     new one. The ban was measured: white text on an amber fill is 1.50:1 — it
-     collapses. Black text would give 11.30:1, but a pattern that permits a fill
+     new one. The ban was measured: white text on an amber fill is 1.67:1 — it
+     collapses. Black text would give 11.79:1, but a pattern that permits a fill
      reopens the text-colour argument every time; a warning surface is built from
      text, border and icon.
      WHAT REPLACES IT: warning text `--tk-warning` (11.30:1), border
      `--tk-warning-border` (3.60:1 on `#101115` — clears 1.4.11's 3:1 threshold;
-     pink /50 at 1.94 and purple /50 at 1.92 did NOT carry this rung, amber does),
+     pink /50 at 1.91 and purple /50 at 1.92 did NOT carry this rung, amber does),
      icon the same colour. If an action is needed the button is primary (blue) or
      `danger` (pink) — the warning colour never enters a button.
      COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does

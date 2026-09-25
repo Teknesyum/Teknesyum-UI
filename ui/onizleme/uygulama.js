@@ -742,6 +742,7 @@
       kok.innerHTML = gezinti('s') + icerik(su, 's');
     }
     kok.scrollTop = kaydirma;
+    kaydetGuncelle();
   }
 
   function planla() {
@@ -980,6 +981,10 @@
     });
     $('#kopyala').addEventListener('click', kopyala);
     $('#indir').addEventListener('click', indir);
+    $('#kaydet').addEventListener('click', kaydetAc);
+    $('#kaydet-pencere').addEventListener('cancel', (e) => {
+      if (kayitSuruyor) e.preventDefault();
+    });
   }
 
   function oku() {
@@ -1081,6 +1086,127 @@
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     durum('neon.tokens.degisen.json indirildi.');
+  }
+
+  let kayitSuruyor = false;
+
+  function kacis(s) {
+    return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  }
+
+  function tokenDegisimi() {
+    const d = disaAktar();
+    delete d._;
+    return d;
+  }
+
+  function kaydetGuncelle() {
+    const b = $('#kaydet');
+    if (!b) return;
+    const bos = Object.keys(tokenDegisimi()).length === 0;
+    b.disabled = bos || kayitSuruyor;
+    b.title = bos ? 'Token dosyasından farklı bir ayar yok.' : 'Değişiklikleri token kaynağına yaz, yeni sürüm yayınla.';
+  }
+
+  function sonrakiSurum(s) {
+    const p = String(s).split('.').map(Number);
+    return p.length === 3 && p.every(Number.isInteger) ? p[0] + '.' + (p[1] + 1) + '.0' : '?';
+  }
+
+  async function kaydetAc() {
+    const p = $('#kaydet-pencere');
+    let surum = '?';
+    try {
+      surum = (await (await fetch('/surum', { cache: 'no-store' })).json()).surum;
+    } catch {}
+    const satirlar = farklar().filter((s) => !disaAktar()._ || !disaAktar()._.includes(s));
+    const notlar = disaAktar()._ || [];
+    p.innerHTML =
+      '<div class="tk-panel tk-modal kaydet-kutu">' +
+      '<h2 class="tk-h3" id="kaydet-baslik">Kaydet Ve Yayınla</h2>' +
+      '<p class="kaydet-surum">Sürüm ' + kacis(surum) + ' → ' + kacis(sonrakiSurum(surum)) + '</p>' +
+      '<ul class="kaydet-liste">' + satirlar.map((s) => '<li>' + kacis(s) + '</li>').join('') + '</ul>' +
+      (notlar.length ? '<p class="kaydet-not">Token karşılığı olmadığı için kaydedilmeyecek:</p><ul class="kaydet-liste">' + notlar.map((s) => '<li>' + kacis(s) + '</li>').join('') + '</ul>' : '') +
+      '<p class="kaydet-not">Token kaynağı yazılır, türev dosyalar üretilir, testler ve tarayıcı çalışır; hepsi geçerse sürüm artar, commit, etiket, push ve GitHub sürümü yapılır.</p>' +
+      '<div class="tk-installer__actions"><button type="button" class="tk-btn tk-btn-ghost" data-kaydet="vazgec">Vazgeç</button>' +
+      '<button type="button" class="tk-btn tk-btn-primary" data-kaydet="onay">Kaydet Ve Yayınla</button></div></div>';
+    $('[data-kaydet="vazgec"]', p).addEventListener('click', () => p.close());
+    $('[data-kaydet="onay"]', p).addEventListener('click', kaydetGonder);
+    p.showModal();
+    $('[data-kaydet="onay"]', p).focus();
+  }
+
+  function ilerlemeCiz(d, hata) {
+    const p = $('#kaydet-pencere');
+    const durumu = hata || (d.bitti && !d.basarili) ? 'error' : d.bitti ? 'done' : 'running';
+    const yuzde = Math.max(0, Math.min(100, Math.round(d.yuzde || 0)));
+    const adim = hata || d.adim || 'Başlıyor';
+    const alt = d.surum ? 'Sürüm ' + d.surum : 'Önizlemeden kayıt';
+    let dugmeler = '';
+    if (durumu === 'done') dugmeler = '<button type="button" class="tk-btn tk-btn-primary" data-kaydet="yenile">Önizlemeyi Yenile</button>';
+    else if (durumu === 'error') dugmeler = '<button type="button" class="tk-btn tk-btn-ghost" data-kaydet="kapat">Kapat</button>';
+    p.innerHTML =
+      '<div class="tk-installer kaydet-kutu" data-status="' + durumu + '">' +
+      '<div class="tk-installer__head"><div class="tk-installer__titles"><p class="tk-installer__title" id="kaydet-baslik">Teknesyum<span class="tk-installer__accent">Kaydet</span></p>' +
+      '<p class="tk-installer__sub">' + kacis(alt) + '</p></div></div>' +
+      '<div><div class="tk-installer__row"><span class="tk-installer__step">' + kacis(adim) + '</span><span class="tk-installer__percent">' + yuzde + '%</span></div>' +
+      '<div class="tk-progress__track parca-kur-cubuk" role="progressbar" aria-valuenow="' + yuzde + '" aria-valuemin="0" aria-valuemax="100" aria-label="Kaydet">' +
+      '<div class="tk-progress__fill" style="--tk-progress-value: ' + yuzde / 100 + '"></div></div></div>' +
+      '<ol class="tk-installer__log">' + (d.gunluk || []).slice(-9).map((s) => '<li>' + kacis(s) + '</li>').join('') + '</ol>' +
+      '<div class="tk-installer__actions">' + dugmeler + '</div></div>';
+    const y = $('[data-kaydet="yenile"]', p);
+    if (y) {
+      y.addEventListener('click', () => location.reload());
+      y.focus();
+    }
+    const k = $('[data-kaydet="kapat"]', p);
+    if (k) {
+      k.addEventListener('click', () => p.close());
+      k.focus();
+    }
+  }
+
+  async function kaydetGonder() {
+    kayitSuruyor = true;
+    kaydetGuncelle();
+    ilerlemeCiz({ yuzde: 0, gunluk: [] });
+    let r;
+    try {
+      r = await fetch('/kaydet', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-onizleme': '1' }, body: JSON.stringify(tokenDegisimi()) });
+    } catch (e) {
+      kayitSuruyor = false;
+      ilerlemeCiz({ gunluk: [String(e.message || e)] }, 'Sunucuya ulaşılamadı');
+      kaydetGuncelle();
+      return;
+    }
+    if (!r.ok) {
+      let m = 'HTTP ' + r.status;
+      try {
+        m = (await r.json()).hata || m;
+      } catch {}
+      kayitSuruyor = false;
+      ilerlemeCiz({ gunluk: [m] }, 'Kayıt başlamadı');
+      kaydetGuncelle();
+      return;
+    }
+    const bekle = async () => {
+      let d;
+      try {
+        d = await (await fetch('/kaydet/durum', { cache: 'no-store' })).json();
+      } catch {
+        setTimeout(bekle, 400);
+        return;
+      }
+      ilerlemeCiz(d);
+      if (d.bitti && !d.calisiyor) {
+        kayitSuruyor = false;
+        kaydetGuncelle();
+        durum(d.basarili ? 'Sürüm ' + d.surum + ' yayınlandı.' : 'Kayıt başarısız; dosyalar eski haline döndü.');
+        return;
+      }
+      setTimeout(bekle, 400);
+    };
+    bekle();
   }
 
   async function basla() {

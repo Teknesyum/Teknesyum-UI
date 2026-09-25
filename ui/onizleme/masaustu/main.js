@@ -2,7 +2,7 @@
 
 const path = require('path');
 const { app, BrowserWindow, protocol, shell } = require('electron');
-const { yanit, TOKENS } = require(path.join(__dirname, '..', '..', 'scripts', 'onizleme.js'));
+const { istek, TOKENS } = require(path.join(__dirname, '..', '..', 'scripts', 'onizleme.js'));
 
 const SEMA = 'onizleme';
 const KOK = SEMA + '://sayfa/';
@@ -43,8 +43,10 @@ function pencere() {
 }
 
 app.whenReady().then(() => {
-  protocol.handle(SEMA, (req) => {
-    const r = yanit(new URL(req.url).pathname);
+  protocol.handle(SEMA, async (req) => {
+    const govde = req.method === 'POST' ? await req.text() : '';
+    const basliklar = Object.fromEntries(req.headers.entries());
+    const r = istek(req.method, new URL(req.url).pathname, govde, basliklar);
     return new Response(r.body, { status: r.status, headers: { 'Content-Type': r.type, 'Cache-Control': 'no-store' } });
   });
   pencere();

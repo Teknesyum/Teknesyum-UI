@@ -167,7 +167,12 @@ a long scrolling list, the type scale and panel, card and glass. The "Uygulama P
 components from the standard's own CSS: title bar, sync and update badges, the installer panel
 in three states, progress bars, buttons, toasts, a dialog and form fields. Before / After puts the
 token values next to the current ones. Export copies or downloads only the changed fields
-in `neon.tokens.json` shape; the page never writes a file. Screenshots: `docs/onizleme/`.
+in `neon.tokens.json` shape. **Kaydet** releases them: after a confirm dialog listing the
+changes and the next version, `ui/scripts/kaydet.js` writes the token source and its copy,
+re-measures every `on` pair and ratio rationale, swaps the old hex in the installer and
+fixtures, runs `generate.js` and the tests (scanner included), bumps the minor version,
+writes the CHANGELOG, then commits, tags, pushes and runs `gh release create`. Progress is
+shown in the installer panel; any failure before the commit restores every file. Screenshots: `docs/onizleme/`.
 
 ## Tests
 

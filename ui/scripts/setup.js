@@ -69,6 +69,15 @@ function outRoot(root) {
   return path.join(root, 'teknesyum-ui');
 }
 
+function neonColour(name, fallback) {
+  try {
+    const T = JSON.parse(fs.readFileSync(templateFile('neon'), 'utf8'));
+    return ((T.brand && T.brand[name]) || (T.role && T.role[name])).value;
+  } catch {
+    return fallback;
+  }
+}
+
 function templateFile(name) {
   const local = path.join(pluginDir(), 'templates', name + '.tokens.json');
   if (fs.existsSync(local)) return local;
@@ -135,28 +144,28 @@ const QUESTIONS = [
     custom: true,
     ask: 'Primary brand colour (#rrggbb)',
     parse: (v) => hex(v, 'primary'),
-    fallback: '#5aa8ff',
+    fallback: neonColour('blue', '#5aa8ff'),
   },
   {
     key: 'secondary',
     custom: true,
     ask: 'Secondary brand colour (#rrggbb)',
     parse: (v) => hex(v, 'secondary'),
-    fallback: '#c82ee0',
+    fallback: neonColour('pink', '#c82ee0'),
   },
   {
     key: 'tertiary',
     custom: true,
     ask: 'Tertiary brand colour (#rrggbb)',
     parse: (v) => hex(v, 'tertiary'),
-    fallback: '#9455ea',
+    fallback: neonColour('purple', '#9455ea'),
   },
   {
     key: 'surface',
     custom: true,
     ask: 'Surface colour, the base every contrast is measured against (#rrggbb)',
     parse: (v) => hex(v, 'surface'),
-    fallback: '#101115',
+    fallback: neonColour('surface', '#101115'),
   },
   {
     key: 'dark',
@@ -579,8 +588,8 @@ function help() {
     '',
     'Examples',
     '  node setup.js --apply --template neon --targets css,react --project .',
-    '  node setup.js --apply --template custom --primary #5aa8ff --secondary #c82ee0 \\',
-    '    --tertiary #9455ea --surface #101115 --dark yes',
+    '  node setup.js --apply --template custom --primary ' + neonColour('blue') + ' --secondary ' + neonColour('pink') + ' \\',
+    '    --tertiary ' + neonColour('purple') + ' --surface ' + neonColour('surface') + ' --dark yes',
   ].join('\n');
 }
 

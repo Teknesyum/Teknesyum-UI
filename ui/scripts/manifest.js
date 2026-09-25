@@ -188,20 +188,20 @@ function makeFinding(file, line, rule, severity, suggestion) {
   return { file, line, rule, severity, suggestion };
 }
 
-const PALETTE = new Set([
-  '#5aa8ff',
-  '#c82ee0',
-  '#9455ea',
-  '#f0abfc',
-  '#d4b3ff',
-  '#4ade80',
-  '#fbbf24',
-  '#0a0b0e',
-  '#101115',
-  '#14151a',
-  '#f2f3f6',
-  '#7c7f88',
-]);
+function neonPalette() {
+  for (const p of [path.join(__dirname, '..', 'templates', 'neon.tokens.json'), path.join(__dirname, '..', 'skills', 'teknesyum-ui', 'assets', 'theme.tokens.json')]) {
+    try {
+      const T = JSON.parse(fs.readFileSync(p, 'utf8'));
+      return [T.brand, T.role]
+        .flatMap((g) => Object.values(g || {}))
+        .map((e) => (e && typeof e.value === 'string' ? e.value.toLowerCase() : null))
+        .filter((v) => /^#[0-9a-f]{6}$/.test(v || ''));
+    } catch {}
+  }
+  return [];
+}
+
+const PALETTE = new Set(neonPalette());
 const TYPE_SCALE = new Set([10, 13, 14, 18, 24]);
 const FINDING_CAP = 200;
 const UPPER = '[A-ZÇĞİÖŞÜ]';

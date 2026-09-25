@@ -10,6 +10,7 @@ const UI = path.resolve(__dirname, '..');
 const SAYFA = path.join(UI, 'onizleme');
 const TOKENS = path.join(UI, 'templates', 'neon.tokens.json');
 const KONTRAST = path.join(__dirname, 'kontrast.js');
+const KAYDET = require('./kaydet');
 const PORT = 4317;
 const VARLIK = path.join(UI, 'skills', 'teknesyum-ui', 'assets');
 const SABLON = path.join(UI, 'templates');
@@ -68,11 +69,53 @@ function yanit(yol) {
   }
 }
 
+function json(status, nesne) {
+  return { status, type: TUR['.json'], body: JSON.stringify(nesne) };
+}
+
+function istek(yontem, yol, govde, basliklar) {
+  const temiz = String(yol || '/').split('?')[0];
+  const b = basliklar || {};
+  if (temiz === '/surum') return json(200, { surum: KAYDET.surum() });
+  if (temiz === '/kaydet/durum') return json(200, KAYDET.durum());
+  if (temiz === '/kaydet') {
+    if (yontem !== 'POST') return json(405, { hata: 'Yalnız POST.' });
+    if (b['x-onizleme'] !== '1' || !/^application\/json/.test(b['content-type'] || '')) return json(403, { hata: 'İstek önizlemeden gelmedi.' });
+    if (b.origin && !/^(onizleme:\/\/sayfa|http:\/\/127\.0\.0\.1:\d+)$/.test(b.origin)) return json(403, { hata: 'Yabancı köken.' });
+    let veri;
+    try {
+      veri = JSON.parse(govde || '');
+    } catch {
+      return json(400, { hata: 'Gövde JSON değil.' });
+    }
+    try {
+      KAYDET.dogrula(veri, JSON.parse(fs.readFileSync(TOKENS, 'utf8')));
+    } catch (e) {
+      return json(400, { hata: e.message });
+    }
+    const r = KAYDET.baslat(veri);
+    return json(r.status, r.body);
+  }
+  if (yontem !== 'GET' && yontem !== 'HEAD') return json(405, { hata: 'Yalnız GET.' });
+  return yanit(temiz);
+}
+
 function sunucu() {
   return http.createServer((req, res) => {
-    const r = yanit(req.url);
-    res.writeHead(r.status, { 'Content-Type': r.type, 'Cache-Control': 'no-store' });
-    res.end(r.body);
+    const parca = [];
+    let boy = 0;
+    req.on('data', (c) => {
+      boy += c.length;
+      if (boy <= 65536) parca.push(c);
+    });
+    req.on('end', () => {
+      const r =
+        boy > 65536
+          ? json(413, { hata: 'Gövde çok büyük.' })
+          : istek(req.method, req.url, Buffer.concat(parca).toString('utf8'), req.headers);
+      res.writeHead(r.status, { 'Content-Type': r.type, 'Cache-Control': 'no-store' });
+      res.end(r.body);
+    });
   });
 }
 
@@ -134,4 +177,4 @@ if (require.main === module)
     process.exitCode = 1;
   });
 
-module.exports = { yanit, sunucu, baslat, kontrastTarayici, TOKENS, KONTRAST };
+module.exports = { yanit, istek, sunucu, baslat, kontrastTarayici, TOKENS, KONTRAST };

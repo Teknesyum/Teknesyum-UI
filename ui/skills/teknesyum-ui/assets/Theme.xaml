@@ -80,7 +80,7 @@
 
   <!-- warning #FBBF24 — WARNING SURFACE ONLY: text, border, icon.
        NO FILL, NO BUTTON. The constraint is the same pattern as success.
-       The ban was measured: white text on an amber fill is 1.50:1, it collapses.
+       The ban was measured: white text on an amber fill is 1.67:1, it collapses.
        WHAT REPLACES IT: warning text `Warning` (11.30:1), border
        `Warning50` (3.60:1 on #101115, clears the 3:1 threshold), icon same colour.
        If an action is needed the button is primary (blue) or `Danger` (pink).

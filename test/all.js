@@ -13,6 +13,7 @@ const SUITES = [
   ['raf', require('./raf')],
   ['okunurluk', require('./okunurluk')],
   ['onizleme', require('./onizleme')],
+  ['kaydet', require('./kaydet')],
 ];
 
 function main() {

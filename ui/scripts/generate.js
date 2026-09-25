@@ -35,6 +35,13 @@ const hk = n => n.toString(16).padStart(2, '0');
 const HK = n => hk(n).toUpperCase();
 
 function h(name) { const c = resolve(name); return '#' + hk(c.r) + hk(c.g) + hk(c.b); }
+const WHITE = { r: 255, g: 255, b: 255, a: 1 };
+function oran(fill, text, alpha) {
+  const f = typeof fill === 'string' ? resolve(fill) : fill;
+  const t = typeof text === 'string' ? resolve(text) : text;
+  const g = resolve('surface');
+  return K.pair({ r: f.r, g: f.g, b: f.b, a: alpha !== undefined ? alpha : f.a }, t, { r: g.r, g: g.g, b: g.b, a: 1 }).ratio.toFixed(2);
+}
 function rgba(name, alpha) {
   const c = resolve(name);
   const a = alpha !== undefined ? alpha : c.a;
@@ -369,15 +376,15 @@ ${gradientCss()}
      role layer. */
   --tk-danger-text: var(--tk-pink-text);
 
-  /* \`warning #fbbf24\` — WARNING SURFACE ONLY: text, border, icon.
+  /* \`warning ${h('warning')}\` — WARNING SURFACE ONLY: text, border, icon.
      No fill, no button. The constraint is the same pattern as \`success\`, not a
-     new one. The ban was measured: white text on an amber fill is 1.50:1 — it
-     collapses. Black text would give 11.30:1, but a pattern that permits a fill
+     new one. The ban was measured: white text on an amber fill is ${oran('warning', WHITE)}:1 — it
+     collapses. Black text would give ${oran('warning', 'black')}:1, but a pattern that permits a fill
      reopens the text-colour argument every time; a warning surface is built from
      text, border and icon.
-     WHAT REPLACES IT: warning text \`--tk-warning\` (11.30:1), border
-     \`--tk-warning-border\` (3.60:1 on \`#101115\` — clears 1.4.11's 3:1 threshold;
-     pink /50 at 1.94 and purple /50 at 1.92 did NOT carry this rung, amber does),
+     WHAT REPLACES IT: warning text \`--tk-warning\` (${oran('surface', 'warning')}:1), border
+     \`--tk-warning-border\` (${oran('surface', resolve('warning-border'))}:1 on \`${h('surface')}\` — clears 1.4.11's 3:1 threshold;
+     pink /50 at ${oran('surface', { ...resolve('pink'), a: 0.5 })} and purple /50 at ${oran('surface', { ...resolve('purple'), a: 0.5 })} did NOT carry this rung, amber does),
      icon the same colour. If an action is needed the button is primary (blue) or
      \`danger\` (pink) — the warning colour never enters a button.
      COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does
@@ -618,12 +625,12 @@ body {
   transition-duration: var(--tk-t-instant);
 }
 .tk-btn-primary   { background: var(--tk-blue);   color: var(--tk-on-blue); box-shadow: var(--tk-glow-blue); }
-/* Hover is carried by scale alone: black on blue /80 measured 5.47:1, below 7:1. */
+/* Hover is carried by scale alone: ${T.on.blue.on} on blue /80 measured ${oran('blue', T.on.blue.on, 0.8)}:1, below 7:1. */
 /* The class name was already in role language; its contents moved to the role
    token too. The glow stays on the brand token — a glow is decoration, it does
    not report state. The fill is the danger TEXT cut: black on the fill pink is
-   4.61:1, below 7:1, so pink carries no text (tokens: on.danger); black on
-   danger-text is 11.19:1. Hover is carried by scale alone. */
+   ${oran('pink', 'black')}:1, below 7:1, so pink carries no text (tokens: on.danger); ${T.on['danger-text'].on} on
+   danger-text is ${oran('danger-text', T.on['danger-text'].on)}:1. Hover is carried by scale alone. */
 .tk-btn-danger    { background: var(--tk-danger-text); color: var(--tk-on-danger-text); box-shadow: var(--tk-glow-pink); }
 /* A tint and its own hue never meet on one surface (ui-duzeni): the ghost keeps its
    colour in the border and writes body text. Hover adds the purple /10 fill under its
@@ -762,11 +769,11 @@ ${gradientXaml('    ')}
        text; error text writes this brush. -->
   <SolidColorBrush x:Key="DangerText" Color="${x('danger-text')}"/>
 
-  <!-- warning #FBBF24 — WARNING SURFACE ONLY: text, border, icon.
+  <!-- warning ${h('warning').toUpperCase()} — WARNING SURFACE ONLY: text, border, icon.
        NO FILL, NO BUTTON. The constraint is the same pattern as success.
-       The ban was measured: white text on an amber fill is 1.50:1, it collapses.
-       WHAT REPLACES IT: warning text \`Warning\` (11.30:1), border
-       \`Warning50\` (3.60:1 on #101115, clears the 3:1 threshold), icon same colour.
+       The ban was measured: white text on an amber fill is ${oran('warning', WHITE)}:1, it collapses.
+       WHAT REPLACES IT: warning text \`Warning\` (${oran('surface', 'warning')}:1), border
+       \`Warning50\` (${oran('surface', resolve('warning-border'))}:1 on ${h('surface')}, clears the 3:1 threshold), icon same colour.
        If an action is needed the button is primary (blue) or \`Danger\` (pink).
        COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does
        not separate from success under protanopia, dE2000 15.2

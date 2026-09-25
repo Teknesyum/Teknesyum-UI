@@ -33,25 +33,35 @@ function gate() {
   L.ok('the neon tokens pass the contrast gate', ok.status === 0, ok.stderr);
   const css = fs.existsSync(path.join(out, 'theme.css')) ? fs.readFileSync(path.join(out, 'theme.css'), 'utf8') : '';
   const xaml = fs.existsSync(path.join(out, 'Theme.xaml')) ? fs.readFileSync(path.join(out, 'Theme.xaml'), 'utf8') : '';
-  L.ok('theme.css carries --tk-on-<fill> for every on pair', /--tk-on-blue: #0a0b0e;/.test(css) && /--tk-on-blue-10: #f2f3f6;/.test(css));
-  L.ok('a fill without an on pair gets no --tk-on var', !/--tk-on-pink:/.test(css));
-  L.ok('Theme.xaml carries On<Fill> brushes', /x:Key="OnBlue"\s+Color="#FF0A0B0E"/.test(xaml) && /x:Key="OnPurple60"/.test(xaml));
+  const renk = (ad) => ((tokens.brand[ad] || tokens.role[ad]).value || '');
+  const cift = Object.keys(tokens.on).filter((k) => k !== '_');
+  const dolu = cift.filter((k) => tokens.on[k].on);
+  const bos = cift.filter((k) => !tokens.on[k].on);
+  L.ok('theme.css carries --tk-on-<fill> for every on pair', dolu.length > 0 && dolu.every((k) => css.includes('--tk-on-' + k + ': ' + renk(tokens.on[k].on) + ';')));
+  L.ok('a fill without an on pair gets no --tk-on var', bos.every((k) => !css.includes('--tk-on-' + k + ':')));
+  const pascal = (s) => s.split('-').map((p) => p[0].toLocaleUpperCase('en') + p.slice(1)).join('');
+  L.ok('Theme.xaml carries On<Fill> brushes', dolu.every((k) => new RegExp('x:Key="On' + pascal(k) + '"\\s+Color="#FF' + renk(tokens.on[k].on).slice(1).toLocaleUpperCase('en') + '"').test(xaml)));
 
   const bad = JSON.parse(JSON.stringify(tokens));
-  bad.on.pink = { on: 'black', rationale: 'black on pink: 6.44:1.' };
+  const zayif = Object.keys(tokens.on).find((k) => k !== '_' && !tokens.on[k].on && /the best pair, (\w+) on /.test(tokens.on[k].rationale));
+  const zayifOn = /the best pair, (\w+) on /.exec(tokens.on[zayif].rationale)[1];
+  const zayifOran = /is (\d+\.\d+):1/.exec(tokens.on[zayif].rationale)[1];
+  bad.on[zayif] = { on: zayifOn, rationale: zayifOn + ' on ' + zayif + ': 6.44:1.' };
   const badFile = path.join(out, 'bad.json');
   fs.writeFileSync(badFile, JSON.stringify(bad, null, 2));
   const badOut = L.tmp('tkui-gate-bad-');
   const r = L.node(L.GENERATE, [badFile, badOut], { env: L.cleanEnv() });
   L.ok('a pair below 7:1 stops generation', r.status === 1 && !fs.existsSync(path.join(badOut, 'theme.css')), r.stderr);
-  L.ok('the gate names the pair and its ratio', /black on pink — 4\.61:1, below 7:1/.test(r.stderr), r.stderr);
+  L.ok('the gate names the pair and its ratio', r.stderr.includes(zayifOn + ' on ' + zayif + ' — ' + zayifOran + ':1, below 7:1'), r.stderr);
 
   const lie = JSON.parse(JSON.stringify(tokens));
-  lie.on.blue = { on: 'black', rationale: 'black on blue: 9.99:1.' };
+  const dogru = Object.keys(tokens.on).find((k) => k !== '_' && tokens.on[k].on);
+  const dogruOran = /(\d+\.\d+):1/.exec(tokens.on[dogru].rationale)[1];
+  lie.on[dogru] = { on: tokens.on[dogru].on, rationale: tokens.on[dogru].on + ' on ' + dogru + ': 99.99:1.' };
   const lieFile = path.join(out, 'lie.json');
   fs.writeFileSync(lieFile, JSON.stringify(lie, null, 2));
   const l = L.node(L.GENERATE, [lieFile, L.tmp('tkui-gate-lie-')], { env: L.cleanEnv() });
-  L.ok('a rationale that misstates the ratio stops generation', l.status === 1 && /rationale says 9\.99:1, measured 7\.95:1/.test(l.stderr), l.stderr);
+  L.ok('a rationale that misstates the ratio stops generation', l.status === 1 && l.stderr.includes('rationale says 99.99:1, measured ' + dogruOran + ':1'), l.stderr);
 }
 
 function contrast() {

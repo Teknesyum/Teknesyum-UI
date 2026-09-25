@@ -168,8 +168,13 @@ seçili satır, başlık çubuğu, ilerleme, uzun kayan liste, tipografi ölçe�
 camı gösterir. "Uygulama Parçaları" sekmesi standardın kendi CSS'iyle hazır parçaları çizer:
 üst çubuk, senkron ve güncelleme rozetleri, üç durumda kurulum paneli, ilerleme çubukları,
 düğmeler, bildirimler, onay penceresi ve form alanları. Önce / Sonra kipi token değerlerini şimdikilerin yanına koyar. Dışa aktarma
-yalnız değişen alanları `neon.tokens.json` biçiminde kopyalar ya da indirir; sayfa dosya
-yazmaz. Ekran görüntüleri: `docs/onizleme/`.
+yalnız değişen alanları `neon.tokens.json` biçiminde kopyalar ya da indirir. **Kaydet**
+bunları yayınlar: değişiklikleri ve sonraki sürümü gösteren onaydan sonra
+`ui/scripts/kaydet.js` token kaynağını ve kopyasını yazar, her `on` çiftini ve oran geçen
+gerekçeyi yeniden ölçer, kurulum betiği ile fixture'lardaki eski hex'i değiştirir,
+`generate.js` ve testleri (tarayıcı dahil) çalıştırır, küçük sürümü artırır, CHANGELOG'u
+yazar; ardından commit, etiket, push ve `gh release create` yapar. İlerleme kurulum
+panelinde görünür; commit'ten önceki her hata tüm dosyaları geri yükler. Ekran görüntüleri: `docs/onizleme/`.
 
 ## Testler
 

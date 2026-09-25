@@ -163,7 +163,7 @@
   <CubicEase x:Key="EOut" EasingMode="EaseOut"/>
   <CubicEase x:Key="EIn" EasingMode="EaseIn"/>
 
-  <!-- Numeric tokens: the same values as the CSS --tk-* layer, in DIP.
+  <!-- Numeric tokens: the same values as the CSS tk-* custom properties, in DIP.
        Tracking is em, line height a multiplier, ratios unitless. -->
   <sys:Double x:Key="FontSize1">14</sys:Double>
   <sys:Double x:Key="FontSize2">16</sys:Double>

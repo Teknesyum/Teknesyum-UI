@@ -20,6 +20,10 @@ const ARTIFACTS = {
   winforms: ['Palette.cs'],
 };
 
+const SAMPLES = {
+  'Signature.axaml': 'Signature.axaml.example',
+};
+
 function flag(name) {
   const hit = argv.find((a) => a === '--' + name || a.startsWith('--' + name + '='));
   if (!hit) return null;
@@ -337,7 +341,7 @@ function copyInto(fromDir, toDir, names, force) {
       missing.push(name);
       continue;
     }
-    const dest = path.join(toDir, name);
+    const dest = path.join(toDir, SAMPLES[name] || name);
     if (fs.existsSync(dest) && !force) {
       skipped.push(dest);
       continue;

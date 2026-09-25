@@ -100,6 +100,14 @@ module.exports = function generate() {
       /animation-iteration-count:\s*1 !important/.test(reduced),
     reduced
   );
+  const xmlFiles = ['Theme.xaml', 'Theme.axaml']
+    .map((n) => path.join(out, n))
+    .concat(fs.readdirSync(L.ASSETS).filter((n) => /\.a?xaml$/.test(n)).map((n) => path.join(L.ASSETS, n)));
+  for (const file of xmlFiles) {
+    const text = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+    const bad = [...text.matchAll(/<!--([\s\S]*?)-->/g)].map((m) => m[1]).filter((b) => b.includes('--') || b.endsWith('-'));
+    L.ok(path.basename(file) + ' has no double hyphen inside an XML comment', text.length > 0 && bad.length === 0, bad.slice(0, 2).join(' | '));
+  }
   const shipped = fs.readFileSync(path.join(L.ASSETS, 'theme.css'), 'utf8');
   L.ok('the shipped theme.css matches the generator', shipped.replace(/\r\n/g, '\n') === css.replace(/\r\n/g, '\n'));
 };

@@ -224,10 +224,7 @@ function buildContext(root, config, notes, pick) {
   if (!Object.keys(theme).length && !tokens)
     notes.push('theme assets unreadable at ' + ASSETS + ' — colour and duration rules skipped');
 
-  const all = collect(root);
-  const found = pick
-    ? { ui: all.ui.filter((f) => pick.has(path.resolve(f))), modules: all.modules.filter((f) => pick.has(path.resolve(f))) }
-    : all;
+  const found = collect(root);
   const files = [];
   for (const full of found.ui) {
     const text = read(full);
@@ -263,6 +260,7 @@ function buildContext(root, config, notes, pick) {
     theme,
     files,
     modules,
+    picked: pick ? files.filter((f) => pick.has(path.resolve(f.path))) : files,
     ext: '',
     read(target) {
       return read(path.join(root, target));
@@ -349,7 +347,7 @@ function runScan(ctx, modules, broken) {
     for (const r of m.fileRules) fileRules.push({ m, r, id: m.id + '/' + r.id });
   }
 
-  for (const file of ctx.files) {
+  for (const file of ctx.picked || ctx.files) {
     ctx.ext = file.ext;
     const lines = file.text.split(/\r?\n/);
     const active = lineRules.filter((x) => accepts(x.r, file.ext));
@@ -552,8 +550,11 @@ function main(argv) {
 
   const notes = [];
   const broken = new Map();
-  const ctx = buildContext(root, config.merged, notes, chosen(root, picked));
-  const findings = runScan(ctx, modules, broken);
+  const pickSet = chosen(root, picked);
+  const ctx = buildContext(root, config.merged, notes, pickSet);
+  const findings = runScan(ctx, modules, broken).filter(
+    (f) => !pickSet || (f.file && pickSet.has(path.resolve(root, f.file)))
+  );
   const ignored = markIgnored(findings, ignoreRules(config.merged));
   const live = findings.filter((f) => !f.ignored);
   const applied = fix ? applyFixes(ctx, live, fixTable(modules)) : [];
@@ -589,7 +590,7 @@ function main(argv) {
   for (const f of open.slice(0, PRINT_CAP)) lines.push(where(f) + '  ' + f.rule + '  ' + f.message);
   if (open.length > PRINT_CAP) lines.push('… ' + (open.length - PRINT_CAP) + ' more');
   lines.push(
-    ctx.files.length +
+    ctx.picked.length +
       ' files · ' +
       open.length +
       ' open · ' +

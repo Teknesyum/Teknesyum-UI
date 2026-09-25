@@ -124,7 +124,8 @@ function scan(script, root, files) {
     return null;
   }
   const items = Array.isArray(j) ? j : Array.isArray(j && j.findings) ? j.findings : null;
-  return items && items.length ? items : null;
+  const open = items ? items.filter((f) => f && !f.ignored && !f.fixed) : [];
+  return open.length ? open : null;
 }
 
 function where(f) {

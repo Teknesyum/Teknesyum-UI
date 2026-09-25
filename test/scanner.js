@@ -398,6 +398,29 @@ function onlyFiles() {
   L.ok('--files with an untouched file exits 0', none.status === 0, none.stdout + none.stderr);
 }
 
+function filesSeeProjectStyles() {
+  const env = L.cleanEnv();
+  const root = cleanProject();
+  const eol = String.fromCharCode(10);
+  L.write(path.join(root, 'panel.css'), '.panel { padding: 8px; }' + eol);
+  L.write(path.join(root, 'focus.css'), '.btn:focus-visible { outline: 2px solid var(--tk-accent); }' + eol);
+  L.write(path.join(root, 'Views', 'Overview.axaml'), '<UserControl xmlns="https://github.com/avaloniaui"><Grid/></UserControl>' + eol);
+  L.write(path.join(root, 'Styles', 'App.axaml'), '<Styles xmlns="https://github.com/avaloniaui"><Style Selector="Button"><Setter Property="FocusVisualStyle" Value="{x:Null}"/></Style></Styles>' + eol);
+  const parse = (r) => {
+    try {
+      return JSON.parse(r.stdout);
+    } catch {
+      return [];
+    }
+  };
+  const full = parse(L.node(L.SCAN, [root, '--json', '--rules', 'core'], { env }));
+  const one = parse(L.node(L.SCAN, [root, '--json', '--rules', 'core', '--files', 'panel.css,Views/Overview.axaml'], { env }));
+  const ring = (list) => list.filter((f) => f.rule === 'core/focus-ring-missing');
+  L.ok('the full scan sees the focus styles in other files', ring(full).length === 0, JSON.stringify(ring(full)));
+  L.ok('--files still sees project-wide focus styles', ring(one).length === 0, JSON.stringify(ring(one)));
+  L.ok('--files reports only findings on the named files', one.every((f) => f.file === 'panel.css' || f.file === 'Views/Overview.axaml'), JSON.stringify(one.map((f) => f.file)));
+}
+
 module.exports = function scanner() {
   listRules();
   shape();
@@ -408,5 +431,6 @@ module.exports = function scanner() {
   brokenModuleSurvives(dirty);
   ignorePath();
   onlyFiles();
+  filesSeeProjectStyles();
   dogfood();
 };

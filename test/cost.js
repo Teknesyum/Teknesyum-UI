@@ -88,10 +88,39 @@ function noSlashCommands() {
   L.ok('no command file anywhere in the plugin', stray.length === 0, stray.join(' '));
 }
 
+function guardSkipsIgnored() {
+  const root = L.tmp('tkui-guard-ign-');
+  const config = { version: '1.1.0', off: false, template: 'neon', targets: ['css'], signature: { off: false } };
+  const cfgFile = path.join(root, '.claude', 'teknesyum-ui.json');
+  L.write(path.join(root, 'panel.css'), '.panel { color: #ff00ea; }' + String.fromCharCode(10));
+  L.write(cfgFile, JSON.stringify(config, null, 2));
+  const env = L.cleanEnv();
+  const call = (label) =>
+    L.node(L.GUARD, [], {
+      cwd: root,
+      env,
+      input: JSON.stringify({ session_id: 'ign-' + label, cwd: root, transcript_path: transcript(root) }),
+    });
+
+  const before = call('open');
+  L.ok('guard stops on an open finding', before.status === 2, 'status ' + before.status + ' ' + before.stderr);
+
+  let found = [];
+  try {
+    found = JSON.parse(L.node(L.SCAN, [root, '--json', '--files', 'panel.css'], { env }).stdout);
+  } catch {}
+  const mine = found.filter((f) => f.file === 'panel.css');
+  config.ignore = mine.map((f) => ({ rule: f.rule, file: f.file, line: f.line, reason: 'test' }));
+  L.write(cfgFile, JSON.stringify(config, null, 2));
+  const after = call('ignored');
+  L.ok('guard passes when every finding is ignored', mine.length > 0 && after.status === 0 && after.stderr === '', 'status ' + after.status + ' ' + after.stderr);
+}
+
 module.exports = function cost() {
   hooksWriteNoContext();
   guardIsSilent('with no config', null);
   guardIsSilent('with off: true', { version: '1.1.0', off: true, template: 'neon', targets: ['css'] });
+  guardSkipsIgnored();
   skillBudget();
   referenceBudget();
   noSlashCommands();

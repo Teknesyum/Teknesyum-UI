@@ -39,7 +39,10 @@ function applyNeon() {
   });
   L.ok('every target directory receives files', missing.length === 0, missing.join(' '));
 
-  L.ok('theme.tokens.json is written', fs.existsSync(path.join(root, 'teknesyum-ui', 'theme.tokens.json')));
+  const av = path.join(root, 'teknesyum-ui', 'avalonia');
+  L.ok('the Avalonia signature ships as an example, outside the compiled axaml glob', fs.existsSync(path.join(av, 'Signature.axaml.example')) && !fs.existsSync(path.join(av, 'Signature.axaml')));
+
+  L.ok('theme.tokens.json is written',fs.existsSync(path.join(root, 'teknesyum-ui', 'theme.tokens.json')));
 
   const keys = keysOf(cfg);
   const turkish = keys.filter((k) => TURKISH_KEYS.includes(k));

@@ -3,6 +3,21 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Changed
+- `setup.js` writes the Avalonia signature as `teknesyum-ui/avalonia/Signature.axaml.example`.
+  It needs `Teknesyum.Localization.Str` and a code-behind `Click` handler, so as a `.axaml`
+  it broke `dotnet build` in a bare project; as an example it stays out of the compiled glob.
+
+### Fixed
+- `Theme.xaml` and `Theme.axaml` no longer carry `--` inside an XML comment. The generator
+  cleans every comment, so a bare `avalonia.app` project builds with 0 errors on Avalonia
+  11.3 and 12.1.
+- The Stop hook counts only open findings; `ignored` and `fixed` findings no longer stop a turn.
+- `scan.js --files`: project rules such as `core/focus-ring-missing` see the whole tree, so a
+  focus style in another file counts; only the report is narrowed to the named files.
+
 ## [0.6.0] - 2026-09-24
 
 ### Changed

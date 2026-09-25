@@ -75,7 +75,8 @@ Claude Code içinde çalıştırırsanız neye ihtiyacı olduğunu yazdırır, m
 yanıtlarla `--apply` çağırır.
 
 `<proje>/.claude/teknesyum-ui.json` dosyasını yazar ve seçtiğiniz hedefler için temayı
-`<proje>/teknesyum-ui/` altına üretir: `css`, `react`, `wpf`, `avalonia`, `winforms`.
+`<proje>/teknesyum-ui/` altına üretir: `css`, `react`, `wpf`, `avalonia`, `winforms`. Avalonia imzası `Signature.axaml.example` olarak gelir: bir
+yerelleştirme uzantısı ve `Click` işleyicisi ister, kendi görünümünüze kopyalayın.
 
 Neon hazır yanıttır, tek yanıt değil — `--template custom` üç marka rengi ve bir yüzey alır,
 gerisini aynı formüllerle türetir.
@@ -88,13 +89,15 @@ node <plugin>/scripts/scan.js <proje-kökü>
 
 `0` temiz, `1` bulgu var, `2` yapılandırılmamış ya da kapalı. Makine çıktısı için `--json`,
 güvenle otomatikleştirilebilen onarımlar için `--fix`, neyi uyguladığını görmek için
-`--list-rules`, yalnız dokunulan dosyalara bakması için `--files a.css,b.tsx`. `--fix` sonsuz
+`--list-rules`, proje çapı kurallar bütün ağacı okurken yalnız dokunulan dosyaları raporlaması için
+`--files a.css,b.tsx`. `--fix` sonsuz
 bir animasyonun süresine dokunmaz, yalnız raporlar: döngünün düzeltmesi süresi değil tekrarıdır.
 
 Arayüz dosyaları değiştiğinde bir Stop kancası aynı taramayı çalıştırır ve ihlalde durdurur.
 Yapılandırma yoksa ya da `off: true` ayarlıysa hiç iş yapmadan çıkar; aynı dosyada iki
 engelden sonra geri çekilir, böylece gerçek bir anlaşmazlık işi değil kapıyı durdurur.
-Yalnız o turda değişen dosyaları tarar ve aynı sohbette söylediği bulguyu bir daha söylemez.
+Yalnız o turda değişen dosyaları tarar, yalnız açık bulguları sayar (`ignored` ya da `fixed`
+olanları asla) ve aynı sohbette söylediği bulguyu bir daha söylemez.
 
 ### Kontrast
 

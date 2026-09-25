@@ -224,7 +224,7 @@ function metricXaml(indent, timeTag) {
   const d = (key, p) => indent + '<sys:Double x:Key="' + key + '">' + m(p) + '</sys:Double>';
   const t = (key, p) => indent + mtime(p, timeTag, key);
   return [
-    indent + '<!-- Numeric tokens: the same values as the CSS --tk-* layer, in DIP.',
+    indent + '<!-- Numeric tokens: the same values as the CSS tk-* custom properties, in DIP.',
     indent + '     Tracking is em, line height a multiplier, ratios unitless. -->',
     d('FontSize1', 'size.fs-1'),
     d('FontSize2', 'size.fs-2'),
@@ -1635,10 +1635,15 @@ if (gateFailures.length) {
   process.exit(1);
 }
 
+function xmlComments(text) {
+  return text.replace(/<!--([\s\S]*?)-->/g, (all, body) =>
+    '<!--' + body.replace(/--(?=[a-z*])/gi, '').replace(/-{2,}/g, '-').replace(/-$/, '- ') + '-->');
+}
+
 const outputs = [
   ['theme.css', emitCss()],
-  ['Theme.xaml', emitXaml()],
-  ['Theme.axaml', emitAxaml()],
+  ['Theme.xaml', xmlComments(emitXaml())],
+  ['Theme.axaml', xmlComments(emitAxaml())],
   ['Palette.cs', emitPalette()]
 ];
 // MEASURED (2026-08-25, CI): pinning the line ending makes only the writing

@@ -72,7 +72,8 @@ Code it prints what it needs, the model asks once, and calls `--apply` with the 
 
 It writes `<project>/.claude/teknesyum-ui.json` and generates the theme into
 `<project>/teknesyum-ui/` for the targets you pick: `css`, `react`, `wpf`, `avalonia`,
-`winforms`.
+`winforms`. The Avalonia signature comes as `Signature.axaml.example`: it needs a
+localisation extension and a `Click` handler, so copy it into a view of your own.
 
 Neon is the ready answer, not the only one — `--template custom` takes three brand colours
 and a surface, and derives the rest on the same formulas.
@@ -85,13 +86,15 @@ node <plugin>/scripts/scan.js <project-root>
 
 `0` clean, `1` findings, `2` not configured or off. `--json` for machine output, `--fix`
 for the repairs that are safe to automate, `--list-rules` for what it enforces, `--files
-a.css,b.tsx` to look only at the files that were touched. `--fix` leaves the period of an
+a.css,b.tsx` to report only on the files that were touched while project-wide rules still read
+the whole tree. `--fix` leaves the period of an
 infinite animation alone and only reports it: a loop is fixed by its repeat, not its duration.
 
 A Stop hook runs the same scan when interface files changed and blocks on a violation. It
 exits before doing any work when no config exists or `off: true` is set, and it stands down
 after two blocks on the same file, so a real disagreement stops the gate rather than the work.
-It scans only the files the turn changed, and it does not repeat a finding it has already
+It scans only the files the turn changed, counts only open findings (never `ignored` or
+`fixed`), and it does not repeat a finding it has already
 made in the same conversation.
 
 ### Contrast

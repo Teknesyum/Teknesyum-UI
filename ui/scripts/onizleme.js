@@ -11,6 +11,17 @@ const SAYFA = path.join(UI, 'onizleme');
 const TOKENS = path.join(UI, 'templates', 'neon.tokens.json');
 const KONTRAST = path.join(__dirname, 'kontrast.js');
 const PORT = 4317;
+const VARLIK = path.join(UI, 'skills', 'teknesyum-ui', 'assets');
+const SABLON = path.join(UI, 'templates');
+const STANDART = [
+  path.join(VARLIK, 'theme.css'),
+  path.join(VARLIK, 'forms.css'),
+  path.join(VARLIK, 'states.css'),
+  path.join(SABLON, 'ustcubuk', 'react', 'titlebar.css'),
+  path.join(SABLON, 'ilerleme', 'react', 'progressbar.css'),
+  path.join(SABLON, 'durum', 'electron', 'badge.css'),
+  path.join(SABLON, 'kur', 'panel.css'),
+];
 
 const TUR = {
   '.html': 'text/html; charset=utf-8',
@@ -36,10 +47,19 @@ function kontrastTarayici() {
   );
 }
 
+function standartCss() {
+  return STANDART.map((d) => {
+    let c = fs.readFileSync(d, 'utf8').replace(/\r\n/g, '\n');
+    if (d.endsWith('theme.css')) c = c.replace(/^body \{[\s\S]*?^\}\n/m, '');
+    return '/* ' + path.relative(UI, d).replace(/\\/g, '/') + ' */\n' + c;
+  }).join('\n');
+}
+
 function yanit(yol) {
   const temiz = String(yol || '/').split('?')[0];
   try {
     if (temiz === '/kontrast.js') return { status: 200, type: TUR['.js'], body: kontrastTarayici() };
+    if (temiz === '/standart.css') return { status: 200, type: TUR['.css'], body: standartCss() };
     const dosya = YOL[temiz];
     if (!dosya) return { status: 404, type: 'text/plain; charset=utf-8', body: 'Bulunamadı' };
     return { status: 200, type: TUR[path.extname(dosya)], body: fs.readFileSync(dosya, 'utf8') };

@@ -189,10 +189,10 @@ function makeFinding(file, line, rule, severity, suggestion) {
 }
 
 const PALETTE = new Set([
-  '#3ddbe8',
-  '#d236bf',
+  '#5aa8ff',
+  '#c82ee0',
   '#9455ea',
-  '#ffa3ee',
+  '#f0abfc',
   '#d4b3ff',
   '#4ade80',
   '#fbbf24',

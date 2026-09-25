@@ -183,9 +183,9 @@ function Renk([string]$h, [int]$a = 255) { [System.Drawing.Color]::FromArgb($a, 
 function Yazi([int]$px, [string]$stil = "Regular", [string]$aile = "Segoe UI") { New-Object System.Drawing.Font($aile, $px, [System.Drawing.FontStyle]$stil, [System.Drawing.GraphicsUnit]::Pixel) }
 
 $R = @{
-  zemin = Renk "#101115"; metin = Renk "#f2f3f6"; mavi = Renk "#3ddbe8"; mor = Renk "#9455ea"
-  basari = Renk "#4ade80"; tehlike = Renk "#ffa3ee"; sonuk = Renk "#7c7f88"
-  kenar = Renk "#3ddbe8" 115; iz = Renk "#3ddbe8" 51
+  zemin = Renk "#101115"; metin = Renk "#f2f3f6"; mavi = Renk "#5aa8ff"; mor = Renk "#9455ea"
+  basari = Renk "#4ade80"; tehlike = Renk "#f0abfc"; vurgu = Renk "#f0abfc"; sonuk = Renk "#7c7f88"
+  kenar = Renk "#5aa8ff" 140; iz = Renk "#5aa8ff" 51
 }
 $YZ = @{ baslik = Yazi 24 "Bold"; adim = Yazi 16; kucuk = Yazi 14; log = Yazi 14 "Regular" "Consolas"; dugme = Yazi 14 "Bold" }
 $B = @{}
@@ -224,7 +224,7 @@ $f.Add_Paint({
   if ($G.ikon) { $cz.DrawImage($G.ikon, 24, 24, 48, 48) }
   $cz.DrawString($S.ad, $YZ.baslik, $B.metin, 84, 20)
   $gen = $cz.MeasureString($S.ad, $YZ.baslik).Width
-  $cz.DrawString("Kurulum", $YZ.baslik, $B.mavi, 84 + $gen - 4, 20)
+  $cz.DrawString("Kurulum", $YZ.baslik, $B.vurgu, 84 + $gen - 4, 20)
   if ($S.durum -eq "hata") { $alt = "Günlük  ·  " + $S.gunluk }
   elseif ($S.altbaslik) { $alt = $S.altbaslik + "  ·  " + $S.hedef }
   else { $alt = $S.hedef }
@@ -280,7 +280,7 @@ function Dugme([string]$metin, [bool]$birincil, [int]$x) {
   $dg.Location = New-Object System.Drawing.Point($x, 364)
   $dg.Cursor = "Hand"
   if ($birincil) { $dg.BackColor = $R.mavi; $dg.ForeColor = $R.zemin; $dg.FlatAppearance.BorderSize = 0 }
-  else { $dg.BackColor = $R.zemin; $dg.ForeColor = $R.mavi; $dg.FlatAppearance.BorderColor = $R.mavi }
+  else { $dg.BackColor = $R.zemin; $dg.ForeColor = $R.metin; $dg.FlatAppearance.BorderColor = $R.mavi }
   $dg.Visible = $false
   $f.Controls.Add($dg)
   $dg

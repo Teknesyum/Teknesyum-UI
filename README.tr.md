@@ -165,7 +165,9 @@ kaydırma davranışını ve hareket azaltmayı ayarlar. Sağ taraf her tone-sca
 text-scale kesimini ve `on` eşini hex'i ve yüzey üstündeki oranıyla gösterir (7:1 altı
 işaretlenir); mavi ve pembeyi yan yana, beş durumuyla düğmeleri, rozet, çip, giriş kutusu,
 seçili satır, başlık çubuğu, ilerleme, uzun kayan liste, tipografi ölçeği ve panel, kart,
-camı gösterir. Önce / Sonra kipi token değerlerini şimdikilerin yanına koyar. Dışa aktarma
+camı gösterir. "Uygulama Parçaları" sekmesi standardın kendi CSS'iyle hazır parçaları çizer:
+üst çubuk, senkron ve güncelleme rozetleri, üç durumda kurulum paneli, ilerleme çubukları,
+düğmeler, bildirimler, onay penceresi ve form alanları. Önce / Sonra kipi token değerlerini şimdikilerin yanına koyar. Dışa aktarma
 yalnız değişen alanları `neon.tokens.json` biçiminde kopyalar ya da indirir; sayfa dosya
 yazmaz. Ekran görüntüleri: `docs/onizleme/`.
 

@@ -284,6 +284,7 @@
             <Trigger Property="IsChecked" Value="True">
               <Setter TargetName="bd" Property="Background" Value="{StaticResource NeonBlue20}"/>
               <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource NeonBlue50}"/>
+              <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
             </Trigger>
 
             <!-- hover -->

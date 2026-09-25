@@ -618,20 +618,22 @@ body {
   transition-duration: var(--tk-t-instant);
 }
 .tk-btn-primary   { background: var(--tk-blue);   color: var(--tk-on-blue); box-shadow: var(--tk-glow-blue); }
-.tk-btn-primary:hover   { background: ${rgba('blue', 0.8)}; }
+/* Hover is carried by scale alone: black on blue /80 measured 5.47:1, below 7:1. */
 /* The class name was already in role language; its contents moved to the role
    token too. The glow stays on the brand token — a glow is decoration, it does
    not report state. The fill is the danger TEXT cut: black on the fill pink is
-   6.44:1, below 7:1, so pink carries no text (tokens: on.danger); black on
-   danger-text is 7.72:1. Hover is carried by scale alone — danger-text at /80 under
-   black text measured 5.21:1. */
+   4.61:1, below 7:1, so pink carries no text (tokens: on.danger); black on
+   danger-text is 11.19:1. Hover is carried by scale alone. */
 .tk-btn-danger    { background: var(--tk-danger-text); color: var(--tk-on-danger-text); box-shadow: var(--tk-glow-pink); }
+/* A tint and its own hue never meet on one surface (ui-duzeni): the ghost keeps its
+   colour in the border and writes body text. Hover adds the purple /10 fill under its
+   on pair. */
 .tk-btn-ghost {
-  background: ${rgba('purple', 0.1)};
+  background: transparent;
   border-color: var(--tk-purple-text);
-  color: var(--tk-purple-text);
+  color: var(--tk-text);
 }
-.tk-btn-ghost:hover { background: ${rgba('purple', 0.2)}; color: var(--tk-on-purple-20, var(--tk-text)); }
+.tk-btn-ghost:hover { background: ${rgba('purple', 0.1)}; color: var(--tk-on-purple-10); }
 /* The disabled state does not end at dimming: \`title\` text is mandatory (§2). */
 .tk-btn:disabled {
   color: var(--tk-disabled);
@@ -957,18 +959,20 @@ ${metricXaml('  ', 'Duration')}
               <Trigger.EnterActions>
                 <BeginStoryboard>
                   <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="bd" Storyboard.TargetProperty="Opacity"
-                                     To="0.85" Duration="{StaticResource TInstant}"
-                                     EasingFunction="{StaticResource EOut}"/>
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1.02" Duration="{StaticResource TInstant}"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"/>
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1.02" Duration="{StaticResource TInstant}"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"/>
                   </Storyboard>
                 </BeginStoryboard>
               </Trigger.EnterActions>
               <Trigger.ExitActions>
                 <BeginStoryboard>
                   <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="bd" Storyboard.TargetProperty="Opacity"
-                                     To="1" Duration="{StaticResource TInstant}"
-                                     EasingFunction="{StaticResource EIn}"/>
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"/>
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"/>
                   </Storyboard>
                 </BeginStoryboard>
               </Trigger.ExitActions>
@@ -1293,7 +1297,7 @@ ${metricXaml('    ', 'sys:TimeSpan')}
            a single Easing. Separate curves for entry and exit are not possible; an
            accepted simplification, noted in the contract's Output section. -->
       <Style Selector="^:pointerover /template/ Border#bd">
-        <Setter Property="Opacity" Value="0.85"/>
+        <Setter Property="RenderTransform" Value="scale(1.02)"/>
       </Style>
 
       <Style Selector="^:pressed /template/ Border#bd">

@@ -16,20 +16,20 @@
   },
   "brand": {
     "blue": {
-      "value": "#3ddbe8",
+      "value": "#5aa8ff",
       "rationale": "Primary brand colour: primary button fill, heading, label, focus ring."
     },
     "pink": {
-      "value": "#d236bf",
-      "rationale": "The FILL cut of the secondary brand colour; as text it gives 4.51:1, so text work goes to pink-text."
+      "value": "#c82ee0",
+      "rationale": "The FILL cut of the secondary brand colour; as text it gives 4.42:1, so text work goes to pink-text."
     },
     "purple": {
       "value": "#9455ea",
       "rationale": "Tertiary brand colour: decoration, scrollbar, ghost button."
     },
     "pink-text": {
-      "value": "#ffa3ee",
-      "rationale": "The TEXT cut of pink: 10.53:1 on #101115, clears §2's 7:1 threshold."
+      "value": "#f0abfc",
+      "rationale": "The TEXT cut of pink: 10.72:1 on #101115, clears §2's 7:1 threshold."
     },
     "purple-text": {
       "value": "#d4b3ff",
@@ -59,7 +59,7 @@
     },
     "danger-text": {
       "ref": "pink-text",
-      "rationale": "Error text writes the text pink, not the fill pink — the 7:1 threshold (10.53:1)."
+      "rationale": "Error text writes the text pink, not the fill pink — the 7:1 threshold (10.72:1)."
     },
     "warning": {
       "value": "#fbbf24",
@@ -96,12 +96,12 @@
     },
     "border": {
       "ref": "blue",
-      "alpha": 0.45,
+      "alpha": 0.55,
       "rationale": "Default border."
     },
     "border-strong": {
       "ref": "blue",
-      "alpha": 0.55,
+      "alpha": 0.7,
       "rationale": "Emphasised border."
     },
     "border-decorative": {
@@ -157,24 +157,24 @@
   },
   "on": {
     "_": ["Which text colour sits on each fill. on names an existing colour; null means the fill carries no text.","generate.js composites a translucent fill over surface, measures the pair and refuses to generate below 7:1."],
-    "blue": { "on": "black", "rationale": "black on blue: 11.71:1." },
-    "pink": { "on": null, "rationale": "Carries no text: the best pair, black on pink, is 4.70:1, below 7:1." },
+    "blue": { "on": "black", "rationale": "black on blue: 7.95:1." },
+    "pink": { "on": null, "rationale": "Carries no text: the best pair, black on pink, is 4.61:1, below 7:1." },
     "purple": { "on": null, "rationale": "Carries no text: the best pair, black on purple, is 4.45:1, below 7:1." },
     "success": { "on": "black", "rationale": "black on success: 11.29:1." },
     "danger": { "on": null, "rationale": "Carries no text: the best pair, black on danger, is 4.70:1, below 7:1. The danger button fills with danger-text instead." },
-    "danger-text": { "on": "black", "rationale": "black on danger-text: 10.99:1." },
+    "danger-text": { "on": "black", "rationale": "black on danger-text: 11.19:1." },
     "panel": { "on": "text", "rationale": "text on panel over surface: 17.00:1." },
     "glass": { "on": "text", "rationale": "text on glass over surface: 16.49:1." },
-    "blue-10": { "on": "text", "rationale": "text on blue 10% over surface: 14.21:1." },
-    "blue-20": { "on": "text", "rationale": "text on blue 20% over surface: 11.09:1." },
-    "blue-30": { "on": "text", "rationale": "text on blue 30% over surface: 8.37:1." },
-    "blue-50": { "on": null, "rationale": "Carries no text: the best pair, text on blue 50% over surface, is 4.76:1, below 7:1." },
-    "blue-60": { "on": null, "rationale": "Carries no text: the best pair, black on blue 60% over surface, is 4.85:1, below 7:1." },
-    "pink-10": { "on": "text", "rationale": "text on pink 10% over surface: 15.69:1." },
-    "pink-20": { "on": "text", "rationale": "text on pink 20% over surface: 14.01:1." },
-    "pink-30": { "on": "text", "rationale": "text on pink 30% over surface: 12.18:1." },
-    "pink-50": { "on": "text", "rationale": "text on pink 50% over surface: 8.78:1." },
-    "pink-60": { "on": "text", "rationale": "text on pink 60% over surface: 7.37:1." },
+    "blue-10": { "on": "text", "rationale": "text on blue 10% over surface: 14.76:1." },
+    "blue-20": { "on": "text", "rationale": "text on blue 20% over surface: 12.21:1." },
+    "blue-30": { "on": "text", "rationale": "text on blue 30% over surface: 9.80:1." },
+    "blue-50": { "on": null, "rationale": "Carries no text: the best pair, text on blue 50% over surface, is 6.17:1, below 7:1." },
+    "blue-60": { "on": null, "rationale": "Carries no text: the best pair, text on blue 60% over surface, is 4.93:1, below 7:1." },
+    "pink-10": { "on": "text", "rationale": "text on pink 10% over surface: 15.76:1." },
+    "pink-20": { "on": "text", "rationale": "text on pink 20% over surface: 14.12:1." },
+    "pink-30": { "on": "text", "rationale": "text on pink 30% over surface: 12.32:1." },
+    "pink-50": { "on": "text", "rationale": "text on pink 50% over surface: 8.92:1." },
+    "pink-60": { "on": "text", "rationale": "text on pink 60% over surface: 7.50:1." },
     "purple-10": { "on": "text", "rationale": "text on purple 10% over surface: 15.57:1." },
     "purple-20": { "on": "text", "rationale": "text on purple 20% over surface: 13.86:1." },
     "purple-30": { "on": "text", "rationale": "text on purple 30% over surface: 12.08:1." },

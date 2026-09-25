@@ -135,14 +135,14 @@ const QUESTIONS = [
     custom: true,
     ask: 'Primary brand colour (#rrggbb)',
     parse: (v) => hex(v, 'primary'),
-    fallback: '#3ddbe8',
+    fallback: '#5aa8ff',
   },
   {
     key: 'secondary',
     custom: true,
     ask: 'Secondary brand colour (#rrggbb)',
     parse: (v) => hex(v, 'secondary'),
-    fallback: '#d236bf',
+    fallback: '#c82ee0',
   },
   {
     key: 'tertiary',
@@ -579,7 +579,7 @@ function help() {
     '',
     'Examples',
     '  node setup.js --apply --template neon --targets css,react --project .',
-    '  node setup.js --apply --template custom --primary #3ddbe8 --secondary #d236bf \\',
+    '  node setup.js --apply --template custom --primary #5aa8ff --secondary #c82ee0 \\',
     '    --tertiary #9455ea --surface #101115 --dark yes',
   ].join('\n');
 }

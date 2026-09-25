@@ -163,7 +163,9 @@ angle), font family, size scale, weights, radius, scrollbar width and colour, sc
 behaviour and reduced motion. The right side shows every tone-scale step, text-scale cut
 and `on` pair with its hex and ratio on surface (under 7:1 is marked), blue and pink side by
 side, buttons in all five states, badge, chip, input, selected row, title bar, progress,
-a long scrolling list, the type scale and panel, card and glass. Before / After puts the
+a long scrolling list, the type scale and panel, card and glass. The "Uygulama Parçaları" tab draws the shipped
+components from the standard's own CSS: title bar, sync and update badges, the installer panel
+in three states, progress bars, buttons, toasts, a dialog and form fields. Before / After puts the
 token values next to the current ones. Export copies or downloads only the changed fields
 in `neon.tokens.json` shape; the page never writes a file. Screenshots: `docs/onizleme/`.
 

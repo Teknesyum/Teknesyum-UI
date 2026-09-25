@@ -43,6 +43,7 @@
   let ilk = null;
   let su = null;
   let kip = 'tek';
+  let sayfa = 'renk';
   let bekleyen = false;
   const hslBellek = {};
 
@@ -444,7 +445,7 @@
     }
     return (
       '<section class="bolum" id="' + on + '-dugmeler"><h2>Düğmeler</h2>' +
-      '<p>İlk sütun canlıdır: üzerine gelin, basın, Tab ile odaklayın. Diğer sütunlar durumları sabit gösterir. İkincil düğme standartta tanımlı değildir; pembe dolgu yazı taşımadığı için %10 dolgu ve pembe yazı kesimiyle önerilmiştir.</p>' +
+      '<p>İlk sütun canlıdır: üzerine gelin, basın, Tab ile odaklayın. Diğer sütunlar durumları sabit gösterir. İkincil ve hayalet düğmede renk yalnız kenardadır, yazı gövde rengidir; dolgu ile yazı aynı ton ailesinden olamaz. Üzerine gelince %10 dolgu gelir, yazı o dolgunun on eşinden.</p>' +
       '<div class="dugme-izgara">' + h + '</div></section>'
     );
   }
@@ -556,6 +557,151 @@
     );
   }
 
+  function parcaSayfasi() {
+    const blok = (id, baslik, aciklama, ic) =>
+      '<section class="bolum" id="p-' + id + '"><h2>' + baslik + '</h2><p>' + aciklama + '</p>' + ic + '</section>';
+    const etiketli = (etiket, ic) => '<figure class="parca-kutu"><figcaption class="bilesen-ad">' + etiket + '</figcaption>' + ic + '</figure>';
+    const kahve =
+      '<svg class="tk-titlebar__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M5 6.5v8a3 3 0 0 0 3 3h5a3 3 0 0 0 3-3v-8Z"/><path d="M16 8.5h2a2.5 2.5 0 0 1 0 5h-2"/><path d="M8 .5v3M12 .5v3"/></svg>';
+    const denetim = (sinif, ad, ic) =>
+      '<button type="button" class="tk-titlebar__control' + sinif + '" aria-label="' + ad + '" title="' + ad + '"><span class="tk-titlebar__' + ic + '" aria-hidden="true"></span></button>';
+    const pencere =
+      '<div class="tk-titlebar__window">' + denetim('', 'Küçült', 'minimize') + denetim('', 'Büyüt', 'maximize') + denetim(' tk-titlebar__control--close', 'Kapat', 'close') + '</div>';
+    const sekmeler = (secili) =>
+      '<nav class="tk-titlebar__tabs" aria-label="Sekmeler">' +
+      ['Ana Sayfa', 'Kayıtlar', 'Ayarlar']
+        .map((a, i) => '<a class="tk-titlebar__tab" href="#" data-bos' + (i === secili ? ' aria-current="page"' : '') + '>' + a + '</a>')
+        .join('') +
+      '</nav>';
+    const senkron = (durum, metin) =>
+      '<button type="button" class="tk-sync' + (durum === 'syncing' ? ' tk-sync-progress' : '') + '" data-state="' + durum + '" title="Şimdi eşitle">' + metin + '</button>';
+    const guncelleme = (adim, baslik) => '<button type="button" class="tk-update" data-step="' + adim + '" title="' + baslik + '">Güncelleme</button>';
+    const ustcubuk = (secili, rozetler) =>
+      '<div class="parca-pencere"><header class="tk-titlebar">' +
+      '<div class="tk-titlebar__brand"><span class="tk-titlebar__name">Ameliyat<span class="tk-titlebar__accent">Liste</span></span></div>' +
+      sekmeler(secili) +
+      '<div class="tk-titlebar__tools">' + rozetler +
+      '<a class="tk-titlebar__chip tk-titlebar__chip--support" href="#" data-bos>' + kahve + 'Destek Ol</a>' +
+      '<a class="tk-titlebar__chip" href="#" data-bos>teknesyum.com</a>' + pencere + '</div></header>' +
+      '<div class="parca-pencere-ic">İçerik alanı</div></div>';
+
+    const ust =
+      ustcubuk(0, senkron('synced', 'Eşitlendi · 14:32') + guncelleme('download', 'Yeni sürüm var, indirmek için tıklayın')) +
+      ustcubuk(1, senkron('offline', 'Çevrimdışı · 14:05') + guncelleme('install', 'İndirildi, kurmak için tıklayın'));
+
+    const rozetler =
+      '<div class="parca-sira">' +
+      etiketli('Bekliyor', senkron('waiting', 'Bağlanıyor…')) +
+      etiketli('Eşitleniyor', senkron('syncing', 'Eşitleniyor…')) +
+      etiketli('Eşitlendi', senkron('synced', 'Eşitlendi · 14:32')) +
+      etiketli('Çevrimdışı', senkron('offline', 'Çevrimdışı · 14:05')) +
+      etiketli('Yerel', senkron('local', 'Yalnız bu bilgisayar')) +
+      '</div><h3>Güncelleme Rozeti · İki Adım</h3><div class="parca-sira">' +
+      etiketli('1 · Sarı: Yeni Sürüm Var, Tıkla İndir', guncelleme('download', 'Yeni sürüm var, indirmek için tıklayın')) +
+      etiketli('2 · Yeşil: İndi, Tıkla Kur', guncelleme('install', 'İndirildi, kurmak için tıklayın')) +
+      '</div>';
+
+    const GUNLUK = [
+      'Kaynak denetlendi: D:\\AmeliyatListe',
+      'Eski sürüm yedeklendi (.old)',
+      'Çalışan süreç kapatıldı',
+      'Dosyalar kopyalanıyor · 412 / 980',
+      'Dosyalar kopyalanıyor · 980 / 980',
+      'Bağımlılıklar doğrulandı',
+      'Masaüstü kısayolu yazıldı',
+      'Başlat menüsü kaydı yazıldı',
+      'Kaldırma kaydı yazıldı',
+      'Kurulum tamamlandı',
+    ];
+    const simge =
+      '<svg class="tk-installer__icon" viewBox="0 0 48 48" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--tk-blue)">' +
+      '<rect x="5" y="5" width="38" height="38" rx="10"/><path d="M16 25l6 6 11-13"/></svg>';
+    const kur = (durum, yuzde, adim, alt, satirlar, dugmeler) =>
+      '<div class="tk-installer" data-status="' + durum + '">' +
+      '<div class="tk-installer__head">' + simge +
+      '<div class="tk-installer__titles"><p class="tk-installer__title">AmeliyatListe<span class="tk-installer__accent">Kurulum</span></p>' +
+      '<p class="tk-installer__sub" title="' + alt + '">' + alt + '</p></div></div>' +
+      '<div><div class="tk-installer__row"><span class="tk-installer__step">' + adim + '</span><span class="tk-installer__percent">' + yuzde + '%</span></div>' +
+      '<div class="tk-progress__track parca-kur-cubuk" role="progressbar" aria-valuenow="' + yuzde + '" aria-valuemin="0" aria-valuemax="100" aria-label="Kurulum">' +
+      '<div class="tk-progress__fill" style="--tk-progress-value: ' + yuzde / 100 + '"></div></div></div>' +
+      '<ol class="tk-installer__log">' + satirlar.slice(-9).map((s) => '<li>' + s + '</li>').join('') + '</ol>' +
+      '<div class="tk-installer__actions">' + dugmeler + '</div></div>';
+    const dugme = (sinif, metin) => '<button type="button" class="tk-btn ' + sinif + '">' + metin + '</button>';
+    const panel =
+      '<div class="parca-izgara">' +
+      etiketli('Çalışıyor · Düğme Yok, Kapatılamaz', kur('running', 62, 'Program dosyaları kopyalanıyor', 'İlk kurulum · C:\\Program Files\\AmeliyatListe', GUNLUK.slice(0, 4), '')) +
+      etiketli('Bitti · Programı Aç + Kapat', kur('done', 100, 'Kurulum tamamlandı, program hazır', 'İlk kurulum · C:\\Program Files\\AmeliyatListe', GUNLUK, dugme('tk-btn-primary', 'Programı Aç') + dugme('tk-btn-ghost', 'Kapat'))) +
+      etiketli('Hata · Günlüğü Aç + Kapat', kur('error', 48, 'Kopyalama durdu: hedef klasör başka bir programda açık', 'Günlük · C:\\Users\\Kullanici\\AppData\\Local\\AmeliyatListe\\kur.log', GUNLUK.slice(0, 4).concat('HATA: data.db kilitli, işlem durduruldu'), dugme('tk-btn-primary', 'Günlüğü Aç') + dugme('tk-btn-ghost', 'Kapat'))) +
+      '</div>';
+
+    const ilerleme = (durum, yuzde, adim) =>
+      '<div class="tk-progress" data-status="' + durum + '"><span class="tk-progress__step">' + adim + '</span><div class="tk-progress__row">' +
+      '<div class="tk-progress__track" role="progressbar" aria-valuenow="' + yuzde + '" aria-valuemin="0" aria-valuemax="100" aria-label="' + adim + '">' +
+      '<div class="tk-progress__fill" style="--tk-progress-value: ' + yuzde / 100 + '"></div></div>' +
+      '<span class="tk-progress__percent">' + yuzde + '%</span></div></div>';
+    const cubuklar =
+      '<div class="parca-yigin">' +
+      ilerleme('running', 35, 'Video kodlanıyor · 2 / 6') +
+      ilerleme('done', 100, 'Kodlama bitti') +
+      ilerleme('error', 70, 'Kodlama durdu: disk dolu') +
+      '</div>';
+
+    const dugmeler =
+      '<div class="parca-sira">' +
+      etiketli('Birincil', dugme('tk-btn-primary', 'Kaydet')) +
+      etiketli('Hayalet · Renk Kenarda', dugme('tk-btn-ghost', 'Vazgeç')) +
+      etiketli('Tehlike', dugme('tk-btn-danger', 'Sil')) +
+      etiketli('Edilgen', '<button type="button" class="tk-btn tk-btn-primary" disabled title="Önce bir kayıt seçin">Kaydet</button>') +
+      '</div>';
+
+    const kapat =
+      '<button type="button" class="tk-toast-close" aria-label="Kapat"><svg viewBox="0 0 14 14" aria-hidden="true" stroke="currentColor" stroke-width="1.5"><path d="M2 2l10 10M12 2L2 12"/></svg></button>';
+    const bildirim = (tur, baslik, metin) =>
+      '<div class="tk-panel tk-toast tk-toast-' + tur + '" role="status"><div class="tk-toast-body"><div class="tk-toast-title">' + baslik + '</div>' + metin + '</div>' + kapat + '</div>';
+    const bildirimler =
+      '<div class="parca-sira parca-ust">' +
+      bildirim('success', 'Kaydedildi', 'Ayarlar diske yazıldı.') +
+      bildirim('warning', 'Çevrimdışı', 'Değişiklikler bağlantı gelince eşitlenecek.') +
+      bildirim('danger', 'Kaydedilemedi', 'Disk dolu; yer açıp yeniden deneyin.') +
+      '</div><h3>Onay Penceresi</h3>' +
+      '<div class="parca-modal"><div class="tk-panel tk-modal" role="dialog" aria-label="Kaydı sil">' +
+      '<p class="tk-h3">Kayıt silinsin mi?</p><p class="tk-modal-body">“Ameliyat 2026-09-25” kaydı ve ekleri kalıcı olarak silinir.</p>' +
+      '<div class="tk-modal-actions">' + dugme('tk-btn-ghost', 'Vazgeç') + dugme('tk-btn-danger', 'Sil') + '</div></div></div>';
+
+    const form =
+      '<div class="parca-izgara parca-form">' +
+      '<div class="tk-field"><label class="tk-label" for="p-ad">Hasta Adı</label><input class="tk-input" id="p-ad" value="Ayşe Yılmaz"></div>' +
+      '<div class="tk-field"><label class="tk-label" for="p-tel">Telefon</label><input class="tk-input" id="p-tel" value="0532 12" aria-invalid="true" aria-describedby="p-tel-h">' +
+      '<p class="tk-error" id="p-tel-h">Telefon 11 haneli olmalı.</p></div>' +
+      '<div class="tk-field"><label class="tk-label" for="p-kod">Dosya No</label><input class="tk-input tk-mono" id="p-kod" value="AL-2026-0412" readonly></div>' +
+      '<div class="tk-field"><label class="tk-label" for="p-kapali">Oda</label><input class="tk-input" id="p-kapali" value="Seçilmedi" disabled title="Önce servis seçin"></div>' +
+      '</div><div class="parca-sira"><span class="parca-nokta"><span class="tk-dot tk-dot-on"></span>Bağlı</span><span class="parca-nokta"><span class="tk-dot tk-dot-off"></span>Bağlı Değil</span></div>';
+
+    return (
+      blok('ustcubuk', 'Üst Çubuk', 'Standart üst çubuk: iki renkli ad, dolgusuz sekmeler, senkron ve güncelleme rozeti, destek ve marka çipleri, pencere düğmeleri. Üzerine gelin, basın, Tab ile gezin.', ust) +
+      blok('rozetler', 'Senkron Rozeti · Beş Durum', 'Renkli nokta + metin; rengin yanında metin ikinci taşıyıcıdır.', rozetler) +
+      blok('kurulum', 'Kurulum Ve Güncelleme Paneli', 'Adım cümlesi, yüzde, tavanlı çubuk ve son dokuz günlük satırı. İş bitmeden düğme görünmez.', panel) +
+      blok('ilerleme', 'İlerleme Çubuğu', 'Çalışırken iki renkli geçiş + tarama ışığı, bitince düz durum rengi.', cubuklar) +
+      blok('dugmeler', 'Düğmeler', 'Dolgulu düğmenin yazısı dolgunun on eşinden gelir; hayalet düğmede renk yalnız kenardadır, yazı gövde rengidir.', dugmeler) +
+      blok('bildirimler', 'Bildirim Ve Pencere', 'Bildirimde renk kenar ve başlıktadır, gövde yazısı düzdür.', bildirimler) +
+      blok('form', 'Form Alanları', 'Normal, hatalı, salt okunur, edilgen.', form)
+    );
+  }
+
+  function parcaGezinti() {
+    const b = [
+      ['ustcubuk', 'Üst Çubuk'],
+      ['rozetler', 'Rozetler'],
+      ['kurulum', 'Kurulum Paneli'],
+      ['ilerleme', 'İlerleme'],
+      ['dugmeler', 'Düğmeler'],
+      ['bildirimler', 'Bildirim'],
+      ['form', 'Form'],
+    ];
+    return '<nav class="gezinti" aria-label="Parçalar">' + b.map(([id, ad]) => '<a href="#p-' + id + '">' + ad + '</a>').join('') + '</nav>';
+  }
+
   function icerik(st, on) {
     return tonBolumu(st, on) + yanBolumu(st, on) + dugmeBolumu(st, on) + bilesenBolumu(st, on) + tipoBolumu(st, on) + yuzeyBolumu(st, on);
   }
@@ -583,7 +729,9 @@
     const kok = $('#onizleme');
     const kaydirma = kok.scrollTop;
     uygula(kok, su, true);
-    if (kip === 'karsi') {
+    if (sayfa === 'parca') {
+      kok.innerHTML = parcaGezinti() + parcaSayfasi();
+    } else if (kip === 'karsi') {
       kok.innerHTML =
         gezinti('s') + farkListesi() +
         '<div class="karsi"><section class="sahne" id="sahne-once" aria-label="Önce"><h2 class="sahne-baslik">Önce · Token Dosyası</h2>' + icerik(ilk, 'o') + '</section>' +
@@ -802,9 +950,21 @@
         const liste = document.getElementById(k.dataset.hedef);
         liste.scrollTo({ top: k.dataset.kaydir === 'son' ? liste.scrollHeight : 0 });
       }
+      if (e.target.closest('[data-bos]')) e.preventDefault();
       const li = e.target.closest('.liste li');
       if (li) for (const x of $$('li', li.parentElement)) x.setAttribute('aria-selected', String(x === li));
     });
+    for (const b of $$('[data-sayfa]'))
+      b.addEventListener('click', () => {
+        sayfa = b.dataset.sayfa;
+        for (const x of $$('[data-sayfa]')) x.setAttribute('aria-pressed', String(x === b));
+        for (const x of $$('[data-kip]')) {
+          x.disabled = sayfa === 'parca';
+          x.title = x.disabled ? 'Uygulama Parçaları tek görünümdür' : '';
+        }
+        $('#onizleme').scrollTop = 0;
+        planla();
+      });
     for (const b of $$('[data-kip]'))
       b.addEventListener('click', () => {
         kip = b.dataset.kip;
@@ -938,16 +1098,22 @@
     for (const [k, v] of baglanti) {
       if (DUZENLENEN.includes(k) && /^[0-9a-fA-F]{6}$/.test(v)) su.renk[k] = '#' + v.toLocaleLowerCase('tr');
       else if (k === 'kip' && (v === 'tek' || v === 'karsi')) kip = v;
+      else if (k === 'sayfa' && (v === 'renk' || v === 'parca')) sayfa = v;
       else if (k === 'arka' && ARKALAR.some((a) => a[0] === v)) su.arka.tur = v;
       else if (k === 'bolum' && /^[a-z]+$/.test(v)) bolum = v;
     }
-    for (const x of $$('[data-kip]')) x.setAttribute('aria-pressed', String(x.dataset.kip === kip));
+    for (const x of $$('[data-kip]')) {
+      x.setAttribute('aria-pressed', String(x.dataset.kip === kip));
+      x.disabled = sayfa === 'parca';
+      x.title = x.disabled ? 'Uygulama Parçaları tek görünümdür' : '';
+    }
+    for (const x of $$('[data-sayfa]')) x.setAttribute('aria-pressed', String(x.dataset.sayfa === sayfa));
     uygula(document.documentElement, ilk, false);
     formKur();
     formDoldur();
     olaylar();
     ciz();
-    const hedef = bolum && document.getElementById('s-' + bolum);
+    const hedef = bolum && document.getElementById((sayfa === 'parca' ? 'p-' : 's-') + bolum);
     if (hedef) hedef.scrollIntoView({ behavior: 'instant' });
     window.Onizleme = { durum: () => su, ilk: () => ilk, disaAktar, T: () => T };
   }

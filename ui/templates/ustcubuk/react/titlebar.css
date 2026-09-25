@@ -43,6 +43,61 @@
   color: var(--tk-pink-text);
 }
 
+.tk-titlebar__brand {
+  flex-shrink: 0;
+}
+
+.tk-titlebar__tabs {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: stretch;
+  gap: var(--tk-sp-1);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.tk-titlebar__tab {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--tk-sp-2);  border: 0;
+  border-bottom: var(--tk-focus-w) solid transparent;
+  background: transparent;
+  color: var(--tk-blue);
+  font: inherit;
+  font-size: var(--tk-fs-1);
+  font-weight: var(--tk-fw-semi);
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  transition: color var(--tk-t-instant) var(--tk-e-out), transform var(--tk-t-instant) var(--tk-e-out);
+}
+
+.tk-titlebar__tab:hover {
+  color: var(--tk-pink-text);
+}
+
+.tk-titlebar__tab[aria-current='page'] {
+  border-bottom-color: currentColor;
+}
+
+.tk-titlebar__tab:active {
+  color: var(--tk-pink-text);
+  transform: scale(var(--tk-scale-press));
+}
+
+.tk-titlebar__tab[aria-disabled='true'] {
+  color: var(--tk-disabled);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.tk-titlebar__tab:focus-visible {
+  outline: var(--tk-focus-w) solid var(--tk-pink-text);
+  outline-offset: calc(var(--tk-focus-w) * -1);
+  box-shadow: inset 0 0 0 calc(var(--tk-focus-w) * 2) var(--tk-bg-from);
+}
+
 .tk-titlebar__tools {
   display: flex;
   align-items: center;
@@ -66,6 +121,7 @@
   color: var(--tk-blue);
   font-size: var(--tk-fs-1);
   font-weight: var(--tk-fw-semi);
+  white-space: nowrap;
   text-decoration: none;
   transition:
     color var(--tk-t-instant) var(--tk-e-out),

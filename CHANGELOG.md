@@ -5,14 +5,31 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+- Preview: an "Uygulama Parçaları" tab next to "Renkler" draws the shipped components from the
+  standard's own CSS (`/standart.css` concatenates `theme.css`, `forms.css`, `states.css`, the
+  title bar, progress bar, badge and installer panel): title bar, the five sync states, the
+  two-step update badge, the installer in running, done and error, progress bars, buttons,
+  toasts, a confirm dialog and form fields.
+- `ui/templates/kur/panel.css`: the installer's web twin (step sentence, percentage, last nine
+  log lines, buttons only once the job ends).
+- Title bar tabs (`.tk-titlebar__tab`): no fill, blue text, pink-text on hover, the current
+  page underlined.
+- Update badge (`.tk-update`): yellow = download, green = install; sync badge gains the
+  waiting and local states.
+
 ### Changed
+- Blue `#5aa8ff` (a true blue, no longer cyan) and pink `#c82ee0` (fuchsia), pink-text
+  `#f0abfc`. Border alpha 55 %, strong border 70 %. Every ratio in the rationales re-measured.
+- Ghost button: colour only in the border, body text; hover purple-10 with its `on` text. The
+  primary button no longer dims on hover; it scales to 1.02 on web, WPF and Avalonia.
 - Readability pass on the neon tokens, from a fable consult (`docs/danisma/001-*`): text
-  `#f2f3f6` on surface `#101115` (17.00:1) instead of pure white on near-black; blue
-  `#3ddbe8`, pink `#d236bf`, purple `#9455ea`, pink-text `#ffa3ee`, purple-text `#d4b3ff`,
+  `#f2f3f6` on surface `#101115` (17.00:1) instead of pure white on near-black; purple
+  `#9455ea`, purple-text `#d4b3ff`,
   black `#0a0b0e`, glass-base `#14151a`, success `#4ade80`, disabled `#7c7f88`. Borders
-  45 / 55 / 20 %, panel 96 %, glass 90 %, glow 18 % blur 16, gradient 16 stops. Type: hero
+  55 / 70 / 20 %, panel 96 %, glass 90 %, glow 18 % blur 16, gradient 16 stops. Type: hero
   32 px at 800, line height 1.6 / 1.25 / 1.5, tracking label 0.08em, h3 0.02em, h2 0, hero
-  -0.015em. Every `on` pair still clears 7:1; the narrowest is text on pink-60 at 7.37:1.
+  -0.015em. Every `on` pair still clears 7:1; the narrowest is text on pink-60 and purple-60 at 7.50:1.
 - The primary and danger button text, hero weight and scrollbar thumb read their tokens
   instead of `#000`, `900` and purple; the thumb is purple-text, pink-text on hover.
 - `setup.js`, `manifest.js` and the installer template carry the new palette.

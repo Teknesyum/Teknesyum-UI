@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Teknesyum Renk Önizleme</title>
+<link rel="stylesheet" href="/standart.css">
 <link rel="stylesheet" href="/stil.css">
 <script src="/kontrast.js" defer></script>
 <script src="/uygulama.js" defer></script>
@@ -12,6 +13,10 @@
 <header class="ust">
   <h1 class="ust-baslik">Renk Ve Arka Plan Önizleme</h1>
   <div class="ust-arac">
+    <div class="kip" role="group" aria-label="Sayfa">
+      <button type="button" class="arac-dugme" data-sayfa="renk" aria-pressed="true">Renkler</button>
+      <button type="button" class="arac-dugme" data-sayfa="parca" aria-pressed="false">Uygulama Parçaları</button>
+    </div>
     <div class="kip" role="group" aria-label="Görünüm Kipi">
       <button type="button" class="arac-dugme" data-kip="tek" aria-pressed="true">Tek Görünüm</button>
       <button type="button" class="arac-dugme" data-kip="karsi" aria-pressed="false">Önce / Sonra</button>

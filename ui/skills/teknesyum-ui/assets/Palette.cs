@@ -7,12 +7,12 @@ namespace Teknesyum.Theme;
 /// Teknesyum Neon — WinForms/console palette. Do not change these values.
 public static class Palette
 {
-    public static readonly Color NeonBlue   = ColorTranslator.FromHtml("#3DDBE8");
-    public static readonly Color NeonPink   = ColorTranslator.FromHtml("#D236BF");
+    public static readonly Color NeonBlue   = ColorTranslator.FromHtml("#5AA8FF");
+    public static readonly Color NeonPink   = ColorTranslator.FromHtml("#C82EE0");
     public static readonly Color NeonPurple = ColorTranslator.FromHtml("#9455EA");
     public static readonly Color Success    = ColorTranslator.FromHtml("#4ADE80");
 
-    public static readonly Color PinkText   = ColorTranslator.FromHtml("#FFA3EE");
+    public static readonly Color PinkText   = ColorTranslator.FromHtml("#F0ABFC");
     public static readonly Color PurpleText = ColorTranslator.FromHtml("#D4B3FF");
 
     // --- semantic role layer (SKILL §2) ---
@@ -60,15 +60,15 @@ public static class Palette
     public static readonly Color AppBgFrom  = ColorTranslator.FromHtml("#0A0B0E");
     public static readonly Color AppBgTo    = ColorTranslator.FromHtml("#101115");
 
-    public static readonly Color BorderDefault    = Color.FromArgb(0x73, 0x3D, 0xDB, 0xE8);
-    public static readonly Color BorderStrong     = Color.FromArgb(0x8C, 0x3D, 0xDB, 0xE8);
-    public static readonly Color BorderDecorative = Color.FromArgb(0x33, 0x3D, 0xDB, 0xE8);
+    public static readonly Color BorderDefault    = Color.FromArgb(0x8C, 0x5A, 0xA8, 0xFF);
+    public static readonly Color BorderStrong     = Color.FromArgb(0xB3, 0x5A, 0xA8, 0xFF);
+    public static readonly Color BorderDecorative = Color.FromArgb(0x33, 0x5A, 0xA8, 0xFF);
 
-    public static readonly Color FocusRing      = ColorTranslator.FromHtml("#3DDBE8");
+    public static readonly Color FocusRing      = ColorTranslator.FromHtml("#5AA8FF");
     public static readonly Color FocusRingInner = ColorTranslator.FromHtml("#0A0B0E");
 
     public static readonly Color TextBody   = ColorTranslator.FromHtml("#F2F3F6");
-    public static readonly Color TextLabel  = ColorTranslator.FromHtml("#3DDBE8");
+    public static readonly Color TextLabel  = ColorTranslator.FromHtml("#5AA8FF");
 
     /// A disabled control is exempt from 7:1 (SKILL §2) and there is a price: a
     /// colour-blind user cannot see the grey. This colour is never used alone —
@@ -201,10 +201,10 @@ public static class Palette
 /// ANSI console colours (for CLI projects such as Runly).
 public static class Ansi
 {
-    public const string Blue       = "[38;2;61;219;232m";
-    public const string Pink       = "[38;2;210;54;191m";
+    public const string Blue       = "[38;2;90;168;255m";
+    public const string Pink       = "[38;2;200;46;224m";
     public const string Purple     = "[38;2;148;85;234m";
-    public const string PinkText   = "[38;2;255;163;238m";
+    public const string PinkText   = "[38;2;240;171;252m";
     public const string PurpleText = "[38;2;212;179;255m";
     public const string Success    = "[38;2;74;222;128m";
     // Role colours enter ANSI too; without them the terminal output drifts from the

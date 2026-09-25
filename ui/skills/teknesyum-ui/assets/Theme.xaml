@@ -3,14 +3,14 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-  <Color x:Key="NeonBlueColor">#FF3DDBE8</Color>
-  <Color x:Key="NeonPinkColor">#FFD236BF</Color>
+  <Color x:Key="NeonBlueColor">#FF5AA8FF</Color>
+  <Color x:Key="NeonPinkColor">#FFC82EE0</Color>
   <Color x:Key="NeonPurpleColor">#FF9455EA</Color>
-  <Color x:Key="PinkTextColor">#FFFFA3EE</Color>
+  <Color x:Key="PinkTextColor">#FFF0ABFC</Color>
   <Color x:Key="PurpleTextColor">#FFD4B3FF</Color>
 
-  <SolidColorBrush x:Key="NeonBlue"    Color="#FF3DDBE8"/>
-  <SolidColorBrush x:Key="NeonPink"    Color="#FFD236BF"/>
+  <SolidColorBrush x:Key="NeonBlue"    Color="#FF5AA8FF"/>
+  <SolidColorBrush x:Key="NeonPink"    Color="#FFC82EE0"/>
   <SolidColorBrush x:Key="NeonPurple"  Color="#FF9455EA"/>
   <SolidColorBrush x:Key="Success"     Color="#FF4ADE80"/>
   <SolidColorBrush x:Key="Surface"     Color="#F5101115"/>
@@ -56,7 +56,7 @@
                      Duration="0:0:48"/>
   </Storyboard>
 
-  <SolidColorBrush x:Key="PinkText"   Color="#FFFFA3EE"/>
+  <SolidColorBrush x:Key="PinkText"   Color="#FFF0ABFC"/>
   <SolidColorBrush x:Key="PurpleText" Color="#FFD4B3FF"/>
 
   <!-- SEMANTIC ROLE LAYER (SKILL §2).
@@ -73,10 +73,10 @@
        `Info` IS DELIBERATELY ABSENT: there is no info box today, and an unused
        token is debt. If one opens it binds to blue, and an info fill is never
        used on the same screen as a primary button. -->
-  <SolidColorBrush x:Key="Danger"     Color="#FFD236BF"/>
+  <SolidColorBrush x:Key="Danger"     Color="#FFC82EE0"/>
   <!-- The TEXT role of danger. The fill pink falls below the 7:1 threshold as
        text; error text writes this brush. -->
-  <SolidColorBrush x:Key="DangerText" Color="#FFFFA3EE"/>
+  <SolidColorBrush x:Key="DangerText" Color="#FFF0ABFC"/>
 
   <!-- warning #FBBF24 — WARNING SURFACE ONLY: text, border, icon.
        NO FILL, NO BUTTON. The constraint is the same pattern as success.
@@ -93,7 +93,7 @@
   <SolidColorBrush x:Key="Warning50"  Color="#80FBBF24"/>
 
   <SolidColorBrush x:Key="TextBody"  Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="TextLabel" Color="#FF3DDBE8"/>
+  <SolidColorBrush x:Key="TextLabel" Color="#FF5AA8FF"/>
   <!-- A disabled control is exempt from 7:1 (SKILL §2) and there is a price: a
        colour-blind user cannot see the grey. This brush is never used alone —
        every disabled control carries a marker in addition to the grey: ToolTip
@@ -126,17 +126,17 @@
   <SolidColorBrush x:Key="OnPurple50"    Color="#FFF2F3F6"/>
   <SolidColorBrush x:Key="OnPurple60"    Color="#FFF2F3F6"/>
 
-  <SolidColorBrush x:Key="NeonBlue10"   Color="#1A3DDBE8"/>
-  <SolidColorBrush x:Key="NeonBlue20"   Color="#333DDBE8"/>
-  <SolidColorBrush x:Key="NeonBlue30"   Color="#4D3DDBE8"/>
-  <SolidColorBrush x:Key="NeonBlue50"   Color="#803DDBE8"/>
-  <SolidColorBrush x:Key="NeonBlue60"   Color="#993DDBE8"/>
+  <SolidColorBrush x:Key="NeonBlue10"   Color="#1A5AA8FF"/>
+  <SolidColorBrush x:Key="NeonBlue20"   Color="#335AA8FF"/>
+  <SolidColorBrush x:Key="NeonBlue30"   Color="#4D5AA8FF"/>
+  <SolidColorBrush x:Key="NeonBlue50"   Color="#805AA8FF"/>
+  <SolidColorBrush x:Key="NeonBlue60"   Color="#995AA8FF"/>
 
-  <SolidColorBrush x:Key="NeonPink10"   Color="#1AD236BF"/>
-  <SolidColorBrush x:Key="NeonPink20"   Color="#33D236BF"/>
-  <SolidColorBrush x:Key="NeonPink30"   Color="#4DD236BF"/>
-  <SolidColorBrush x:Key="NeonPink50"   Color="#80D236BF"/>
-  <SolidColorBrush x:Key="NeonPink60"   Color="#99D236BF"/>
+  <SolidColorBrush x:Key="NeonPink10"   Color="#1AC82EE0"/>
+  <SolidColorBrush x:Key="NeonPink20"   Color="#33C82EE0"/>
+  <SolidColorBrush x:Key="NeonPink30"   Color="#4DC82EE0"/>
+  <SolidColorBrush x:Key="NeonPink50"   Color="#80C82EE0"/>
+  <SolidColorBrush x:Key="NeonPink60"   Color="#99C82EE0"/>
 
   <SolidColorBrush x:Key="NeonPurple10" Color="#1A9455EA"/>
   <SolidColorBrush x:Key="NeonPurple20" Color="#339455EA"/>
@@ -144,12 +144,12 @@
   <SolidColorBrush x:Key="NeonPurple50" Color="#809455EA"/>
   <SolidColorBrush x:Key="NeonPurple60" Color="#999455EA"/>
 
-  <SolidColorBrush x:Key="PinkText50"   Color="#80FFA3EE"/>
+  <SolidColorBrush x:Key="PinkText50"   Color="#80F0ABFC"/>
   <SolidColorBrush x:Key="PurpleText50" Color="#80D4B3FF"/>
 
-  <SolidColorBrush x:Key="BorderDefault"    Color="#733DDBE8"/>
-  <SolidColorBrush x:Key="BorderStrong"     Color="#8C3DDBE8"/>
-  <SolidColorBrush x:Key="BorderDecorative" Color="#333DDBE8"/>
+  <SolidColorBrush x:Key="BorderDefault"    Color="#8C5AA8FF"/>
+  <SolidColorBrush x:Key="BorderStrong"     Color="#B35AA8FF"/>
+  <SolidColorBrush x:Key="BorderDecorative" Color="#335AA8FF"/>
 
   <!-- The chain's only source is SKILL §3; the order matches. Atkinson
        Hyperlegible Next is the default and is EMBEDDED in the project (pack URI),
@@ -162,7 +162,7 @@
   <Duration x:Key="TBase">0:0:0.24</Duration>
   <Duration x:Key="TSlow">0:0:0.36</Duration>
   <!-- Hero glow: same intensity as the CSS token `tk-glow-hero` — blur 8, opacity 0.8. -->
-  <DropShadowEffect x:Key="HeroGlow" x:Shared="False" Color="#FF3DDBE8"
+  <DropShadowEffect x:Key="HeroGlow" x:Shared="False" Color="#FF5AA8FF"
                     BlurRadius="8" ShadowDepth="0" Opacity="0.8"/>
 
   <CubicEase x:Key="EOut" EasingMode="EaseOut"/>
@@ -248,7 +248,7 @@
             <Rectangle Margin="4" RadiusX="7" RadiusY="7"
                        Stroke="#FF0A0B0E" StrokeThickness="2"/>
             <Rectangle Margin="2" RadiusX="9" RadiusY="9"
-                       Stroke="#FF3DDBE8" StrokeThickness="2"/>
+                       Stroke="#FF5AA8FF" StrokeThickness="2"/>
           </Grid>
         </ControlTemplate>
       </Setter.Value>
@@ -383,18 +383,20 @@
               <Trigger.EnterActions>
                 <BeginStoryboard>
                   <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="bd" Storyboard.TargetProperty="Opacity"
-                                     To="0.85" Duration="{StaticResource TInstant}"
-                                     EasingFunction="{StaticResource EOut}"/>
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1.02" Duration="{StaticResource TInstant}"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"/>
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1.02" Duration="{StaticResource TInstant}"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"/>
                   </Storyboard>
                 </BeginStoryboard>
               </Trigger.EnterActions>
               <Trigger.ExitActions>
                 <BeginStoryboard>
                   <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="bd" Storyboard.TargetProperty="Opacity"
-                                     To="1" Duration="{StaticResource TInstant}"
-                                     EasingFunction="{StaticResource EIn}"/>
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"/>
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"/>
                   </Storyboard>
                 </BeginStoryboard>
               </Trigger.ExitActions>

@@ -44,14 +44,14 @@ function gate() {
   const badOut = L.tmp('tkui-gate-bad-');
   const r = L.node(L.GENERATE, [badFile, badOut], { env: L.cleanEnv() });
   L.ok('a pair below 7:1 stops generation', r.status === 1 && !fs.existsSync(path.join(badOut, 'theme.css')), r.stderr);
-  L.ok('the gate names the pair and its ratio', /black on pink — 4\.70:1, below 7:1/.test(r.stderr), r.stderr);
+  L.ok('the gate names the pair and its ratio', /black on pink — 4\.61:1, below 7:1/.test(r.stderr), r.stderr);
 
   const lie = JSON.parse(JSON.stringify(tokens));
   lie.on.blue = { on: 'black', rationale: 'black on blue: 9.99:1.' };
   const lieFile = path.join(out, 'lie.json');
   fs.writeFileSync(lieFile, JSON.stringify(lie, null, 2));
   const l = L.node(L.GENERATE, [lieFile, L.tmp('tkui-gate-lie-')], { env: L.cleanEnv() });
-  L.ok('a rationale that misstates the ratio stops generation', l.status === 1 && /rationale says 9\.99:1, measured 11\.71:1/.test(l.stderr), l.stderr);
+  L.ok('a rationale that misstates the ratio stops generation', l.status === 1 && /rationale says 9\.99:1, measured 7\.95:1/.test(l.stderr), l.stderr);
 }
 
 function contrast() {

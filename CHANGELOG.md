@@ -3,7 +3,7 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [0.7.0] - 2026-09-25
 
 ### Added
 - Preview: `node ui/scripts/onizleme.js` serves `ui/onizleme/` on a local port and opens it.

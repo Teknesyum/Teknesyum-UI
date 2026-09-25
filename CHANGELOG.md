@@ -5,6 +5,13 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+- Preview: `node ui/scripts/onizleme.js` serves `ui/onizleme/` on a local port and opens it.
+  Blue, pink, their text cuts, purple, surface and the background design are tuned live
+  against every tone step, `on` pair and component state, each with its ratio from the
+  shared `kontrast.js`; Before / After mode; export of the changed fields only.
+  Tested in `test/onizleme.js`.
+
 ### Changed
 - `setup.js` writes the Avalonia signature as `teknesyum-ui/avalonia/Signature.axaml.example`.
   It needs `Teknesyum.Localization.Str` and a code-behind `Click` handler, so as a `.axaml`

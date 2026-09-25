@@ -148,13 +148,31 @@ plainly when the shelf or the book is missing. An existing file is never overwri
 `--adimlar <file>`; the default installs npm packages and a desktop shortcut. Keep
 `.kurulum/` and `.araclar/` out of the project's git.
 
+## Preview
+
+```bash
+node ui/scripts/onizleme.js [--port 4317] [--no-open]
+```
+
+A local, dependency-free page for trying new brand colours before touching the tokens. It
+starts from `ui/templates/neon.tokens.json` and measures with the same `kontrast.js` the
+scanner uses, served to the browser as is. The left panel sets blue, pink, their text cuts,
+purple, surface and the background (flat, token gradient, glass, grid, glow; stops and
+angle), font family, size scale, weights, radius, scrollbar width and colour, scroll
+behaviour and reduced motion. The right side shows every tone-scale step, text-scale cut
+and `on` pair with its hex and ratio on surface (under 7:1 is marked), blue and pink side by
+side, buttons in all five states, badge, chip, input, selected row, title bar, progress,
+a long scrolling list, the type scale and panel, card and glass. Before / After puts the
+token values next to the current ones. Export copies or downloads only the changed fields
+in `neon.tokens.json` shape; the page never writes a file. Screenshots: `docs/onizleme/`.
+
 ## Tests
 
 ```bash
 npm test
 ```
 
-185 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
+225 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
 starts writing to `additionalContext` or `systemMessage`, if `SKILL.md` grows past 150
 lines, or if a slash command reappears.
 

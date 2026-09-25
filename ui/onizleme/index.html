@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teknesyum Renk Önizleme</title>
+<link rel="stylesheet" href="/stil.css">
+<script src="/kontrast.js" defer></script>
+<script src="/uygulama.js" defer></script>
+</head>
+<body>
+<header class="ust">
+  <h1 class="ust-baslik">Renk Ve Arka Plan Önizleme</h1>
+  <div class="ust-arac">
+    <div class="kip" role="group" aria-label="Görünüm Kipi">
+      <button type="button" class="arac-dugme" data-kip="tek" aria-pressed="true">Tek Görünüm</button>
+      <button type="button" class="arac-dugme" data-kip="karsi" aria-pressed="false">Önce / Sonra</button>
+    </div>
+    <button type="button" class="arac-dugme" id="sifirla">Tümünü Sıfırla</button>
+    <button type="button" class="arac-dugme" id="kopyala">Panoya Kopyala</button>
+    <button type="button" class="arac-dugme arac-birincil" id="indir">İndir</button>
+    <span class="durum" id="durum" role="status" aria-live="polite"></span>
+  </div>
+</header>
+<div class="duzen">
+  <aside class="sol" aria-label="Ayarlar">
+    <form id="ayarlar" autocomplete="off"></form>
+  </aside>
+  <main class="onizleme" id="onizleme" tabindex="-1" aria-label="Önizleme">
+    <p class="yukleniyor">Token dosyası okunuyor…</p>
+  </main>
+</div>
+</body>
+</html>

@@ -148,13 +148,32 @@ bunu açıkça söyler. Var olan dosyanın üzerine asla yazılmaz. Projeye özg
 ile girer; varsayılan npm paketlerini ve bir masaüstü kısayolunu kurar. `.kurulum/` ve
 `.araclar/` projenin git'ine girmesin.
 
+## Önizleme
+
+```bash
+node ui/scripts/onizleme.js [--port 4317] [--no-open]
+```
+
+Token'a dokunmadan önce yeni marka renklerini denemek için yerel, bağımlılıksız bir sayfa.
+`ui/templates/neon.tokens.json` değerleriyle açılır ve tarayıcıya olduğu gibi sunulan,
+`scan.js`'in kullandığı `kontrast.js` ile ölçer. Sol panel mavi, pembe, yazı kesimleri,
+mor, yüzey ve arka planı (düz, token degradesi, cam, ızgara, hale; durak ve açı), yazı
+ailesini, boyut ölçeğini, ağırlıkları, yarıçapı, kaydırma çubuğu kalınlığı ve rengini,
+kaydırma davranışını ve hareket azaltmayı ayarlar. Sağ taraf her tone-scale kademesini,
+text-scale kesimini ve `on` eşini hex'i ve yüzey üstündeki oranıyla gösterir (7:1 altı
+işaretlenir); mavi ve pembeyi yan yana, beş durumuyla düğmeleri, rozet, çip, giriş kutusu,
+seçili satır, başlık çubuğu, ilerleme, uzun kayan liste, tipografi ölçeği ve panel, kart,
+camı gösterir. Önce / Sonra kipi token değerlerini şimdikilerin yanına koyar. Dışa aktarma
+yalnız değişen alanları `neon.tokens.json` biçiminde kopyalar ya da indirir; sayfa dosya
+yazmaz. Ekran görüntüleri: `docs/onizleme/`.
+
 ## Testler
 
 ```bash
 npm test
 ```
 
-185 assertion, bağımlılık yok. Yedisi maliyet assertion'ıdır: bir kanca `additionalContext`
+225 assertion, bağımlılık yok. Yedisi maliyet assertion'ıdır: bir kanca `additionalContext`
 ya da `systemMessage` yazmaya başlarsa, `SKILL.md` 150 satırı geçerse ya da bir slash komutu
 yeniden belirirse başarısız olurlar.
 

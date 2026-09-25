@@ -12,6 +12,7 @@ const SUITES = [
   ['scaffold', require('./scaffold')],
   ['raf', require('./raf')],
   ['okunurluk', require('./okunurluk')],
+  ['onizleme', require('./onizleme')],
 ];
 
 function main() {

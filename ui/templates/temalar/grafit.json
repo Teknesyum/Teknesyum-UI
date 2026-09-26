@@ -1,0 +1,20 @@
+{
+  "ad": "grafit",
+  "baslik": "Grafit",
+  "tur": "koyu",
+  "esin": "VS Code Dark Modern ve Fluent 2 Dark'ın nötr, ılık gri zemini.",
+  "renk": {
+    "blue": "#82bfff",
+    "pink": "#d848e6",
+    "pink-text": "#f5b8fc",
+    "purple": "#a883f3",
+    "purple-text": "#dcc7ff",
+    "surface": "#1b1b1d",
+    "black": "#121214",
+    "glass-base": "#202022",
+    "text": "#f0f0f0",
+    "disabled": "#858790",
+    "success": "#6fe39a",
+    "warning": "#ffcc55"
+  }
+}

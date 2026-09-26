@@ -41,13 +41,89 @@
     ['purple-text', 'Mor Yazı Kesimi'],
   ];
 
+  const SAYFALAR = [
+    ['renkler', 'Renkler Ve Tonlar'],
+    ['dugmeler', 'Düğmeler'],
+    ['formlar', 'Formlar'],
+    ['ustcubuk', 'Üst Çubuk'],
+    ['ilerleme', 'İlerleme Çubuğu'],
+    ['kaydirma', 'Kaydırma Çubuğu'],
+    ['arka', 'Arka Plan'],
+    ['rozetler', 'Rozetler'],
+    ['bildirimler', 'Bildirimler'],
+    ['kurulum', 'Kurulum Paneli'],
+    ['modal', 'Modal'],
+    ['tipografi', 'Tipografi'],
+    ['akicilik', 'Akıcılık'],
+    ['okunur', 'Okunurluk'],
+    ['teknik', 'Teknik'],
+  ];
+  const TEK = ['arka', 'akicilik', 'okunur', 'teknik'];
+  const ESKI = { renk: 'renkler', parca: 'ustcubuk', tonlar: 'renkler', yanyana: 'renkler', yuzeyler: 'renkler', bilesenler: 'formlar', form: 'formlar' };
+  const ILGILI = {
+    renkler: ['renk'],
+    dugmeler: ['renk-blue', 'renk-pink', 'renk-pink-text', 'renk-purple', 'renk-purple-text', 'renk-disabled', 'parlama', 'sekil', 'yogunluk', 'hareket'],
+    formlar: ['renk-text', 'renk-surface', 'renk-blue', 'renk-pink-text', 'renk-disabled', 'sekil', 'yogunluk', 'yazi'],
+    ustcubuk: ['renk-glass-base', 'renk-text', 'renk-pink-text', 'renk-purple-text', 'yazi', 'sekil', 'yuzey'],
+    ilerleme: ['renk-blue', 'renk-purple', 'renk-success', 'parlama', 'hareket'],
+    kaydirma: ['kaydir', 'renk-purple-text', 'renk-pink-text'],
+    arka: ['arka', 'renk-black', 'renk-surface', 'renk-blue', 'renk-pink', 'renk-purple', 'yuzey'],
+    rozetler: ['renk-success', 'renk-warning', 'renk-blue', 'renk-pink', 'renk-purple-text', 'sekil'],
+    bildirimler: ['renk-success', 'renk-warning', 'renk-surface', 'hareket', 'yuzey'],
+    kurulum: ['renk-blue', 'renk-success', 'renk-surface', 'yuzey', 'yazi'],
+    modal: ['yuzey', 'hareket', 'renk-surface', 'renk-text', 'renk-black'],
+    tipografi: ['yazi', 'renk-text', 'renk-blue', 'parlama'],
+    akicilik: ['egri', 'hareket'],
+    okunur: ['renk'],
+    teknik: ['hareket', 'parlama', 'yuzey'],
+  };
+  const PARLAMALAR = [
+    ['glow', 'Kutu Halesi'],
+    ['glow-button', 'Düğme Halesi'],
+    ['glow-hero', 'Kahraman Yazı Halesi'],
+  ];
+  const PARLAMA_DUZEY = [
+    ['yok', 'Yok'],
+    ['ince', 'İnce'],
+    ['token', 'Token Dosyası'],
+    ['neon', 'Neon'],
+    ['ozel', 'Özel'],
+  ];
+  const SURELER = [
+    ['instant', 'Anında'],
+    ['fast', 'Hızlı'],
+    ['base', 'Temel'],
+    ['slow', 'Yavaş'],
+  ];
+  const BICIMLER = [
+    ['dolu', 'Dolu'],
+    ['ince', 'İnce'],
+    ['hap', 'Hap'],
+    ['gizli', 'Üzerine Gelince'],
+  ];
+  const DURUMLAR = [
+    ['', 'Normal'],
+    ['s-uzerinde', 'Üzerinde'],
+    ['s-basili', 'Basılı'],
+    ['s-odak', 'Odak'],
+    ['pasif', 'Pasif'],
+  ];
+
   let T = null;
   let ilk = null;
   let su = null;
   let kip = 'tek';
-  let sayfa = 'renk';
+  let sayfa = 'renkler';
   let bekleyen = false;
+  let temalar = [];
+  let sonCizim = null;
+  let arkaPanel = true;
+  let ilerlemeNo = 0;
   const hslBellek = {};
+  const zamanlar = new Set();
+  const A = () => window.Akicilik;
+  const r2 = (n) => Math.round(n * 100) / 100;
+  const egriMetin = (b) => '[' + b.map(r2).join(', ') + ']';
 
   const $ = (s, kok) => (kok || document).querySelector(s);
   const $$ = (s, kok) => Array.from((kok || document).querySelectorAll(s));
@@ -73,8 +149,26 @@
     const renk = {};
     for (const [k, v] of Object.entries(t.brand)) if (v && v.value) renk[k] = v.value.toLocaleLowerCase('tr');
     for (const [k, v] of Object.entries(t.role)) if (v && v.value) renk[k] = v.value.toLocaleLowerCase('tr');
+    const parlama = {};
+    for (const [g] of PARLAMALAR) parlama[g] = { alpha: t.derived[g].alpha, blur: t.derived[g].blur };
+    const egri = {};
+    if (A()) for (const [ad, , b] of A().EGRILER) egri[ad] = b.slice();
+    for (const [ad, v] of Object.entries(t.easing || {})) if (v && Array.isArray(v.bezier)) egri[ad] = v.bezier.slice();
+    const sure = {};
+    for (const [k] of SURELER) sure[k] = t.duration[k].ms;
     return {
+      parlama,
+      parlamaDuzey: 'token',
+      egri,
+      arayuzEgri: 'out',
+      sure,
+      sureCarpan: 1,
+      yogunluk: 1,
+      kenar: t.shape['border-w'] ? t.shape['border-w'].value : 1,
+      cam: 16,
+      golge: 1,
       renk,
+      koyu: t.meta.dark !== false,
       arka: { tur: 'degrade', durak: t.derived['bg-gradient'].stops, aci: 160, don: false },
       yazi: {
         aile: 'sans',
@@ -84,8 +178,8 @@
         kahraman: t.size['fw-hero'].value,
       },
       sekil: { r: t.shape.r.value, rPencere: t.shape['r-window'].value },
-      kaydir: { kalinlik: t.metric['scrollbar-w'].value, renk: 'purple-text', davranis: 'auto' },
-      hareketAz: true,
+      kaydir: { kalinlik: t.metric['scrollbar-w'].value, renk: 'purple-text', davranis: 'auto', bicim: 'dolu' },
+      hareketAz: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
     };
   }
 
@@ -230,14 +324,16 @@
     v['--tk-panel'] = rgba(R('surface'), T.derived.panel.alpha);
     v['--tk-glass'] = rgba(R('glass-base'), T.derived.glass.alpha);
     for (const k of ['border', 'border-strong', 'border-decorative']) v['--tk-' + k] = rgba(R(T.derived[k].ref), T.derived[k].alpha);
-    for (const b of T.derived.glow.bases)
-      v['--tk-glow-' + b] = '0 0 ' + T.derived.glow.blur + 'px ' + rgba(R(b), T.derived.glow.alpha);
-    const gb = T.derived['glow-button'];
-    v['--tk-glow-button'] = '0 0 ' + gb.blur + 'px ' + rgba(R(gb.ref), gb.alpha);
-    const gh = T.derived['glow-hero'];
-    v['--tk-glow-hero'] = '0 0 ' + gh.blur + 'px ' + rgba(R(gh.ref), gh.alpha);
+    const pg = st.parlama.glow;
+    for (const b of T.derived.glow.bases) v['--tk-glow-' + b] = '0 0 ' + pg.blur + 'px ' + rgba(R(b), pg.alpha);
+    const gb = st.parlama['glow-button'];
+    v['--tk-glow-button'] = '0 0 ' + gb.blur + 'px ' + rgba(R(T.derived['glow-button'].ref), gb.alpha);
+    const gh = st.parlama['glow-hero'];
+    v['--tk-glow-hero'] = '0 0 ' + gh.blur + 'px ' + rgba(R(T.derived['glow-hero'].ref), gh.alpha);
     const sp = T.derived['shadow-panel'];
-    v['--tk-shadow-panel'] = '0 0 ' + sp.blur + 'px ' + rgba(R(sp.ref), sp.alpha);
+    v['--tk-shadow-panel'] = '0 0 ' + Math.round(sp.blur * st.golge) + 'px ' + rgba(R(sp.ref), Math.min(1, sp.alpha * st.golge));
+    v['--tk-glass-blur'] = st.cam + 'px';
+    v['--tk-border-w'] = st.kenar + 'px';
     for (const k of Object.keys(T.on)) if (k !== '_') v['--tk-on-' + k] = onRenk(st, k);
     v['--tk-font'] = (A[st.yazi.aile] || A.sans)[1];
     v['--tk-font-mono'] = A.mono[1];
@@ -248,7 +344,7 @@
     for (const k of ['lh-body', 'lh-heading', 'lh-mono']) v['--tk-' + k] = String(T.size[k].value);
     for (const k of ['tr-label', 'tr-h3', 'tr-h2', 'tr-hero']) v['--tk-' + k] = T.size[k].value + T.size[k].unit;
     v['--tk-measure'] = T.size.measure.value + T.size.measure.unit;
-    for (const k of ['1', '2', '3', '4', '5']) v['--tk-sp-' + k] = T.space[k].value + 'px';
+    for (const k of ['1', '2', '3', '4', '5']) v['--tk-sp-' + k] = Math.round(T.space[k].value * st.yogunluk) + 'px';
     v['--tk-r'] = st.sekil.r + 'px';
     v['--tk-r-window'] = st.sekil.rPencere + 'px';
     v['--tk-focus-w'] = T.shape['focus-w'].value + 'px';
@@ -261,10 +357,10 @@
     v['--tk-thumb-hover'] = R(st.kaydir.renk === 'pink' ? 'blue' : 'pink');
     v['--tk-track'] = rgba(R('black'), 0.3);
     v['--tk-scroll-behavior'] = st.hareketAz ? 'auto' : st.kaydir.davranis;
-    v['--tk-t-instant'] = T.duration.instant.ms + 'ms';
+    for (const [k] of SURELER) v['--tk-t-' + k] = st.sure[k] + 'ms';
     v['--tk-bg-rotate'] = T.duration['bg-rotate'].ms + 'ms';
-    v['--tk-e-out'] = 'cubic-bezier(' + T.easing.out.bezier.join(', ') + ')';
-    v['--tk-e-linear'] = 'linear';
+    for (const [ad, b] of Object.entries(st.egri)) v['--tk-e-' + ad] = 'cubic-bezier(' + b.map(r2).join(', ') + ')';
+    if (st.egri[st.arayuzEgri]) v['--tk-e-out'] = v['--tk-e-' + st.arayuzEgri];
     v['--tk-bg'] = degrade(st, '160deg');
     v['--tk-bg-demo'] = hale(st) + ', ' + degrade(st, '160deg');
     return v;
@@ -278,6 +374,7 @@
       el.style.background = a.deger;
       el.dataset.zeminDon = a.don ? '1' : '0';
       el.dataset.arka = st.arka.tur;
+      el.dataset.kaydirBicim = st.kaydir.bicim;
     }
     if (st.hareketAz) el.dataset.hareket = 'az';
     else delete el.dataset.hareket;
@@ -455,75 +552,6 @@
     );
   }
 
-  function bilesenBolumu(st, on) {
-    const R = (a) => coz(st, a);
-    const blok = (ad, ic) => '<div class="bilesen"><p class="bilesen-ad">' + ad + '</p>' + ic + '</div>';
-    const panelHex = bilesik(st, R('surface'), T.derived.panel.alpha);
-    const camHex = bilesik(st, R('glass-base'), T.derived.glass.alpha);
-    const satirlar = [
-      ['Gelen Kutusu', '128'],
-      ['Taslaklar', '4'],
-      ['Gönderilenler', '1 024'],
-      ['Arşiv', '9 870'],
-    ]
-      .map(
-        ([a, d], i) =>
-          '<li role="option" aria-selected="' + (i === 1) + '"><span>' + a + '</span><span class="deger">' + d + '</span></li>'
-      )
-      .join('');
-    const uzun = [];
-    for (let i = 1; i <= 60; i++)
-      uzun.push('<li><span>Kayıt ' + String(i).padStart(2, '0') + ' · Örnek Satır</span><span class="deger">' + (i * 37) % 1000 + '</span></li>');
-    return (
-      '<section class="bolum" id="' + on + '-bilesenler"><h2>Bileşenler</h2><div class="bilesenler">' +
-      blok(
-        'Rozet',
-        '<div class="satir"><span class="rozet rozet-mavi">7</span>' + oranEtiket(oran(st, R('blue'), 1, onRenk(st, 'blue'))) + '</div>' +
-          '<div class="satir"><span class="rozet rozet-basari">12</span>' + oranEtiket(oran(st, R('success'), 1, onRenk(st, 'success'))) + '</div>' +
-          '<div class="satir"><span class="rozet rozet-tehlike">3</span>' + oranEtiket(oran(st, R('danger-text'), 1, onRenk(st, 'danger-text'))) + '</div>'
-      ) +
-      blok(
-        'Çip',
-        '<div class="satir"><span class="cip cip-mavi">Mavi Çip</span>' + oranEtiket(oran(st, R('blue'), 0.1, R('text'))) + '</div>' +
-          '<div class="satir"><span class="cip cip-pembe">Pembe Çip</span>' + oranEtiket(oran(st, R('pink'), 0.1, R('text'))) + '</div>' +
-          '<div class="satir"><span class="cip cip-mor">Mor Çip</span>' + oranEtiket(oran(st, R('purple'), 0.1, R('text'))) + '</div>'
-      ) +
-      blok(
-        'Giriş Kutusu',
-        '<label class="ornek-etiket" for="' + on + '-ad">Proje Adı</label>' + oranEtiket(yaziOlarak(st, R('text-label'))) +
-          '<input class="ornek-giris" id="' + on + '-ad" value="Teknesyum">' + oranEtiket(yaziOlarak(st, R('text'))) +
-          '<label class="ornek-etiket" for="' + on + '-ep">E-Posta</label>' +
-          '<input class="ornek-giris" id="' + on + '-ep" value="adres@" aria-invalid="true" aria-describedby="' + on + '-ep-h">' +
-          '<span class="hata-yazi" id="' + on + '-ep-h">Geçerli bir adres yazın.</span>' + oranEtiket(yaziOlarak(st, R('danger-text')))
-      ) +
-      blok('Seçili Liste Satırı', oranEtiket(oran(st, R('blue'), 0.2, R('text'))) + '<ul class="liste" role="listbox" aria-label="Klasörler">' + satirlar + '</ul>') +
-      blok(
-        'Başlık Çubuğu',
-        oranEtiket(K.pair(K.withAlpha(P(R('glass-base')), T.derived.glass.alpha), P(R('text')), zemin(st)).ratio) +
-          '<div><div class="baslik-cubugu"><strong>Teknesyum · Pencere</strong><div class="pencere-dugmeler">' +
-          '<button type="button" class="pencere-dugme" aria-label="Küçült" title="Küçült">–</button>' +
-          '<button type="button" class="pencere-dugme" aria-label="Büyüt" title="Büyüt">□</button>' +
-          '<button type="button" class="pencere-dugme pencere-kapat" aria-label="Kapat" title="Kapat">✕</button>' +
-          '</div></div><div class="pencere-govde">Pencere gövdesi, panel yüzeyi.</div></div>'
-      ) +
-      blok(
-        'İlerleme Çubuğu',
-        '<div class="satir"><span class="mono">%64</span>' + oranEtiket(yaziOlarak(st, R('blue')), null) + '</div>' +
-          '<div class="ilerleme" role="progressbar" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Mavi ilerleme"><span style="width: 64%"></span></div>' +
-          '<span class="kare-not">Dolgu / İz · Eşik 3:1</span>' + oranEtiket(K.ratio(P(R('blue')), P(bilesik(st, R('blue'), 0.1))), { esik: 3 }) +
-          '<div class="ilerleme ilerleme-pembe" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100" aria-label="Pembe ilerleme"><span style="width: 38%"></span></div>' +
-          oranEtiket(K.ratio(P(R('pink')), P(bilesik(st, R('blue'), 0.1))), { esik: 3 })
-      ) +
-      '</div>' +
-      '<h3>Uzun Kayan Liste</h3>' +
-      '<div class="kaydirma-arac"><button type="button" class="btn btn-hayalet" data-kaydir="son" data-hedef="' + on + '-uzun">Sona Kaydır</button>' +
-      '<button type="button" class="btn btn-hayalet" data-kaydir="bas" data-hedef="' + on + '-uzun">Başa Kaydır</button></div>' +
-      '<ul class="uzun-liste" id="' + on + '-uzun" tabindex="0" aria-label="Uzun liste">' + uzun.join('') + '</ul>' +
-      '<p class="kare-not">Panel ' + panelHex + ' · Cam ' + camHex + '</p>' +
-      '</section>'
-    );
-  }
-
   function tipoBolumu(st, on) {
     const R = (a) => coz(st, a);
     const px = (n) => Math.round(T.size['fs-' + n].value * st.yazi.carpan);
@@ -562,15 +590,108 @@
     );
   }
 
-  function parcaSayfasi() {
-    const blok = (id, baslik, aciklama, ic) =>
-      '<section class="bolum" id="p-' + id + '"><h2>' + baslik + '</h2><p>' + aciklama + '</p>' + ic + '</section>';
-    const etiketli = (etiket, ic) => '<figure class="parca-kutu"><figcaption class="bilesen-ad">' + etiket + '</figcaption>' + ic + '</figure>';
-    const kahve =
-      '<svg class="tk-titlebar__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
-      '<path d="M5 6.5v8a3 3 0 0 0 3 3h5a3 3 0 0 0 3-3v-8Z"/><path d="M16 8.5h2a2.5 2.5 0 0 1 0 5h-2"/><path d="M8 .5v3M12 .5v3"/></svg>';
-    const denetim = (sinif, ad, ic) =>
-      '<button type="button" class="tk-titlebar__control' + sinif + '" aria-label="' + ad + '" title="' + ad + '"><span class="tk-titlebar__' + ic + '" aria-hidden="true"></span></button>';
+  function blok(on, id, baslik, aciklama, ic) {
+    return '<section class="bolum" id="' + on + '-' + id + '"><h2>' + baslik + '</h2>' + (aciklama ? '<p>' + aciklama + '</p>' : '') + ic + '</section>';
+  }
+
+  const etiketli = (etiket, ic) => '<figure class="parca-kutu"><figcaption class="bilesen-ad">' + etiket + '</figcaption>' + ic + '</figure>';
+  const kutucuk = (ad, ic) => '<div class="bilesen"><p class="bilesen-ad">' + ad + '</p>' + ic + '</div>';
+  const tkDugme = (sinif, metin, ek) => '<button type="button" class="tk-btn ' + sinif + '"' + (ek || '') + '>' + metin + '</button>';
+  const zorla = (s) => (s ? ' ' + s : '');
+  const durumAttr = (s, p, neden) => (p ? ' disabled title="' + neden + '"' : s ? ' tabindex="-1"' : '');
+
+  function durumIzgara(satirlar) {
+    let h = '<div class="durum-bas"></div>' + DURUMLAR.map(([, a]) => '<div class="durum-bas">' + a + '</div>').join('');
+    for (const [ad, fn] of satirlar) {
+      h += '<div class="durum-bas durum-satir-ad">' + ad + '</div>';
+      for (const [s] of DURUMLAR) h += '<div class="durum-hucre">' + fn(s === 'pasif' ? '' : s, s === 'pasif') + '</div>';
+    }
+    return '<div class="durum-izgara">' + h + '</div>';
+  }
+
+  function renklerSayfasi(st, on) {
+    return tonBolumu(st, on) + yanBolumu(st, on) + yuzeyBolumu(st, on);
+  }
+
+  function dugmelerSayfasi(st, on) {
+    const R = (a) => coz(st, a);
+    const izgara = durumIzgara([
+      ['Birincil', (s, p) => tkDugme('tk-btn-primary' + zorla(s), 'Kaydet', durumAttr(s, p, 'Önce bir kayıt seçin'))],
+      ['Hayalet', (s, p) => tkDugme('tk-btn-ghost' + zorla(s), 'Vazgeç', durumAttr(s, p, 'İşlem sürüyor, bekleyin'))],
+      ['Tehlike', (s, p) => tkDugme('tk-btn-danger' + zorla(s), 'Sil', durumAttr(s, p, 'Silinecek kayıt yok'))],
+    ]);
+    const oranlar =
+      '<div class="satir oran-satir">' +
+      '<span class="kare-not">Birincil</span>' + oranEtiket(oran(st, R('blue'), 1, onRenk(st, 'blue'))) +
+      '<span class="kare-not">Hayalet Üzerinde</span>' + oranEtiket(oran(st, R('purple'), 0.1, R('text'))) +
+      '<span class="kare-not">Tehlike</span>' + oranEtiket(oran(st, R('danger-text'), 1, onRenk(st, 'danger-text'))) +
+      '</div>';
+    return (
+      blok(on, 'standart', 'Standart Düğme · Durumlar', 'Normal sütunu canlıdır: üzerine gelin, basın, Tab ile odaklayın. Diğer sütunlar durumu sabit gösterir. Dolgulu düğmenin yazısı dolgunun on eşinden gelir; hayalet düğmede renk yalnız kenardadır, yazı gövde rengidir. Pasif düğme neden pasif olduğunu title ile söyler.', izgara + oranlar) +
+      dugmeBolumu(st, on)
+    );
+  }
+
+  function formlarSayfasi(st, on) {
+    const R = (a) => coz(st, a);
+    const form =
+      '<div class="parca-izgara parca-form">' +
+      '<div class="tk-field"><label class="tk-label" for="' + on + '-ad">Hasta Adı</label><input class="tk-input" id="' + on + '-ad" value="Ayşe Yılmaz"></div>' +
+      '<div class="tk-field"><label class="tk-label" for="' + on + '-tel">Telefon</label><input class="tk-input" id="' + on + '-tel" value="0532 12" aria-invalid="true" aria-describedby="' + on + '-tel-h">' +
+      '<p class="tk-error" id="' + on + '-tel-h">Telefon 11 haneli olmalı.</p></div>' +
+      '<div class="tk-field"><label class="tk-label" for="' + on + '-kod">Dosya No</label><input class="tk-input tk-mono" id="' + on + '-kod" value="AL-2026-0412" readonly></div>' +
+      '<div class="tk-field"><label class="tk-label" for="' + on + '-kapali">Oda</label><input class="tk-input" id="' + on + '-kapali" value="Seçilmedi" disabled title="Önce servis seçin"></div>' +
+      '</div>';
+    const izgara = durumIzgara([
+      ['Giriş', (s, p) => '<input class="tk-input' + zorla(s) + '" value="Ayşe Yılmaz" aria-label="Örnek giriş"' + durumAttr(s, p, 'Önce servis seçin') + '>'],
+      ['Hatalı', (s, p) => '<input class="tk-input' + zorla(s) + '" value="0532 12" aria-invalid="true" aria-label="Hatalı giriş"' + durumAttr(s, p, 'Önce servis seçin') + '>'],
+      ['Mono', (s, p) => '<input class="tk-input tk-mono' + zorla(s) + '" value="AL-2026-0412" aria-label="Mono giriş"' + durumAttr(s, p, 'Önce servis seçin') + '>'],
+    ]);
+    const satirlar = [
+      ['Gelen Kutusu', '128'],
+      ['Taslaklar', '4'],
+      ['Gönderilenler', '1 024'],
+      ['Arşiv', '9 870'],
+    ]
+      .map(([a, d], i) => '<li role="option" aria-selected="' + (i === 1) + '"><span>' + a + '</span><span class="deger">' + d + '</span></li>')
+      .join('');
+    const karsit =
+      '<div class="bilesenler">' +
+      kutucuk(
+        'Giriş Kutusu',
+        '<label class="ornek-etiket" for="' + on + '-pad">Proje Adı</label>' + oranEtiket(yaziOlarak(st, R('text-label'))) +
+          '<input class="ornek-giris" id="' + on + '-pad" value="Teknesyum">' + oranEtiket(yaziOlarak(st, R('text'))) +
+          '<label class="ornek-etiket" for="' + on + '-ep">E-Posta</label>' +
+          '<input class="ornek-giris" id="' + on + '-ep" value="adres@" aria-invalid="true" aria-describedby="' + on + '-ep-h">' +
+          '<span class="hata-yazi" id="' + on + '-ep-h">Geçerli bir adres yazın.</span>' + oranEtiket(yaziOlarak(st, R('danger-text')))
+      ) +
+      kutucuk('Seçili Liste Satırı', oranEtiket(oran(st, R('blue'), 0.2, R('text'))) + '<ul class="liste" role="listbox" aria-label="Klasörler">' + satirlar + '</ul>') +
+      '</div>';
+    return (
+      blok(on, 'form', 'Form Alanları', 'Normal, hatalı, salt okunur, edilgen. Etiket hep görünür; hata metni alanın altındadır ve alana bağlıdır.', form) +
+      blok(on, 'giris-durum', 'Giriş Kutusu · Durumlar', 'Normal sütunu canlıdır. Üzerinde ve basılıda kenar güçlenir, basılıda imleç pembeye döner, odakta iki katmanlı halka çizilir.', izgara) +
+      blok(on, 'karsitlik', 'Karşıtlık Ölçümleri', 'Etiket, değer ve hata metni yüzey üstünde ölçülür.', karsit)
+    );
+  }
+
+  const KAHVE =
+    '<svg class="tk-titlebar__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M5 6.5v8a3 3 0 0 0 3 3h5a3 3 0 0 0 3-3v-8Z"/><path d="M16 8.5h2a2.5 2.5 0 0 1 0 5h-2"/><path d="M8 .5v3M12 .5v3"/></svg>';
+
+  function denetim(sinif, ad, ic, ek) {
+    return '<button type="button" class="tk-titlebar__control' + sinif + '" aria-label="' + ad + '" title="' + ad + '"' + (ek || '') + '><span class="tk-titlebar__' + ic + '" aria-hidden="true"></span></button>';
+  }
+
+  function senkron(durum, metin) {
+    return '<button type="button" class="tk-sync' + (durum === 'syncing' ? ' tk-sync-progress' : '') + '" data-state="' + durum + '" title="Şimdi eşitle">' + metin + '</button>';
+  }
+
+  function guncelleme(adim, baslik) {
+    return '<button type="button" class="tk-update" data-step="' + adim + '" title="' + baslik + '">Güncelleme</button>';
+  }
+
+  function ustcubukSayfasi(st, on) {
+    const R = (a) => coz(st, a);
     const pencere =
       '<div class="tk-titlebar__window">' + denetim('', 'Küçült', 'minimize') + denetim('', 'Büyüt', 'maximize') + denetim(' tk-titlebar__control--close', 'Kapat', 'close') + '</div>';
     const sekmeler = (secili) =>
@@ -579,34 +700,197 @@
         .map((a, i) => '<a class="tk-titlebar__tab" href="#" data-bos' + (i === secili ? ' aria-current="page"' : '') + '>' + a + '</a>')
         .join('') +
       '</nav>';
-    const senkron = (durum, metin) =>
-      '<button type="button" class="tk-sync' + (durum === 'syncing' ? ' tk-sync-progress' : '') + '" data-state="' + durum + '" title="Şimdi eşitle">' + metin + '</button>';
-    const guncelleme = (adim, baslik) => '<button type="button" class="tk-update" data-step="' + adim + '" title="' + baslik + '">Güncelleme</button>';
-    const ustcubuk = (secili, rozetler) =>
+    const ustcubuk = (secili, rozetler, cipler) =>
       '<div class="parca-pencere"><header class="tk-titlebar">' +
       '<div class="tk-titlebar__brand"><span class="tk-titlebar__name">Ameliyat<span class="tk-titlebar__accent">Liste</span></span></div>' +
       sekmeler(secili) +
-      '<div class="tk-titlebar__tools">' + rozetler +
-      '<a class="tk-titlebar__chip tk-titlebar__chip--support" href="#" data-bos>' + kahve + 'Destek Ol</a>' +
-      '<a class="tk-titlebar__chip" href="#" data-bos>teknesyum.com</a>' + pencere + '</div></header>' +
+      '<div class="tk-titlebar__tools">' + rozetler + cipler + pencere + '</div></header>' +
       '<div class="parca-pencere-ic">İçerik alanı</div></div>';
+    const duzCip =
+      '<a class="tk-titlebar__chip tk-titlebar__chip--support" href="#" data-bos>' + KAHVE + 'Destek Ol</a>' +
+      '<a class="tk-titlebar__chip" href="#" data-bos>teknesyum.com</a>';
+    const cerCip =
+      '<a class="tk-titlebar__chip tk-titlebar__chip--support" href="#" data-bos>' + KAHVE + 'Destek Ol</a>' +
+      '<a class="tk-titlebar__chip tk-titlebar__chip--outlined" href="#" data-bos>teknesyum.com</a>';
+    const sekmeli =
+      ustcubuk(0, senkron('synced', 'Eşitlendi · 14:32') + guncelleme('download', 'Yeni sürüm var, indirmek için tıklayın'), duzCip) +
+      ustcubuk(1, senkron('offline', 'Çevrimdışı · 14:05') + guncelleme('install', 'İndirildi, kurmak için tıklayın'), duzCip);
+    const bagEk = (s, p, neden) => (p ? ' aria-disabled="true" title="' + neden + '"' : s ? ' tabindex="-1"' : '');
+    const kucuk = (ic) => '<div class="durum-cubuk">' + ic + '</div>';
+    const anahatsiz = durumIzgara([
+      ['Sekme', (s, p) => kucuk('<a class="tk-titlebar__tab' + zorla(s) + '" href="#" data-bos' + bagEk(s, p, 'Bu sekme yetki ister') + '>Kayıtlar</a>')],
+      ['Seçili Sekme', (s, p) => kucuk('<a class="tk-titlebar__tab' + zorla(s) + '" href="#" data-bos aria-current="page"' + bagEk(s, p, 'Bu sekme yetki ister') + '>Ana Sayfa</a>')],
+      ['Çip', (s, p) => kucuk('<a class="tk-titlebar__chip' + zorla(s) + '" href="#" data-bos' + bagEk(s, p, 'Bağlantı yok') + '>teknesyum.com</a>')],
+      ['Küçült', (s, p) => kucuk(denetim(zorla(s), 'Küçült', 'minimize', durumAttr(s, p, 'Pencere küçültülemez')))],
+      ['Kapat', (s, p) => kucuk(denetim(' tk-titlebar__control--close' + zorla(s), 'Kapat', 'close', durumAttr(s, p, 'Kayıt sürerken kapatılamaz')))],
+    ]);
+    const cerceveli =
+      ustcubuk(2, senkron('synced', 'Eşitlendi · 14:32'), cerCip) +
+      durumIzgara([
+        ['Çerçeveli Çip', (s, p) => kucuk('<a class="tk-titlebar__chip tk-titlebar__chip--outlined' + zorla(s) + '" href="#" data-bos' + bagEk(s, p, 'Bağlantı yok') + '>teknesyum.com</a>')],
+      ]);
+    const sade =
+      oranEtiket(K.pair(K.withAlpha(P(R('glass-base')), T.derived.glass.alpha), P(R('text')), zemin(st)).ratio) +
+      '<div><div class="baslik-cubugu"><strong>Teknesyum · Pencere</strong><div class="pencere-dugmeler">' +
+      '<button type="button" class="pencere-dugme" aria-label="Küçült" title="Küçült">–</button>' +
+      '<button type="button" class="pencere-dugme" aria-label="Büyüt" title="Büyüt">□</button>' +
+      '<button type="button" class="pencere-dugme pencere-kapat" aria-label="Kapat" title="Kapat">✕</button>' +
+      '</div></div><div class="pencere-govde">Pencere gövdesi, panel yüzeyi.</div></div>';
+    return (
+      blok(on, 'sekmeli', 'Sekmeli Gezinme', 'Seçili sekme aria-current ile işaretlenir: yazı gövde rengine döner, altında gösterge çizgisi sabit durur. Üzerine gelin, basın, Tab ile gezin.', sekmeli) +
+      blok(on, 'anahatsiz', 'Anahatsız Düğmeler · Durumlar', 'Sekme, çip ve pencere düğmelerinde anahat yoktur. Üzerine gelince yazı pembe yazı kesimine döner, metnin altında ortadan açılan bir çizgi belirir. Normal sütunu canlıdır.', anahatsiz) +
+      blok(on, 'cerceveli', 'Çerçeveli İstisna', 'Tek istisna çerçeveli çiptir: kenarı yazı rengindedir, çubukta dikey ortalı durur ve alt çizgi göstermez.', cerceveli) +
+      blok(on, 'sade', 'Sade Başlık Çubuğu · Karşıtlık', 'Cam yüzey üstünde gövde yazısı ölçülür.', sade)
+    );
+  }
 
-    const ust =
-      ustcubuk(0, senkron('synced', 'Eşitlendi · 14:32') + guncelleme('download', 'Yeni sürüm var, indirmek için tıklayın')) +
-      ustcubuk(1, senkron('offline', 'Çevrimdışı · 14:05') + guncelleme('install', 'İndirildi, kurmak için tıklayın'));
+  function ilerlemeHtml(durum, yuzde, adim, ek) {
+    return (
+      '<div class="tk-progress" data-status="' + durum + '"' + (ek || '') + '><span class="tk-progress__step">' + adim + '</span><div class="tk-progress__row">' +
+      '<div class="tk-progress__track" role="progressbar" aria-valuenow="' + yuzde + '" aria-valuemin="0" aria-valuemax="100" aria-label="' + adim + '">' +
+      '<div class="tk-progress__fill" style="--tk-progress-value: ' + yuzde / 100 + '"></div></div>' +
+      '<span class="tk-progress__percent">' + yuzde + '%</span></div></div>'
+    );
+  }
 
-    const rozetler =
+  function ilerlemeSayfasi(st, on) {
+    const R = (a) => coz(st, a);
+    const canli =
+      '<div class="parca-yigin">' + ilerlemeHtml('running', 0, 'Başlamaya hazır', ' data-demo-ilerleme') + '</div>' +
+      '<div class="satir demo-arac">' + tkDugme('tk-btn-primary', 'Baştan Oynat', ' data-eylem="ilerleme"') + '</div>';
+    const cubuklar =
+      '<div class="parca-yigin">' +
+      ilerlemeHtml('running', 35, 'Video kodlanıyor · 2 / 6') +
+      ilerlemeHtml('done', 100, 'Kodlama bitti') +
+      ilerlemeHtml('error', 70, 'Kodlama durdu: disk dolu') +
+      '</div>';
+    const sade =
+      '<div class="parca-yigin">' +
+      '<div class="satir"><span class="mono">%64</span>' + oranEtiket(yaziOlarak(st, R('blue'))) + '</div>' +
+      '<div class="ilerleme" role="progressbar" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Mavi ilerleme"><span style="width: 64%"></span></div>' +
+      '<span class="kare-not">Dolgu / İz · Eşik 3:1</span>' + oranEtiket(K.ratio(P(R('blue')), P(bilesik(st, R('blue'), 0.1))), { esik: 3 }) +
+      '<div class="ilerleme ilerleme-pembe" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100" aria-label="Pembe ilerleme"><span style="width: 38%"></span></div>' +
+      oranEtiket(K.ratio(P(R('pink')), P(bilesik(st, R('blue'), 0.1))), { esik: 3 }) +
+      '</div>';
+    return (
+      blok(on, 'canli', 'Canlı İlerleme', 'Değer her yavaş süre jetonunda (' + st.sure.slow + ' ms) artar; dolgu yalnız transform ile ölçeklenir, genişlik canlanmaz. Bitince düz başarı rengine döner.', canli) +
+      blok(on, 'durumlar', 'Durumlar', 'Çalışırken iki renkli geçiş ve tarama ışığı, bitince düz başarı rengi, hatada tehlike rengi.', cubuklar) +
+      blok(on, 'sade', 'Sade Çubuk · Karşıtlık', 'Dolgu ile iz arasında 3:1 eşiği aranır.', sade)
+    );
+  }
+
+  function kaydirmaSayfasi(st, on) {
+    const uzun = [];
+    for (let i = 1; i <= 60; i++)
+      uzun.push('<li><span>Kayıt ' + String(i).padStart(2, '0') + ' · Örnek Satır</span><span class="deger">' + ((i * 37) % 1000) + '</span></li>');
+    const ornek = (b, ad) =>
+      '<figure class="parca-kutu kaydir-kutu"><figcaption class="bilesen-ad">' + ad + '</figcaption>' +
+      '<ul class="uzun-liste kaydir-ornek" data-bicim="' + b + '" tabindex="0" aria-label="' + ad + ' biçimi">' + uzun.slice(0, 30).join('') + '</ul></figure>';
+    const arac =
+      '<div class="kaydirma-arac"><button type="button" class="btn btn-hayalet" data-kaydir="son" data-hedef="' + on + '-uzun">Sona Kaydır</button>' +
+      '<button type="button" class="btn btn-hayalet" data-kaydir="bas" data-hedef="' + on + '-uzun">Başa Kaydır</button></div>';
+    return (
+      blok(on, 'kaydirma', 'Kaydırma Çubuğu', 'Çubukta hale yoktur: ince ve hareketli bir çubuğun çevresindeki parlama bulaşır, gürültü gibi okunur. Kalınlık, renk, biçim ve davranış sağdaki Kaydırma grubundan değişir; önizlemenin kendi çubuğu da aynı ayarı kullanır.', arac + '<ul class="uzun-liste" id="' + on + '-uzun" tabindex="0" aria-label="Uzun liste">' + uzun.join('') + '</ul>') +
+      blok(on, 'bicimler', 'Biçimler', 'Dört biçim yan yana. Seçili biçim (' + BICIMLER.find((b) => b[0] === st.kaydir.bicim)[1] + ') sayfanın ve uzun listenin çubuğuna uygulanır.', '<div class="kaydir-ornekler">' + BICIMLER.map(([b, a]) => ornek(b, a)).join('') + '</div>')
+    );
+  }
+
+  function arkaSayfasi(st) {
+    const turler = ARKALAR.map(
+      ([k, a]) => '<button type="button" class="arac-dugme" data-arka-sec="' + k + '" aria-pressed="' + (st.arka.tur === k) + '">' + a + '</button>'
+    ).join('');
+    const don = st.hareketAz ? ' disabled title="Hareketi azalt açıkken salınım durur"' : '';
+    return (
+      '<div class="arka-sahne">' +
+      '<div class="arka-arac">' +
+      '<h2 class="arka-baslik">Arka Plan</h2>' +
+      '<p>Arka plan önizlemenin tamamını kaplar. Türü aşağıdan seçin; degrade başı Siyah, sonu Yüzey rengidir.</p>' +
+      '<div class="arka-turler" role="group" aria-label="Arka Plan Türü">' + turler + '</div>' +
+      '<div class="satir">' +
+      '<label class="secim"><input type="checkbox" data-arka-panel' + (arkaPanel ? ' checked' : '') + '> Örnek Paneli Göster</label>' +
+      '<label class="secim"><input type="checkbox" data-arka-don' + (st.arka.don ? ' checked' : '') + don + '> Salınım (150–170°)</label>' +
+      '</div></div>' +
+      (arkaPanel
+        ? '<div class="bolum arka-ornek"><h2>Örnek Panel</h2><p>Panel yüzeyi arka planın üstünde durur. Cam türünde yüzey yarı saydamdır, arkadaki hale bulanık görünür.</p>' +
+          '<div class="satir">' + tkDugme('tk-btn-primary', 'Birincil') + tkDugme('tk-btn-ghost', 'Hayalet') + '</div></div>'
+        : '') +
+      '</div>'
+    );
+  }
+
+  function rozetlerSayfasi(st, on) {
+    const R = (a) => coz(st, a);
+    const rozet =
+      '<div class="bilesenler">' +
+      kutucuk(
+        'Sayı Rozeti',
+        '<div class="satir"><span class="rozet rozet-mavi">7</span>' + oranEtiket(oran(st, R('blue'), 1, onRenk(st, 'blue'))) + '</div>' +
+          '<div class="satir"><span class="rozet rozet-basari">12</span>' + oranEtiket(oran(st, R('success'), 1, onRenk(st, 'success'))) + '</div>' +
+          '<div class="satir"><span class="rozet rozet-tehlike">3</span>' + oranEtiket(oran(st, R('danger-text'), 1, onRenk(st, 'danger-text'))) + '</div>'
+      ) +
+      kutucuk(
+        'Çip',
+        '<div class="satir"><span class="cip cip-mavi">Mavi Çip</span>' + oranEtiket(oran(st, R('blue'), 0.1, R('text'))) + '</div>' +
+          '<div class="satir"><span class="cip cip-pembe">Pembe Çip</span>' + oranEtiket(oran(st, R('pink'), 0.1, R('text'))) + '</div>' +
+          '<div class="satir"><span class="cip cip-mor">Mor Çip</span>' + oranEtiket(oran(st, R('purple'), 0.1, R('text'))) + '</div>'
+      ) +
+      kutucuk(
+        'Durum Noktası',
+        '<div class="satir"><span class="parca-nokta"><span class="tk-dot tk-dot-on"></span>Bağlı</span></div>' +
+          '<div class="satir"><span class="parca-nokta"><span class="tk-dot tk-dot-off"></span>Bağlı Değil</span></div>' +
+          '<p class="kare-not">Dolu daire ve halka: renk olmadan da ayrılır.</p>'
+      ) +
+      '</div>';
+    const senk =
       '<div class="parca-sira">' +
       etiketli('Bekliyor', senkron('waiting', 'Bağlanıyor…')) +
       etiketli('Eşitleniyor', senkron('syncing', 'Eşitleniyor…')) +
       etiketli('Eşitlendi', senkron('synced', 'Eşitlendi · 14:32')) +
       etiketli('Çevrimdışı', senkron('offline', 'Çevrimdışı · 14:05')) +
       etiketli('Yerel', senkron('local', 'Yalnız bu bilgisayar')) +
-      '</div><h3>Güncelleme Rozeti · İki Adım</h3><div class="parca-sira">' +
+      '</div>';
+    const gun =
+      '<div class="parca-sira">' +
       etiketli('1 · Sarı: Yeni Sürüm Var, Tıkla İndir', guncelleme('download', 'Yeni sürüm var, indirmek için tıklayın')) +
       etiketli('2 · Yeşil: İndi, Tıkla Kur', guncelleme('install', 'İndirildi, kurmak için tıklayın')) +
       '</div>';
+    return (
+      blok(on, 'rozet', 'Rozet, Çip Ve Nokta', 'Dolgulu rozetin yazısı on eşinden gelir; çipte renk %10 dolgu ve kenardadır, yazı gövde rengidir.', rozet) +
+      blok(on, 'senkron', 'Senkron Rozeti · Beş Durum', 'Renkli nokta ve metin; rengin yanında metin ikinci taşıyıcıdır.', senk) +
+      blok(on, 'guncelleme', 'Güncelleme Rozeti · İki Adım', 'Önce indir, sonra kur; her adımın rengi ve metni ayrıdır.', gun)
+    );
+  }
 
+  const KAPAT_SIMGE =
+    '<button type="button" class="tk-toast-close" aria-label="Kapat"><svg viewBox="0 0 14 14" aria-hidden="true" stroke="currentColor" stroke-width="1.5"><path d="M2 2l10 10M12 2L2 12"/></svg></button>';
+  const BILDIRIM = {
+    success: ['Kaydedildi', 'Ayarlar diske yazıldı.'],
+    warning: ['Çevrimdışı', 'Değişiklikler bağlantı gelince eşitlenecek.'],
+    danger: ['Kaydedilemedi', 'Disk dolu; yer açıp yeniden deneyin.'],
+  };
+
+  function bildirimHtml(tur) {
+    const [baslik, metin] = BILDIRIM[tur];
+    return '<div class="tk-panel tk-toast tk-toast-' + tur + '" role="status"><div class="tk-toast-body"><div class="tk-toast-title">' + baslik + '</div>' + metin + '</div>' + KAPAT_SIMGE + '</div>';
+  }
+
+  function bildirimlerSayfasi(st, on) {
+    const omur = T.metric['toast-life'].value;
+    const tavan = T.metric['toast-max'].value;
+    const canli =
+      '<div class="satir demo-arac">' +
+      tkDugme('tk-btn-ghost', 'Başarı Göster', ' data-eylem="bildirim" data-tur="success"') +
+      tkDugme('tk-btn-ghost', 'Uyarı Göster', ' data-eylem="bildirim" data-tur="warning"') +
+      tkDugme('tk-btn-danger', 'Hata Göster', ' data-eylem="bildirim" data-tur="danger"') +
+      '</div><div class="bildirim-sahne"><div class="bildirim-yigin" data-bildirim-yigin aria-live="polite"></div></div>';
+    const statik = '<div class="parca-sira parca-ust">' + bildirimHtml('success') + bildirimHtml('warning') + bildirimHtml('danger') + '</div>';
+    return (
+      blok(on, 'canli', 'Canlı Bildirim', 'Bildirim sağdan kayarak girer (' + st.sure.fast + ' ms), ' + omur / 1000 + ' saniye sonra kendiliğinden kapanır; hata bildirimi siz kapatana kadar kalır. Aynı anda en çok ' + tavan + ' bildirim görünür, üzerine gelince süre durur.', canli) +
+      blok(on, 'turler', 'Türler', 'Renk kenar ve başlıktadır, gövde yazısı düzdür.', statik)
+    );
+  }
+
+  function kurulumSayfasi(st, on) {
     const GUNLUK = [
       'Kaynak denetlendi: D:\\AmeliyatListe',
       'Eski sürüm yedeklendi (.old)',
@@ -632,96 +916,46 @@
       '<div class="tk-progress__fill" style="--tk-progress-value: ' + yuzde / 100 + '"></div></div></div>' +
       '<ol class="tk-installer__log">' + satirlar.slice(-9).map((s) => '<li>' + s + '</li>').join('') + '</ol>' +
       '<div class="tk-installer__actions">' + dugmeler + '</div></div>';
-    const dugme = (sinif, metin) => '<button type="button" class="tk-btn ' + sinif + '">' + metin + '</button>';
     const panel =
       '<div class="parca-izgara">' +
       etiketli('Çalışıyor · Düğme Yok, Kapatılamaz', kur('running', 62, 'Program dosyaları kopyalanıyor', 'İlk kurulum · C:\\Program Files\\AmeliyatListe', GUNLUK.slice(0, 4), '')) +
-      etiketli('Bitti · Programı Aç + Kapat', kur('done', 100, 'Kurulum tamamlandı, program hazır', 'İlk kurulum · C:\\Program Files\\AmeliyatListe', GUNLUK, dugme('tk-btn-primary', 'Programı Aç') + dugme('tk-btn-ghost', 'Kapat'))) +
-      etiketli('Hata · Günlüğü Aç + Kapat', kur('error', 48, 'Kopyalama durdu: hedef klasör başka bir programda açık', 'Günlük · C:\\Users\\Kullanici\\AppData\\Local\\AmeliyatListe\\kur.log', GUNLUK.slice(0, 4).concat('HATA: data.db kilitli, işlem durduruldu'), dugme('tk-btn-primary', 'Günlüğü Aç') + dugme('tk-btn-ghost', 'Kapat'))) +
+      etiketli('Bitti · Programı Aç + Kapat', kur('done', 100, 'Kurulum tamamlandı, program hazır', 'İlk kurulum · C:\\Program Files\\AmeliyatListe', GUNLUK, tkDugme('tk-btn-primary', 'Programı Aç') + tkDugme('tk-btn-ghost', 'Kapat'))) +
+      etiketli('Hata · Günlüğü Aç + Kapat', kur('error', 48, 'Kopyalama durdu: hedef klasör başka bir programda açık', 'Günlük · C:\\Users\\Kullanici\\AppData\\Local\\AmeliyatListe\\kur.log', GUNLUK.slice(0, 4).concat('HATA: data.db kilitli, işlem durduruldu'), tkDugme('tk-btn-primary', 'Günlüğü Aç') + tkDugme('tk-btn-ghost', 'Kapat'))) +
       '</div>';
+    return blok(on, 'kurulum', 'Kurulum Ve Güncelleme Paneli', 'Adım cümlesi, yüzde, tavanlı çubuk ve son dokuz günlük satırı. İş bitmeden düğme görünmez; hata durumunda günlük yolu açıkça yazılır.', panel);
+  }
 
-    const ilerleme = (durum, yuzde, adim) =>
-      '<div class="tk-progress" data-status="' + durum + '"><span class="tk-progress__step">' + adim + '</span><div class="tk-progress__row">' +
-      '<div class="tk-progress__track" role="progressbar" aria-valuenow="' + yuzde + '" aria-valuemin="0" aria-valuemax="100" aria-label="' + adim + '">' +
-      '<div class="tk-progress__fill" style="--tk-progress-value: ' + yuzde / 100 + '"></div></div>' +
-      '<span class="tk-progress__percent">' + yuzde + '%</span></div></div>';
-    const cubuklar =
-      '<div class="parca-yigin">' +
-      ilerleme('running', 35, 'Video kodlanıyor · 2 / 6') +
-      ilerleme('done', 100, 'Kodlama bitti') +
-      ilerleme('error', 70, 'Kodlama durdu: disk dolu') +
-      '</div>';
-
-    const dugmeler =
-      '<div class="parca-sira">' +
-      etiketli('Birincil', dugme('tk-btn-primary', 'Kaydet')) +
-      etiketli('Hayalet · Renk Kenarda', dugme('tk-btn-ghost', 'Vazgeç')) +
-      etiketli('Tehlike', dugme('tk-btn-danger', 'Sil')) +
-      etiketli('Edilgen', '<button type="button" class="tk-btn tk-btn-primary" disabled title="Önce bir kayıt seçin">Kaydet</button>') +
-      '</div>';
-
-    const kapat =
-      '<button type="button" class="tk-toast-close" aria-label="Kapat"><svg viewBox="0 0 14 14" aria-hidden="true" stroke="currentColor" stroke-width="1.5"><path d="M2 2l10 10M12 2L2 12"/></svg></button>';
-    const bildirim = (tur, baslik, metin) =>
-      '<div class="tk-panel tk-toast tk-toast-' + tur + '" role="status"><div class="tk-toast-body"><div class="tk-toast-title">' + baslik + '</div>' + metin + '</div>' + kapat + '</div>';
-    const bildirimler =
-      '<div class="parca-sira parca-ust">' +
-      bildirim('success', 'Kaydedildi', 'Ayarlar diske yazıldı.') +
-      bildirim('warning', 'Çevrimdışı', 'Değişiklikler bağlantı gelince eşitlenecek.') +
-      bildirim('danger', 'Kaydedilemedi', 'Disk dolu; yer açıp yeniden deneyin.') +
-      '</div><h3>Onay Penceresi</h3>' +
-      '<div class="parca-modal"><div class="tk-panel tk-modal" role="dialog" aria-label="Kaydı sil">' +
-      '<p class="tk-h3">Kayıt silinsin mi?</p><p class="tk-modal-body">“Ameliyat 2026-09-25” kaydı ve ekleri kalıcı olarak silinir.</p>' +
-      '<div class="tk-modal-actions">' + dugme('tk-btn-ghost', 'Vazgeç') + dugme('tk-btn-danger', 'Sil') + '</div></div></div>';
-
-    const form =
-      '<div class="parca-izgara parca-form">' +
-      '<div class="tk-field"><label class="tk-label" for="p-ad">Hasta Adı</label><input class="tk-input" id="p-ad" value="Ayşe Yılmaz"></div>' +
-      '<div class="tk-field"><label class="tk-label" for="p-tel">Telefon</label><input class="tk-input" id="p-tel" value="0532 12" aria-invalid="true" aria-describedby="p-tel-h">' +
-      '<p class="tk-error" id="p-tel-h">Telefon 11 haneli olmalı.</p></div>' +
-      '<div class="tk-field"><label class="tk-label" for="p-kod">Dosya No</label><input class="tk-input tk-mono" id="p-kod" value="AL-2026-0412" readonly></div>' +
-      '<div class="tk-field"><label class="tk-label" for="p-kapali">Oda</label><input class="tk-input" id="p-kapali" value="Seçilmedi" disabled title="Önce servis seçin"></div>' +
-      '</div><div class="parca-sira"><span class="parca-nokta"><span class="tk-dot tk-dot-on"></span>Bağlı</span><span class="parca-nokta"><span class="tk-dot tk-dot-off"></span>Bağlı Değil</span></div>';
-
+  function modalSayfasi(st, on) {
+    const govde = (idEk, kapat) =>
+      '<div class="tk-panel tk-modal"' + (kapat ? '' : ' role="dialog" aria-label="Kaydı sil"') + '>' +
+      '<p class="tk-h3"' + (idEk ? ' id="' + idEk + '"' : '') + '>Kayıt silinsin mi?</p><p class="tk-modal-body">“Ameliyat 2026-09-25” kaydı ve ekleri kalıcı olarak silinir.</p>' +
+      '<div class="tk-modal-actions">' + tkDugme('tk-btn-ghost', 'Vazgeç', kapat) + tkDugme('tk-btn-danger', 'Sil', kapat) + '</div></div>';
+    const canli =
+      '<div class="satir demo-arac">' + tkDugme('tk-btn-primary', 'Onay Penceresini Aç', ' data-eylem="modal"') + '</div>' +
+      '<dialog class="demo-modal" data-demo-modal aria-labelledby="' + on + '-modal-baslik">' + govde(on + '-modal-baslik', ' data-modal-kapat') + '</dialog>';
     return (
-      blok('ustcubuk', 'Üst Çubuk', 'Standart üst çubuk: iki renkli ad, dolgusuz sekmeler, senkron ve güncelleme rozeti, destek ve marka çipleri, pencere düğmeleri. Üzerine gelin, basın, Tab ile gezin.', ust) +
-      blok('rozetler', 'Senkron Rozeti · Beş Durum', 'Renkli nokta + metin; rengin yanında metin ikinci taşıyıcıdır.', rozetler) +
-      blok('kurulum', 'Kurulum Ve Güncelleme Paneli', 'Adım cümlesi, yüzde, tavanlı çubuk ve son dokuz günlük satırı. İş bitmeden düğme görünmez.', panel) +
-      blok('ilerleme', 'İlerleme Çubuğu', 'Çalışırken iki renkli geçiş + tarama ışığı, bitince düz durum rengi.', cubuklar) +
-      blok('dugmeler', 'Düğmeler', 'Dolgulu düğmenin yazısı dolgunun on eşinden gelir; hayalet düğmede renk yalnız kenardadır, yazı gövde rengidir.', dugmeler) +
-      blok('bildirimler', 'Bildirim Ve Pencere', 'Bildirimde renk kenar ve başlıktadır, gövde yazısı düzdür.', bildirimler) +
-      blok('form', 'Form Alanları', 'Normal, hatalı, salt okunur, edilgen.', form)
+      blok(on, 'canli', 'Canlı Modal', 'Pencere ölçek ve saydamlıkla temel sürede (' + st.sure.base + ' ms) açılır, hızlı sürede (' + st.sure.fast + ' ms) kapanır. Esc, Vazgeç ya da perdeye tıklama kapatır.', canli) +
+      blok(on, 'modal', 'Onay Penceresi', 'Perde üstünde panel; birincil eylem sağda, yıkıcı eylem tehlike renginde.', '<div class="parca-modal">' + govde('', '') + '</div>')
     );
   }
 
-  function parcaGezinti() {
-    const b = [
-      ['ustcubuk', 'Üst Çubuk'],
-      ['rozetler', 'Rozetler'],
-      ['kurulum', 'Kurulum Paneli'],
-      ['ilerleme', 'İlerleme'],
-      ['dugmeler', 'Düğmeler'],
-      ['bildirimler', 'Bildirim'],
-      ['form', 'Form'],
-    ];
-    return '<nav class="gezinti" aria-label="Parçalar">' + b.map(([id, ad]) => '<a href="#p-' + id + '">' + ad + '</a>').join('') + '</nav>';
+  function tipografiSayfasi(st, on) {
+    return tipoBolumu(st, on);
   }
 
-  function icerik(st, on) {
-    return tonBolumu(st, on) + yanBolumu(st, on) + dugmeBolumu(st, on) + bilesenBolumu(st, on) + tipoBolumu(st, on) + yuzeyBolumu(st, on);
-  }
-
-  function gezinti(on) {
-    const b = [
-      ['tonlar', 'Tonlar'],
-      ['yanyana', 'Yan Yana'],
-      ['dugmeler', 'Düğmeler'],
-      ['bilesenler', 'Bileşenler'],
-      ['tipografi', 'Tipografi'],
-      ['yuzeyler', 'Yüzeyler'],
-    ];
-    return '<nav class="gezinti" aria-label="Bölümler">' + b.map(([id, ad]) => '<a href="#' + on + '-' + id + '">' + ad + '</a>').join('') + '</nav>';
-  }
+  const SAYFA_IC = {
+    renkler: renklerSayfasi,
+    dugmeler: dugmelerSayfasi,
+    formlar: formlarSayfasi,
+    ustcubuk: ustcubukSayfasi,
+    ilerleme: ilerlemeSayfasi,
+    kaydirma: kaydirmaSayfasi,
+    rozetler: rozetlerSayfasi,
+    bildirimler: bildirimlerSayfasi,
+    kurulum: kurulumSayfasi,
+    modal: modalSayfasi,
+    tipografi: tipografiSayfasi,
+  };
 
   function farkListesi() {
     const f = farklar();
@@ -815,26 +1049,90 @@
     return okunurGezinti() + genel + etki + zayif + paneller;
   }
 
+  let ilerlemeDeger = 0;
+
+  function akisCtx() {
+    return {
+      egri: su.egri,
+      ilkEgri: ilk.egri,
+      sure: Object.assign({}, su.sure),
+      sistemAz: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      duzenle: egriDuzenle,
+      guncel: akisCtx,
+    };
+  }
+
+  function zamanla(fn, ms) {
+    const z = setTimeout(() => {
+      zamanlar.delete(z);
+      fn();
+    }, ms);
+    zamanlar.add(z);
+    return z;
+  }
+
+  function sayfaBirak() {
+    if (window.Teknik) window.Teknik.durdur();
+    if (A()) A().durdur();
+    for (const z of zamanlar) clearTimeout(z);
+    zamanlar.clear();
+    ilerlemeNo++;
+    ilerlemeDeger = 0;
+  }
+
+  function sayfaIcerik(st, on) {
+    const f = SAYFA_IC[sayfa];
+    return f ? f(st, on) : '';
+  }
+
   function ciz() {
     bekleyen = false;
+    const t0 = performance.now();
     const kok = $('#onizleme');
-    const kaydirma = kok.scrollTop;
     uygula(kok, su, true);
-    if (sayfa === 'parca') {
-      kok.innerHTML = parcaGezinti() + parcaSayfasi();
-    } else if (sayfa === 'okunur') {
-      kok.innerHTML = okunurSayfasi();
-    } else if (kip === 'karsi') {
-      kok.innerHTML =
-        gezinti('s') + farkListesi() +
-        '<div class="karsi"><section class="sahne" id="sahne-once" aria-label="Önce"><h2 class="sahne-baslik">Önce · Token Dosyası</h2>' + icerik(ilk, 'o') + '</section>' +
-        '<section class="sahne" id="sahne-sonra" aria-label="Sonra"><h2 class="sahne-baslik">Sonra · Şu Anki Ayar</h2>' + icerik(su, 's') + '</section></div>';
+    const ayni = kok.dataset.sayfa === sayfa;
+    if (ayni && sayfa === 'akicilik' && A() && $('[data-akis]', kok)) {
+      A().guncelle(kok, akisCtx());
+      return cizBitti(t0);
+    }
+    if (ayni && sayfa === 'teknik' && window.Teknik && window.Teknik.calisiyor()) {
+      window.Teknik.renkYenile();
+      return cizBitti(t0);
+    }
+    if (!ayni) sayfaBirak();
+    const kaydirma = ayni ? kok.scrollTop : 0;
+    const karsi = kip === 'karsi' && !TEK.includes(sayfa);
+    let html;
+    if (sayfa === 'arka') html = arkaSayfasi(su);
+    else if (sayfa === 'okunur') html = okunurSayfasi();
+    else if (sayfa === 'akicilik') html = A() ? A().sayfa(akisCtx()) : '<p>Akıcılık modülü yüklenemedi.</p>';
+    else if (sayfa === 'teknik') html = window.Teknik ? window.Teknik.sayfa() : '<p>Teknik modülü yüklenemedi.</p>';
+    else if (karsi)
+      html =
+        farkListesi() +
+        '<div class="karsi"><section class="sahne" id="sahne-once" aria-label="Önce"><h2 class="sahne-baslik">Önce · Token Dosyası</h2>' + sayfaIcerik(ilk, 'o') + '</section>' +
+        '<section class="sahne" id="sahne-sonra" aria-label="Sonra"><h2 class="sahne-baslik">Sonra · Şu Anki Ayar</h2>' + sayfaIcerik(su, 's') + '</section></div>';
+    else html = sayfaIcerik(su, 's');
+    const ad = SAYFALAR.find((x) => x[0] === sayfa)[1];
+    const bas = TEK.includes(sayfa) ? '' : '<header class="sayfa-ust"><h1 class="sayfa-baslik">' + ad + '</h1></header>';
+    kok.innerHTML = '<div class="sayfa' + (ayni ? '' : ' sayfa-gir') + '" data-bilesen="' + sayfa + '">' + bas + html + '</div>';
+    if (karsi) {
       uygula($('#sahne-once'), ilk, true);
       uygula($('#sahne-sonra'), su, true);
-    } else {
-      kok.innerHTML = gezinti('s') + icerik(su, 's');
     }
+    kok.dataset.sayfa = sayfa;
     kok.scrollTop = kaydirma;
+    if (sayfa === 'akicilik' && A()) A().bagla(kok, akisCtx());
+    if (sayfa === 'teknik' && window.Teknik) window.Teknik.baslat($('.teknik', kok) || kok);
+    if (sayfa === 'ilerleme') {
+      if (ayni) for (const el of $$('[data-demo-ilerleme]', kok)) ilerlemeYaz(el, ilerlemeDeger);
+      else ilerlemeOynat();
+    }
+    cizBitti(t0);
+  }
+
+  function cizBitti(t0) {
+    sonCizim = performance.now() - t0;
     kaydetGuncelle();
     okunurGuncelle();
   }
@@ -843,6 +1141,151 @@
     if (bekleyen) return;
     bekleyen = true;
     requestAnimationFrame(ciz);
+  }
+
+  function ilerlemeYaz(el, deger) {
+    const bitti = deger >= 100;
+    el.dataset.status = bitti ? 'done' : 'running';
+    $('.tk-progress__step', el).textContent = bitti ? 'Aktarım bitti' : deger === 0 ? 'Başlamaya hazır' : 'Dosyalar aktarılıyor · ' + deger + ' / 100';
+    $('.tk-progress__percent', el).textContent = deger + '%';
+    $('.tk-progress__track', el).setAttribute('aria-valuenow', String(deger));
+    $('.tk-progress__fill', el).style.setProperty('--tk-progress-value', String(deger / 100));
+  }
+
+  function ilerlemeOynat() {
+    const no = ++ilerlemeNo;
+    ilerlemeDeger = 0;
+    const adim = () => {
+      if (no !== ilerlemeNo || sayfa !== 'ilerleme') return;
+      for (const el of $$('#onizleme [data-demo-ilerleme]')) ilerlemeYaz(el, ilerlemeDeger);
+      if (ilerlemeDeger >= 100) return;
+      ilerlemeDeger = Math.min(100, ilerlemeDeger + 7);
+      zamanla(adim, su.sure.slow);
+    };
+    adim();
+  }
+
+  function sonraki(fn) {
+    requestAnimationFrame(() => requestAnimationFrame(fn));
+  }
+
+  function bildirimKapat(el) {
+    if (!el || el.dataset.tkKapaniyor) return;
+    el.dataset.tkKapaniyor = '1';
+    let bitti = false;
+    const sil = () => {
+      if (bitti) return;
+      bitti = true;
+      el.remove();
+    };
+    el.addEventListener('transitionend', sil, { once: true });
+    setTimeout(sil, su.sure.instant + 120);
+  }
+
+  function bildirimGoster(dugme) {
+    const yigin = $('[data-bildirim-yigin]', dugme.closest('.bolum'));
+    if (!yigin) return;
+    const tur = dugme.dataset.tur;
+    const canli = $$('.tk-toast:not([data-tk-kapaniyor])', yigin);
+    if (canli.length >= T.metric['toast-max'].value) bildirimKapat(canli[0]);
+    yigin.insertAdjacentHTML('beforeend', bildirimHtml(tur));
+    const el = yigin.lastElementChild;
+    el.dataset.tkGiriyor = '1';
+    sonraki(() => delete el.dataset.tkGiriyor);
+    if (tur === 'danger') return;
+    const omur = T.metric['toast-life'].value;
+    let z = zamanla(() => bildirimKapat(el), omur);
+    el.addEventListener('mouseenter', () => {
+      clearTimeout(z);
+      zamanlar.delete(z);
+    });
+    el.addEventListener('mouseleave', () => {
+      z = zamanla(() => bildirimKapat(el), omur / 2);
+    });
+  }
+
+  function modalAc(dugme) {
+    const d = $('[data-demo-modal]', dugme.closest('.bolum'));
+    if (!d || d.open) return;
+    const m = $('.tk-modal', d);
+    m.dataset.tkGiriyor = '1';
+    d.showModal();
+    sonraki(() => delete m.dataset.tkGiriyor);
+  }
+
+  function modalKapat(d) {
+    const m = $('.tk-modal', d);
+    if (!d.open || m.dataset.tkKapaniyor) return;
+    m.dataset.tkKapaniyor = '1';
+    let bitti = false;
+    const son = () => {
+      if (bitti) return;
+      bitti = true;
+      d.close();
+      delete m.dataset.tkKapaniyor;
+    };
+    m.addEventListener('transitionend', son, { once: true });
+    setTimeout(son, su.sure.fast + 120);
+  }
+
+  function navKur() {
+    $('#bilesen-liste').innerHTML =
+      '<ul class="bilesen-ul">' +
+      SAYFALAR.map(
+        ([id, ad]) =>
+          '<li><button type="button" class="bilesen-oge" data-git="' + id + '"><span>' + ad + '</span>' +
+          (id === 'okunur' ? '<span class="puan puan-kucuk" id="okunur-puan"></span>' : '') + '</button></li>'
+      ).join('') +
+      '</ul>';
+  }
+
+  function navGuncelle() {
+    for (const b of $$('[data-git]')) {
+      if (b.dataset.git === sayfa) b.setAttribute('aria-current', 'page');
+      else b.removeAttribute('aria-current');
+    }
+    for (const x of $$('[data-kip]')) {
+      x.disabled = TEK.includes(sayfa);
+      x.title = x.disabled ? 'Bu bileşen tek görünümdür' : '';
+    }
+  }
+
+  function grupSirala() {
+    const ilgili = ILGILI[sayfa] || [];
+    const sira = (g) => {
+      const i = ilgili.indexOf(g);
+      if (i >= 0) return i;
+      if (g.startsWith('renk-') && ilgili.includes('renk')) return ilgili.indexOf('renk');
+      return -1;
+    };
+    for (const d of $$('#ayarlar [data-grup]')) {
+      const i = sira(d.dataset.grup);
+      d.style.order = String(i >= 0 ? 1 + i : 60);
+      d.classList.toggle('grup-ilgili', i >= 0);
+      if (i >= 0 && !d.dataset.grup.startsWith('renk-')) d.open = true;
+    }
+    $('[data-ayrac="ilgili"]').style.order = '0';
+    $('[data-ayrac="diger"]').style.order = '50';
+    const sag = $('.sag');
+    if (sag) sag.scrollTop = 0;
+  }
+
+  function hashYaz() {
+    const p = new URLSearchParams(location.hash.slice(1));
+    p.set('sayfa', sayfa);
+    p.set('kip', kip);
+    p.set('arka', su.arka.tur);
+    p.delete('bolum');
+    history.replaceState(null, '', '#' + p.toString());
+  }
+
+  function sayfaAc(id) {
+    if (!SAYFALAR.some((x) => x[0] === id)) return;
+    sayfa = id;
+    navGuncelle();
+    grupSirala();
+    hashYaz();
+    planla();
   }
 
   function renkDenetimi(ad) {
@@ -855,7 +1298,7 @@
       ? '<button type="button" class="arac-dugme" data-turet="' + ad + '">' + adi(TURETILIR[ad]) + ' Dolgusundan Türet (7:1)</button>'
       : '';
     return (
-      '<details class="grup"' + acik + '><summary><span><span class="nokta" data-nokta="' + ad + '"></span>' + etiket + '</span><code data-hexgoster="' + ad + '"></code></summary>' +
+      '<details class="grup" data-grup="renk-' + ad + '"' + acik + '><summary><span><span class="nokta" data-nokta="' + ad + '"></span>' + etiket + '</span><code data-hexgoster="' + ad + '"></code></summary>' +
       '<div class="grup-ic">' +
       '<div class="satir"><input type="color" class="secici" data-renk="' + ad + '" data-alan="secici" aria-label="' + adi(ad) + ' Renk Seçici">' +
       '<input type="text" class="giris hex" data-renk="' + ad + '" data-alan="hex" maxlength="7" spellcheck="false" aria-label="' + adi(ad) + ' Hex">' +
@@ -879,24 +1322,62 @@
     );
   }
 
+  const EGRI_ALAN = ['x1', 'y1', 'x2', 'y2'];
+
+  function egriAdlari() {
+    return Object.keys(su.egri).map((ad) => [ad, (A() ? A().adi(ad) : ad) + ' (' + ad + ')']);
+  }
+
   function formKur() {
-    const A = aileler();
+    const AL = aileler();
     const f = $('#ayarlar');
-    const grup = (baslik, ic, acik) => '<details class="grup"' + (acik ? ' open' : '') + '><summary>' + baslik + '</summary><div class="grup-ic">' + ic + '</div></details>';
+    const grup = (id, baslik, ic) => '<details class="grup" data-grup="' + id + '"><summary>' + baslik + '</summary><div class="grup-ic">' + ic + '</div></details>';
+    const parlama = PARLAMALAR.map(
+      ([g, ad]) =>
+        '<p class="alt-baslik">' + ad + '</p>' + aralik('parlama-' + g + '-alpha', 'Saydamlık', 0, 1, 0.01) + aralik('parlama-' + g + '-blur', 'Bulanıklık (px)', 0, 48, 1)
+    ).join('');
+    const egriK = (k, min, max) => aralik('egri-' + k, k.toLocaleUpperCase('tr'), min, max, 0.01);
     f.innerHTML =
+      '<p class="grup-ayrac" data-ayrac="ilgili">Bu Bileşenin Ayarları</p>' +
+      '<p class="grup-ayrac" data-ayrac="diger">Diğer Ayarlar</p>' +
       DUZENLENEN.map(renkDenetimi).join('') +
       grup(
+        'arka',
         'Arka Plan',
         secim('arka-tur', 'Tasarım', ARKALAR) +
           aralik('arka-durak', 'Degrade Durakları', 2, 32, 1) +
           aralik('arka-aci', 'Açı (Derece)', 0, 360, 1) +
           '<label class="secim"><input type="checkbox" id="arka-don"> Arka Plan Salınsın (150–170°, 48 sn)</label>' +
-          '<p class="ipucu">Degrade başı Siyah, sonu Yüzey rengidir; ikisini yukarıdan ayarlayın.</p>',
-        true
+          '<p class="ipucu">Degrade başı Siyah, sonu Yüzey rengidir; ikisini renk gruplarından ayarlayın.</p>'
       ) +
       grup(
+        'parlama',
+        'Parlama',
+        secim('parlama-duzey', 'Parlama Düzeyi', PARLAMA_DUZEY) + parlama +
+          '<p class="ipucu">Kaydırma çubuğunda hale yoktur; düzey yalnız kutu, düğme ve kahraman yazısına uygulanır.</p>'
+      ) +
+      grup(
+        'hareket',
+        'Hareket',
+        secim('arayuz-egri', 'Arayüz Eğrisi (Geçişler)', egriAdlari()) +
+          aralik('sure-carpan', 'Süre Çarpanı', 0.5, 2, 0.05) +
+          SURELER.map(([k, ad]) => aralik('sure-' + k, ad + ' Süre (ms)', 0, 2000, 10)).join('') +
+          '<label class="secim"><input type="checkbox" id="hareket-az"> Hareketi Azalt</label>' +
+          '<p class="ipucu">Hareketi azalt geçişleri, salınımı ve yumuşak kaydırmayı kapatır. Yalnız transform ve opacity canlanır.</p>'
+      ) +
+      grup(
+        'egri',
+        'Eğri Düzenleyici',
+        secim('egri-sec', 'Eğri', egriAdlari()) +
+          '<svg class="egri-mini" viewBox="0 -40 100 180" aria-hidden="true"><path class="egri-mini-izgara" d="M0,0 H100 M0,100 H100 M0,100 L100,0"/><path class="egri-mini-yol" id="egri-mini-yol" d=""/></svg>' +
+          egriK('x1', 0, 1) + egriK('y1', -1, 2) + egriK('x2', 0, 1) + egriK('y2', -1, 2) +
+          '<div class="satir"><code class="mono" id="egri-deger"></code><button type="button" class="arac-dugme" data-egri-geri>Geri Al</button></div>' +
+          '<p class="ipucu">X değerleri 0–1 arasıdır; Y 1’i aşarsa eğri hedefi geçip geri döner.</p>'
+      ) +
+      grup(
+        'yazi',
         'Yazı',
-        secim('yazi-aile', 'Yazı Ailesi', Object.entries(A).map(([k, v]) => [k, v[0]])) +
+        secim('yazi-aile', 'Yazı Ailesi', Object.entries(AL).map(([k, v]) => [k, v[0]])) +
           aralik('yazi-carpan', 'Boyut Çarpanı', 0.8, 1.4, 0.05) +
           '<p class="ipucu mono" id="yazi-olcek"></p>' +
           secim('yazi-govde', 'Gövde Ağırlığı', [[300, '300'], [400, '400'], [500, '500']]) +
@@ -904,16 +1385,19 @@
           secim('yazi-kahraman', 'Kahraman Ağırlığı', [[700, '700'], [800, '800'], [900, '900']]) +
           '<p class="ipucu uyari" id="yazi-uyari" hidden>Standart 700 ağırlığı yalnız kahraman için tanır.</p>'
       ) +
-      grup('Köşe Yarıçapı', aralik('sekil-r', 'Yarıçap (r)', 0, 20, 1) + aralik('sekil-rp', 'Pencere Yarıçapı', 0, 24, 1)) +
+      grup('sekil', 'Köşe Yarıçapı', aralik('sekil-r', 'Yarıçap (r)', 0, 20, 1) + aralik('sekil-rp', 'Pencere Yarıçapı', 0, 24, 1)) +
+      grup('yogunluk', 'Yoğunluk Ve Kenar', aralik('yogunluk', 'Yoğunluk (Boşluk Çarpanı)', 0.75, 1.5, 0.05) + aralik('kenar', 'Kenar Kalınlığı (px)', 0, 3, 1)) +
+      grup('yuzey', 'Yüzey', aralik('cam', 'Cam Bulanıklığı (px)', 0, 48, 1) + aralik('golge', 'Gölge Gücü', 0, 2, 0.05)) +
       grup(
+        'kaydir',
         'Kaydırma',
         aralik('kay-kalinlik', 'Çubuk Kalınlığı (px)', 4, 20, 1) +
           secim('kay-renk', 'Çubuk Rengi', KAYDIRMA_RENK) +
+          secim('kay-bicim', 'Çubuk Biçimi', BICIMLER) +
           '<fieldset class="alan"><legend>Kaydırma Davranışı</legend>' +
           '<label class="secim"><input type="radio" name="kay-davranis" value="smooth"> Yumuşak (smooth)</label>' +
           '<label class="secim"><input type="radio" name="kay-davranis" value="auto"> Anında (auto)</label></fieldset>'
-      ) +
-      grup('Hareket', '<label class="secim"><input type="checkbox" id="hareket-az"> Hareketi Azalt</label><p class="ipucu">Geçişleri, salınımı ve yumuşak kaydırmayı kapatır.</p>');
+      );
   }
 
   function renkEsle(ad, kaynak) {
@@ -938,12 +1422,43 @@
     $('[data-nokta="' + ad + '"]').style.background = hex;
   }
 
-  function formDoldur() {
-    for (const ad of DUZENLENEN) renkEsle(ad);
+  function egriDoldur() {
+    const ad = $('#egri-sec').value;
+    const b = su.egri[ad];
+    if (!b) return;
+    EGRI_ALAN.forEach((k, i) => {
+      $('#egri-' + k).value = b[i];
+      $('#o-egri-' + k).textContent = r2(b[i]).toFixed(2);
+    });
+    $('#egri-mini-yol').setAttribute('d', A() ? A().yol(b) : '');
+    $('#egri-deger').textContent = egriMetin(b);
+    $('[data-egri-geri]').disabled = !ilk.egri[ad] || egriMetin(ilk.egri[ad]) === egriMetin(b);
+  }
+
+  function egriDuzenle(ad) {
+    if (!su.egri[ad]) return;
+    $('#egri-sec').value = ad;
+    egriDoldur();
+    const g = $('[data-grup="egri"]');
+    g.open = true;
+    g.scrollIntoView({ block: 'nearest' });
+    $('#egri-x1').focus();
+  }
+
+  function ayarDoldur() {
     $('#arka-tur').value = su.arka.tur;
     $('#arka-durak').value = su.arka.durak;
     $('#arka-aci').value = su.arka.aci;
     $('#arka-don').checked = su.arka.don;
+    $('#parlama-duzey').value = su.parlamaDuzey;
+    for (const [g] of PARLAMALAR) {
+      $('#parlama-' + g + '-alpha').value = su.parlama[g].alpha;
+      $('#parlama-' + g + '-blur').value = su.parlama[g].blur;
+    }
+    $('#arayuz-egri').value = su.arayuzEgri;
+    $('#sure-carpan').value = su.sureCarpan;
+    for (const [k] of SURELER) $('#sure-' + k).value = su.sure[k];
+    $('#hareket-az').checked = su.hareketAz;
     $('#yazi-aile').value = su.yazi.aile;
     $('#yazi-carpan').value = su.yazi.carpan;
     $('#yazi-govde').value = su.yazi.govde;
@@ -951,26 +1466,51 @@
     $('#yazi-kahraman').value = su.yazi.kahraman;
     $('#sekil-r').value = su.sekil.r;
     $('#sekil-rp').value = su.sekil.rPencere;
+    $('#yogunluk').value = su.yogunluk;
+    $('#kenar').value = su.kenar;
+    $('#cam').value = su.cam;
+    $('#golge').value = su.golge;
     $('#kay-kalinlik').value = su.kaydir.kalinlik;
     $('#kay-renk').value = su.kaydir.renk;
+    $('#kay-bicim').value = su.kaydir.bicim;
     for (const r of $$('[name="kay-davranis"]')) r.checked = r.value === su.kaydir.davranis;
-    $('#hareket-az').checked = su.hareketAz;
+    egriDoldur();
+  }
+
+  function formDoldur() {
+    for (const ad of DUZENLENEN) renkEsle(ad);
+    ayarDoldur();
     ciktilar();
   }
 
   function ciktilar() {
-    $('#o-arka-durak').textContent = su.arka.durak;
-    $('#o-arka-aci').textContent = su.arka.aci + '°';
-    $('#o-yazi-carpan').textContent = '×' + Number(su.yazi.carpan).toFixed(2);
-    $('#o-sekil-r').textContent = su.sekil.r + ' px';
-    $('#o-sekil-rp').textContent = su.sekil.rPencere + ' px';
-    $('#o-kay-kalinlik').textContent = su.kaydir.kalinlik + ' px';
+    const yaz = (id, m) => {
+      const o = $('#o-' + id);
+      if (o) o.textContent = m;
+    };
+    yaz('arka-durak', su.arka.durak);
+    yaz('arka-aci', su.arka.aci + '°');
+    for (const [g] of PARLAMALAR) {
+      yaz('parlama-' + g + '-alpha', Number(su.parlama[g].alpha).toFixed(2));
+      yaz('parlama-' + g + '-blur', su.parlama[g].blur + ' px');
+    }
+    yaz('sure-carpan', '×' + Number(su.sureCarpan).toFixed(2));
+    for (const [k] of SURELER) yaz('sure-' + k, su.sure[k] + ' ms');
+    yaz('yazi-carpan', '×' + Number(su.yazi.carpan).toFixed(2));
+    yaz('sekil-r', su.sekil.r + ' px');
+    yaz('sekil-rp', su.sekil.rPencere + ' px');
+    yaz('yogunluk', '×' + Number(su.yogunluk).toFixed(2));
+    yaz('kenar', su.kenar + ' px');
+    yaz('cam', su.cam + ' px');
+    yaz('golge', '×' + Number(su.golge).toFixed(2));
+    yaz('kay-kalinlik', su.kaydir.kalinlik + ' px');
     const olcek = [1, 2, 3, 4, 5].map((n) => 'fs-' + n + ' ' + Math.round(T.size['fs-' + n].value * su.yazi.carpan));
     $('#yazi-olcek').textContent = olcek.join(' · ');
     $('#yazi-uyari').hidden = !(Number(su.yazi.yari) >= 700 || Number(su.yazi.govde) >= 700);
     $('#arka-aci').disabled = su.arka.don && !su.hareketAz;
     $('#arka-aci').title = $('#arka-aci').disabled ? 'Salınım açıkken açı 150–170° arasında gezer' : '';
     document.documentElement.style.setProperty('--tk-scrollbar-w', su.kaydir.kalinlik + 'px');
+    document.documentElement.dataset.kaydirBicim = su.kaydir.bicim;
   }
 
   function turet(ad) {
@@ -981,6 +1521,50 @@
       if (yaziOlarak(su, hex) >= 7.05 && oran(su, hex, 1, siyah) >= 7) return hex;
     }
     return hslHex(kaynak.h, kaynak.s, 90);
+  }
+
+  function parlamaUygula(d) {
+    su.parlamaDuzey = d;
+    if (d === 'ozel') return;
+    for (const [g] of PARLAMALAR) {
+      const t = ilk.parlama[g];
+      if (d === 'yok') su.parlama[g] = { alpha: 0, blur: 0 };
+      else if (d === 'ince') su.parlama[g] = { alpha: r2(t.alpha * 0.5), blur: Math.round(t.blur * 0.5) };
+      else if (d === 'neon') su.parlama[g] = { alpha: Math.min(1, r2(t.alpha * 1.8)), blur: Math.min(48, Math.round(t.blur * 1.5)) };
+      else su.parlama[g] = { alpha: t.alpha, blur: t.blur };
+    }
+  }
+
+  function ozelGirdi(el) {
+    const id = el.id || '';
+    if (id === 'parlama-duzey') {
+      parlamaUygula(el.value);
+      return true;
+    }
+    const m = /^parlama-(.+)-(alpha|blur)$/.exec(id);
+    if (m) {
+      su.parlama[m[1]][m[2]] = Number(el.value);
+      su.parlamaDuzey = 'ozel';
+      return true;
+    }
+    if (id === 'sure-carpan') {
+      su.sureCarpan = Number(el.value);
+      for (const [k] of SURELER) su.sure[k] = Math.max(0, Math.min(2000, Math.round(ilk.sure[k] * su.sureCarpan)));
+      return true;
+    }
+    if (id === 'egri-sec') {
+      egriDoldur();
+      return 'bos';
+    }
+    if (/^egri-(x1|y1|x2|y2)$/.test(id)) {
+      const ad = $('#egri-sec').value;
+      const b = EGRI_ALAN.map((k) => Number($('#egri-' + k).value));
+      b[0] = Math.max(0, Math.min(1, b[0]));
+      b[2] = Math.max(0, Math.min(1, b[2]));
+      su.egri[ad] = b.map(r2);
+      return true;
+    }
+    return false;
   }
 
   function olaylar() {
@@ -1011,12 +1595,22 @@
         planla();
         return;
       }
-      oku();
+      const o = ozelGirdi(el);
+      if (o === 'bos') return;
+      if (!o) oku();
+      ayarDoldur();
       ciktilar();
       planla();
     });
     f.addEventListener('change', (e) => {
-      if (!e.target.dataset.renk) {
+      const el = e.target;
+      if (el.dataset.renk) return;
+      if (/^egri-/.test(el.id) && sayfa === 'akicilik' && A()) {
+        requestAnimationFrame(() => requestAnimationFrame(() => A().oynat($('#onizleme'))));
+        return;
+      }
+      if (el.id === 'arka-tur') hashYaz();
+      if (el.type === 'radio' || el.type === 'checkbox') {
         oku();
         ciktilar();
         planla();
@@ -1038,8 +1632,15 @@
         planla();
         durum(adi(ad) + ' ' + su.renk[ad] + ' olarak türetildi.');
       }
+      if (e.target.closest('[data-egri-geri]')) {
+        const ad = $('#egri-sec').value;
+        if (ilk.egri[ad]) su.egri[ad] = ilk.egri[ad].slice();
+        egriDoldur();
+        planla();
+      }
     });
-    $('#onizleme').addEventListener('click', (e) => {
+    const kok = $('#onizleme');
+    kok.addEventListener('click', (e) => {
       const k = e.target.closest('[data-kaydir]');
       if (k) {
         const liste = document.getElementById(k.dataset.hedef);
@@ -1048,28 +1649,77 @@
       if (e.target.closest('[data-bos]')) e.preventDefault();
       const li = e.target.closest('.liste li');
       if (li) for (const x of $$('li', li.parentElement)) x.setAttribute('aria-selected', String(x === li));
-    });
-    for (const b of $$('[data-sayfa]'))
-      b.addEventListener('click', () => {
-        sayfa = b.dataset.sayfa;
-        for (const x of $$('[data-sayfa]')) x.setAttribute('aria-pressed', String(x === b));
-        for (const x of $$('[data-kip]')) {
-          x.disabled = sayfa !== 'renk';
-          x.title = x.disabled ? 'Bu sayfa tek görünümdür' : '';
-        }
-        $('#onizleme').scrollTop = 0;
+      const ey = e.target.closest('[data-eylem]');
+      if (ey) {
+        if (ey.dataset.eylem === 'ilerleme') ilerlemeOynat();
+        else if (ey.dataset.eylem === 'bildirim') bildirimGoster(ey);
+        else if (ey.dataset.eylem === 'modal') modalAc(ey);
+      }
+      const kapat = e.target.closest('[data-bildirim-yigin] .tk-toast-close');
+      if (kapat) bildirimKapat(kapat.closest('.tk-toast'));
+      const dlg = e.target.closest('[data-demo-modal]');
+      if (dlg && (e.target === dlg || e.target.closest('[data-modal-kapat]'))) modalKapat(dlg);
+      const as = e.target.closest('[data-arka-sec]');
+      if (as) {
+        su.arka.tur = as.dataset.arkaSec;
+        $('#arka-tur').value = su.arka.tur;
+        hashYaz();
         planla();
-      });
+      }
+    });
+    kok.addEventListener('change', (e) => {
+      if (e.target.matches('[data-arka-panel]')) {
+        arkaPanel = e.target.checked;
+        planla();
+      } else if (e.target.matches('[data-arka-don]')) {
+        su.arka.don = e.target.checked;
+        $('#arka-don').checked = su.arka.don;
+        ciktilar();
+        planla();
+      }
+    });
+    kok.addEventListener(
+      'cancel',
+      (e) => {
+        const d = e.target;
+        if (d.matches && d.matches('[data-demo-modal]')) {
+          e.preventDefault();
+          modalKapat(d);
+        }
+      },
+      true
+    );
+    const nav = $('#bilesen-liste');
+    nav.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-git]');
+      if (b) sayfaAc(b.dataset.git);
+    });
+    nav.addEventListener('keydown', (e) => {
+      const b = e.target.closest('[data-git]');
+      if (!b) return;
+      const hepsi = $$('[data-git]', nav);
+      const i = hepsi.indexOf(b);
+      const j = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: hepsi.length - 1 }[e.key];
+      if (j === undefined) return;
+      e.preventDefault();
+      const h = hepsi[(j + hepsi.length) % hepsi.length];
+      h.focus();
+      sayfaAc(h.dataset.git);
+    });
     for (const b of $$('[data-kip]'))
       b.addEventListener('click', () => {
         kip = b.dataset.kip;
         for (const x of $$('[data-kip]')) x.setAttribute('aria-pressed', String(x === b));
+        hashYaz();
         planla();
       });
+    $('#tema-sec').addEventListener('change', (e) => temaSec(e.target.value));
     $('#sifirla').addEventListener('click', () => {
       su = kopya(ilk);
+      $('#tema-sec').value = '';
       for (const k of Object.keys(hslBellek)) delete hslBellek[k];
       formDoldur();
+      oku();
       planla();
       durum('Token dosyasındaki değerlere dönüldü.');
     });
@@ -1086,6 +1736,8 @@
     su.arka.durak = Number($('#arka-durak').value);
     su.arka.aci = Number($('#arka-aci').value);
     su.arka.don = $('#arka-don').checked;
+    su.arayuzEgri = $('#arayuz-egri').value;
+    for (const [k] of SURELER) su.sure[k] = Math.max(0, Math.min(2000, Math.round(Number($('#sure-' + k).value))));
     su.yazi.aile = $('#yazi-aile').value;
     su.yazi.carpan = Number($('#yazi-carpan').value);
     su.yazi.govde = Number($('#yazi-govde').value);
@@ -1093,8 +1745,13 @@
     su.yazi.kahraman = Number($('#yazi-kahraman').value);
     su.sekil.r = Number($('#sekil-r').value);
     su.sekil.rPencere = Number($('#sekil-rp').value);
+    su.yogunluk = Number($('#yogunluk').value);
+    su.kenar = Number($('#kenar').value);
+    su.cam = Number($('#cam').value);
+    su.golge = Number($('#golge').value);
     su.kaydir.kalinlik = Number($('#kay-kalinlik').value);
     su.kaydir.renk = $('#kay-renk').value;
+    su.kaydir.bicim = $('#kay-bicim').value;
     const d = $$('[name="kay-davranis"]').find((r) => r.checked);
     su.kaydir.davranis = d ? d.value : 'smooth';
     su.hareketAz = $('#hareket-az').checked;
@@ -1109,6 +1766,7 @@
       out[bolum][anahtar] = deger;
     };
     for (const ad of DUZENLENEN) if (su.renk[ad] !== ilk.renk[ad]) koy(T.role[ad] ? 'role' : 'brand', ad, { value: su.renk[ad] });
+    if (su.koyu !== ilk.koyu) koy('meta', 'dark', su.koyu);
     if (su.yazi.carpan !== ilk.yazi.carpan)
       for (let n = 1; n <= 5; n++) koy('size', 'fs-' + n, { value: Math.round(T.size['fs-' + n].value * su.yazi.carpan), unit: 'px' });
     if (su.yazi.govde !== ilk.yazi.govde) koy('size', 'fw-body', { value: su.yazi.govde });
@@ -1119,13 +1777,33 @@
     if (su.kaydir.kalinlik !== ilk.kaydir.kalinlik) koy('metric', 'scrollbar-w', { value: su.kaydir.kalinlik, unit: 'px' });
     if (su.arka.durak !== ilk.arka.durak) koy('derived', 'bg-gradient', { stops: su.arka.durak });
     if (su.yazi.aile !== ilk.yazi.aile && su.yazi.aile !== 'mono') koy('font', 'sans', { chain: aileler()[su.yazi.aile][2] });
+    for (const [ad, b] of Object.entries(su.egri)) {
+      if (!T.easing || !T.easing[ad] || !ilk.egri[ad]) continue;
+      const y = b.map(r2);
+      if (egriMetin(y) !== egriMetin(ilk.egri[ad])) koy('easing', ad, { bezier: y });
+    }
+    for (const [k] of SURELER) if (su.sure[k] !== ilk.sure[k]) koy('duration', k, { ms: Math.max(0, Math.min(2000, Math.round(su.sure[k]))) });
+    for (const [g] of PARLAMALAR) {
+      const a = su.parlama[g];
+      const b = ilk.parlama[g];
+      const d = {};
+      if (r2(a.alpha) !== r2(b.alpha)) d.alpha = Math.max(0, Math.min(1, r2(a.alpha)));
+      if (Math.round(a.blur) !== Math.round(b.blur)) d.blur = Math.max(0, Math.min(48, Math.round(a.blur)));
+      if (Object.keys(d).length) koy('derived', g, d);
+    }
     const notlar = [];
     if (su.arka.tur !== ilk.arka.tur) notlar.push('Arka plan tasarımı: ' + su.arka.tur + ' (token karşılığı yok).');
     if (su.arka.aci !== ilk.arka.aci) notlar.push('Degrade açısı: ' + su.arka.aci + 'deg (generate.js varsayılanı 160deg).');
     if (su.arka.don !== ilk.arka.don) notlar.push('Arka plan salınımı: ' + (su.arka.don ? 'açık' : 'kapalı') + '.');
     if (su.kaydir.renk !== ilk.kaydir.renk) notlar.push('Kaydırma çubuğu rengi: ' + su.kaydir.renk + '.');
     if (su.kaydir.davranis !== ilk.kaydir.davranis) notlar.push('Kaydırma davranışı: ' + su.kaydir.davranis + '.');
+    if (su.kaydir.bicim !== ilk.kaydir.bicim) notlar.push('Kaydırma çubuğu biçimi: ' + su.kaydir.bicim + '.');
     if (su.yazi.aile === 'mono' && ilk.yazi.aile !== 'mono') notlar.push('Gövde yazısı mono zincire çevrildi.');
+    if (su.arayuzEgri !== ilk.arayuzEgri) notlar.push('Arayüz geçiş eğrisi: ' + su.arayuzEgri + ' (önizlemede --tk-e-out yerine).');
+    if (su.yogunluk !== ilk.yogunluk) notlar.push('Yoğunluk: ×' + su.yogunluk + ' (boşluk ölçeği çarpanı).');
+    if (su.kenar !== ilk.kenar) notlar.push('Kenar kalınlığı: ' + su.kenar + ' px.');
+    if (su.cam !== ilk.cam) notlar.push('Cam bulanıklığı: ' + su.cam + ' px.');
+    if (su.golge !== ilk.golge) notlar.push('Panel gölgesi gücü: ×' + su.golge + '.');
     if (notlar.length) out._ = notlar;
     return out;
   }
@@ -1139,6 +1817,21 @@
         continue;
       }
       for (const [k, v] of Object.entries(alanlar)) {
+        if (bolum === 'easing') {
+          out.push('easing.' + k + ': ' + egriMetin(ilk.egri[k]) + ' → ' + egriMetin(v.bezier));
+          continue;
+        }
+        if (bolum === 'duration') {
+          out.push('duration.' + k + ': ' + ilk.sure[k] + ' → ' + v.ms + ' ms');
+          continue;
+        }
+        if (bolum === 'derived' && ilk.parlama[k]) {
+          const p = [];
+          if ('alpha' in v) p.push('alpha ' + ilk.parlama[k].alpha + ' → ' + v.alpha);
+          if ('blur' in v) p.push('blur ' + ilk.parlama[k].blur + ' → ' + v.blur);
+          out.push('derived.' + k + ': ' + p.join(', '));
+          continue;
+        }
         const eski = bolum === 'brand' ? ilk.renk[k] : '';
         out.push(bolum + '.' + k + ': ' + (eski ? eski + ' → ' : '') + (typeof v.value === 'string' ? v.value : JSON.stringify(v.value !== undefined ? v.value : v)));
       }
@@ -1304,6 +1997,34 @@
     bekle();
   }
 
+  async function temalarYukle() {
+    try {
+      const r = await fetch('/temalar.json', { cache: 'no-store' });
+      if (r.ok) temalar = await r.json();
+    } catch {
+      temalar = [];
+    }
+    const grup = (tur, ad) =>
+      '<optgroup label="' + ad + '">' +
+      temalar.filter((t) => t.tur === tur).map((t) => '<option value="' + kacis(t.ad) + '">' + kacis(t.baslik) + '</option>').join('') +
+      '</optgroup>';
+    if (temalar.length) $('#tema-sec').insertAdjacentHTML('beforeend', grup('koyu', 'Koyu Temalar') + grup('acik', 'Açık Temalar'));
+  }
+
+  function temaSec(ad) {
+    const t = temalar.find((x) => x.ad === ad);
+    su.renk = kopya(ilk.renk);
+    su.koyu = ilk.koyu;
+    if (t) {
+      for (const [k, v] of Object.entries(t.renk)) if (DUZENLENEN.includes(k)) su.renk[k] = v;
+      su.koyu = t.tur === 'koyu';
+    }
+    for (const k of Object.keys(hslBellek)) delete hslBellek[k];
+    formDoldur();
+    planla();
+    durum(t ? t.baslik + ' yüklendi' + (t.esin ? ' (esin: ' + t.esin + ')' : '') + '. Düzenleyip Kaydet ile standart yapabilirsiniz.' : 'Token dosyasındaki renklere dönüldü.');
+  }
+
   async function oneriYukle() {
     let o;
     try {
@@ -1335,31 +2056,37 @@
     }
     ilk = durumKur(T);
     su = kopya(ilk);
+    await temalarYukle();
     const baglanti = new URLSearchParams(location.hash.slice(1));
     let bolum = null;
     const oneri = [...baglanti.keys()].some((k) => DUZENLENEN.includes(k)) ? null : await oneriYukle();
+    const varMi = (id) => SAYFALAR.some((x) => x[0] === id);
     for (const [k, v] of baglanti) {
       if (DUZENLENEN.includes(k) && /^[0-9a-fA-F]{6}$/.test(v)) su.renk[k] = '#' + v.toLocaleLowerCase('tr');
       else if (k === 'kip' && (v === 'tek' || v === 'karsi')) kip = v;
-      else if (k === 'sayfa' && (v === 'renk' || v === 'parca' || v === 'okunur')) sayfa = v;
+      else if (k === 'sayfa' && varMi(ESKI[v] || v)) sayfa = ESKI[v] || v;
       else if (k === 'arka' && ARKALAR.some((a) => a[0] === v)) su.arka.tur = v;
       else if (k === 'bolum' && /^[a-z]+$/.test(v)) bolum = v;
     }
-    for (const x of $$('[data-kip]')) {
-      x.setAttribute('aria-pressed', String(x.dataset.kip === kip));
-      x.disabled = sayfa !== 'renk';
-      x.title = x.disabled ? 'Bu sayfa tek görünümdür' : '';
+    if (bolum && sayfa !== 'okunur') {
+      if (varMi(bolum)) sayfa = bolum;
+      else if (ESKI[bolum]) sayfa = ESKI[bolum];
+      bolum = null;
     }
-    for (const x of $$('[data-sayfa]')) x.setAttribute('aria-pressed', String(x.dataset.sayfa === sayfa));
+    for (const x of $$('[data-kip]')) x.setAttribute('aria-pressed', String(x.dataset.kip === kip));
     uygula(document.documentElement, ilk, false);
+    navKur();
     formKur();
     formDoldur();
     olaylar();
+    navGuncelle();
+    grupSirala();
+    hashYaz();
     ciz();
-    const hedef = bolum && document.getElementById(({ parca: 'p-', okunur: 'o-' }[sayfa] || 's-') + bolum);
+    const hedef = bolum && document.getElementById('o-' + bolum);
     if (hedef) hedef.scrollIntoView({ behavior: 'instant' });
     if (oneri) durum(oneri);
-    window.Onizleme = { durum: () => su, ilk: () => ilk, disaAktar, T: () => T };
+    window.Onizleme = { durum: () => su, ilk: () => ilk, disaAktar, T: () => T, sonCizim: () => sonCizim, sayfa: () => sayfa, sayfaAc };
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', basla);

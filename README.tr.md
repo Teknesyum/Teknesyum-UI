@@ -155,7 +155,19 @@ node ui/scripts/onizleme.js [--tarayici [--port 4317] [--no-open]]
 ```
 
 Kendi Electron penceresinde açılır (`ui/onizleme/masaustu/`, Electron ilk açılışta oraya
-kurulur); `--tarayici` aynı sayfayı `127.0.0.1` üstünden sunar. Token'a dokunmadan önce yeni
+kurulur); `--tarayici` aynı sayfayı `127.0.0.1` üstünden sunar.
+
+Düzen üç sütunludur. Soldaki sütun 15 bileşeni listeler: renkler, düğmeler, formlar, üst çubuk,
+ilerleme, kaydırma çubuğu, arka plan, rozetler, bildirimler, kurulum, modal, tipografi, Akıcılık,
+Okunurluk ve Teknik. Ortadaki sütun seçilen bileşeni bütün örnekleri ve durumlarıyla (normal,
+üzerinde, basılı, odak, pasif) çizer. Sağdaki sütun önce o bileşenin ayarlarını gösterir.
+Ayarlar arasında parlama (yok, ince, token, neon, özel), arayüz eğrisi, süre çarpanı, yoğunluk,
+kenar kalınlığı, cam bulanıklığı, gölge gücü ve kaydırma çubuğu biçimi var. Akıcılık eğrileri
+yan yana oynatır, Teknik ise FPS'i ve kare süresini ölçer. `ui/templates/temalar/` beşi açık,
+beşi koyu on tema tutar (`node ui/scripts/tema.js liste`, `denetle [ad]`). Her tema 7:1'i geçer
+ve en az 85 puan alır.
+
+Token'a dokunmadan önce yeni
 marka renklerini denemek için bir sayfa.
 `ui/templates/neon.tokens.json` değerleriyle açılır ve tarayıcıya olduğu gibi sunulan,
 `scan.js`'in kullandığı `kontrast.js` ile ölçer. Sol panel mavi, pembe, yazı kesimleri,

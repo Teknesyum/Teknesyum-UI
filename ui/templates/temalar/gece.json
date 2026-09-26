@@ -1,0 +1,20 @@
+{
+  "ad": "gece",
+  "baslik": "Gece Mavisi",
+  "tur": "koyu",
+  "esin": "GitHub Primer Dark ve Tokyo Night'ın mavimsi lacivert zemini.",
+  "renk": {
+    "blue": "#6cb4ff",
+    "pink": "#d63de6",
+    "pink-text": "#f3b1fb",
+    "purple": "#9b6cf5",
+    "purple-text": "#d7bdff",
+    "surface": "#0d1220",
+    "black": "#070a14",
+    "glass-base": "#111827",
+    "text": "#e8eef8",
+    "disabled": "#7f8798",
+    "success": "#56e08a",
+    "warning": "#ffc94a"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "ad": "kagit",
+  "baslik": "Sıcak Kâğıt",
+  "tur": "acik",
+  "esin": "Solarized Light ve Gruvbox Light'ın krem kâğıt sıcaklığı.",
+  "renk": {
+    "blue": "#0d3388",
+    "pink": "#b83aa2",
+    "pink-text": "#64146c",
+    "purple": "#7443c9",
+    "purple-text": "#431984",
+    "surface": "#fbf3e2",
+    "black": "#fffaf0",
+    "glass-base": "#fdf7ea",
+    "text": "#241f18",
+    "disabled": "#675e52",
+    "success": "#0b4221",
+    "warning": "#503103"
+  }
+}

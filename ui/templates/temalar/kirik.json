@@ -1,0 +1,20 @@
+{
+  "ad": "kirik",
+  "baslik": "Kırık Beyaz",
+  "tur": "acik",
+  "esin": "One Light ve VS Code Light Modern'in hafif kirli, yumuşak beyazı.",
+  "renk": {
+    "blue": "#0f3390",
+    "pink": "#bd2ccc",
+    "pink-text": "#6a1079",
+    "purple": "#7a3be6",
+    "purple-text": "#48128a",
+    "surface": "#f6f6f4",
+    "black": "#ffffff",
+    "glass-base": "#fbfbfa",
+    "text": "#1c1e24",
+    "disabled": "#61656d",
+    "success": "#0e4326",
+    "warning": "#553203"
+  }
+}

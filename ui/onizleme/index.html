@@ -3,26 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Teknesyum Renk Önizleme</title>
+<title>Teknesyum Bileşen Önizleme</title>
 <link rel="stylesheet" href="/standart.css">
 <link rel="stylesheet" href="/stil.css">
 <script src="/kontrast.js" defer></script>
 <script src="/skor.js" defer></script>
+<script src="/akicilik.js" defer></script>
+<script src="/teknik.js" defer></script>
 <script src="/uygulama.js" defer></script>
 </head>
 <body>
 <header class="ust">
-  <h1 class="ust-baslik">Renk Ve Arka Plan Önizleme</h1>
+  <h1 class="ust-baslik">Bileşen Önizleme</h1>
   <div class="ust-arac">
-    <div class="kip" role="group" aria-label="Sayfa">
-      <button type="button" class="arac-dugme" data-sayfa="renk" aria-pressed="true">Renkler</button>
-      <button type="button" class="arac-dugme" data-sayfa="parca" aria-pressed="false">Uygulama Parçaları</button>
-      <button type="button" class="arac-dugme" data-sayfa="okunur" aria-pressed="false">Okunurluk <span id="okunur-puan"></span></button>
-    </div>
     <div class="kip" role="group" aria-label="Görünüm Kipi">
       <button type="button" class="arac-dugme" data-kip="tek" aria-pressed="true">Tek Görünüm</button>
       <button type="button" class="arac-dugme" data-kip="karsi" aria-pressed="false">Önce / Sonra</button>
     </div>
+    <select class="giris tema-sec" id="tema-sec" aria-label="Tema"><option value="">Token Dosyası</option></select>
     <button type="button" class="arac-dugme" id="sifirla">Tümünü Sıfırla</button>
     <button type="button" class="arac-dugme" id="kopyala">Panoya Kopyala</button>
     <button type="button" class="arac-dugme" id="indir">İndir</button>
@@ -31,12 +29,13 @@
   </div>
 </header>
 <div class="duzen">
-  <aside class="sol" aria-label="Ayarlar">
-    <form id="ayarlar" autocomplete="off"></form>
-  </aside>
+  <nav class="bilesen-liste" id="bilesen-liste" aria-label="Bileşenler"></nav>
   <main class="onizleme" id="onizleme" tabindex="-1" aria-label="Önizleme">
     <p class="yukleniyor">Token dosyası okunuyor…</p>
   </main>
+  <aside class="sol sag" aria-label="Ayarlar">
+    <form id="ayarlar" autocomplete="off"></form>
+  </aside>
 </div>
 <dialog class="kaydet-pencere" id="kaydet-pencere" aria-labelledby="kaydet-baslik"></dialog>
 </body>

@@ -1,7 +1,9 @@
-import type { ReactNode } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 import './titlebar.css';
 
 export type TitleBarLinks = { sponsor?: string; brand: string };
+
+export type TitleBarTab = { id: string; label: string; disabled?: boolean };
 
 export type TitleBarLabels = {
   sponsor: string;
@@ -9,6 +11,7 @@ export type TitleBarLabels = {
   minimize: string;
   maximize: string;
   close: string;
+  tabs?: string;
 };
 
 type Props = {
@@ -18,6 +21,9 @@ type Props = {
   links: TitleBarLinks;
   labels: TitleBarLabels;
   language?: ReactNode;
+  tabs?: TitleBarTab[];
+  current?: string;
+  onTab?: (id: string) => void;
   onMinimize: () => void;
   onMaximize: () => void;
   onClose: () => void;
@@ -42,7 +48,17 @@ function CoffeeIcon() {
   );
 }
 
-export function TitleBar({ first, second, logo, links, labels, language, onMinimize, onMaximize, onClose }: Props) {
+export function TitleBar({ first, second, logo, links, labels, language, tabs, current, onTab, onMinimize, onMaximize, onClose }: Props) {
+  const open = (tabs ?? []).filter((t) => !t.disabled);
+  const onKey = (e: KeyboardEvent<HTMLElement>) => {
+    const i = open.findIndex((t) => t.id === current);
+    const n = open.length;
+    const next = e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : -1;
+    if (next < 0 || !n) return;
+    e.preventDefault();
+    onTab?.(open[next].id);
+    e.currentTarget.querySelector<HTMLElement>('[data-tab="' + open[next].id + '"]')?.focus();
+  };
   return (
     <header className="tk-titlebar" data-tauri-drag-region>
       <div className="tk-titlebar__brand" data-tauri-drag-region>
@@ -52,6 +68,26 @@ export function TitleBar({ first, second, logo, links, labels, language, onMinim
           <span className="tk-titlebar__accent">{second}</span>
         </span>
       </div>
+      {tabs?.length ? (
+        <nav className="tk-titlebar__tabs" aria-label={labels.tabs} onKeyDown={onKey}>
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              className="tk-titlebar__tab"
+              data-tab={t.id}
+              aria-current={t.id === current ? 'page' : undefined}
+              aria-disabled={t.disabled || undefined}
+              tabIndex={t.id === current ? 0 : -1}
+              onClick={() => !t.disabled && onTab?.(t.id)}
+            >
+              <span>{t.label}</span>
+            </button>
+          ))}
+        </nav>
+      ) : (
+        <div className="tk-titlebar__tabs" data-tauri-drag-region />
+      )}
       <div className="tk-titlebar__tools">
         {language ? <div className="tk-titlebar__language">{language}</div> : null}
         {links.sponsor ? (

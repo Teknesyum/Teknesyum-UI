@@ -1,0 +1,20 @@
+{
+  "ad": "keskin",
+  "baslik": "Keskin Beyaz",
+  "tur": "acik",
+  "esin": "macOS ve Fluent'in artırılmış kontrast kipi: saf beyaz üstünde saf siyah.",
+  "renk": {
+    "blue": "#0f3aa8",
+    "pink": "#a80fa8",
+    "pink-text": "#6e0f78",
+    "purple": "#5a1fc0",
+    "purple-text": "#46158f",
+    "surface": "#ffffff",
+    "black": "#ffffff",
+    "glass-base": "#fafafa",
+    "text": "#000000",
+    "disabled": "#6b7280",
+    "success": "#0b4d24",
+    "warning": "#5c3a00"
+  }
+}

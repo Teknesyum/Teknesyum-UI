@@ -6,6 +6,21 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- Ten standard themes in `ui/templates/temalar/`: five dark (gece, grafit, kadife, karbon,
+  kor) and five light (kar, kirik, kagit, buz, keskin), drawn from 36 market palettes
+  (`docs/arastirma/temalar.md`) and designed with fable (consult 004). Every theme passes the
+  7:1 gate and scores 85.6–91.8. `node ui/scripts/tema.js liste | denetle [ad]`; the preview
+  picks them from the header.
+- Five new easing curves: `in-out`, `fast-slow-fast`, `emphasized`, `sharp`, `linear`
+  (`--tk-e-<name>` in `theme.css`).
+- Kaydet also writes easing curves, the four durations, the glow alpha and blur, and
+  `meta.dark`.
+- The preview has a three-column layout: a list of 15 components on the left, every example
+  and state (normal, hover, pressed, focus, disabled) in the middle, and that component's
+  settings first on the right. It has live progress, toast and modal demos. Akıcılık plays
+  the easing curves, and Teknik measures FPS and frame time. New settings cover glow, UI
+  easing, durations, density, border width, glass blur, shadow and scrollbar style.
+
 - Preview proposals: `ui/onizleme/oneri.json` loads a suggested colour set on start when the
   token file still holds its base values. The first one is fable's balanced readability set
   (blue #6ab2ff, disabled #9a9da6: score 85 → 87.4, consult 002).
@@ -34,6 +49,13 @@ All notable changes to this project are documented here. The format follows
   waiting and local states.
 
 ### Changed
+- The scrollbar thumb has no glow any more; only its fill colour transitions.
+- Title bar: tabs and buttons lose their outline. On hover the text turns pink and an
+  indicator grows from the centre under it (`scaleX`, interruptible). Every item has the
+  same height and one centre line; `.tk-titlebar__chip--outlined` is the one exception, and
+  it sits vertically centred in the bar. `TitleBar.tsx` takes `tabs`, `current`, `onTab` for
+  navigation, with arrow keys, Home and End (research: `docs/arastirma/ustcubuk-core.md`).
+- Scanner: `core/list-without-motion` also reads the motion in a component's imported CSS.
 - Preview `on` colours follow the save rule: a token pair that drops under 7:1 switches to the
   better of black and text, as Kaydet will ship it.
 - Ratio comments in `generate.js` are measured, not literal; the manifest palette, `setup.js`

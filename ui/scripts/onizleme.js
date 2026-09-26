@@ -12,6 +12,7 @@ const TOKENS = path.join(UI, 'templates', 'neon.tokens.json');
 const KONTRAST = path.join(__dirname, 'kontrast.js');
 const SKOR = path.join(__dirname, 'skor.js');
 const KAYDET = require('./kaydet');
+const TEMA = require('./tema');
 const PORT = 4317;
 const VARLIK = path.join(UI, 'skills', 'teknesyum-ui', 'assets');
 const SABLON = path.join(UI, 'templates');
@@ -37,6 +38,8 @@ const YOL = {
   '/index.html': path.join(SAYFA, 'index.html'),
   '/stil.css': path.join(SAYFA, 'stil.css'),
   '/uygulama.js': path.join(SAYFA, 'uygulama.js'),
+  '/akicilik.js': path.join(SAYFA, 'akicilik.js'),
+  '/teknik.js': path.join(SAYFA, 'teknik.js'),
   '/tokens.json': TOKENS,
   '/oneri.json': path.join(SAYFA, 'oneri.json'),
 };
@@ -67,6 +70,7 @@ function yanit(yol) {
   try {
     if (temiz === '/kontrast.js') return { status: 200, type: TUR['.js'], body: kontrastTarayici() };
     if (temiz === '/skor.js') return { status: 200, type: TUR['.js'], body: tarayici(SKOR, 'Skor') };
+    if (temiz === '/temalar.json') return { status: 200, type: TUR['.json'], body: JSON.stringify(TEMA.sayfaVerisi()) };
     if (temiz === '/standart.css') return { status: 200, type: TUR['.css'], body: standartCss() };
     const dosya = YOL[temiz];
     if (!dosya || !fs.existsSync(dosya)) return { status: 404, type: 'text/plain; charset=utf-8', body: 'Bulunamadı' };

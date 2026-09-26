@@ -15,6 +15,7 @@ const SUITES = [
   ['onizleme', require('./onizleme')],
   ['kaydet', require('./kaydet')],
   ['skor', require('./skor')],
+  ['tema', require('./tema')],
 ];
 
 function main() {

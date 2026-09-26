@@ -191,7 +191,12 @@
   "easing": {
     "out": { "bezier": [0.2, 0, 0, 1], "rationale": "Default for entering/settling elements (§5.4)." },
     "in": { "bezier": [0.4, 0, 1, 1], "rationale": "Element leaving the scene." },
-    "spring": { "bezier": [0.34, 1.36, 0.64, 1], "rationale": "Emphasis spring; used on the web side only." }
+    "spring": { "bezier": [0.34, 1.36, 0.64, 1], "rationale": "Emphasis spring; used on the web side only." },
+    "in-out": { "bezier": [0.4, 0, 0.2, 1], "rationale": "Slow start, fast middle, slow end: an element moving from one place to another on screen." },
+    "fast-slow-fast": { "bezier": [0.15, 0.85, 0.85, 0.15], "rationale": "Fast start, slow middle, fast end: a pass that lingers on the midpoint, such as a carousel step or a highlight sweep." },
+    "emphasized": { "bezier": [0.05, 0.7, 0.1, 1], "rationale": "Snaps in and settles long: large panels and modals entering; the frame after the input already moves." },
+    "sharp": { "bezier": [0.4, 0, 0.6, 1], "rationale": "Short symmetric curve for elements that may return at any moment, such as a drawer or a tooltip." },
+    "linear": { "bezier": [0, 0, 1, 1], "rationale": "Constant speed: only for progress, spinners and colour fades, never for movement." }
   },
   "size": {
     "fs-1": { "value": 14, "unit": "px", "rationale": "Type scale step 1 \u2014 label, hint, h3. The floor: no text below 14 (SKILL \u00a73)." },

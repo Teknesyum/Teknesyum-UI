@@ -1,0 +1,20 @@
+{
+  "ad": "buz",
+  "baslik": "Buz Grisi",
+  "tur": "acik",
+  "esin": "Catppuccin Latte ve JetBrains Islands Light'ın soğuk, mavimsi grisi.",
+  "renk": {
+    "blue": "#0b2c82",
+    "pink": "#bd2fd0",
+    "pink-text": "#600f6d",
+    "purple": "#7638e8",
+    "purple-text": "#3f1283",
+    "surface": "#eceff4",
+    "black": "#f8fafc",
+    "glass-base": "#f1f4f8",
+    "text": "#171b25",
+    "disabled": "#5c6371",
+    "success": "#0b3f22",
+    "warning": "#4c2e00"
+  }
+}

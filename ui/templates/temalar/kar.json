@@ -1,0 +1,20 @@
+{
+  "ad": "kar",
+  "baslik": "Kar Beyazı",
+  "tur": "acik",
+  "esin": "GitHub Primer Light ve Fluent 2 Light'ın saf beyaz zemini.",
+  "renk": {
+    "blue": "#123a9e",
+    "pink": "#c026d3",
+    "pink-text": "#7a1685",
+    "purple": "#7c3aed",
+    "purple-text": "#521a97",
+    "surface": "#ffffff",
+    "black": "#f3f6fb",
+    "glass-base": "#f7f9fc",
+    "text": "#14181f",
+    "disabled": "#6b7280",
+    "success": "#14532d",
+    "warning": "#633b05"
+  }
+}

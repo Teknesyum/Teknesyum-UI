@@ -1,0 +1,20 @@
+{
+  "ad": "kadife",
+  "baslik": "Kadife",
+  "tur": "koyu",
+  "esin": "Catppuccin Mocha ve Rosé Pine'ın morumsu, yumuşak pastel karanlığı.",
+  "renk": {
+    "blue": "#98c2ff",
+    "pink": "#d24bd8",
+    "pink-text": "#f6bcf8",
+    "purple": "#a67ef2",
+    "purple-text": "#dfcbff",
+    "surface": "#1b1a2c",
+    "black": "#14131f",
+    "glass-base": "#201f33",
+    "text": "#f1eefb",
+    "disabled": "#8b87a6",
+    "success": "#94e6a0",
+    "warning": "#f9d580"
+  }
+}

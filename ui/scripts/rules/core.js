@@ -8,6 +8,14 @@ const COMPONENT_NAME = /(panel|dialog|modal|drawer|sheet|popover|tooltip|toast|m
 const MOTION_TRACE =
   /transition|animate|animation|motion\.|AnimatePresence|@keyframes|Storyboard|useSpring/i;
 const LIST_MOTION = /AnimatePresence|autoAnimate|auto-animate|@keyframes|transition|layout[ =}]/i;
+function importedMotion(file, text) {
+  const fs = require('fs');
+  for (const m of text.matchAll(/import\s+['"](\.{1,2}\/[^'"]+\.css)['"]/g)) {
+    const css = path.resolve(path.dirname(file), m[1]);
+    if (fs.existsSync(css) && LIST_MOTION.test(fs.readFileSync(css, 'utf8'))) return true;
+  }
+  return false;
+}
 const STYLE_NAME = /^(theme|global|globals|index|app|main|style|styles)\.css$/i;
 const TAURI_CONF_PATH = ['src-tauri/tauri.conf.json', 'tauri.conf.json'];
 const REDUCED_MOTION_BLOCK = [
@@ -625,7 +633,7 @@ module.exports = {
       severity: 'warn',
       exts: ['.tsx', '.jsx'],
       check(file, text) {
-        return /\.map\(/.test(text) && !LIST_MOTION.test(text)
+        return /\.map\(/.test(text) && !LIST_MOTION.test(text) && !importedMotion(file, text)
           ? [{ line: 1, message: 'list render, no position animation' }]
           : [];
       },

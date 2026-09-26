@@ -50,5 +50,17 @@ module.exports = function kaydet() {
   L.ok('/kaydet refuses a foreign origin', S.istek('POST', '/kaydet', '{}', { ...gecerli, origin: 'https://ornek.com' }).status === 403);
   L.ok('/kaydet refuses a bad body', S.istek('POST', '/kaydet', 'x', gecerli).status === 400);
   L.ok('/kaydet refuses an invalid field', S.istek('POST', '/kaydet', '{"brand":{"blue":{"value":"x"}}}', gecerli).status === 400);
-  L.ok('other paths refuse POST', S.istek('POST', '/tokens.json', '', gecerli).status === 405);
+  const hareket = K.tokenMetni(metin, { meta: { dark: false }, easing: { sharp: { bezier: [0.3, 0, 0.7, 1] } }, duration: { fast: { ms: 140 } }, derived: { glow: { alpha: 0.1, blur: 8 } } });
+  const H = JSON.parse(hareket.metin);
+  L.ok('tokenMetni writes easing, duration, glow and meta.dark', H.easing.sharp.bezier.join() === '0.3,0,0.7,1' && H.duration.fast.ms === 140 && H.derived.glow.alpha === 0.1 && H.derived.glow.blur === 8 && H.meta.dark === false);
+  const ret = (d) => {
+    try {
+      K.tokenMetni(metin, d);
+      return false;
+    } catch {
+      return true;
+    }
+  };
+  L.ok('dogrula refuses an out-of-range curve, duration or glow', ret({ easing: { sharp: { bezier: [1.2, 0, 1, 1] } } }) && ret({ easing: { yok: { bezier: [0, 0, 1, 1] } } }) && ret({ duration: { fast: { ms: 2500 } } }) && ret({ duration: { 'bg-rotate': { ms: 100 } } }) && ret({ derived: { glow: { alpha: 2 } } }) && ret({ derived: { glow: { blur: 60 } } }));
+  L.ok('other paths refuse POST',S.istek('POST', '/tokens.json', '', gecerli).status === 405);
 };

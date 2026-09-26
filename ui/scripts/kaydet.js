@@ -35,6 +35,8 @@ const TAMSAYI = {
   'metric.scrollbar-w': [4, 24],
   'derived.bg-gradient': [2, 64],
 };
+const SURELER = ['instant', 'fast', 'base', 'slow'];
+const PARLAMALAR = ['glow', 'glow-button', 'glow-hero'];
 
 function grupBul(T, anahtar) {
   if (T.brand && T.brand[anahtar] && T.brand[anahtar].value !== undefined) return 'brand';
@@ -50,7 +52,10 @@ function dogrula(degisen, T) {
     if (!alanlar || typeof alanlar !== 'object') throw new Error(bolum + ': alanlar nesne olmalı.');
     for (const [ad, v] of Object.entries(alanlar)) {
       const yer = bolum + '.' + ad;
-      if (RENKLER.includes(ad) && (bolum === 'brand' || bolum === 'role')) {
+      if (yer === 'meta.dark') {
+        if (typeof v !== 'boolean') throw new Error(yer + ': true ya da false bekleniyor.');
+        out.push({ grup: 'meta', ad, alan: 'dark', deger: v });
+      } else if (RENKLER.includes(ad) && (bolum === 'brand' || bolum === 'role')) {
         const deger = String(v && v.value).toLocaleLowerCase('en');
         if (!HEX.test(deger)) throw new Error(yer + ': #rrggbb bekleniyor.');
         const grup = grupBul(T, ad);
@@ -66,6 +71,29 @@ function dogrula(degisen, T) {
         const [alt, ust] = TAMSAYI[yer];
         if (!Number.isInteger(n) || n < alt || n > ust) throw new Error(yer + ': ' + alt + '–' + ust + ' arası tamsayı bekleniyor.');
         out.push({ grup: bolum, ad, alan: bolum === 'derived' ? 'stops' : 'value', deger: n });
+      } else if (bolum === 'easing') {
+        const b = v && v.bezier;
+        if (!T.easing || !T.easing[ad]) throw new Error(yer + ': token bulunamadı.');
+        if (!Array.isArray(b) || b.length !== 4 || !b.every((n) => typeof n === 'number' && Number.isFinite(n)) || b[0] < 0 || b[0] > 1 || b[2] < 0 || b[2] > 1 || Math.abs(b[1]) > 2 || Math.abs(b[3]) > 2)
+          throw new Error(yer + ': dört sayı bekleniyor; x değerleri 0–1, y değerleri −2–2.');
+        out.push({ grup: 'easing', ad, alan: 'bezier', deger: b.map((n) => Math.round(n * 1000) / 1000) });
+      } else if (bolum === 'duration' && SURELER.includes(ad)) {
+        const n = Number(v && v.ms);
+        if (!Number.isInteger(n) || n < 0 || n > 2000) throw new Error(yer + ': 0–2000 arası tamsayı milisaniye bekleniyor.');
+        out.push({ grup: 'duration', ad, alan: 'ms', deger: n });
+      } else if (bolum === 'derived' && PARLAMALAR.includes(ad)) {
+        const e = v || {};
+        if (e.alpha === undefined && e.blur === undefined) throw new Error(yer + ': alpha ya da blur bekleniyor.');
+        if (e.alpha !== undefined) {
+          const a = Number(e.alpha);
+          if (!Number.isFinite(a) || a < 0 || a > 1) throw new Error(yer + '.alpha: 0–1 arası sayı bekleniyor.');
+          out.push({ grup: 'derived', ad, alan: 'alpha', deger: Math.round(a * 100) / 100 });
+        }
+        if (e.blur !== undefined) {
+          const n = Number(e.blur);
+          if (!Number.isInteger(n) || n < 0 || n > 48) throw new Error(yer + '.blur: 0–48 arası tamsayı bekleniyor.');
+          out.push({ grup: 'derived', ad, alan: 'blur', deger: n });
+        }
       } else if (yer === 'font.sans') {
         const z = v && v.chain;
         if (!Array.isArray(z) || !z.length || z.length > 6 || !z.every((s) => typeof s === 'string' && /^[A-Za-z0-9 -]{1,48}$/.test(s)))
@@ -195,6 +223,12 @@ function tokenMetni(metin, degisen) {
   const yeni = {};
   const ozet = [];
   for (const y of yazilar) {
+    if (y.grup === 'meta') {
+      if (T.meta.dark === y.deger) continue;
+      metin = metin.replace(/("meta":\s*\{[^}]*?"dark":\s*)(true|false)/, (m, a) => a + String(y.deger));
+      ozet.push('meta.dark: `' + T.meta.dark + '` → `' + y.deger + '`');
+      continue;
+    }
     const once = T[y.grup][y.ad][y.alan];
     if (JSON.stringify(once) === JSON.stringify(y.deger)) continue;
     metin = alanYaz(metin, y.grup, y.ad, y.alan, y.deger);

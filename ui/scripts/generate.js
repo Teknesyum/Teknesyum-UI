@@ -508,6 +508,11 @@ ${onCss()}
   --tk-e-out: ${bezier('out')};
   --tk-e-in: ${bezier('in')};
   --tk-e-spring: ${bezier('spring')};
+  --tk-e-in-out: ${bezier('in-out')};
+  --tk-e-fast-slow-fast: ${bezier('fast-slow-fast')};
+  --tk-e-emphasized: ${bezier('emphasized')};
+  --tk-e-sharp: ${bezier('sharp')};
+  --tk-e-linear: ${bezier('linear')};
 
   --tk-glow-blue: ${glowCss('blue')};
   --tk-glow-pink: ${glowCss('pink')};
@@ -656,13 +661,12 @@ body {
 ::-webkit-scrollbar-track { background: ${rgba('black', 0.3)}; border-radius: 4px; }
 ::-webkit-scrollbar-thumb {
   background: var(--tk-purple-text); border-radius: 4px;
-  box-shadow: 0 0 10px var(--tk-purple);
-  /* §5.4 bans animating \`box-shadow\` by name, with no exception; the glow stays
-     static and only the fill colour transitions. Measured in the audit (2026-08-23). */
+  /* No glow on the scrollbar: a halo on a thin moving bar smears and reads as noise
+     (user feedback, 2026-09-26). Only the fill colour transitions. */
   transition: background-color var(--tk-t-instant) var(--tk-e-out);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--tk-pink-text); box-shadow: 0 0 10px var(--tk-pink);
+  background: var(--tk-pink-text);
 }
 
 /* --- title bar and signature (§4) --- */

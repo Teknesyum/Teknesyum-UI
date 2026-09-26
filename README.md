@@ -155,7 +155,19 @@ node ui/scripts/onizleme.js [--tarayici [--port 4317] [--no-open]]
 ```
 
 Opens in its own Electron window (`ui/onizleme/masaustu/`, Electron is installed there on
-the first run); `--tarayici` serves the same page on `127.0.0.1` instead. A page for trying new brand colours before touching the tokens. It
+the first run); `--tarayici` serves the same page on `127.0.0.1` instead.
+
+The layout has three columns. The left one lists 15 components: colours, buttons, forms, title bar,
+progress, scrollbar, background, badges, toasts, installer, modal, type, Akıcılık, Okunurluk and
+Teknik. The middle one draws the chosen component with every example and state (normal, hover,
+pressed, focus, disabled). The right one shows that component's settings first. The settings
+include glow (none, thin, token, neon, custom), UI easing, duration scale, density, border
+width, glass blur, shadow strength and scrollbar style. Akıcılık plays the easing curves side by
+side, and Teknik measures FPS and frame time. `ui/templates/temalar/` holds ten themes
+(`node ui/scripts/tema.js liste`, `denetle [ad]`), five light and five dark. Each passes 7:1 and
+scores at least 85.
+
+A page for trying new brand colours before touching the tokens. It
 starts from `ui/templates/neon.tokens.json` and measures with the same `kontrast.js` the
 scanner uses, served to the browser as is. The left panel sets blue, pink, their text cuts,
 purple, surface and the background (flat, token gradient, glass, grid, glow; stops and

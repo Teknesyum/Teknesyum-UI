@@ -1,8 +1,7 @@
 .tk-titlebar {
   display: flex;
   align-items: stretch;
-  justify-content: space-between;
-  gap: var(--tk-sp-5);
+  gap: var(--tk-sp-4);
   height: var(--tk-titlebar-h-min);
   padding-left: var(--tk-sp-4);
   background: var(--tk-surface);
@@ -17,11 +16,25 @@
   -webkit-app-region: no-drag;
 }
 
-.tk-titlebar__brand {
+.tk-titlebar__brand,
+.tk-titlebar__tabs,
+.tk-titlebar__tools,
+.tk-titlebar__language {
   display: flex;
+  align-items: stretch;
+  gap: var(--tk-sp-1);
+  min-width: 0;
+}
+
+.tk-titlebar__brand {
+  flex-shrink: 0;
   align-items: center;
   gap: var(--tk-sp-2);
-  min-width: 0;
+}
+
+.tk-titlebar__tabs {
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 
 .tk-titlebar__logo {
@@ -34,7 +47,7 @@
   color: var(--tk-text);
   font-size: var(--tk-fs-3);
   font-weight: var(--tk-fw-semi);
-  line-height: var(--tk-lh-heading);
+  line-height: 1;
   letter-spacing: var(--tk-tr-h2);
   white-space: nowrap;
 }
@@ -43,129 +56,120 @@
   color: var(--tk-pink-text);
 }
 
-.tk-titlebar__brand {
-  flex-shrink: 0;
-}
-
-.tk-titlebar__tabs {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: stretch;
-  gap: var(--tk-sp-1);
-  min-width: 0;
-  overflow: hidden;
-}
-
-.tk-titlebar__tab {
-  white-space: nowrap;
+.tk-titlebar__tab,
+.tk-titlebar__chip {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  padding: 0 var(--tk-sp-2);  border: 0;
-  border-bottom: var(--tk-focus-w) solid transparent;
+  justify-content: center;
+  gap: var(--tk-sp-2);
+  min-width: var(--tk-target-min);
+  padding: 0 var(--tk-sp-3);
+  border: 0;
+  border-radius: 0;
   background: transparent;
   color: var(--tk-blue);
   font: inherit;
   font-size: var(--tk-fs-1);
   font-weight: var(--tk-fw-semi);
+  line-height: 1;
+  white-space: nowrap;
   text-decoration: none;
   cursor: pointer;
-  -webkit-app-region: no-drag;
-  transition: color var(--tk-t-instant) var(--tk-e-out), transform var(--tk-t-instant) var(--tk-e-out);
+  transition: color var(--tk-t-fast) var(--tk-e-out);
 }
 
-.tk-titlebar__tab:hover {
+.tk-titlebar__tab::after,
+.tk-titlebar__chip::after {
+  content: '';
+  position: absolute;
+  left: var(--tk-sp-3);
+  right: var(--tk-sp-3);
+  bottom: calc(50% - 0.5em - var(--tk-sp-1) - var(--tk-focus-w));
+  height: var(--tk-focus-w);
+  border-radius: var(--tk-focus-w);
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform var(--tk-t-base) var(--tk-e-emphasized);
+}
+
+.tk-titlebar__chip--support {
+  color: var(--tk-purple-text);
+}
+
+.tk-titlebar__tab:hover,
+.tk-titlebar__tab:focus-visible,
+.tk-titlebar__chip:hover,
+.tk-titlebar__chip:focus-visible {
   color: var(--tk-pink-text);
+}
+
+.tk-titlebar__tab:hover::after,
+.tk-titlebar__tab:focus-visible::after,
+.tk-titlebar__chip:hover::after,
+.tk-titlebar__chip:focus-visible::after,
+.tk-titlebar__tab[aria-current='page']::after {
+  transform: scaleX(1);
+}
+
+.tk-titlebar__tab:active::after,
+.tk-titlebar__chip:active::after {
+  background: var(--tk-pink);
+  transform: scaleX(1);
 }
 
 .tk-titlebar__tab[aria-current='page'] {
-  border-bottom-color: currentColor;
+  color: var(--tk-text);
 }
 
-.tk-titlebar__tab:active {
+.tk-titlebar__tab:active,
+.tk-titlebar__chip:active {
   color: var(--tk-pink-text);
   transform: scale(var(--tk-scale-press));
+  transition-duration: var(--tk-t-instant);
 }
 
-.tk-titlebar__tab[aria-disabled='true'] {
-  color: var(--tk-disabled);
-  cursor: not-allowed;
-  transform: none;
-}
-
-.tk-titlebar__tab:focus-visible {
+.tk-titlebar__tab:focus-visible,
+.tk-titlebar__chip:focus-visible {
   outline: var(--tk-focus-w) solid var(--tk-pink-text);
   outline-offset: calc(var(--tk-focus-w) * -1);
   box-shadow: inset 0 0 0 calc(var(--tk-focus-w) * 2) var(--tk-bg-from);
 }
 
-.tk-titlebar__tools {
-  display: flex;
-  align-items: center;
-  gap: var(--tk-sp-1);
-}
-
-.tk-titlebar__language {
-  display: flex;
-  align-items: center;
-  gap: var(--tk-sp-1);
-}
-
-.tk-titlebar__chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--tk-sp-2);
-  min-height: var(--tk-target-min);
-  padding: var(--tk-sp-1) var(--tk-sp-3);
-  border: var(--tk-border-w) solid var(--tk-border-strong);
-  border-radius: var(--tk-r-btn);
-  color: var(--tk-blue);
-  font-size: var(--tk-fs-1);
-  font-weight: var(--tk-fw-semi);
-  white-space: nowrap;
-  text-decoration: none;
-  transition:
-    color var(--tk-t-instant) var(--tk-e-out),
-    border-color var(--tk-t-instant) var(--tk-e-out),
-    transform var(--tk-t-instant) var(--tk-e-out);
-}
-
-.tk-titlebar__chip--support {
-  color: var(--tk-purple-text);
-  border-color: var(--tk-purple-text);
-}
-
-.tk-titlebar__chip:hover {
-  color: var(--tk-pink-text);
-  border-color: var(--tk-pink-text);
-  transform: scale(var(--tk-scale-hover));
-}
-
-.tk-titlebar__chip:focus-visible {
-  outline: var(--tk-focus-w) solid var(--tk-blue);
-  outline-offset: var(--tk-focus-offset);
-  box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg-from);
-}
-
-.tk-titlebar__chip:active {
-  border-color: var(--tk-pink);
-  transform: scale(var(--tk-scale-press));
-}
-
+.tk-titlebar__tab[aria-disabled='true'],
 .tk-titlebar__chip[aria-disabled='true'] {
   color: var(--tk-disabled);
-  border-color: var(--tk-disabled);
   cursor: not-allowed;
   transform: none;
 }
 
+.tk-titlebar__tab[aria-disabled='true']::after,
+.tk-titlebar__chip[aria-disabled='true']::after {
+  cursor: not-allowed;
+  transform: scaleX(0);
+}
+
+.tk-titlebar__chip--outlined {
+  align-self: center;
+  height: calc(var(--tk-titlebar-h-min) - var(--tk-sp-1) * 2);
+  border: var(--tk-border-w) solid currentColor;
+  border-radius: var(--tk-r-btn);
+}
+
+.tk-titlebar__chip--outlined::after {
+  display: none;
+}
+
 .tk-titlebar__icon {
+  flex: none;
   width: var(--tk-icon-2);
   height: var(--tk-icon-2);
 }
 
 .tk-titlebar__window {
   display: flex;
-  align-self: stretch;
+  align-items: stretch;
   margin-left: var(--tk-sp-1);
 }
 
@@ -216,8 +220,7 @@
 
 .tk-titlebar__minimize {
   width: var(--tk-sp-3);
-  height: var(--tk-focus-w);
-  border-radius: var(--tk-border-w);
+  height: var(--tk-border-w);
   background: currentColor;
 }
 
@@ -239,12 +242,20 @@
   position: absolute;
   inset: 0;
   margin: auto;
-  width: 100%;
+  width: 141.42%;
   height: var(--tk-border-w);
+  margin-left: -20.71%;
   background: currentColor;
   transform: rotate(45deg);
 }
 
 .tk-titlebar__close::after {
   transform: rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tk-titlebar__tab::after,
+  .tk-titlebar__chip::after {
+    transition: none;
+  }
 }

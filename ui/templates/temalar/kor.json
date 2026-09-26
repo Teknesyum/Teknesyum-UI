@@ -1,0 +1,20 @@
+{
+  "ad": "kor",
+  "baslik": "Kor",
+  "tur": "koyu",
+  "esin": "Gruvbox Dark ve Discord Dark'ın sıcak, kahve-gri zemini.",
+  "renk": {
+    "blue": "#8abeff",
+    "pink": "#d94ac9",
+    "pink-text": "#f8baf0",
+    "purple": "#ab82ef",
+    "purple-text": "#e1ceff",
+    "surface": "#1e1a18",
+    "black": "#151210",
+    "glass-base": "#241f1c",
+    "text": "#f8f2ea",
+    "disabled": "#8f867f",
+    "success": "#9be087",
+    "warning": "#ffcd62"
+  }
+}

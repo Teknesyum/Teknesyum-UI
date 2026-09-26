@@ -178,7 +178,7 @@
       </Style>
       <Style Selector="^.destek:pointerover">
         <Setter Property="Background" Value="{StaticResource Renk2x20}"/>
-        <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
+        <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
       </Style>
       <Style Selector="^.destek:focus-visible">
         <Setter Property="Background" Value="{StaticResource Renk2x10}"/>

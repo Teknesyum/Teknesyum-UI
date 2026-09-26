@@ -32,6 +32,26 @@ namespace {{AD}}.Kontrast
                 .UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false });
     }
 
+    public static class KontrastEkranlari
+    {
+        public static Func<Window, IEnumerable<string>>? Gez { get; set; }
+
+        internal static IEnumerable<string> Hepsi(Window pencere) => Gez?.Invoke(pencere) ?? new[] { "ana" };
+
+        internal static string Dosya(string ekran)
+        {
+            var sb = new StringBuilder();
+            foreach (var h in ekran.ToLowerInvariant())
+                sb.Append(h switch
+                {
+                    'ç' => 'c', 'ğ' => 'g', 'ı' => 'i', 'İ' => 'i', 'ö' => 'o', 'ş' => 's', 'ü' => 'u',
+                    _ when char.IsLetterOrDigit(h) => h,
+                    _ => '-'
+                });
+            return sb.ToString().Trim('-');
+        }
+    }
+
     public class KontrastTests
     {
         const double Esik = {{ESIK}};
@@ -45,23 +65,27 @@ namespace {{AD}}.Kontrast
         {
             var pencere = Ac(1.0);
             var olcumler = new List<Olcum>();
-            Yuru(pencere, "dinlenik", olcumler);
-            foreach (var dugme in pencere.GetVisualDescendants().OfType<Button>().Where(b => b.IsEffectivelyVisible).ToList())
+            foreach (var ekran in KontrastEkranlari.Hepsi(pencere))
             {
-                foreach (var durum in Durumlar)
+                Bekle();
+                Yuru(pencere, ekran + " · dinlenik", olcumler);
+                foreach (var dugme in pencere.GetVisualDescendants().OfType<Button>().Where(b => b.IsEffectivelyVisible).ToList())
                 {
-                    Uygula(dugme, durum, true);
+                    foreach (var durum in Durumlar)
+                    {
+                        Uygula(dugme, durum, true);
+                        Bekle();
+                        Yuru(dugme, ekran + " · " + durum + " " + Ad(dugme), olcumler);
+                        Uygula(dugme, durum, false);
+                        Bekle();
+                    }
+                    var etkin = dugme.IsEnabled;
+                    dugme.IsEnabled = false;
                     Bekle();
-                    Yuru(dugme, durum + " " + Ad(dugme), olcumler);
-                    Uygula(dugme, durum, false);
+                    Yuru(dugme, ekran + " · edilgen " + Ad(dugme), olcumler);
+                    dugme.IsEnabled = etkin;
                     Bekle();
                 }
-                var etkin = dugme.IsEnabled;
-                dugme.IsEnabled = false;
-                Bekle();
-                Yuru(dugme, "edilgen " + Ad(dugme), olcumler);
-                dugme.IsEnabled = etkin;
-                Bekle();
             }
             pencere.Close();
             Yaz(olcumler);
@@ -78,7 +102,11 @@ namespace {{AD}}.Kontrast
             {
                 var yuzde = ((int)Math.Round(olcek * 100)).ToString(CultureInfo.InvariantCulture);
                 var pencere = Ac(olcek);
-                Kaydet(pencere, IOPath.Combine(klasor, "ana-" + yuzde + "-" + etiket + ".png"));
+                foreach (var ekran in KontrastEkranlari.Hepsi(pencere))
+                {
+                    Bekle();
+                    Kaydet(pencere, IOPath.Combine(klasor, KontrastEkranlari.Dosya(ekran) + "-" + yuzde + "-" + etiket + ".png"));
+                }
                 pencere.Close();
             }
         }

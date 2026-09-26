@@ -5,3 +5,5 @@ trash/
 Teknesyum-Base/
 .claude/relay/live/
 ui/onizleme/ozel-ayar.json
+test/ekran/**/bin/
+test/ekran/**/obj/

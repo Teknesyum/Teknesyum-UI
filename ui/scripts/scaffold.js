@@ -20,9 +20,14 @@ const HELP = [
   '      --depo <url>        git remote (default: origin, as ssh)',
   '      --anahtar <name>    deploy key file under .kurulum\\anahtar (default usb-01)',
   '      --adimlar <file>    project steps fragment (default templates/kur/adimlar.ps1)',
-  '  ustcubuk        TitleBar.tsx + titlebar.css into teknesyum-ui/ustcubuk',
-  '  durum           Electron sync badge into teknesyum-ui/durum',
-  '  denetim <Namespace>  headless contrast test into teknesyum-ui/denetim/KontrastTests.cs',
+  '      --avalonia          also the KurulumEkrani install screen into teknesyum-ui/kur',
+  '      --ns <Namespace>    its C# namespace (default: the app name)',
+  '  ustcubuk [<Namespace>]  title bar into teknesyum-ui/ustcubuk',
+  '      --avalonia | --react  flavour (default: avalonia when the project has .axaml);',
+  '                            Avalonia: TitleBar + KabukStilleri, needs the namespace',
+  '  durum [<Namespace>]     update badge and panel into teknesyum-ui/durum',
+  '      --avalonia | --electron  flavour (default as above); Avalonia: GuncellemePaneli',
+  '  denetim <Namespace>  headless contrast and shell tests into teknesyum-ui/denetim',
   '      --wpf | --avalonia  test flavour (default: avalonia when the project has .axaml)',
   '      --pencere <Class>   window to open (default MainWindow)',
   '      --esik <ratio>      threshold (default 7)',
@@ -126,13 +131,11 @@ function denetim(root, args, name) {
   if (!/^\d+(\.\d+)?$/.test(esik) || Number(esik) < 1) throw new Error('--esik takes a ratio of 1 or more');
   const kind = args.includes('--wpf') ? 'wpf' : args.includes('--avalonia') ? 'avalonia' : hasAxaml(root, 0) ? 'avalonia' : 'wpf';
   const values = { AD: name, PENCERE: pencere, ESIK: esik.includes('.') ? esik : esik + '.0' };
-  const plan = [
-    {
-      to: path.join(root, 'teknesyum-ui', 'denetim', 'KontrastTests.cs'),
-      text: fill(template('denetim/' + kind + '/KontrastTests.cs'), values),
-      crlf: true,
-    },
-  ];
+  const plan = templateFiles('denetim/' + kind).map((n) => ({
+    to: path.join(root, 'teknesyum-ui', 'denetim', n),
+    text: fill(template('denetim/' + kind + '/' + n), values),
+    crlf: true,
+  }));
   plan.note = DENETIM_NOTE[kind];
   return plan;
 }
@@ -154,22 +157,74 @@ const DENETIM_NOTE = {
   ].join('\n'),
 };
 
+const IDENT = /^[A-Za-z_]\w*(\.[A-Za-z_]\w*)*$/;
+
+function isAvalonia(root, args, other) {
+  if (args.includes('--avalonia')) return true;
+  if (args.includes('--' + other)) return false;
+  return hasAxaml(root, 0);
+}
+
+function templateFiles(dir) {
+  return fs
+    .readdirSync(path.join(TEMPLATES, dir), { withFileTypes: true })
+    .filter((e) => e.isFile() && /\.(axaml|cs)$/.test(e.name))
+    .map((e) => e.name)
+    .sort();
+}
+
+function linkNote(target) {
+  const dir = '../teknesyum-ui/' + target;
+  const lines = [
+    'link into the app .csproj (paths relative to it):',
+    '  <AvaloniaXaml Include="' + dir + '/*.axaml" Link="Kabuk/%(Filename)%(Extension)" />',
+    '  <Compile Include="' + dir + '/*.cs" Link="Kabuk/%(Filename)%(Extension)" />',
+  ];
+  if (target === 'ustcubuk') lines.push('  App.axaml Styles: <StyleInclude Source="avares://<Assembly>/Kabuk/KabukStilleri.axaml"/>');
+  lines.push('hover and press stay inside each button: do not add RenderTransform scale or a negative Margin to these files');
+  return lines.join('\n');
+}
+
+function avaloniaShell(root, target, ns) {
+  if (!ns || !IDENT.test(ns)) throw new Error(target + ' --avalonia needs the application namespace as a C# name, e.g. ' + target + ' Runly');
+  const plan = templateFiles(target + '/avalonia').map((n) => ({
+    to: path.join(root, 'teknesyum-ui', target, n),
+    text: fill(template(target + '/avalonia/' + n), { AD: ns }),
+    crlf: true,
+  }));
+  plan.note = linkNote(target);
+  return plan;
+}
+
+function kurAll(root, args, name) {
+  const plan = kur(root, args, name);
+  if (!args.includes('--avalonia')) return plan;
+  const shell = avaloniaShell(root, 'kur', flag(args, 'ns') || name);
+  const all = plan.concat(shell);
+  all.note = shell.note;
+  return all;
+}
+
 function copies(root, dir, names) {
   return names.map((n) => ({ to: path.join(root, 'teknesyum-ui', dir, n), text: template(dir + '/' + n) }));
 }
 
 const TARGETS = {
-  kur: (root, args, name) => kur(root, args, name),
-  ustcubuk: (root) =>
-    copies(root, 'ustcubuk', ['react/TitleBar.tsx', 'react/titlebar.css']).map((f) => ({
-      ...f,
-      to: f.to.replace(path.sep + 'react' + path.sep, path.sep),
-    })),
+  kur: (root, args, name) => kurAll(root, args, name),
+  ustcubuk: (root, args, name) =>
+    isAvalonia(root, args, 'react')
+      ? avaloniaShell(root, 'ustcubuk', name)
+      : copies(root, 'ustcubuk', ['react/TitleBar.tsx', 'react/titlebar.css']).map((f) => ({
+          ...f,
+          to: f.to.replace(path.sep + 'react' + path.sep, path.sep),
+        })),
   denetim: (root, args, name) => denetim(root, args, name),
-  durum: (root) =>
-    copies(root, 'durum', ['electron/sync.js', 'electron/preload.js', 'electron/badge.js', 'electron/badge.css']).map(
-      (f) => ({ ...f, to: f.to.replace(path.sep + 'electron' + path.sep, path.sep) })
-    ),
+  durum: (root, args, name) =>
+    isAvalonia(root, args, 'electron')
+      ? avaloniaShell(root, 'durum', name)
+      : copies(root, 'durum', ['electron/sync.js', 'electron/preload.js', 'electron/badge.js', 'electron/badge.css']).map(
+          (f) => ({ ...f, to: f.to.replace(path.sep + 'electron' + path.sep, path.sep) })
+        ),
 };
 
 function emit(root, plan) {

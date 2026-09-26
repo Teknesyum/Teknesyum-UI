@@ -29,7 +29,7 @@ bir sayıdır. İkisinin de bağlam penceresinde yeri yoktur.
 | Rafa nasıl gidilir ve ne koşulur | `SKILL.md`, 80 satır | bir kez, arayüz işi başladığında |
 
 Base, her arayüz konusu açıldığında `SKILL.md` için yaklaşık 27.000 ve sekiz referans dosyası
-için 55.000 token daha harcıyordu. Bu proje 97 tarayıcı kuralı, 80 satırlık tek bir skill ve
+için 55.000 token daha harcıyordu. Bu proje 100 tarayıcı kuralı, 80 satırlık tek bir skill ve
 iki referans dosyası ile gelir.
 
 ## Kurallar nerede yaşar
@@ -77,6 +77,12 @@ yanıtlarla `--apply` çağırır.
 `<proje>/.claude/teknesyum-ui.json` dosyasını yazar ve seçtiğiniz hedefler için temayı
 `<proje>/teknesyum-ui/` altına üretir: `css`, `react`, `wpf`, `avalonia`, `winforms`. Avalonia imzası `Signature.axaml.example` olarak gelir: bir
 yerelleştirme uzantısı ve `Click` işleyicisi ister, kendi görünümünüze kopyalayın.
+
+`avalonia` ve `wpf` için sans yazıyı da gömer: Atkinson Hyperlegible Next ve OFL lisansı
+uygulama projesinin `Assets/Fonts` klasörüne girer, `FontSans` `avares://` (ya da assembly
+component) adresine döner ve projeye kaynak öğesi eklenir. Birden çok proje varsa
+`--app <csproj>` seçer. Üretilen tema her pencereyi fs-2 boyunda FontSans ile açar (Avalonia
+`:is(Window)`, WPF `TkWindow`); `typography.scale` token dosyasından okunur.
 
 Neon hazır yanıttır, tek yanıt değil — `--template custom` üç marka rengi ve bir yüzey alır,
 gerisini aynı formüllerle türetir.
@@ -131,17 +137,27 @@ biçimde ölçen başsız bir xUnit testi yazar (bkz. Şablonlar).
 
 ```bash
 node <plugin>/scripts/scaffold.js kur <UygulamaAdı> [--simge app/simge.ico] [--anahtar usb-01]
-node <plugin>/scripts/scaffold.js ustcubuk
-node <plugin>/scripts/scaffold.js durum
+node <plugin>/scripts/scaffold.js kur <UygulamaAdı> --avalonia [--ns <Namespace>]
+node <plugin>/scripts/scaffold.js ustcubuk [<Namespace>] [--avalonia|--react]
+node <plugin>/scripts/scaffold.js durum [<Namespace>] [--avalonia|--electron]
 node <plugin>/scripts/scaffold.js denetim <Namespace> [--wpf|--avalonia] [--pencere MainWindow] [--esik 7]
 ```
 
 | Hedef | Yazdığı | Ne olduğu |
 |---|---|---|
 | `kur` | `Kur.bat`, `kur-<ad>.ps1` | USB kurulum penceresi: adım içinde ilerleyen çubuk, canlı günlük, bitiş ve hata ekranları, `-Prova` deneme kipi. Yerinde günceller; `-Onar` ya da bitiş ekranındaki Onar düğmesi baştan kurar. Her USB kendi deploy anahtarını `.kurulum/anahtar/` altında taşır. |
-| `ustcubuk` | `teknesyum-ui/ustcubuk/` | React başlık çubuğu: logo, iki parçalı ad, dil yuvası, sponsor ve marka bağlantıları, pencere düğmeleri, Electron ve Tauri için sürükleme alanı. |
-| `durum` | `teknesyum-ui/durum/` | Başlık çubuğu rozetli Electron git eşitlemesi: eşitleniyor, saatiyle eşitlendi, çevrimdışı; tıklayınca hemen eşitler. |
-| `denetim` | `teknesyum-ui/denetim/KontrastTests.cs` | Başsız kontrast testi: projede `.axaml` varsa Avalonia.Headless.XUnit (test projesi xunit v3 ister), yoksa STA iş parçacığında `VisualTreeHelper` ile WPF. Her yazı parçasını ve simgeyi, her düğmeyi dinlenik, üstünde, basılı, odakta ve edilgen hâlde, degrade zeminin en kötü durağını ölçer; `tmp/uc/kontrast-*.txt` ile %100/125/150 pencere görüntülerini yazar ve eşiğin altındaki her eşi sayarak başarısız olur. |
+| `kur --avalonia` | `teknesyum-ui/kur/KurulumEkrani.axaml` | Aynı kurulum akışı, PowerShell panelinin yanında Avalonia ekranı olarak. |
+| `ustcubuk` | `teknesyum-ui/ustcubuk/` | Üst çubuk: başlık, Teknesyum düğmesi, güncelleme rozeti, pencere düğmeleri. React (logo, iki parçalı ad, dil yuvası, Electron ve Tauri için sürükleme alanı) ya da projede `.axaml` varsa Avalonia `TitleBar` + `KabukStilleri`. |
+| `durum` | `teknesyum-ui/durum/` | Güncelleme yüzeyi: başlık çubuğu rozetli Electron git eşitlemesi ya da Avalonia `GuncellemePaneli`. |
+| `denetim` | `teknesyum-ui/denetim/KontrastTests.cs`, `KabukTests.cs` | Başsız kontrast testi: projede `.axaml` varsa Avalonia.Headless.XUnit (test projesi xunit v3 ister), yoksa STA iş parçacığında `VisualTreeHelper` ile WPF. Her yazı parçasını ve simgeyi, her düğmeyi dinlenik, üstünde, basılı, odakta ve edilgen hâlde, degrade zeminin en kötü durağını ölçer; `tmp/uc/kontrast-*.txt` ile %100/125/150 pencere görüntülerini yazar ve eşiğin altındaki her eşi sayarak başarısız olur. |
+
+Her şablon dosyası `teknesyum-ui template <yol>` satırıyla başlar. Üzerine gelme ve basma
+düğmenin içinde kalır (hiçbir hâl sınırı aşmaz: üzerine gelince renk ve kenar değişir); her Avalonia klasörü dinlenik,
+üstünde, basılı, odakta ve edilgen hâllerin 848×640 görüntülerini `ekran/` altında taşır.
+`KabukTests.cs` sans yazının gerçekten yüklendiğini, fs-2 altında yazı olmadığını ve her
+düğme durumunun kendi kırpmasına sığdığını sınar. Tarayıcı kök yazı boyu olmayan pencereyi,
+gömülü olmayan `FontSans`'ı ve imza satırı taşımayan üst çubuk, güncelleme paneli ya da
+kurulum ekranını işaretler (`kabuk/*`).
 
 Her hedef, yazdığı şeyi yöneten raf kitabının adını söyleyerek biter; raf ya da kitap yoksa
 bunu açıkça söyler. Var olan dosyanın üzerine asla yazılmaz. Projeye özgü kurulum adımları `--adimlar <dosya>`

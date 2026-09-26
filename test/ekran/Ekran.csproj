@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Ekran</AssemblyName>
+    <RootNamespace>Ekran</RootNamespace>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Testler/**</DefaultItemExcludes>
+    <TemaUret>true</TemaUret>
+  </PropertyGroup>
+
+  <Import Project="Sablon.targets" />
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.20" />
+    <PackageReference Include="Avalonia.Headless" Version="11.3.20" />
+    <PackageReference Include="Avalonia.Headless.XUnit" Version="11.3.20" />
+    <PackageReference Include="Avalonia.Skia" Version="11.3.20" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.20" />
+    <PackageReference Include="xunit.assert" Version="2.9.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SablonXaml Include="$(Sablonlar)ustcubuk/avalonia/KabukStilleri.axaml" Cikti="$(SablonCikti)Kabuk/KabukStilleri.axaml" Link="Kabuk/KabukStilleri.axaml" />
+    <SablonXaml Include="$(Sablonlar)ustcubuk/avalonia/TitleBar.axaml" Cikti="$(SablonCikti)Kabuk/TitleBar.axaml" Link="Kabuk/TitleBar.axaml" />
+    <SablonXaml Include="$(Sablonlar)durum/avalonia/GuncellemePaneli.axaml" Cikti="$(SablonCikti)Kabuk/GuncellemePaneli.axaml" Link="Kabuk/GuncellemePaneli.axaml" />
+    <SablonXaml Include="$(Sablonlar)kur/avalonia/KurulumEkrani.axaml" Cikti="$(SablonCikti)Kabuk/KurulumEkrani.axaml" Link="Kabuk/KurulumEkrani.axaml" />
+    <SablonCs Include="$(Sablonlar)ustcubuk/avalonia/TitleBar.axaml.cs" Cikti="$(SablonCikti)Kabuk/TitleBar.axaml.cs" Link="Kabuk/TitleBar.axaml.cs" />
+    <SablonCs Include="$(Sablonlar)durum/avalonia/GuncellemePaneli.axaml.cs" Cikti="$(SablonCikti)Kabuk/GuncellemePaneli.axaml.cs" Link="Kabuk/GuncellemePaneli.axaml.cs" />
+    <SablonCs Include="$(Sablonlar)kur/avalonia/KurulumEkrani.axaml.cs" Cikti="$(SablonCikti)Kabuk/KurulumEkrani.axaml.cs" Link="Kabuk/KurulumEkrani.axaml.cs" />
+    <SablonCs Include="$(Sablonlar)denetim/avalonia/KabukTests.cs" Cikti="$(SablonCikti)Denetim/KabukTests.cs" Link="Denetim/KabukTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Include="@(SablonXaml->'%(Cikti)')" />
+    <Compile Include="@(SablonCs->'%(Cikti)')" />
+    <AvaloniaXaml Include="$(SablonCikti)Tema/Theme.axaml" Link="Tema/Theme.axaml" />
+    <AvaloniaResource Include="$(KokDizin)ui/fonts/*.ttf" Link="Assets/Fonts/%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>

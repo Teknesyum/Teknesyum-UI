@@ -1,4 +1,5 @@
-﻿param([string]$AnahtarAdi = "{{ANAHTAR}}", [switch]$Onar, [switch]$Prova)
+﻿# teknesyum-ui template kur/kur.ps1
+param([string]$AnahtarAdi = "{{ANAHTAR}}", [switch]$Onar, [switch]$Prova)
 
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing

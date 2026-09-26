@@ -1,0 +1,7 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Deneme.MainWindow" FontSize="{StaticResource FontSize2}">
+  <DockPanel>
+    <Grid Name="TitleBar" DockPanel.Dock="Top" Height="{StaticResource TitleBarHeightMax}"/>
+  </DockPanel>
+</Window>

@@ -1,0 +1,53 @@
+<Project>
+
+  <PropertyGroup>
+    <KokDizin>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../../'))</KokDizin>
+    <Sablonlar>$(KokDizin)ui/templates/</Sablonlar>
+    <SablonCikti>$(MSBuildProjectDirectory)/obj/sablon/</SablonCikti>
+    <SablonAd Condition="'$(SablonAd)' == ''">Ekran</SablonAd>
+    <SablonPencere Condition="'$(SablonPencere)' == ''">SinamaPenceresi</SablonPencere>
+    <SablonEsik Condition="'$(SablonEsik)' == ''">7</SablonEsik>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SablonDegisim Include="{{AD}}" Yeni="$(SablonAd)" />
+    <SablonDegisim Include="{{PENCERE}}" Yeni="$(SablonPencere)" />
+    <SablonDegisim Include="{{ESIK}}" Yeni="$(SablonEsik)" />
+    <TemaDegisim Include="&gt;Atkinson Hyperlegible Next, Segoe UI&lt;" Yeni="&gt;avares://$(SablonAd)/Assets/Fonts#Atkinson Hyperlegible Next, Segoe UI&lt;" />
+  </ItemGroup>
+
+  <UsingTask TaskName="SablonDoldur" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Dosyalar ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <Degisimler ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs"><![CDATA[
+foreach (var d in Dosyalar)
+{
+    var metin = System.IO.File.ReadAllText(d.ItemSpec);
+    foreach (var g in Degisimler)
+        metin = metin.Replace(g.ItemSpec, g.GetMetadata("Yeni"));
+    var hedef = d.GetMetadata("Cikti");
+    System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(hedef));
+    if (!System.IO.File.Exists(hedef) || System.IO.File.ReadAllText(hedef) != metin)
+        System.IO.File.WriteAllText(hedef, metin, new System.Text.UTF8Encoding(false));
+}
+]]></Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="SablonlariDoldur" BeforeTargets="BeforeBuild;CoreCompile">
+    <SablonDoldur Dosyalar="@(SablonXaml);@(SablonCs)" Degisimler="@(SablonDegisim)" Condition="'@(SablonXaml);@(SablonCs)' != ';'" />
+  </Target>
+
+  <Target Name="TemaUret" BeforeTargets="SablonlariDoldur" Condition="'$(TemaUret)' == 'true'">
+    <MakeDir Directories="$(SablonCikti)ham" />
+    <Exec Command="node &quot;$(KokDizin)ui/scripts/generate.js&quot; &quot;$(KokDizin)ui/templates/neon.tokens.json&quot; &quot;$(SablonCikti)ham&quot;" />
+    <ItemGroup>
+      <TemaDosya Include="$(SablonCikti)ham/Theme.axaml" Cikti="$(SablonCikti)Tema/Theme.axaml" />
+    </ItemGroup>
+    <SablonDoldur Dosyalar="@(TemaDosya)" Degisimler="@(TemaDegisim)" />
+  </Target>
+
+</Project>

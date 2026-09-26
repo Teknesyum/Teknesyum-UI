@@ -1,0 +1,2 @@
+bilesen: kur  pencere: 848x640  dugme: 3  denetim: 15  tasma: 0
+dugmeler: DegistirDugmesi, KapatDugmesi, AcDugmesi

@@ -7,6 +7,17 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- Avalonia shell templates: `scaffold.js ustcubuk <Namespace>` writes `TitleBar` (title,
+  Teknesyum button, update badge, window buttons) and `KabukStilleri`, `durum <Namespace>` the
+  `GuncellemePaneli`, `kur <AppName> --avalonia` the `KurulumEkrani`; the flavour follows the
+  project's `.axaml` unless `--react`/`--electron` says otherwise. Each folder carries 848×640
+  captures of rest, hover, pressed, focus and disabled under `ekran/`.
+- `denetim` also writes `KabukTests.cs`: the sans face loads, no text is below fs-2, every button
+  state fits its own clip.
+- Scanner rules `kabuk/kok-yazi-boyu` (a window with no root font size),
+  `kabuk/font-gomulu-degil` (`FontSans` names the token face but does not embed it) and
+  `kabuk/sablon-imzasiz` (a title bar, update panel or install screen without the template
+  signature line). Every template now starts with that line.
 - Hedef Okunurluk picks its target with a 1-point slider (50–100), chips stay as shortcuts. In
   single-colour scope it draws a hue × lightness field with the 95, 90 and 85 readability curves
   and the target curve dashed; hovering shows hex and score, clicking applies that colour.
@@ -21,6 +32,13 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- `setup.js --apply` for Avalonia and WPF copies Atkinson Hyperlegible Next and its OFL into
+  the app's `Assets/Fonts`, points `FontSans` at the embedded URI and adds the resource item
+  (`--app <csproj>` picks the project). Before, the face was only named and fell back.
+- The generated theme sets windows to FontSans at fs-2 (Avalonia `:is(Window)`, WPF keyed
+  `TkWindow`), gives PrimaryButton fs-2 and adds a DangerButton on the same base; untyped text
+  no longer falls to the framework's 14.
+- `typography.scale` in `teknesyum-ui.json` is read from the token file instead of a written list.
 - The load test note and count no longer change height as the value moves, so scrolling past
   the slider does not jump.
 

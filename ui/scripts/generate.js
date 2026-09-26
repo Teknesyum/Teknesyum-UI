@@ -806,8 +806,8 @@ ${scaleXaml('  ')}
   <SolidColorBrush x:Key="BorderDecorative" Color="${xa('border-decorative')}"/>
 
   <!-- The chain's only source is SKILL §3; the order matches. Atkinson
-       Hyperlegible Next is the default and is EMBEDDED in the project (pack URI),
-       not assumed present on the system. -->
+       Hyperlegible Next is the default and is EMBEDDED in the project: setup.js
+       copies it into the app's Assets/Fonts and rewrites this line. -->
   <FontFamily x:Key="FontSans">${fontXaml('sans')}</FontFamily>
   <FontFamily x:Key="FontMono">${fontXaml('mono')}</FontFamily>
 
@@ -944,11 +944,17 @@ ${metricXaml('  ', 'Duration')}
     <Setter Property="Foreground" Value="{StaticResource DangerText}"/>
   </Style>
 
+  <Style x:Key="TkWindow" TargetType="Window">
+    <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+  </Style>
+
   <Style x:Key="PrimaryButton" TargetType="Button">
     <Setter Property="Background" Value="{StaticResource NeonBlue}"/>
     <Setter Property="Foreground" Value="Black"/>
     <Setter Property="FontWeight" Value="SemiBold"/>
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
     <Setter Property="Padding" Value="20,14"/>
     <Setter Property="BorderThickness" Value="0"/>
     <Setter Property="Cursor" Value="Hand"/>
@@ -1022,6 +1028,11 @@ ${metricXaml('  ', 'Duration')}
         </ControlTemplate>
       </Setter.Value>
     </Setter>
+  </Style>
+
+  <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+    <Setter Property="Background" Value="{StaticResource DangerText}"/>
+    <Setter Property="Foreground" Value="{StaticResource OnDangerText}"/>
   </Style>
 
 </ResourceDictionary>
@@ -1107,8 +1118,8 @@ ${scaleXaml('    ')}
 
     <!-- The chain's only source is SKILL §3; the order matches. Atkinson
          Hyperlegible Next is the default and is EMBEDDED in the project, not
-         assumed present on the system. In Avalonia the embed path is an avares
-         URI, not a pack URI; example in references/avalonia.md. -->
+         assumed present on the system. setup.js copies the font into the app's
+         Assets/Fonts and rewrites this line to an avares URI. -->
     <FontFamily x:Key="FontSans">${fontXaml('sans')}</FontFamily>
     <FontFamily x:Key="FontMono">${fontXaml('mono')}</FontFamily>
 
@@ -1262,6 +1273,7 @@ ${metricXaml('    ', 'sys:TimeSpan')}
       <Setter Property="Foreground" Value="Black"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
       <Setter Property="Padding" Value="20,14"/>
       <Setter Property="BorderThickness" Value="0"/>
       <Setter Property="Cursor" Value="Hand"/>
@@ -1327,7 +1339,17 @@ ${metricXaml('    ', 'sys:TimeSpan')}
       </Style>
     </ControlTheme>
 
+    <ControlTheme x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+      <Setter Property="Background" Value="{StaticResource DangerText}"/>
+      <Setter Property="Foreground" Value="{StaticResource OnDangerText}"/>
+    </ControlTheme>
+
   </Styles.Resources>
+
+  <Style Selector=":is(Window)">
+    <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+  </Style>
 
   <!-- FOCUS RING, application wide.
        In WPF this was done with a style keyed on

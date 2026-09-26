@@ -1,0 +1,7 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Style Selector=":is(Window)">
+    <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+  </Style>
+</Styles>

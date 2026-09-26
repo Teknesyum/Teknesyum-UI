@@ -28,7 +28,7 @@ a number. Neither belongs in its context window.
 | How to reach the shelf and what to run | `SKILL.md`, 80 lines | paid once, when UI work starts |
 
 Base spent about 27,000 tokens on `SKILL.md` and 55,000 more on eight reference files
-every time an interface came up. This ships 97 scanner rules, one 80-line skill and two
+every time an interface came up. This ships 100 scanner rules, one 80-line skill and two
 reference files.
 
 ## Where the rules live
@@ -74,6 +74,12 @@ It writes `<project>/.claude/teknesyum-ui.json` and generates the theme into
 `<project>/teknesyum-ui/` for the targets you pick: `css`, `react`, `wpf`, `avalonia`,
 `winforms`. The Avalonia signature comes as `Signature.axaml.example`: it needs a
 localisation extension and a `Click` handler, so copy it into a view of your own.
+
+For `avalonia` and `wpf` it also embeds the sans face: Atkinson Hyperlegible Next and its
+OFL go into the app project's `Assets/Fonts`, `FontSans` points at the `avares://` (or
+assembly component) URI, and the project gets the resource item. `--app <csproj>` picks the
+project when there are several. The generated theme sets every window to FontSans at fs-2
+(Avalonia `:is(Window)`, WPF `TkWindow`), and `typography.scale` is read from the token file.
 
 Neon is the ready answer, not the only one — `--template custom` takes three brand colours
 and a surface, and derives the rest on the same formulas.
@@ -131,17 +137,27 @@ the window and measures every text the same way (see Templates).
 
 ```bash
 node <plugin>/scripts/scaffold.js kur <AppName> [--simge app/simge.ico] [--anahtar usb-01]
-node <plugin>/scripts/scaffold.js ustcubuk
-node <plugin>/scripts/scaffold.js durum
+node <plugin>/scripts/scaffold.js kur <AppName> --avalonia [--ns <Namespace>]
+node <plugin>/scripts/scaffold.js ustcubuk [<Namespace>] [--avalonia|--react]
+node <plugin>/scripts/scaffold.js durum [<Namespace>] [--avalonia|--electron]
 node <plugin>/scripts/scaffold.js denetim <Namespace> [--wpf|--avalonia] [--pencere MainWindow] [--esik 7]
 ```
 
 | Target | Writes | What it is |
 |---|---|---|
 | `kur` | `Kur.bat`, `kur-<name>.ps1` | A USB installer window: creeping progress bar, live log, finish and error screens, `-Prova` dry run. Updates in place; `-Onar` or the finish screen's Onar button rebuilds. Each stick carries its own deploy key under `.kurulum/anahtar/`. |
-| `ustcubuk` | `teknesyum-ui/ustcubuk/` | A React title bar: logo, two-part name, language slot, sponsor and brand links, window controls, drag region for Electron and Tauri. |
-| `durum` | `teknesyum-ui/durum/` | An Electron git sync with a title-bar badge: syncing, synced with the time, offline; click to sync now. |
-| `denetim` | `teknesyum-ui/denetim/KontrastTests.cs` | A headless contrast test: Avalonia.Headless.XUnit when the project has `.axaml` (the test project needs xunit v3), otherwise WPF on an STA thread with `VisualTreeHelper`. It measures every text run and icon, every button at rest, hover, pressed, focus and disabled, and the worst stop of a gradient ground; it writes `tmp/uc/kontrast-*.txt` plus window captures at 100/125/150 % and fails with every pair under the threshold. |
+| `kur --avalonia` | `teknesyum-ui/kur/KurulumEkrani.axaml` | The same install flow as an Avalonia screen, beside the PowerShell panel. |
+| `ustcubuk` | `teknesyum-ui/ustcubuk/` | The title bar: title, Teknesyum button, update badge, window buttons. React (logo, two-part name, language slot, drag region for Electron and Tauri) or, when the project has `.axaml`, Avalonia `TitleBar` + `KabukStilleri`. |
+| `durum` | `teknesyum-ui/durum/` | The update surface: an Electron git sync with a title-bar badge, or the Avalonia `GuncellemePaneli`. |
+| `denetim` | `teknesyum-ui/denetim/KontrastTests.cs`, `KabukTests.cs` | A headless contrast test: Avalonia.Headless.XUnit when the project has `.axaml` (the test project needs xunit v3), otherwise WPF on an STA thread with `VisualTreeHelper`. It measures every text run and icon, every button at rest, hover, pressed, focus and disabled, and the worst stop of a gradient ground; it writes `tmp/uc/kontrast-*.txt` plus window captures at 100/125/150 % and fails with every pair under the threshold. |
+
+Every template file starts with a `teknesyum-ui template <path>` line. Hover and press stay
+inside the button (nothing grows past its bounds: hover changes colour and border), and each Avalonia folder carries
+`ekran/` captures of rest, hover, pressed, focus and disabled at 848×640. `KabukTests.cs`
+checks that the sans face really loads, that no text sits below fs-2, and that every button
+state fits its own clip. The scanner flags a window with no root font size, a `FontSans`
+that is not embedded, and a title bar, update panel or install screen without the
+signature line (`kabuk/*`).
 
 Each target ends by naming the shelf book that governs what it just wrote, and says so
 plainly when the shelf or the book is missing. An existing file is never overwritten. Project-specific install steps go in with

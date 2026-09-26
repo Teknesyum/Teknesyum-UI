@@ -108,6 +108,27 @@ module.exports = function generate() {
     const bad = [...text.matchAll(/<!--([\s\S]*?)-->/g)].map((m) => m[1]).filter((b) => b.includes('--') || b.endsWith('-'));
     L.ok(path.basename(file) + ' has no double hyphen inside an XML comment', text.length > 0 && bad.length === 0, bad.slice(0, 2).join(' | '));
   }
+  const read = (n) => (fs.existsSync(path.join(out, n)) ? fs.readFileSync(path.join(out, n), 'utf8') : '');
+  const axaml = read('Theme.axaml');
+  const xaml = read('Theme.xaml');
+  const primaryAx = (/<ControlTheme x:Key="PrimaryButton"[\s\S]*?<\/ControlTheme>/.exec(axaml) || [''])[0];
+  L.ok('Avalonia PrimaryButton sets FontSize2', primaryAx.includes('<Setter Property="FontSize" Value="{StaticResource FontSize2}"/>'));
+  L.ok('Avalonia DangerButton builds on PrimaryButton', /<ControlTheme x:Key="DangerButton" TargetType="Button" BasedOn="\{StaticResource PrimaryButton\}">/.test(axaml));
+  const windowAx = (/<Style Selector=":is\(Window\)">[\s\S]*?<\/Style>/.exec(axaml) || [''])[0];
+  L.ok(
+    'Avalonia windows get FontSans and FontSize2 at the root',
+    windowAx.includes('Value="{StaticResource FontSans}"') && windowAx.includes('Value="{StaticResource FontSize2}"'),
+    windowAx
+  );
+  const primaryX = (/<Style x:Key="PrimaryButton"[\s\S]*?<\/Style>/.exec(xaml) || [''])[0];
+  L.ok('WPF PrimaryButton sets FontSize2', primaryX.includes('<Setter Property="FontSize" Value="{StaticResource FontSize2}"/>'));
+  L.ok('WPF DangerButton builds on PrimaryButton', /<Style x:Key="DangerButton" TargetType="Button" BasedOn="\{StaticResource PrimaryButton\}">/.test(xaml));
+  const windowX = (/<Style x:Key="TkWindow" TargetType="Window">[\s\S]*?<\/Style>/.exec(xaml) || [''])[0];
+  L.ok(
+    'WPF TkWindow carries FontSans and FontSize2',
+    windowX.includes('Value="{StaticResource FontSans}"') && windowX.includes('Value="{StaticResource FontSize2}"'),
+    windowX
+  );
   const shipped = fs.readFileSync(path.join(L.ASSETS, 'theme.css'), 'utf8');
   L.ok('the shipped theme.css matches the generator', shipped.replace(/\r\n/g, '\n') === css.replace(/\r\n/g, '\n'));
 };

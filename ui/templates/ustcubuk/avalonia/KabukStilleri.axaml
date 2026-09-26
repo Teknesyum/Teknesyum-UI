@@ -1,0 +1,261 @@
+<!-- teknesyum-ui template ustcubuk/avalonia/KabukStilleri.axaml -->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Styles.Resources>
+
+    <ControlTheme x:Key="WindowButton" TargetType="Button">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Width" Value="{StaticResource TitleBarHeightMax}"/>
+      <Setter Property="MinHeight" Value="{StaticResource TitleBarHeightMax}"/>
+      <Setter Property="VerticalAlignment" Value="Stretch"/>
+      <Setter Property="Focusable" Value="False"/>
+      <Setter Property="ClipToBounds" Value="False"/>
+      <Setter Property="Template">
+        <ControlTemplate TargetType="Button">
+          <Border Name="bd" Background="{TemplateBinding Background}">
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              HorizontalContentAlignment="Center"
+                              VerticalContentAlignment="Center"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:pointerover /template/ Border#bd">
+        <Setter Property="Background" Value="{StaticResource NeonBlue20}"/>
+      </Style>
+      <Style Selector="^:pressed /template/ Border#bd">
+        <Setter Property="Background" Value="{StaticResource NeonBlue30}"/>
+      </Style>
+      <Style Selector="^.close:pointerover /template/ Border#bd">
+        <Setter Property="Background" Value="{StaticResource DangerText}"/>
+      </Style>
+      <Style Selector="^.close:pointerover">
+        <Setter Property="Foreground" Value="{StaticResource OnDangerText}"/>
+      </Style>
+      <Style Selector="^.close:pressed">
+        <Setter Property="Foreground" Value="{StaticResource OnDangerText}"/>
+      </Style>
+      <Style Selector="^.close:pressed /template/ Border#bd">
+        <Setter Property="Background" Value="{StaticResource DangerText}"/>
+      </Style>
+      <Style Selector="^:disabled">
+        <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
+      </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="BadgeButton" TargetType="Button">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{StaticResource Warning}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource Warning50}"/>
+      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+      <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+      <Setter Property="Padding" Value="{StaticResource InputPadding}"/>
+      <Setter Property="MinHeight" Value="{StaticResource TargetMin}"/>
+      <Setter Property="MinWidth" Value="{StaticResource TargetMin}"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="ClipToBounds" Value="False"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Template">
+        <ControlTemplate TargetType="Button">
+          <Border Name="bd"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}"
+                  RenderTransformOrigin="50%,50%">
+            <Border.Transitions>
+              <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="{StaticResource TInstant}" Easing="{StaticResource EOut}"/>
+              </Transitions>
+            </Border.Transitions>
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:pointerover /template/ Border#bd">
+        <Setter Property="BorderBrush" Value="{StaticResource Warning}"/>
+      </Style>
+      <Style Selector="^:focus-visible /template/ Border#bd">
+        <Setter Property="BorderBrush" Value="{StaticResource Warning}"/>
+      </Style>
+      <Style Selector="^:pressed /template/ Border#bd">
+        <Setter Property="RenderTransform" Value="scale(0.98)"/>
+      </Style>
+      <Style Selector="^.hazir">
+        <Setter Property="Foreground" Value="{StaticResource Success}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Success}"/>
+      </Style>
+      <Style Selector="^.hazir:pointerover /template/ Border#bd">
+        <Setter Property="Background" Value="{StaticResource Success}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Success}"/>
+      </Style>
+      <Style Selector="^.hazir:pointerover">
+        <Setter Property="Foreground" Value="{StaticResource OnSuccess}"/>
+      </Style>
+      <Style Selector="^.hazir:focus-visible /template/ Border#bd">
+        <Setter Property="BorderBrush" Value="{StaticResource Success}"/>
+      </Style>
+      <Style Selector="^:disabled">
+        <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
+        <Setter Property="Cursor" Value="No"/>
+      </Style>
+      <Style Selector="^:disabled /template/ Border#bd">
+        <Setter Property="BorderBrush" Value="{StaticResource Disabled}"/>
+        <Setter Property="Background" Value="Transparent"/>
+      </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="SigChip" TargetType="Button">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource NeonBlue}"/>
+      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+      <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+      <Setter Property="Padding" Value="{StaticResource InputPadding}"/>
+      <Setter Property="MinHeight" Value="{StaticResource TargetMin}"/>
+      <Setter Property="MinWidth" Value="{StaticResource TargetMin}"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="ClipToBounds" Value="False"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Template">
+        <ControlTemplate TargetType="Button">
+          <Border Name="bd"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}"
+                  RenderTransformOrigin="50%,50%">
+            <Border.Transitions>
+              <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="{StaticResource TInstant}" Easing="{StaticResource EOut}"/>
+              </Transitions>
+            </Border.Transitions>
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              HorizontalContentAlignment="Center"
+                              VerticalContentAlignment="Center"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:not(.destek):pointerover">
+        <Setter Property="Background" Value="{StaticResource NeonBlue20}"/>
+        <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
+      </Style>
+      <Style Selector="^:not(.destek):focus-visible">
+        <Setter Property="Background" Value="{StaticResource NeonBlue10}"/>
+        <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
+      </Style>
+      <Style Selector="^:pressed /template/ Border#bd">
+        <Setter Property="RenderTransform" Value="scale(0.98)"/>
+      </Style>
+      <Style Selector="^.destek">
+        <Setter Property="Foreground" Value="{StaticResource PinkText}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource PinkText}"/>
+      </Style>
+      <Style Selector="^.destek:pointerover">
+        <Setter Property="Background" Value="{StaticResource NeonPink20}"/>
+        <Setter Property="Foreground" Value="{StaticResource PinkText}"/>
+      </Style>
+      <Style Selector="^.destek:focus-visible">
+        <Setter Property="Background" Value="{StaticResource NeonPink10}"/>
+        <Setter Property="Foreground" Value="{StaticResource PinkText}"/>
+      </Style>
+      <Style Selector="^:disabled">
+        <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Disabled}"/>
+        <Setter Property="Cursor" Value="No"/>
+      </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="GhostButton" TargetType="Button">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{StaticResource PurpleText}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
+      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+      <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+      <Setter Property="Padding" Value="{StaticResource InputPadding}"/>
+      <Setter Property="MinHeight" Value="{StaticResource InputHeight}"/>
+      <Setter Property="MinWidth" Value="{StaticResource TargetMin}"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="ClipToBounds" Value="False"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Template">
+        <ControlTemplate TargetType="Button">
+          <Border Name="bd"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}"
+                  RenderTransformOrigin="50%,50%">
+            <Border.Transitions>
+              <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="{StaticResource TInstant}" Easing="{StaticResource EOut}"/>
+              </Transitions>
+            </Border.Transitions>
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:pointerover /template/ Border#bd">
+        <Setter Property="BorderBrush" Value="{StaticResource PurpleText}"/>
+      </Style>
+      <Style Selector="^:focus-visible /template/ Border#bd">
+        <Setter Property="BorderBrush" Value="{StaticResource PurpleText}"/>
+      </Style>
+      <Style Selector="^:pressed /template/ Border#bd">
+        <Setter Property="RenderTransform" Value="scale(0.98)"/>
+      </Style>
+      <Style Selector="^:disabled">
+        <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
+        <Setter Property="Cursor" Value="No"/>
+      </Style>
+      <Style Selector="^:disabled /template/ Border#bd">
+        <Setter Property="BorderBrush" Value="{StaticResource Disabled}"/>
+      </Style>
+    </ControlTheme>
+
+  </Styles.Resources>
+
+  <Style Selector="Button">
+    <Setter Property="ClipToBounds" Value="False"/>
+  </Style>
+
+  <Style Selector="TextBlock">
+    <Setter Property="ClipToBounds" Value="False"/>
+  </Style>
+
+</Styles>

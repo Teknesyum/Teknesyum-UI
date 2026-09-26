@@ -1,0 +1,50 @@
+<!-- teknesyum-ui template ustcubuk/avalonia/TitleBar.axaml -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="{{AD}}.Kabuk.TitleBar"
+             Height="{StaticResource TitleBarHeightMax}"
+             ClipToBounds="False">
+
+  <Grid Name="Kap" Background="Transparent" ClipToBounds="False"
+        ColumnDefinitions="Auto,*,Auto,Auto,Auto">
+
+    <Border Grid.Column="0" Padding="{StaticResource InputPadding}" IsHitTestVisible="False">
+      <StackPanel Orientation="Horizontal" Spacing="{StaticResource Space2}" VerticalAlignment="Center">
+        <Image Name="LogoResmi" Width="{StaticResource IconSize3}" Height="{StaticResource IconSize3}"
+               VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw"/>
+        <TextBlock Name="AdYazisi" Theme="{StaticResource H3}" VerticalAlignment="Center"><Run Foreground="{StaticResource NeonBlue}"/><Run Foreground="{StaticResource PinkText}"/></TextBlock>
+      </StackPanel>
+    </Border>
+
+    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{StaticResource Space2}"
+                VerticalAlignment="Center" ClipToBounds="False">
+      <Button Name="Rozet" Theme="{StaticResource BadgeButton}" IsVisible="False" AutomationProperties.Name="{Binding #RozetYazisi.Text}">
+        <StackPanel Orientation="Horizontal" Spacing="{StaticResource Space2}">
+          <Ellipse Width="{StaticResource Space2}" Height="{StaticResource Space2}" VerticalAlignment="Center"
+                   Fill="{Binding $parent[Button].Foreground}"/>
+          <TextBlock Name="RozetYazisi" VerticalAlignment="Center"/>
+        </StackPanel>
+      </Button>
+      <Button Name="DestekDugmesi" Theme="{StaticResource SigChip}" Classes="sigchip destek" AutomationProperties.Name="{Binding $self.Content}"/>
+      <Button Name="ImzaDugmesi" Theme="{StaticResource SigChip}" Classes="sigchip" AutomationProperties.Name="{Binding $self.Content}"/>
+    </StackPanel>
+
+    <Border Grid.Column="3" Width="{StaticResource Space3}" IsHitTestVisible="False"/>
+
+    <StackPanel Grid.Column="4" Orientation="Horizontal" ClipToBounds="False">
+      <Button Name="KucultDugmesi" Theme="{StaticResource WindowButton}" AutomationProperties.Name="{Binding $self.(ToolTip.Tip)}">
+        <Path Data="M0 7H14" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"
+              Width="{StaticResource IconSize1}" Height="{StaticResource IconSize1}" VerticalAlignment="Center"/>
+      </Button>
+      <Button Name="BuyutDugmesi" Theme="{StaticResource WindowButton}" AutomationProperties.Name="{Binding $self.(ToolTip.Tip)}">
+        <Path Data="M0.5 0.5H13.5V13.5H0.5Z" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"
+              Width="{StaticResource IconSize1}" Height="{StaticResource IconSize1}"/>
+      </Button>
+      <Button Name="KapatDugmesi" Theme="{StaticResource WindowButton}" Classes="close" AutomationProperties.Name="{Binding $self.(ToolTip.Tip)}">
+        <Path Data="M0 0L14 14M14 0L0 14" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"
+              Width="{StaticResource IconSize1}" Height="{StaticResource IconSize1}"/>
+      </Button>
+    </StackPanel>
+
+  </Grid>
+</UserControl>

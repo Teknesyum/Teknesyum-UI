@@ -1,3 +1,4 @@
+// teknesyum-ui template durum/electron/badge.js
 const LABELS = {
   waiting: 'Bağlanıyor…',
   syncing: 'Eşitleniyor…',

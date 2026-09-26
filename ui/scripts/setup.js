@@ -20,6 +20,16 @@ const ARTIFACTS = {
   winforms: ['Palette.cs'],
 };
 
+const FONT_FILES = [
+  'AtkinsonHyperlegibleNext-Regular.ttf',
+  'AtkinsonHyperlegibleNext-SemiBold.ttf',
+  'AtkinsonHyperlegibleNext-Bold.ttf',
+  'OFL.txt',
+];
+const FONT_FAMILY = 'Atkinson Hyperlegible Next';
+const THEME_FILE = { avalonia: 'Theme.axaml', wpf: 'Theme.xaml' };
+const SKIP_PROJECT_DIR = /^(\.|node_modules$|bin$|obj$|teknesyum-ui$|trash$)/;
+
 const SAMPLES = {
   'Signature.axaml': 'Signature.axaml.example',
 };
@@ -339,6 +349,111 @@ function buildTokens(palette, name) {
   return T;
 }
 
+function tokenScale(tokensFile) {
+  const T = read(tokensFile);
+  const steps = ['fs-1', 'fs-2', 'fs-3', 'fs-4', 'fs-5'].map((k) => T && T.size && T.size[k] && T.size[k].value);
+  if (steps.some((v) => typeof v !== 'number')) throw new Error('token file has no size.fs-1..fs-5: ' + tokensFile);
+  return steps;
+}
+
+function csprojFiles(dir, depth, out) {
+  let entries;
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return out;
+  }
+  for (const e of entries) {
+    const full = path.join(dir, e.name);
+    if (e.isFile() && /\.csproj$/i.test(e.name)) out.push(full);
+    else if (e.isDirectory() && depth < 4 && !SKIP_PROJECT_DIR.test(e.name)) csprojFiles(full, depth + 1, out);
+  }
+  return out;
+}
+
+function appProject(root, target) {
+  const given = flag('app');
+  const list = given && given !== 'true' ? [path.resolve(root, given)] : csprojFiles(root, 0, []);
+  const fits = (text) =>
+    target === 'avalonia'
+      ? /Include="Avalonia(\.Desktop)?"/.test(text)
+      : /<UseWPF>\s*true\s*<\/UseWPF>/i.test(text);
+  const found = [];
+  for (const file of list) {
+    let text;
+    try {
+      text = fs.readFileSync(file, 'utf8');
+    } catch {
+      continue;
+    }
+    if (!fits(text)) continue;
+    if (/<IsTestProject>\s*true|Include="xunit|Include="Avalonia\.Headless/i.test(text)) continue;
+    const exe = /<OutputType>\s*(Win)?Exe\s*<\/OutputType>/i.test(text);
+    const asm = /<AssemblyName>\s*([^<\s]+)\s*<\/AssemblyName>/.exec(text);
+    found.push({ file, text, exe, assembly: asm ? asm[1] : path.basename(file, path.extname(file)) });
+  }
+  found.sort((a, b) => Number(b.exe) - Number(a.exe));
+  return found[0] || null;
+}
+
+function fontUri(target, assembly, chain) {
+  const rest = chain.slice(1).join(', ');
+  const head =
+    target === 'avalonia'
+      ? 'avares://' + assembly + '/Assets/Fonts#' + FONT_FAMILY
+      : '/' + assembly + ';component/Assets/Fonts/#' + FONT_FAMILY;
+  return rest ? head + ', ' + rest : head;
+}
+
+function pointFontSans(themeFile, target, assembly) {
+  let text;
+  try {
+    text = fs.readFileSync(themeFile, 'utf8');
+  } catch {
+    return false;
+  }
+  const re = /(<FontFamily x:Key="FontSans">)([^<]*)(<\/FontFamily>)/;
+  const m = re.exec(text);
+  if (!m) return false;
+  const chain = m[2].split(',').map((x) => x.trim()).filter(Boolean);
+  if (chain[0] !== FONT_FAMILY) return false;
+  fs.writeFileSync(themeFile, text.replace(re, (all, a, v, b) => a + fontUri(target, assembly, chain) + b), 'utf8');
+  return true;
+}
+
+function addFontResource(app, target) {
+  const covered =
+    target === 'avalonia'
+      ? /<AvaloniaResource\s+Include="Assets[\\/](\*\*|Fonts)/i.test(app.text)
+      : /<Resource\s+Include="Assets[\\/](\*\*|Fonts)/i.test(app.text);
+  if (covered || !/<\/Project>\s*$/.test(app.text)) return false;
+  const item = target === 'avalonia' ? '<AvaloniaResource Include="Assets\\Fonts\\**" />' : '<Resource Include="Assets\\Fonts\\*.ttf" />';
+  const eol = app.text.includes('\r\n') ? '\r\n' : '\n';
+  const text = app.text.replace(/<\/Project>\s*$/, '  <ItemGroup>' + eol + '    ' + item + eol + '  </ItemGroup>' + eol + '</Project>' + eol);
+  fs.writeFileSync(app.file, text, 'utf8');
+  return true;
+}
+
+function embedFont(root, target, outDir, force) {
+  const app = appProject(root, target);
+  if (!app) return '  font     no ' + target + ' app .csproj found; ' + FONT_FAMILY + ' is not embedded (pass --app <csproj>)';
+  const fonts = path.join(path.dirname(app.file), 'Assets', 'Fonts');
+  const r = copyInto(path.join(pluginDir(), 'fonts'), fonts, FONT_FILES, force);
+  const pointed = pointFontSans(path.join(outDir, THEME_FILE[target]), target, app.assembly);
+  const added = addFontResource(app, target);
+  return (
+    '  font     ' +
+    fonts +
+    '  (' +
+    r.written.length +
+    ' written' +
+    (r.skipped.length ? ', ' + r.skipped.length + ' kept' : '') +
+    (pointed ? ', FontSans -> ' + (target === 'avalonia' ? 'avares' : 'component') + ' URI' : '') +
+    (added ? ', font resource added to ' + path.basename(app.file) : '') +
+    ')'
+  );
+}
+
 function copyInto(fromDir, toDir, names, force) {
   const written = [];
   const skipped = [];
@@ -441,7 +556,6 @@ function apply(answers) {
   cfg.typography = prev.typography || {
     sans: "'Atkinson Hyperlegible Next', 'Segoe UI', system-ui, sans-serif",
     mono: "'Cascadia Mono', Consolas, ui-monospace, monospace",
-    scale: [10, 13, 14, 18, 24],
   };
   if (flag('sans')) cfg.typography.sans = flag('sans');
   if (flag('mono')) cfg.typography.mono = flag('mono');
@@ -488,6 +602,8 @@ function apply(answers) {
     }
   }
 
+  cfg.typography.scale = tokenScale(tokensFile);
+
   const stage = fs.mkdtempSync(path.join(os.tmpdir(), 'teknesyum-ui-'));
   const lines = [];
   let wrote = 0;
@@ -516,6 +632,7 @@ function apply(answers) {
           (gone.length ? ', missing ' + gone.join(' ') : '') +
           ')'
       );
+      if (THEME_FILE[t]) lines.push(embedFont(root, t, dir, force));
     }
   } finally {
     fs.rmSync(stage, { recursive: true, force: true });
@@ -585,6 +702,7 @@ function help() {
     'Flags   --project <dir>  --template neon|custom  --targets ' + TARGETS.join(',') ,
     '        --primary --secondary --tertiary --surface --dark   (custom only)',
     '        --sans --mono --signature yes|no --note <text>  --force',
+    '        --app <csproj>   app project that receives Assets/Fonts (default: found under --project)',
     '',
     'Examples',
     '  node setup.js --apply --template neon --targets css,react --project .',

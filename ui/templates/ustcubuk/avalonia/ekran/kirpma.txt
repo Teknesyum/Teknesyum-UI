@@ -1,0 +1,2 @@
+bilesen: ustcubuk  pencere: 848x640  dugme: 6  denetim: 30  tasma: 0
+dugmeler: Rozet, DestekDugmesi, ImzaDugmesi, KucultDugmesi, BuyutDugmesi, KapatDugmesi

@@ -59,6 +59,42 @@ function copies() {
   L.ok('durum writes the main, preload and badge files', names.every((n) => fs.existsSync(path.join(syncDir, n))));
 }
 
+function avalonia() {
+  const root = L.tmp('tkui-av-');
+  L.write(path.join(root, 'src', 'App', 'MainWindow.axaml'), '<Window xmlns="https://github.com/avaloniaui"/>\n');
+  const signed = (file) => /teknesyum-ui template [\w./-]+/.test(fs.readFileSync(file, 'utf8').split(/\r?\n/)[0]);
+  const clean = (file) => !/\{\{[A-Z]+\}\}/.test(fs.readFileSync(file, 'utf8'));
+
+  L.ok('ustcubuk on an Avalonia project without a namespace exits 2', scaffold(root, ['ustcubuk']).status === 2);
+
+  const bar = scaffold(root, ['ustcubuk', 'Deneme']);
+  L.ok('scaffold ustcubuk picks Avalonia from the .axaml in the project', bar.status === 0, bar.stderr || bar.stdout);
+  const barDir = path.join(root, 'teknesyum-ui', 'ustcubuk');
+  const barFiles = ['TitleBar.axaml', 'TitleBar.axaml.cs', 'KabukStilleri.axaml'].map((n) => path.join(barDir, n));
+  L.ok('ustcubuk writes TitleBar and KabukStilleri', barFiles.every((f) => fs.existsSync(f)), fs.existsSync(barDir) ? fs.readdirSync(barDir).join(' ') : '');
+  L.ok('ustcubuk says how to link the files', /AvaloniaXaml Include=/.test(bar.stdout) && /StyleInclude/.test(bar.stdout), bar.stdout);
+
+  const panel = scaffold(root, ['durum', 'Deneme', '--avalonia']);
+  L.ok('scaffold durum --avalonia exits 0', panel.status === 0, panel.stderr || panel.stdout);
+  const panelFiles = fs.readdirSync(path.join(root, 'teknesyum-ui', 'durum')).map((n) => path.join(root, 'teknesyum-ui', 'durum', n));
+  L.ok('durum writes GuncellemePaneli', panelFiles.some((f) => f.endsWith('GuncellemePaneli.axaml')), panelFiles.join(' '));
+
+  const kurRoot = L.tmp('tkui-av-kur-');
+  const setup = scaffold(kurRoot, ['kur', 'Görev Takip', '--avalonia', '--ns', 'GorevTakip']);
+  L.ok('kur --avalonia exits 0', setup.status === 0, setup.stderr || setup.stdout);
+  const kurDir = path.join(kurRoot, 'teknesyum-ui', 'kur');
+  const kurFiles = fs.existsSync(kurDir) ? fs.readdirSync(kurDir).map((n) => path.join(kurDir, n)) : [];
+  L.ok('kur --avalonia adds the install screen', kurFiles.some((f) => f.endsWith('KurulumEkrani.axaml')) && fs.existsSync(path.join(kurRoot, 'Kur.bat')), kurFiles.join(' '));
+  L.ok('kur --avalonia refuses an app name that is no namespace', scaffold(L.tmp('tkui-av-ns-'), ['kur', 'Görev Takip', '--avalonia']).status === 2);
+
+  const all = barFiles.concat(panelFiles, kurFiles);
+  L.ok('every Avalonia shell file carries its template signature', all.every(signed), all.filter((f) => !signed(f)).join(' '));
+  L.ok('no placeholder survives in the Avalonia shell', all.every(clean), all.filter((f) => !clean(f)).join(' '));
+
+  const audit = scaffold(root, ['denetim', 'Deneme']);
+  L.ok('denetim writes the shell tests beside the contrast test', audit.status === 0 && ['KontrastTests.cs', 'KabukTests.cs'].every((n) => fs.existsSync(path.join(root, 'teknesyum-ui', 'denetim', n))), audit.stdout);
+}
+
 function usage() {
   const root = L.tmp('tkui-usage-');
   L.ok('an unknown target exits 2', scaffold(root, ['nope']).status === 2);
@@ -94,6 +130,7 @@ function rafNotu() {
 module.exports = function scaffoldSuite() {
   kur();
   copies();
+  avalonia();
   usage();
   rafNotu();
 };

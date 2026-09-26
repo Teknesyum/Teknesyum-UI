@@ -1,3 +1,4 @@
+// teknesyum-ui template durum/electron/preload.js
 'use strict';
 
 const { contextBridge, ipcRenderer } = require('electron');

@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <NoWarn>$(NoWarn);CS0436</NoWarn>
+  </PropertyGroup>
+
+  <Import Project="../Sablon.targets" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <PackageReference Include="Avalonia.Headless.XUnit" Version="11.3.20" />
+    <PackageReference Include="Avalonia.Skia" Version="11.3.20" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Ekran.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SablonCs Include="$(Sablonlar)denetim/avalonia/KontrastTests.cs" Cikti="$(SablonCikti)Denetim/KontrastTests.cs" Link="Denetim/KontrastTests.cs" />
+    <SablonCs Include="$(Sablonlar)denetim/avalonia/KabukTests.cs" Cikti="$(SablonCikti)Denetim/KabukTests.cs" Link="Denetim/KabukTests.cs" />
+    <Compile Include="@(SablonCs->'%(Cikti)')" />
+  </ItemGroup>
+
+</Project>

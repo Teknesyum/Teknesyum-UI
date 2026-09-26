@@ -1,0 +1,56 @@
+<!-- teknesyum-ui template durum/avalonia/GuncellemePaneli.axaml -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="{{AD}}.Kabuk.GuncellemePaneli"
+             Width="{StaticResource ModalWidth}"
+             ClipToBounds="False">
+
+  <UserControl.Transitions>
+    <Transitions>
+      <DoubleTransition Property="Opacity" Duration="{StaticResource TBase}" Easing="{StaticResource EOut}"/>
+    </Transitions>
+  </UserControl.Transitions>
+
+  <Border Theme="{StaticResource Panel}" ClipToBounds="False">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="{StaticResource Space4}" ClipToBounds="False">
+
+      <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="{StaticResource Space2}">
+        <Image Name="LogoResmi" Width="{StaticResource IconSize3}" Height="{StaticResource IconSize3}"
+               VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw"/>
+        <TextBlock Name="BaslikYazisi" Theme="{StaticResource H3}" VerticalAlignment="Center"/>
+      </StackPanel>
+
+      <StackPanel Grid.Row="1" Spacing="{StaticResource Space1}">
+        <TextBlock Name="DurumYazisi" Theme="{StaticResource Body}" TextWrapping="Wrap"/>
+        <StackPanel Orientation="Horizontal" Spacing="{StaticResource Space2}">
+          <TextBlock Name="SurumEtiketiYazisi" Theme="{StaticResource Label}" VerticalAlignment="Center"/>
+          <TextBlock Name="SurumYazisi" Theme="{StaticResource MonoValue}" VerticalAlignment="Center"/>
+        </StackPanel>
+      </StackPanel>
+
+      <Grid Name="Ilerleme" Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="{StaticResource Space3}">
+        <Border Name="Iz" Grid.Column="0" Height="{StaticResource Space2}" CornerRadius="{StaticResource Radius}"
+                Background="{StaticResource NeonBlue10}" VerticalAlignment="Center" ClipToBounds="True">
+          <Border Name="Dolgu" HorizontalAlignment="Stretch" CornerRadius="{StaticResource Radius}"
+                  RenderTransformOrigin="0%,50%">
+            <Border.Background>
+              <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                <GradientStop Offset="0" Color="{StaticResource NeonBlueColor}"/>
+                <GradientStop Offset="1" Color="{StaticResource NeonPinkColor}"/>
+              </LinearGradientBrush>
+            </Border.Background>
+          </Border>
+        </Border>
+        <TextBlock Name="YuzdeYazisi" Grid.Column="1" Theme="{StaticResource MonoValue}" VerticalAlignment="Center"/>
+      </Grid>
+
+      <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="{StaticResource Space3}" ClipToBounds="False">
+        <Button Name="IndirVeYukleDugmesi" Theme="{StaticResource PrimaryButton}" AutomationProperties.Name="{Binding $self.Content}"/>
+        <Button Name="IndirDugmesi" Theme="{StaticResource GhostButton}" AutomationProperties.Name="{Binding $self.Content}"/>
+        <Button Name="IptalDugmesi" Theme="{StaticResource GhostButton}" AutomationProperties.Name="{Binding $self.Content}"/>
+        <Button Name="YukleDugmesi" Theme="{StaticResource PrimaryButton}" AutomationProperties.Name="{Binding $self.Content}"/>
+      </StackPanel>
+
+    </Grid>
+  </Border>
+</UserControl>

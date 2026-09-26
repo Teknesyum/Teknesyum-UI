@@ -1,3 +1,4 @@
+// teknesyum-ui template durum/electron/sync.js
 'use strict';
 
 const { execFile } = require('child_process');

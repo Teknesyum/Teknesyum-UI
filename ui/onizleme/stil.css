@@ -710,6 +710,14 @@ th { color: var(--tk-text-label); font-weight: var(--tk-fw-semi); }
 @media (prefers-reduced-motion: reduce) { .kaydet-pencere[open] .kaydet-kutu { animation: none; } }
 .kaydet-kutu { width: min(560px, 90vw); max-height: 85vh; overflow: auto; }
 .kombi-kutu { width: min(760px, 92vw); }
+.kombi-hedef { margin-bottom: var(--tk-sp-2); }
+.kombi-hedef output { min-inline-size: 3ch; text-align: end; font-variant-numeric: tabular-nums; }
+.kombi-alan-kap { margin: 0 0 var(--tk-sp-3); }
+#kombi-alan { display: block; width: 100%; height: auto; border-radius: var(--tk-r-chip); cursor: crosshair; }
+.kombi-lejant { display: flex; flex-wrap: wrap; align-items: center; gap: var(--tk-sp-3); margin-top: var(--tk-sp-2); font-size: var(--tk-fs-1); color: var(--tk-text-label); }
+.kombi-lejant > span:not(.kombi-alan-bilgi) { padding-top: var(--tk-sp-1); border-top: 4px solid; font-variant-numeric: tabular-nums; }
+.kombi-lejant > span.kombi-lejant-hedef { border-top-style: dashed; border-top-color: var(--tk-pink-text); }
+.kombi-alan-bilgi { flex-basis: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
 .kombi-izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: var(--tk-sp-3); margin-bottom: var(--tk-sp-4); }
 .kombi-kart {
   display: flex;
@@ -1032,7 +1040,7 @@ th { color: var(--tk-text-label); font-weight: var(--tk-fw-semi); }
 .olcu-izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr)); gap: var(--tk-sp-3); margin-bottom: var(--tk-sp-4); }
 .olcu { display: flex; flex-direction: column; gap: var(--tk-sp-1); padding: var(--tk-sp-3); background: var(--tk-surface); border: var(--tk-border-w) solid var(--tk-border); border-radius: var(--tk-r); }
 .olcu-ad { font-size: var(--tk-fs-1); color: var(--tk-text-label); }
-.olcu-deger { display: flex; align-items: baseline; gap: var(--tk-sp-1); font-size: var(--tk-fs-4); font-weight: var(--tk-fw-semi); color: var(--tk-blue); }
+.olcu-deger { display: flex; font-variant-numeric: tabular-nums; align-items: baseline; gap: var(--tk-sp-1); font-size: var(--tk-fs-4); font-weight: var(--tk-fw-semi); color: var(--tk-blue); }
 .olcu-birim { font-size: var(--tk-fs-1); color: var(--tk-text); }
 .kare-grafik-kap { margin-bottom: var(--tk-sp-3); }
 .kare-grafik { display: block; width: 100%; height: calc(var(--tk-sp-5) * 5); background: var(--tk-surface); border-radius: var(--tk-r); }
@@ -1043,7 +1051,10 @@ th { color: var(--tk-text-label); font-weight: var(--tk-fw-semi); }
 .yuk-serit > span { border-top: 4px solid transparent; }
 .yuk-serit > [data-yuk-bolge='uyari'] { border-top-color: var(--tk-warning); }
 .yuk-serit > [data-yuk-bolge='tehlike'] { flex: 1; border-top-color: var(--tk-danger-text); }
-.yuk-not { font-size: var(--tk-fs-1); color: var(--tk-text-label); }
+.yuk-not { display: grid; font-size: var(--tk-fs-1); color: var(--tk-text-label); }
+.yuk-not > span { grid-area: 1 / 1; }
+.yuk-not > [aria-hidden='true'] { visibility: hidden; }
+.alan-ust output[data-yuk-bolge] { min-inline-size: 4ch; text-align: end; font-variant-numeric: tabular-nums; }
 .yuk-not[data-yuk-bolge='uyari'],
 .alan-ust output[data-yuk-bolge='uyari'] { color: var(--tk-warning); }
 .yuk-not[data-yuk-bolge='tehlike'],

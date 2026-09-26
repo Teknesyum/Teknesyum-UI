@@ -7,6 +7,16 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- Hedef Okunurluk picks its target with a 1-point slider (50–100), chips stay as shortcuts. In
+  single-colour scope it draws a hue × lightness field with the 95, 90 and 85 readability curves
+  and the target curve dashed; hovering shows hex and score, clicking applies that colour.
+- The preview is titled TeknesyumUI (title bar, window and page title).
+
+### Fixed
+
+- The load test note and count no longer change height as the value moves, so scrolling past
+  the slider does not jump.
+
 - Teknik → Yük Testi marks the item-count slider: 1500 and up is a caution zone, 2000 and up a
   warning zone, measured on the dev machine (64 fps at 1500, 42 fps at 2000). The count and a note
   under the slider take the zone colour.

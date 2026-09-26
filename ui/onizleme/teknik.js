@@ -17,10 +17,10 @@
   const YUK_TEHLIKE = 2000;
   const yukYuzde = (n) => Math.round(((n - 50) / (3000 - 50)) * 1000) / 10;
   const yukBolge = (n) => (n >= YUK_TEHLIKE ? 'tehlike' : n >= YUK_UYARI ? 'uyari' : 'rahat');
-  const yukNot = (n) =>
-    n >= YUK_TEHLIKE
+  const yukNot = (b) =>
+    b === 'tehlike'
       ? 'Uyarı: ' + YUK_TEHLIKE + ' ve üstü bu makinede 60 fps altına iniyor; arayüz takılabilir.'
-      : n >= YUK_UYARI
+      : b === 'uyari'
         ? 'Dikkat: ' + YUK_UYARI + ' ve üstü bu makinede 60 fps sınırında.'
         : YUK_UYARI + ' altı rahat; ' + YUK_UYARI + ' dikkat, ' + YUK_TEHLIKE + ' üstü uyarı bölgesi.';
   let toplamKare = 0;
@@ -67,7 +67,7 @@
       '<label class="alan yuk-sayi"><span class="alan-ust">Öğe Sayısı <output data-yuk-cikti data-yuk-bolge="' + yukBolge(yuk.sayi) + '">' + yuk.sayi + '</output></span>' +
       '<input type="range" min="50" max="3000" step="50" value="' + yuk.sayi + '" data-yuk-sayi aria-label="Öğe Sayısı" aria-describedby="yuk-not">' +
       '<span class="yuk-serit" aria-hidden="true"><span style="width:' + yukYuzde(YUK_UYARI) + '%"></span><span data-yuk-bolge="uyari" style="width:' + (yukYuzde(YUK_TEHLIKE) - yukYuzde(YUK_UYARI)) + '%"></span><span data-yuk-bolge="tehlike"></span></span>' +
-      '<span class="yuk-not" id="yuk-not" data-yuk-bolge="' + yukBolge(yuk.sayi) + '">' + yukNot(yuk.sayi) + '</span></label>' +
+      '<span class="yuk-not" id="yuk-not" data-yuk-bolge="' + yukBolge(yuk.sayi) + '">' + ['rahat', 'uyari', 'tehlike'].map((b) => '<span data-yuk-mesaj="' + b + '"' + (b === yukBolge(yuk.sayi) ? '' : ' aria-hidden="true"') + '>' + yukNot(b) + '</span>').join('') + '</span></label>' +
       '<button type="button" class="tk-btn tk-btn-primary" data-teknik="yuk">Testi Başlat</button>' +
       '</div>' +
       '<div class="yuk-sahne" data-yuk-sahne aria-hidden="true"></div>' +
@@ -300,7 +300,7 @@
     const n = $('#yuk-not', kok);
     o.textContent = yuk.sayi;
     o.dataset.yukBolge = n.dataset.yukBolge = yukBolge(yuk.sayi);
-    n.textContent = yukNot(yuk.sayi);
+    for (const m of n.children) m.dataset.yukMesaj === n.dataset.yukBolge ? m.removeAttribute('aria-hidden') : m.setAttribute('aria-hidden', 'true');
   }
 
   function degisim(e) {

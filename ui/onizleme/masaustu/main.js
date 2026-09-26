@@ -40,7 +40,7 @@ function pencere() {
     height: 920,
     minWidth: 1024,
     minHeight: 640,
-    title: 'Teknesyum Renk Önizleme ' + surum(),
+    title: 'TeknesyumUI ' + surum(),
     backgroundColor: yuzey(),
     frame: false,
     thickFrame: true,
@@ -71,7 +71,7 @@ function pencere() {
 
 app.on('second-instance', () => {
   if (!ana) return pencere();
-  ana.setTitle('Teknesyum Renk Önizleme ' + surum());
+  ana.setTitle('TeknesyumUI ' + surum());
   ana.webContents.reloadIgnoringCache();
   if (ana.isMinimized()) ana.restore();
   ana.focus();

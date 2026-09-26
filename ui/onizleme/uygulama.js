@@ -1102,11 +1102,109 @@
     return en;
   }
 
+  const EGRILER = [[95, '--tk-success'], [90, '--tk-blue'], [85, '--tk-warning']];
+  const ALAN_H = 10;
+  const ALAN_L = 2.5;
+  const alanBellek = {};
+
+  function alanOlc(ad) {
+    const s = hsl(su.renk[ad]).s;
+    const anahtar = ad + '|' + s + '|' + su.renk.surface + '|' + su.renk.text;
+    if (!alanBellek[anahtar]) {
+      const izgara = [];
+      for (let l = 0; l <= 100; l += ALAN_L) {
+        const satir = [];
+        for (let h = 0; h <= 360; h += ALAN_H) satir.push(renkPuani({ [ad]: hslHex(h % 360, s, l) }, ad).puan);
+        izgara.push(satir);
+      }
+      alanBellek[anahtar] = { s, izgara };
+    }
+    return alanBellek[anahtar];
+  }
+
+  function egriCiz(ctx, izgara, esik, g, y) {
+    const sx = g / (izgara[0].length - 1);
+    const sy = y / (izgara.length - 1);
+    const nokta = (i, j, i2, j2) => {
+      const a = izgara[i][j] - esik;
+      const b = izgara[i2][j2] - esik;
+      const t = a / (a - b);
+      return [(j + (j2 - j) * t) * sx, y - (i + (i2 - i) * t) * sy];
+    };
+    ctx.beginPath();
+    for (let i = 0; i < izgara.length - 1; i++)
+      for (let j = 0; j < izgara[0].length - 1; j++) {
+        const k = [[i, j], [i, j + 1], [i + 1, j + 1], [i + 1, j]];
+        const kenar = [];
+        for (let e = 0; e < 4; e++) {
+          const [a1, b1] = k[e];
+          const [a2, b2] = k[(e + 1) % 4];
+          if (izgara[a1][b1] >= esik !== izgara[a2][b2] >= esik) kenar.push(nokta(a1, b1, a2, b2));
+        }
+        for (let e = 0; e + 1 < kenar.length; e += 2) {
+          ctx.moveTo(kenar[e][0], kenar[e][1]);
+          ctx.lineTo(kenar[e + 1][0], kenar[e + 1][1]);
+        }
+      }
+    ctx.stroke();
+  }
+
+  function alanCiz() {
+    const cv = $('#kombi-alan');
+    if (!cv || !kombiAd) return;
+    const ad = kombiAd;
+    const { s, izgara } = alanOlc(ad);
+    const ctx = cv.getContext('2d');
+    const g = cv.width;
+    const y = cv.height;
+    const hs = getComputedStyle(document.documentElement);
+    const v = (n) => hs.getPropertyValue(n).trim();
+    for (let px = 0; px < g; px += 4)
+      for (let py = 0; py < y; py += 4) {
+        ctx.fillStyle = 'hsl(' + (px / g) * 360 + ', ' + s + '%, ' + (1 - py / y) * 100 + '%)';
+        ctx.fillRect(px, py, 4, 4);
+      }
+    const esikler = EGRILER.concat(EGRILER.some(([e]) => e === kombiHedef) ? [] : [[kombiHedef, '--tk-pink-text']]);
+    for (const [esik, renk] of esikler) {
+      ctx.setLineDash(renk === '--tk-pink-text' ? [6, 4] : []);
+      ctx.strokeStyle = v('--tk-black');
+      ctx.lineWidth = 4;
+      egriCiz(ctx, izgara, esik, g, y);
+      ctx.strokeStyle = v(renk);
+      ctx.lineWidth = 2;
+      egriCiz(ctx, izgara, esik, g, y);
+    }
+    ctx.setLineDash([]);
+    const isaret = (hex, dolu) => {
+      const k = hsl(hex);
+      const px = (k.h / 360) * g;
+      const py = y - (k.l / 100) * y;
+      ctx.beginPath();
+      ctx.arc(px, py, dolu ? 6 : 4, 0, Math.PI * 2);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = v('--tk-black');
+      ctx.fillStyle = v('--tk-text');
+      if (dolu) ctx.fill();
+      ctx.stroke();
+    };
+    for (const k of kombiler) isaret(k.renk[ad], false);
+    isaret(su.renk[ad], true);
+  }
+
+  function alanNokta(cv, e) {
+    const k = cv.getBoundingClientRect();
+    const h = Math.round(Math.max(0, Math.min(1, (e.clientX - k.left) / k.width)) * 360) % 360;
+    const l = Math.round(Math.max(0, Math.min(1, 1 - (e.clientY - k.top) / k.height)) * 1000) / 10;
+    const hex = hslHex(h, alanOlc(kombiAd).s, l);
+    return { hex, puan: renkPuani({ [kombiAd]: hex }, kombiAd).puan };
+  }
+
   function kombiUret(hedef, ad = kombiAd) {
     kombiHedef = hedef;
     kombiAd = ad;
     kombiler = [0, 1, 2, 3, 4].map(() => (ad ? tekBul(hedef, ad) : kombiBul(hedef)));
     kombiCiz();
+    if ($('#kombi-pencere').open) alanCiz();
   }
 
   function onRenkHex(r, ad) {
@@ -1159,6 +1257,8 @@
       '<div class="tk-panel tk-modal kaydet-kutu kombi-kutu">' +
       '<h2 class="tk-h3" id="kombi-baslik">Hedef Okunurluk' + (kombiAd ? ' · ' + adi(kombiAd) : '') + '</h2>' +
       kapsam +
+      '<label class="alan kombi-hedef"><span class="alan-ust">Hedef Puan <output data-kombi-hedef-cikti>' + kombiHedef + '</output></span>' +
+      '<input type="range" min="50" max="100" step="1" value="' + kombiHedef + '" data-kombi-hedef-aralik aria-label="Hedef Puan"></label>' +
       '<div class="oneri" role="group" aria-label="Hedef puan">' +
       [...new Set(KOMBI_HEDEF.concat(kombiHedef))]
         .sort((x, y) => x - y)
@@ -1167,6 +1267,13 @@
       '</div>' +
       '<p class="kaydet-not">Her tıklamada ' + kombiHedef + ' puanı veren ' + ne + '.' + sonra +
       (ulasilmadi ? ' Bazıları hedefe ulaşamadı; en yakın puan gösterildi.' : '') + '</p>' +
+      (kombiAd
+        ? '<figure class="kombi-alan-kap"><canvas id="kombi-alan" width="720" height="200" aria-label="' + adi(kombiAd) + ' okunurluk eğrileri: yatay ton, dikey açıklık"></canvas>' +
+          '<figcaption class="kombi-lejant">' +
+          EGRILER.map(([e, r]) => '<span style="border-top-color:var(' + r + ')">' + e + '</span>').join('') +
+          (EGRILER.some(([e]) => e === kombiHedef) ? '' : '<span class="kombi-lejant-hedef">' + kombiHedef + ' (hedef)</span>') +
+          '<span class="kombi-alan-bilgi" data-kombi-alan-bilgi>Yatay ton, dikey açıklık · Tıkla: o rengi uygula</span></figcaption></figure>'
+        : '') +
       '<div class="kombi-izgara">' + kombiler.map(kombiAd ? tekKart : kart).join('') + '</div>' +
       '<div class="tk-installer__actions"><button type="button" class="tk-btn tk-btn-ghost" data-kombi-kapat>Kapat</button>' +
       '<button type="button" class="tk-btn tk-btn-primary" data-kombi-yenile>' + (kombiAd ? 'Yeni 5 Renk' : 'Yeni 5 Palet') + '</button></div></div>';
@@ -1175,12 +1282,34 @@
   function kombiAc(hedef, ad = null) {
     const p = $('#kombi-pencere');
     kombiUret(hedef, ad);
+    requestAnimationFrame(alanCiz);
     if (!p.open) p.showModal();
   }
 
   function kombiOlaylar() {
     const p = $('#kombi-pencere');
+    p.addEventListener('change', (e) => {
+      if (e.target.matches('[data-kombi-hedef-aralik]')) kombiUret(Number(e.target.value));
+    });
+    p.addEventListener('input', (e) => {
+      if (e.target.matches('[data-kombi-hedef-aralik]')) $('[data-kombi-hedef-cikti]', p).textContent = e.target.value;
+    });
+    p.addEventListener('pointermove', (e) => {
+      if (e.target.id !== 'kombi-alan') return;
+      const n = alanNokta(e.target, e);
+      $('[data-kombi-alan-bilgi]', p).textContent = n.hex + ' · okunurluk ' + Math.round(n.puan);
+    });
     p.addEventListener('click', (e) => {
+      if (e.target.id === 'kombi-alan') {
+        const n = alanNokta(e.target, e);
+        su.renk[kombiAd] = n.hex;
+        delete hslBellek[kombiAd];
+        renkEsle(kombiAd);
+        planla();
+        alanCiz();
+        durum(adi(kombiAd) + ' ' + n.hex + ', okunurluk ' + Math.round(n.puan) + ' uygulandı. Tümünü Sıfırla token dosyasına döner.');
+        return;
+      }
       const h = e.target.closest('[data-kombi-hedef]');
       if (h) return kombiUret(Number(h.dataset.kombiHedef));
       const kp = e.target.closest('[data-kombi-kapsam]');

@@ -146,6 +146,42 @@ code, .mono { font-weight: var(--tk-fw-semi); }
 .alan { display: flex; flex-direction: column; gap: var(--tk-sp-1); font-size: var(--tk-fs-1); }
 .alan-ust { display: flex; justify-content: space-between; gap: var(--tk-sp-2); color: var(--tk-text); }
 .alan-ust output { color: var(--tk-pink-text); }
+.oneri { display: flex; flex-wrap: wrap; gap: var(--tk-sp-1); margin-bottom: var(--tk-sp-2); }
+.oneri:empty { display: none; }
+.oneri-dugme {
+  min-width: var(--tk-target-min);
+  min-height: var(--tk-target-min);
+  padding: 0 var(--tk-sp-2);
+  font: inherit;
+  font-family: var(--tk-font-mono);
+  font-size: var(--tk-fs-1);
+  color: var(--tk-text-label);
+  background: transparent;
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-chip);
+  cursor: pointer;
+  transition: color var(--tk-t-instant) var(--tk-e-out), border-color var(--tk-t-instant) var(--tk-e-out);
+}
+.oneri-taban { border-style: dashed; }
+.oneri-dugme:hover,
+.oneri-dugme:focus-visible { color: var(--tk-pink-text); border-color: var(--tk-border-strong); }
+.oneri-dugme:active { transform: scale(var(--tk-scale-press)); border-color: var(--tk-blue); }
+.oneri-dugme:disabled { color: var(--tk-disabled); border-color: var(--tk-disabled); cursor: not-allowed; }
+.oneri-dugme[aria-pressed='true'] { color: var(--tk-text); border-color: var(--tk-blue); background: var(--tk-blue-20); }
+.oneri-renk {
+  width: var(--tk-target-min);
+  height: var(--tk-target-min);
+  padding: 0;
+  border: var(--tk-border-w) solid var(--tk-border-strong);
+  border-radius: var(--tk-r-chip);
+  cursor: pointer;
+  transition: transform var(--tk-t-instant) var(--tk-e-out);
+}
+.oneri-renk:hover,
+.oneri-renk:focus-visible { transform: scale(var(--tk-scale-hover)); }
+.oneri-renk:active { transform: scale(var(--tk-scale-press)); border-color: var(--tk-blue); }
+.oneri-renk:disabled { border-color: var(--tk-disabled); cursor: not-allowed; }
+.oneri-renk[aria-pressed='true'] { outline: var(--tk-focus-w) solid var(--tk-blue); outline-offset: var(--tk-focus-offset); }
 .satir { display: flex; flex-wrap: wrap; align-items: center; gap: var(--tk-sp-2); }
 
 .giris {

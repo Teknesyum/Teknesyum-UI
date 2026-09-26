@@ -1365,6 +1365,7 @@
       '<div class="satir"><input type="color" class="secici" data-renk="' + ad + '" data-alan="secici" aria-label="' + adi(ad) + ' Renk Seçici">' +
       '<input type="text" class="giris hex" data-renk="' + ad + '" data-alan="hex" maxlength="7" spellcheck="false" aria-label="' + adi(ad) + ' Hex">' +
       '<button type="button" class="arac-dugme" data-geri="' + ad + '">Geri Al</button></div>' +
+      '<div class="oneri" role="group" aria-label="' + adi(ad) + ' Tema Önerileri" data-oneri-renk="' + ad + '"></div>' +
       kaydirici('h', 360, 'Ton (H)') + kaydirici('s', 100, 'Doygunluk (S)') + kaydirici('l', 100, 'Açıklık (L)') + tur +
       '</div></details>'
     );
@@ -1373,7 +1374,8 @@
   function aralik(id, etiket, min, max, adim) {
     return (
       '<label class="alan"><span class="alan-ust">' + etiket + ' <output id="o-' + id + '"></output></span>' +
-      '<input type="range" id="' + id + '" min="' + min + '" max="' + max + '" step="' + adim + '"></label>'
+      '<input type="range" id="' + id + '" min="' + min + '" max="' + max + '" step="' + adim + '"></label>' +
+      '<div class="oneri" role="group" aria-label="' + etiket + ' Önerileri" data-oneri-aralik="' + id + '"></div>'
     );
   }
 
@@ -1489,6 +1491,7 @@
     }
     $('[data-hexgoster="' + ad + '"]').textContent = hex;
     $('[data-nokta="' + ad + '"]').style.background = hex;
+    for (const b of $$('[data-oneri-hedef="' + ad + '"]')) b.setAttribute('aria-pressed', String(b.dataset.oneriHex === hex));
   }
 
   function egriDoldur() {
@@ -1554,6 +1557,54 @@
     for (const ad of DUZENLENEN) renkEsle(ad);
     ayarDoldur();
     ciktilar();
+    renkOneriCiz();
+  }
+
+  const oneriTaban = {};
+
+  function oneriKur() {
+    for (const el of $$('#ayarlar input[type="range"][id]')) {
+      const kutu = $('[data-oneri-aralik="' + el.id + '"]');
+      if (!kutu) continue;
+      const min = Number(el.min), max = Number(el.max), adim = Number(el.step) || 1;
+      const taban = Number(el.value);
+      oneriTaban[el.id] = taban;
+      const basamak = (String(adim).split('.')[1] || '').length;
+      const yuvarla = (v) => Number((Math.round((v - min) / adim) * adim + min).toFixed(basamak));
+      const d = [0, 0.25, 0.5, 0.75, 1].map((p) => yuvarla(min + (max - min) * p));
+      let en = 0;
+      for (let i = 1; i < d.length; i++) if (Math.abs(d[i] - taban) < Math.abs(d[en] - taban)) en = i;
+      d[en] = taban;
+      kutu.innerHTML = [...new Set(d)]
+        .map((v) => '<button type="button" class="oneri-dugme' + (v === taban ? ' oneri-taban' : '') + '" data-oneri-id="' + el.id + '" data-deger="' + v + '" aria-pressed="false"' + (v === taban ? ' title="Token değeri"' : '') + '>' + v.toLocaleString('tr-TR') + '</button>')
+        .join('');
+    }
+    oneriIsaretle();
+  }
+
+  function oneriIsaretle() {
+    for (const b of $$('#ayarlar [data-oneri-id]')) {
+      const el = document.getElementById(b.dataset.oneriId);
+      b.setAttribute('aria-pressed', String(!!el && Number(el.value) === Number(b.dataset.deger)));
+    }
+  }
+
+  function renkOneriCiz() {
+    const tur = su.koyu ? 'koyu' : 'acik';
+    for (const kutu of $$('#ayarlar [data-oneri-renk]')) {
+      const ad = kutu.dataset.oneriRenk;
+      const gorulen = new Set();
+      const liste = [];
+      for (const t of temalar) {
+        const hex = t.tur === tur && t.renk && t.renk[ad] ? String(t.renk[ad]).toLocaleLowerCase('en') : null;
+        if (!hex || !/^#[0-9a-f]{6}$/.test(hex) || gorulen.has(hex) || liste.length >= 5) continue;
+        gorulen.add(hex);
+        liste.push([hex, t.baslik]);
+      }
+      kutu.innerHTML = liste
+        .map(([hex, ad2]) => '<button type="button" class="oneri-renk" data-oneri-hex="' + hex + '" data-oneri-hedef="' + ad + '" aria-pressed="' + (su.renk[ad] === hex) + '" title="' + kacis(ad2) + ' · ' + hex + '" aria-label="' + kacis(ad2) + ' ' + hex + '" style="background:' + hex + '"></button>')
+        .join('');
+    }
   }
 
   function ciktilar() {
@@ -1587,6 +1638,7 @@
     $('#arka-aci').title = $('#arka-aci').disabled ? 'Salınım açıkken açı 150–170° arasında gezer' : '';
     document.documentElement.style.setProperty('--tk-scrollbar-w', su.kaydir.kalinlik + 'px');
     document.documentElement.dataset.kaydirBicim = su.kaydir.bicim;
+    oneriIsaretle();
   }
 
   function turet(ad) {
@@ -1730,6 +1782,24 @@
       }
     });
     f.addEventListener('click', (e) => {
+      const on = e.target.closest('[data-oneri-id]');
+      if (on) {
+        const el = document.getElementById(on.dataset.oneriId);
+        el.value = on.dataset.deger;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+        oneriIsaretle();
+        return;
+      }
+      const orr = e.target.closest('[data-oneri-hex]');
+      if (orr) {
+        const ad = orr.dataset.oneriHedef;
+        su.renk[ad] = orr.dataset.oneriHex;
+        delete hslBellek[ad];
+        renkEsle(ad);
+        planla();
+        return;
+      }
       const g = e.target.closest('[data-geri]');
       if (g) {
         const ad = g.dataset.geri;
@@ -2240,6 +2310,7 @@
     navKur();
     formKur();
     formDoldur();
+    oneriKur();
     olaylar();
     navGuncelle();
     grupSirala();

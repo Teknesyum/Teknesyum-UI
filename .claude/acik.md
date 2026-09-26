@@ -8,4 +8,5 @@
 - [x] Üst çubuk kalınlığı çok daha azaltılabilsin — 2026-09-26 16:35 — jobs.md
 - [x] Önizlemede bir nesneye basınca ayarları otomatik açılsın — 2026-09-26 16:35 — jobs.md
 - [x] ajan: Min-size usability review — 2026-09-26 16:35 — sonucu aktarıldı
-- [ ] Her parametreye 5 hazır ön ayar, tıklayınca sıçrasın — 2026-09-26 — sürüyor
+- [x] Her parametreye 5 hazır ön ayar, tıklayınca sıçrasın — 2026-09-26
+- [ ] ajan: Preset chips usability review — 2026-09-26 16:42 — sonucu aktarılacak

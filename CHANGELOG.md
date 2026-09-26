@@ -6,6 +6,9 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- Every slider in the preview settings has five one-click presets: four points spread over its
+  range and the token value (dashed). Every colour group offers five alternatives from the
+  standard themes of the same kind (dark or light).
 - Progress bars carry animated `/ / /` stripes, run thinner, and the scan light stays inside the
   filled part. Clicking a button or other object in the preview opens its settings group. New
   button size settings (height, horizontal padding); the title bar can be made much thinner and

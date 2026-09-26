@@ -709,6 +709,32 @@ th { color: var(--tk-text-label); font-weight: var(--tk-fw-semi); }
 @keyframes kaydet-gir { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .kaydet-pencere[open] .kaydet-kutu { animation: none; } }
 .kaydet-kutu { width: min(560px, 90vw); max-height: 85vh; overflow: auto; }
+.kombi-kutu { width: min(760px, 92vw); }
+.kombi-izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: var(--tk-sp-3); margin-bottom: var(--tk-sp-4); }
+.kombi-kart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tk-sp-2);
+  padding: var(--tk-sp-2);
+  font: inherit;
+  color: var(--tk-text);
+  background: transparent;
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r);
+  cursor: pointer;
+  transition: transform var(--tk-t-instant) var(--tk-e-out), border-color var(--tk-t-instant) var(--tk-e-out);
+}
+.kombi-kart:hover,
+.kombi-kart:focus-visible { border-color: var(--tk-pink-text); transform: scale(var(--tk-scale-hover)); }
+.kombi-kart:active { border-color: var(--tk-blue); transform: scale(var(--tk-scale-press)); }
+.kombi-kart:disabled { border-color: var(--tk-disabled); cursor: not-allowed; transform: none; }
+.kombi-sahne { display: flex; flex-direction: column; align-items: flex-start; gap: var(--tk-sp-2); padding: var(--tk-sp-3); border-radius: var(--tk-r-chip); font-size: var(--tk-fs-1); text-align: start; }
+.kombi-baslik { font-size: var(--tk-fs-4); font-weight: var(--tk-fw-semi); line-height: 1; }
+.kombi-dugme { padding: var(--tk-sp-1) var(--tk-sp-2); border-radius: var(--tk-r-chip); font-weight: var(--tk-fw-semi); }
+.kombi-noktalar { display: flex; gap: var(--tk-sp-1); }
+.kombi-nokta { width: var(--tk-icon-2); height: var(--tk-icon-2); border-radius: var(--tk-r-chip); }
+.kombi-puan { align-self: center; font-size: var(--tk-fs-3); }
+#okunur-puan { cursor: pointer; }
 .kaydet-surum { margin: 0 0 var(--tk-sp-3); color: var(--tk-blue); font-weight: var(--tk-fw-semi); }
 .kaydet-liste { margin: 0 0 var(--tk-sp-3); padding-left: var(--tk-sp-4); font-size: var(--tk-fs-1); }
 .kaydet-not { margin: 0 0 var(--tk-sp-3); color: var(--tk-text-label); font-size: var(--tk-fs-1); }

@@ -994,6 +994,135 @@
     return '<span class="puan' + (ek ? ' ' + ek : '') + '" data-not="' + NOT_KOD[window.Skor.not(p)] + '">' + Math.round(p) + '</span>';
   }
 
+  const KOMBI_HEDEF = [70, 75, 80, 85, 90, 95, 100];
+  const AILE = { blue: [190, 250], pink: [300, 350], purple: [255, 295], success: [120, 160], warning: [30, 52] };
+  let kombiHedef = null;
+  let kombiler = [];
+
+  function kombiTohum() {
+    const r = (a, b) => a + Math.random() * (b - a);
+    const t = {};
+    for (const [ad, [a, b]] of Object.entries(AILE)) t[ad] = { h: Math.round(r(a, b)), s: Math.round(r(55, 95)) };
+    t.zemin = { h: Math.round(r(0, 360)), s: Math.round(r(8, 35)) };
+    t.yazi = { s: Math.round(r(5, 25)) };
+    return t;
+  }
+
+  function kombiRenk(t, k, koyu) {
+    const L = (a, b) => {
+      const v = a + (b - a) * k;
+      return Math.round((koyu ? v : 100 - v) * 10) / 10;
+    };
+    const z = t.zemin;
+    const r = {
+      surface: hslHex(z.h, z.s, L(16, 3)),
+      black: hslHex(z.h, z.s, L(8, 1)),
+      'glass-base': hslHex(z.h, z.s, L(20, 6)),
+      text: hslHex(z.h, t.yazi.s, L(78, 98)),
+      disabled: hslHex(z.h, t.yazi.s, L(42, 74)),
+    };
+    for (const ad of Object.keys(AILE)) r[ad] = hslHex(t[ad].h, t[ad].s, L(52, 90));
+    r['pink-text'] = hslHex(t.pink.h, t.pink.s, L(66, 94));
+    r['purple-text'] = hslHex(t.purple.h, t.purple.s, L(66, 94));
+    return r;
+  }
+
+  function kombiBul(hedef) {
+    const koyu = su.koyu !== false;
+    const puani = (r) => window.Skor.skorla(T, Object.assign({}, su.renk, r)).genel;
+    let en = null;
+    for (let deneme = 0; deneme < 12; deneme++) {
+      const t = kombiTohum();
+      let a = 0;
+      let b = 1;
+      let r = kombiRenk(t, 1, koyu);
+      let p = puani(r);
+      if (p >= hedef) {
+        for (let i = 0; i < 22; i++) {
+          const m = (a + b) / 2;
+          const rm = kombiRenk(t, m, koyu);
+          const pm = puani(rm);
+          if (pm >= hedef) {
+            b = m;
+            r = rm;
+            p = pm;
+          } else a = m;
+        }
+      }
+      if (!en || Math.abs(p - hedef) < Math.abs(en.puan - hedef)) en = { renk: r, puan: p };
+      if (Math.abs(p - hedef) <= 0.5) break;
+    }
+    return en;
+  }
+
+  function kombiUret(hedef) {
+    kombiHedef = hedef;
+    kombiler = [0, 1, 2, 3, 4].map(() => kombiBul(hedef));
+    kombiCiz();
+  }
+
+  function onRenkHex(r, ad) {
+    try {
+      return K.hex(window.Skor.onSec(T, Object.assign({}, su.renk, r), ad).renk);
+    } catch {
+      return r.black;
+    }
+  }
+
+  function kombiCiz() {
+    const p = $('#kombi-pencere');
+    const kart = (k, i) => {
+      const r = k.renk;
+      const nokta = (ad) => '<span class="kombi-nokta" style="background:' + r[ad] + '"></span>';
+      return (
+        '<button type="button" class="kombi-kart" data-kombi="' + i + '" aria-label="Palet ' + (i + 1) + ', okunurluk ' + Math.round(k.puan) + '">' +
+        '<span class="kombi-sahne" style="background:' + r.surface + ';color:' + r.text + '">' +
+        '<span class="kombi-baslik" style="color:' + r.blue + '">Aa</span>' +
+        '<span>Gövde <span style="color:' + r['pink-text'] + '">vurgu</span> <span style="color:' + r.disabled + '">pasif</span></span>' +
+        '<span class="kombi-dugme" style="background:' + r.blue + ';color:' + onRenkHex(r, 'blue') + '">Uygula</span>' +
+        '<span class="kombi-noktalar">' + ['blue', 'pink', 'purple', 'success', 'warning'].map(nokta).join('') + '</span></span>' +
+        '<span class="kombi-puan puan" data-not="' + NOT_KOD[window.Skor.not(k.puan)] + '">' + Math.round(k.puan) + '</span></button>'
+      );
+    };
+    const ulasilmadi = kombiler.some((k) => Math.abs(k.puan - kombiHedef) > 0.5);
+    p.innerHTML =
+      '<div class="tk-panel tk-modal kaydet-kutu kombi-kutu">' +
+      '<h2 class="tk-h3" id="kombi-baslik">Hedef Okunurluk</h2>' +
+      '<div class="oneri" role="group" aria-label="Hedef puan">' +
+      KOMBI_HEDEF.map((h) => '<button type="button" class="oneri-dugme" data-kombi-hedef="' + h + '" aria-pressed="' + (h === kombiHedef) + '">' + h + '</button>').join('') +
+      '</div>' +
+      '<p class="kaydet-not">Her tıklamada ' + kombiHedef + ' puanı veren 5 yeni rastgele palet. Bir palete basınca renkler uygulanır.' +
+      (ulasilmadi ? ' Bazı paletler hedefe ulaşamadı; en yakın puan gösterildi.' : '') + '</p>' +
+      '<div class="kombi-izgara">' + kombiler.map(kart).join('') + '</div>' +
+      '<div class="tk-installer__actions"><button type="button" class="tk-btn tk-btn-ghost" data-kombi-kapat>Kapat</button>' +
+      '<button type="button" class="tk-btn tk-btn-primary" data-kombi-yenile>Yeni 5 Palet</button></div></div>';
+  }
+
+  function kombiAc(hedef) {
+    const p = $('#kombi-pencere');
+    kombiUret(hedef);
+    if (!p.open) p.showModal();
+  }
+
+  function kombiOlaylar() {
+    const p = $('#kombi-pencere');
+    p.addEventListener('click', (e) => {
+      const h = e.target.closest('[data-kombi-hedef]');
+      if (h) return kombiUret(Number(h.dataset.kombiHedef));
+      if (e.target.closest('[data-kombi-yenile]')) return kombiUret(kombiHedef);
+      if (e.target.closest('[data-kombi-kapat]') || e.target === p) return p.close();
+      const k = e.target.closest('[data-kombi]');
+      if (!k) return;
+      const s = kombiler[Number(k.dataset.kombi)];
+      Object.assign(su.renk, s.renk);
+      for (const ad of Object.keys(hslBellek)) delete hslBellek[ad];
+      formDoldur();
+      planla();
+      p.close();
+      durum('Okunurluk ' + Math.round(s.puan) + ' paleti uygulandı. Tümünü Sıfırla token dosyasına döner.');
+    });
+  }
+
   function okunurGuncelle() {
     const y = $('#okunur-puan');
     if (!y || !window.Skor) return;
@@ -1294,7 +1423,7 @@
       SAYFALAR.map(
         ([id, ad]) =>
           '<li><button type="button" class="bilesen-oge" data-git="' + id + '"><span>' + ad + '</span>' +
-          (id === 'okunur' ? '<span class="puan puan-kucuk" id="okunur-puan"></span>' : '') + '</button></li>'
+          (id === 'okunur' ? '<span class="puan puan-kucuk" id="okunur-puan" title="Tıkla: hedef puana göre 5 renk paleti"></span>' : '') + '</button></li>'
       ).join('') +
       '</ul>';
   }
@@ -1875,6 +2004,11 @@
     );
     const nav = $('#bilesen-liste');
     nav.addEventListener('click', (e) => {
+      if (e.target.closest('#okunur-puan') && window.Skor) {
+        const s = Math.round(skorlar().su.genel);
+        kombiAc(KOMBI_HEDEF.find((h) => h >= s) || 100);
+        return;
+      }
       const b = e.target.closest('[data-git]');
       if (b) sayfaAc(b.dataset.git);
     });
@@ -2312,6 +2446,7 @@
     formDoldur();
     oneriKur();
     olaylar();
+    kombiOlaylar();
     navGuncelle();
     grupSirala();
     hashYaz();

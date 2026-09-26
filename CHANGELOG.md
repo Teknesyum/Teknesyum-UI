@@ -6,6 +6,9 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- Clicking the Okunurluk number in the preview opens Hedef Okunurluk: pick a target (70–100)
+  and get five fresh random palettes that score it, found by bisecting a contrast knob over
+  random hues. Each click brings new ones; clicking a palette applies it.
 - Every slider in the preview settings has five one-click presets: four points spread over its
   range and the token value (dashed). Every colour group offers five alternatives from the
   standard themes of the same kind (dark or light).

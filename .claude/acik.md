@@ -1,12 +1,1 @@
-- [x] İlerleme: tarama ışığı yalnız dolu kısımda, çubuk daha ince, / / / taralı ve animatif — 2026-09-26 16:31 — jobs.md
-- [x] Kaydet çerçevesini kaldır, diğer çipler gibi olsun — 2026-09-26 16:31 — jobs.md
-- [x] Çerçeveli çipte parlamanın kesilme nedenini bul ve düzelt — 2026-09-26 16:31 — jobs.md
-- [x] Okunurluk: '87 (+2)' yerine tek sayı — 2026-09-26 16:31 — jobs.md
-- [x] Kaydırma çubuğu 4 px, daha ince ayarı olsun — 2026-09-26 16:31 — jobs.md
-- [x] Kaydırmada gecikme yok — 2026-09-26 16:31 — jobs.md
-- [x] Düğme yükseklikleri ayarlanabilsin — 2026-09-26 16:35 — jobs.md
-- [x] Üst çubuk kalınlığı çok daha azaltılabilsin — 2026-09-26 16:35 — jobs.md
-- [x] Önizlemede bir nesneye basınca ayarları otomatik açılsın — 2026-09-26 16:35 — jobs.md
-- [x] ajan: Min-size usability review — 2026-09-26 16:35 — sonucu aktarıldı
-- [x] Her parametreye 5 hazır ön ayar, tıklayınca sıçrasın — 2026-09-26
-- [ ] ajan: Preset chips usability review — 2026-09-26 16:42 — sonucu aktarılacak
+- [ ] ajan: Palette dialog usability review — 2026-09-26 16:58 — sonucu aktarılacak

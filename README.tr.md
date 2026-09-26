@@ -167,7 +167,13 @@ işaretlenir); mavi ve pembeyi yan yana, beş durumuyla düğmeleri, rozet, çip
 seçili satır, başlık çubuğu, ilerleme, uzun kayan liste, tipografi ölçeği ve panel, kart,
 camı gösterir. "Uygulama Parçaları" sekmesi standardın kendi CSS'iyle hazır parçaları çizer:
 üst çubuk, senkron ve güncelleme rozetleri, üç durumda kurulum paneli, ilerleme çubukları,
-düğmeler, bildirimler, onay penceresi ve form alanları. Önce / Sonra kipi token değerlerini şimdikilerin yanına koyar. Dışa aktarma
+düğmeler, bildirimler, onay penceresi ve form alanları. "Okunurluk" sekmesi karşıtlığı 0–100 arası tek bir puana çevirir, yüksek daha
+iyidir (`ui/scripts/skor.js`, ayrıca `node ui/scripts/skor.js`): standardın CSS'indeki her
+yazı/dolgu çifti log ölçekte puanlanır (3:1 → 30, 4.5:1 → 50, 7:1 → 70, 12:1 → 90, 18:1 → 100;
+büyük başlıklar 7/4.5 kat sayılır) ve ne sık göründüğüyle (×1–×10) ağırlıklanır; gövde yazısı,
+sekmeler ve birincil düğme en ağırlarıdır. Şu anki puanı token dosyasıyla, panel panel,
+renk değişiminin en çok oynattığı ve 70'in altında kalan parçalarla gösterir; araç çubuğundaki
+sekme canlı puanı taşır. Önce / Sonra kipi token değerlerini şimdikilerin yanına koyar. Dışa aktarma
 yalnız değişen alanları `neon.tokens.json` biçiminde kopyalar ya da indirir. **Kaydet**
 bunları yayınlar: değişiklikleri ve sonraki sürümü gösteren onaydan sonra
 `ui/scripts/kaydet.js` token kaynağını ve kopyasını yazar, her `on` çiftini ve oran geçen

@@ -30,7 +30,7 @@ module.exports = function kaydet() {
   const Y = JSON.parse(r.metin);
   L.ok('tokenMetni writes the new values', Y.brand.blue.value === '#4499ff' && Y.shape.r.value === T.shape.r.value + 1);
   L.ok('tokenMetni keeps the line count', r.metin.split('\n').length === metin.split('\n').length);
-  L.ok('tokenMetni reports the old and new colour', r.eski.blue === eskiMavi && r.yeni.blue === '#4499ff' && r.ozet.length === 2);
+  L.ok('tokenMetni reports the old and new colour', r.eski.blue === eskiMavi && r.yeni.blue === '#4499ff' && r.ozet.length === 3 && /readability score/.test(r.ozet[2]));
   L.ok('tokenMetni is a no-op for unchanged values', K.tokenMetni(metin, { brand: { blue: { value: eskiMavi } } }).ozet.length === 0);
 
   const p = K.paletDegistir('a ' + eskiMavi + ' #FF' + eskiMavi.slice(1).toLocaleUpperCase('en') + ' rgba(' + [1, 3, 5].map((i) => parseInt(eskiMavi.slice(i, i + 2), 16)).join(', ') + ', 0.5)', r.eski, r.yeni, '.xaml');

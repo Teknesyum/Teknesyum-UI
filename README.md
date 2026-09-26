@@ -165,7 +165,13 @@ and `on` pair with its hex and ratio on surface (under 7:1 is marked), blue and 
 side, buttons in all five states, badge, chip, input, selected row, title bar, progress,
 a long scrolling list, the type scale and panel, card and glass. The "Uygulama Parçaları" tab draws the shipped
 components from the standard's own CSS: title bar, sync and update badges, the installer panel
-in three states, progress bars, buttons, toasts, a dialog and form fields. Before / After puts the
+in three states, progress bars, buttons, toasts, a dialog and form fields. The "Okunurluk" tab turns contrast into one readability score from 0 to
+100, higher is better (`ui/scripts/skor.js`, also `node ui/scripts/skor.js`): every text/fill
+pair the standard CSS uses is scored on a log scale (3:1 → 30, 4.5:1 → 50, 7:1 → 70, 12:1 → 90,
+18:1 → 100; large headings count 7/4.5 more) and weighted by how often it appears (×1–×10), so
+body text, tabs and the primary button weigh most. It shows the score now against the token
+file, per panel, the parts a colour change moved most and the parts under 70; the toolbar tab
+carries the live score. Before / After puts the
 token values next to the current ones. Export copies or downloads only the changed fields
 in `neon.tokens.json` shape. **Kaydet** releases them: after a confirm dialog listing the
 changes and the next version, `ui/scripts/kaydet.js` writes the token source and its copy,

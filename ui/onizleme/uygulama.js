@@ -133,6 +133,9 @@
   }
 
   function onRenk(st, anahtar) {
+    try {
+      return K.hex(window.Skor.onSec(T, st.renk, anahtar).renk);
+    } catch {}
     const tanim = T.on[anahtar];
     if (tanim && tanim.on) return coz(st, tanim.on);
     const d = dolgu(st, anahtar);
@@ -724,6 +727,92 @@
     return '<div class="farklar"><strong>Değişenler</strong><ul>' + li + '</ul></div>';
   }
 
+  const NOT_KOD = { 'Mükemmel': 'mukemmel', 'İyi': 'iyi', 'Zayıf': 'zayif', 'Kötü': 'kotu' };
+  let skorBellek = null;
+
+  function skorlar() {
+    const anahtar = JSON.stringify(su.renk);
+    if (!skorBellek || skorBellek.anahtar !== anahtar)
+      skorBellek = { anahtar, ilk: window.Skor.skorla(T, ilk.renk), su: window.Skor.skorla(T, su.renk) };
+    return skorBellek;
+  }
+
+  function farkYazi(f) {
+    const r = Math.round(f);
+    return r > 0 ? '+' + r : r < 0 ? '−' + Math.abs(r) : '±0';
+  }
+
+  function farkSinif(f) {
+    const r = Math.round(f);
+    return r > 0 ? 'fark-arti' : r < 0 ? 'fark-eksi' : 'fark-yok';
+  }
+
+  function puanEtiket(p, ek) {
+    return '<span class="puan' + (ek ? ' ' + ek : '') + '" data-not="' + NOT_KOD[window.Skor.not(p)] + '">' + Math.round(p) + '</span>';
+  }
+
+  function okunurGuncelle() {
+    const y = $('#okunur-puan');
+    if (!y || !window.Skor) return;
+    const s = skorlar();
+    const f = Math.round(s.su.genel) - Math.round(s.ilk.genel);
+    y.textContent = Math.round(s.su.genel) + (f ? ' (' + farkYazi(f) + ')' : '');
+    y.dataset.not = NOT_KOD[s.su.not];
+  }
+
+  function okunurGezinti() {
+    const b = [['genel', 'Genel'], ['etki', 'En Çok Etkilenenler'], ['zayif', 'Zayıf Parçalar'], ['paneller', 'Paneller']];
+    return '<nav class="gezinti" aria-label="Okunurluk">' + b.map(([id, ad]) => '<a href="#o-' + id + '">' + ad + '</a>').join('') + '</nav>';
+  }
+
+  function okunurSayfasi() {
+    const { ilk: A, su: B } = skorlar();
+    const f = Math.round(B.genel) - Math.round(A.genel);
+    const kutu = (etiket, ic, alt) => '<div class="okunur-kutu"><span class="bilesen-ad">' + etiket + '</span>' + ic + '<span class="okunur-not">' + alt + '</span></div>';
+    const olcek =
+      '<div class="okunur-olcek">' +
+      [['kotu', '0–49 · Kötü'], ['zayif', '50–69 · Zayıf'], ['iyi', '70–89 · İyi'], ['mukemmel', '90–100 · Mükemmel']].map(([k, t]) => '<span data-not="' + k + '">' + t + '</span>').join('') +
+      '</div>';
+    const genel =
+      '<section class="bolum" id="o-genel"><h2>Genel Okunurluk</h2>' +
+      '<p>Puan 0 ile 100 arasıdır; yüksek daha iyidir. 70 ve üstü standardı geçer. Bir parça uygulamalarda ne kadar sık görünüyorsa (×1 – ×10) puana o kadar ağır katılır: gövde yazısı, sekmeler, birincil düğme ve giriş kutusu en ağırlarıdır.</p>' +
+      '<div class="okunur-ozet">' +
+      kutu('Şu Anki Ayar', puanEtiket(B.genel, 'puan-buyuk'), B.not) +
+      kutu('Token Dosyası', puanEtiket(A.genel, 'puan-buyuk'), A.not) +
+      kutu('Fark', '<span class="puan puan-buyuk ' + farkSinif(f) + '">' + farkYazi(f) + '</span>', f > 0 ? 'Daha okunur' : f < 0 ? 'Daha az okunur' : 'Değişmedi') +
+      '</div>' + olcek +
+      '<p class="okunur-dip">Her parçanın puanı yazı renginin zeminine karşıtlığından gelir: 3:1 → 30, 4.5:1 → 50, 7:1 → 70, 12:1 → 90, 18:1 ve üstü → 100. Büyük başlıklar daha az karşıtlıkla da okunduğu için aynı renkte daha yüksek puan alır.</p></section>';
+    const cift = B.paneller.flatMap((p, i) => p.ogeler.map((o, j) => ({ panel: p.ad, a: A.paneller[i].ogeler[j], b: o })));
+    const ornek = (o) => '<span class="okunur-ornek" style="color: ' + o.on + '; background: ' + o.arka + '">Aa</span>';
+    const satir = (x, ilkSutun) => '<tr><th scope="row">' + ornek(x.b) + x.b.ad + (ilkSutun ? '<span class="okunur-panel-ad">' + x.panel + '</span>' : '') + '</th><td>×' + x.b.agirlik + '</td><td>' + puanEtiket(x.a.puan) + '</td><td>' + puanEtiket(x.b.puan) + '</td><td class="' + farkSinif(x.b.puan - x.a.puan) + '">' + farkYazi(x.b.puan - x.a.puan) + '</td></tr>';
+    const tablo = (satirlar, ilkSutun) => '<table class="okunur-tablo"><thead><tr><th scope="col">Parça</th><th scope="col">Kullanım</th><th scope="col">Önce</th><th scope="col">Şimdi</th><th scope="col">Fark</th></tr></thead><tbody>' + satirlar.map((x) => satir(x, ilkSutun)).join('') + '</tbody></table>';
+    const etkilenen = cift
+      .filter((x) => Math.round(x.b.puan) !== Math.round(x.a.puan))
+      .sort((x, y) => Math.abs((y.b.puan - y.a.puan) * y.b.agirlik) - Math.abs((x.b.puan - x.a.puan) * x.b.agirlik))
+      .slice(0, 8);
+    const etki =
+      '<section class="bolum" id="o-etki"><h2>En Çok Etkilenenler</h2>' +
+      (etkilenen.length ? '<p>Renk değişiminin puanı en çok oynattığı parçalar; kullanım ağırlığı ile çarpılarak sıralanır.</p>' + tablo(etkilenen, true) : '<p>Şu anki ayar token dosyasıyla aynı puanı veriyor; bir renk değiştirince burada hangi parçaların etkilendiği görünür.</p>') +
+      '</section>';
+    const zayiflar = cift
+      .filter((x) => x.b.puan < 70)
+      .sort((x, y) => (70 - y.b.puan) * y.b.agirlik - (70 - x.b.puan) * x.b.agirlik);
+    const zayif =
+      '<section class="bolum" id="o-zayif"><h2>Zayıf Parçalar</h2>' +
+      (zayiflar.length ? '<p>70 puanın altında kalan parçalar; en üstteki düzeltildiğinde genel puan en çok artar.</p>' + tablo(zayiflar, true) : '<p>70 puanın altında parça yok.</p>') +
+      '</section>';
+    const kart = (pa, pb) =>
+      '<article class="okunur-panel"><header class="okunur-panel-ust"><h3>' + pb.ad + '</h3>' + puanEtiket(pb.puan, 'puan-orta') +
+      '<span class="' + farkSinif(pb.puan - pa.puan) + '">' + farkYazi(pb.puan - pa.puan) + '</span></header>' +
+      '<div class="okunur-cubuk" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(pb.puan) + '" aria-label="' + pb.ad + ' okunurluk"><span data-not="' + NOT_KOD[window.Skor.not(pb.puan)] + '" style="inline-size: ' + pb.puan.toFixed(1) + '%"></span></div>' +
+      '<p class="okunur-not">Kullanım payı ' + pb.agirlik + ' / ' + B.paneller.reduce((t, p) => t + p.agirlik, 0) + '</p>' +
+      tablo(pb.ogeler.map((o, j) => ({ panel: pb.ad, a: pa.ogeler[j], b: o })), false) + '</article>';
+    const paneller =
+      '<section class="bolum" id="o-paneller"><h2>Paneller</h2><p>Her panelin puanı kendi parçalarının kullanım ağırlıklı ortalamasıdır.</p>' +
+      '<div class="okunur-paneller">' + B.paneller.map((p, i) => kart(A.paneller[i], p)).join('') + '</div></section>';
+    return okunurGezinti() + genel + etki + zayif + paneller;
+  }
+
   function ciz() {
     bekleyen = false;
     const kok = $('#onizleme');
@@ -731,6 +820,8 @@
     uygula(kok, su, true);
     if (sayfa === 'parca') {
       kok.innerHTML = parcaGezinti() + parcaSayfasi();
+    } else if (sayfa === 'okunur') {
+      kok.innerHTML = okunurSayfasi();
     } else if (kip === 'karsi') {
       kok.innerHTML =
         gezinti('s') + farkListesi() +
@@ -743,6 +834,7 @@
     }
     kok.scrollTop = kaydirma;
     kaydetGuncelle();
+    okunurGuncelle();
   }
 
   function planla() {
@@ -960,8 +1052,8 @@
         sayfa = b.dataset.sayfa;
         for (const x of $$('[data-sayfa]')) x.setAttribute('aria-pressed', String(x === b));
         for (const x of $$('[data-kip]')) {
-          x.disabled = sayfa === 'parca';
-          x.title = x.disabled ? 'Uygulama Parçaları tek görünümdür' : '';
+          x.disabled = sayfa !== 'renk';
+          x.title = x.disabled ? 'Bu sayfa tek görünümdür' : '';
         }
         $('#onizleme').scrollTop = 0;
         planla();
@@ -1125,6 +1217,7 @@
       '<div class="tk-panel tk-modal kaydet-kutu">' +
       '<h2 class="tk-h3" id="kaydet-baslik">Kaydet Ve Yayınla</h2>' +
       '<p class="kaydet-surum">Sürüm ' + kacis(surum) + ' → ' + kacis(sonrakiSurum(surum)) + '</p>' +
+      '<p class="kaydet-surum">Okunurluk ' + Math.round(skorlar().ilk.genel) + ' → ' + Math.round(skorlar().su.genel) + ' / 100</p>' +
       '<ul class="kaydet-liste">' + satirlar.map((s) => '<li>' + kacis(s) + '</li>').join('') + '</ul>' +
       (notlar.length ? '<p class="kaydet-not">Token karşılığı olmadığı için kaydedilmeyecek:</p><ul class="kaydet-liste">' + notlar.map((s) => '<li>' + kacis(s) + '</li>').join('') + '</ul>' : '') +
       '<p class="kaydet-not">Token kaynağı yazılır, türev dosyalar üretilir, testler ve tarayıcı çalışır; hepsi geçerse sürüm artar, commit, etiket, push ve GitHub sürümü yapılır.</p>' +
@@ -1224,14 +1317,14 @@
     for (const [k, v] of baglanti) {
       if (DUZENLENEN.includes(k) && /^[0-9a-fA-F]{6}$/.test(v)) su.renk[k] = '#' + v.toLocaleLowerCase('tr');
       else if (k === 'kip' && (v === 'tek' || v === 'karsi')) kip = v;
-      else if (k === 'sayfa' && (v === 'renk' || v === 'parca')) sayfa = v;
+      else if (k === 'sayfa' && (v === 'renk' || v === 'parca' || v === 'okunur')) sayfa = v;
       else if (k === 'arka' && ARKALAR.some((a) => a[0] === v)) su.arka.tur = v;
       else if (k === 'bolum' && /^[a-z]+$/.test(v)) bolum = v;
     }
     for (const x of $$('[data-kip]')) {
       x.setAttribute('aria-pressed', String(x.dataset.kip === kip));
-      x.disabled = sayfa === 'parca';
-      x.title = x.disabled ? 'Uygulama Parçaları tek görünümdür' : '';
+      x.disabled = sayfa !== 'renk';
+      x.title = x.disabled ? 'Bu sayfa tek görünümdür' : '';
     }
     for (const x of $$('[data-sayfa]')) x.setAttribute('aria-pressed', String(x.dataset.sayfa === sayfa));
     uygula(document.documentElement, ilk, false);
@@ -1239,7 +1332,7 @@
     formDoldur();
     olaylar();
     ciz();
-    const hedef = bolum && document.getElementById((sayfa === 'parca' ? 'p-' : 's-') + bolum);
+    const hedef = bolum && document.getElementById(({ parca: 'p-', okunur: 'o-' }[sayfa] || 's-') + bolum);
     if (hedef) hedef.scrollIntoView({ behavior: 'instant' });
     window.Onizleme = { durum: () => su, ilk: () => ilk, disaAktar, T: () => T };
   }

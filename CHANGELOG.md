@@ -6,6 +6,10 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- Readability score (`ui/scripts/skor.js`): 0–100, higher is better, from every text/fill pair
+  in the standard CSS, weighted by how often each part appears. A new "Okunurluk" tab in the
+  preview shows it against the token file, per panel, the most affected and the weak parts;
+  Kaydet shows the change and writes it into the release notes.
 - Preview **Kaydet**: writes the changed fields into `neon.tokens.json` and its copy,
   re-measures `on` pairs and ratio rationales, swaps the palette in the installer and fixtures,
   regenerates, tests, bumps the minor version, writes this file, commits, tags, pushes and
@@ -24,6 +28,8 @@ All notable changes to this project are documented here. The format follows
   waiting and local states.
 
 ### Changed
+- Preview `on` colours follow the save rule: a token pair that drops under 7:1 switches to the
+  better of black and text, as Kaydet will ship it.
 - Ratio comments in `generate.js` are measured, not literal; the manifest palette, `setup.js`
   fallbacks and the readability tests read their colours from the tokens.
 - Blue `#5aa8ff` (a true blue, no longer cyan) and pink `#c82ee0` (fuchsia), pink-text

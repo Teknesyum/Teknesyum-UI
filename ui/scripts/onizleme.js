@@ -10,6 +10,7 @@ const UI = path.resolve(__dirname, '..');
 const SAYFA = path.join(UI, 'onizleme');
 const TOKENS = path.join(UI, 'templates', 'neon.tokens.json');
 const KONTRAST = path.join(__dirname, 'kontrast.js');
+const SKOR = path.join(__dirname, 'skor.js');
 const KAYDET = require('./kaydet');
 const PORT = 4317;
 const VARLIK = path.join(UI, 'skills', 'teknesyum-ui', 'assets');
@@ -39,13 +40,17 @@ const YOL = {
   '/tokens.json': TOKENS,
 };
 
-function kontrastTarayici() {
-  const kaynak = fs.readFileSync(KONTRAST, 'utf8');
+function tarayici(dosya, ad) {
+  const kaynak = fs.readFileSync(dosya, 'utf8');
   return (
     '(function () {\nvar module = { exports: {} };\nvar exports = module.exports;\n' +
     kaynak +
-    '\nwindow.Kontrast = module.exports;\n})();\n'
+    '\nwindow.' + ad + ' = module.exports;\n})();\n'
   );
+}
+
+function kontrastTarayici() {
+  return tarayici(KONTRAST, 'Kontrast');
 }
 
 function standartCss() {
@@ -60,6 +65,7 @@ function yanit(yol) {
   const temiz = String(yol || '/').split('?')[0];
   try {
     if (temiz === '/kontrast.js') return { status: 200, type: TUR['.js'], body: kontrastTarayici() };
+    if (temiz === '/skor.js') return { status: 200, type: TUR['.js'], body: tarayici(SKOR, 'Skor') };
     if (temiz === '/standart.css') return { status: 200, type: TUR['.css'], body: standartCss() };
     const dosya = YOL[temiz];
     if (!dosya) return { status: 404, type: 'text/plain; charset=utf-8', body: 'Bulunamadı' };

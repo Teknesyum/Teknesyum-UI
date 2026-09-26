@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 const K = require('./kontrast');
+const SKOR = require('./skor');
 
 const UI = path.resolve(__dirname, '..');
 const KOK = path.resolve(UI, '..');
@@ -206,7 +207,12 @@ function tokenMetni(metin, degisen) {
     ozet.push(y.grup + '.' + y.ad + (y.alan === 'value' ? '' : '.' + y.alan) + ': `' + goster(once) + '` → `' + goster(y.deger) + '`');
   }
   metin = yenidenOlc(metin);
-  JSON.parse(metin);
+  const Y = JSON.parse(metin);
+  if (ozet.length) {
+    const once = Math.round(SKOR.skorla(T, {}).genel);
+    const sonra = Math.round(SKOR.skorla(Y, {}).genel);
+    ozet.push('readability score: `' + once + '` → `' + sonra + '`');
+  }
   return { metin, eski, yeni, ozet };
 }
 

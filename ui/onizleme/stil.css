@@ -650,7 +650,8 @@ th { color: var(--tk-text-label); font-weight: var(--tk-fw-semi); }
 }
 [data-hareket='az'] .onizleme,
 [data-hareket='az'] .sahne,
-[data-hareket='az'] :is(.sihirbaz, .sihirbaz-metin, .grup-ic) { animation: none; }
+[data-hareket='az'] :is(.sihirbaz, .sihirbaz-metin, .grup-ic, .sayfa-gir) { animation: none; }
+[data-hareket='az'] .bilesen-imlec { transition: none; }
 [data-hareket='az'] :is(.onizleme, .uzun-liste, .kaydir-ornek) { transition: none; }
 
 @media (forced-colors: active) {
@@ -834,7 +835,19 @@ body[data-sihirbaz] .bilesen-liste { padding-bottom: calc(var(--tk-sp-4) * 2 + v
   background: var(--tk-panel);
   border-right: var(--tk-border-w) solid var(--tk-border);
 }
-.bilesen-ul { display: flex; flex-direction: column; gap: var(--tk-sp-1); margin: 0; padding: 0; list-style: none; }
+.bilesen-ul { position: relative; display: flex; flex-direction: column; gap: var(--tk-sp-1); margin: 0; padding: 0; list-style: none; }
+.bilesen-ul > li:not(.bilesen-imlec) { position: relative; z-index: 1; }
+.bilesen-imlec {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--imlec-h, 0);
+  transform: translateY(var(--imlec-y, 0));
+  background: var(--tk-renk-1-20);
+  border-left: var(--tk-focus-w) solid var(--tk-renk-1);
+  border-radius: var(--tk-r);
+  pointer-events: none;
+}
+.bilesen-imlec[data-hazir] { transition: transform var(--tk-t-base) var(--tk-e-out); }
 .bilesen-oge {
   display: flex;
   align-items: center;
@@ -859,7 +872,7 @@ body[data-sihirbaz] .bilesen-liste { padding-bottom: calc(var(--tk-sp-4) * 2 + v
 .bilesen-oge:focus-visible { background: var(--tk-renk-1-10); color: var(--tk-on-renk-1-10); }
 .bilesen-oge:active { background: var(--tk-renk-1-20); color: var(--tk-on-renk-1-20); }
 .bilesen-oge:disabled { color: var(--tk-disabled); background: transparent; cursor: not-allowed; }
-.bilesen-oge[aria-current='page'] { background: var(--tk-renk-1-20); color: var(--tk-on-renk-1-20); border-left-color: var(--tk-renk-1); }
+.bilesen-oge[aria-current='page'] { background: transparent; color: var(--tk-on-renk-1-20); }
 .puan-kucuk { font-size: var(--tk-fs-1); }
 
 .sag { border-right: 0; border-left: var(--tk-border-w) solid var(--tk-border); }
@@ -907,7 +920,8 @@ body[data-sihirbaz] .bilesen-liste { padding-bottom: calc(var(--tk-sp-4) * 2 + v
   color: var(--tk-renk-1);
 }
 @keyframes sayfa-gir { from { opacity: 0; transform: translateY(var(--tk-sp-2)); } to { opacity: 1; transform: none; } }
-.sayfa-gir { animation: sayfa-gir var(--tk-t-base) var(--tk-e-out); }
+@keyframes sayfa-gec { from { opacity: 0; transform: translateY(calc(var(--tk-sp-5) * var(--sayfa-yon, 1))); } to { opacity: 1; transform: none; } }
+.sayfa-gir { animation: sayfa-gec var(--tk-t-base) var(--tk-e-out); }
 .sihirbaz:not([hidden]) { animation: kaydet-gir var(--tk-t-base) var(--tk-e-out); }
 .sihirbaz-metin:not([aria-hidden='true']) { animation: sayfa-gir var(--tk-t-fast) var(--tk-e-out); }
 .grup[open] > .grup-ic { animation: sayfa-gir var(--tk-t-fast) var(--tk-e-out); }

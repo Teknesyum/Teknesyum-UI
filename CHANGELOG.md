@@ -6,6 +6,7 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- The preview app moves with the chosen motion settings: a sliding marker follows the selected page in the left menu, pages enter from the direction of travel, and the Okunurluk section links scroll along the interface curve over the slow duration.
 
 - `setup.js --apply --targets avalonia` now registers the `ITransform` animator the generated
   `Theme.axaml` needs for its `Window.anim Panel.appbg` background loop: it writes a

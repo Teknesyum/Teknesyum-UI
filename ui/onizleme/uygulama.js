@@ -115,6 +115,7 @@
   let ilk = null;
   let su = null;
   let kip = 'tek';
+  let sayfaYon = 1;
   let sayfa = 'renkler';
   let bekleyen = false;
   let temalar = [];
@@ -1479,7 +1480,10 @@
     else html = sayfaIcerik(su, 's');
     const ad = SAYFALAR.find((x) => x[0] === sayfa)[1];
     const bas = TEK.includes(sayfa) ? '' : '<header class="sayfa-ust"><h1 class="sayfa-baslik">' + ad + '</h1></header>';
-    kok.innerHTML = '<div class="sayfa' + (ayni ? '' : ' sayfa-gir') + '" data-bilesen="' + sayfa + '">' + bas + html + '</div>';
+    const gecis = !ayni || kok.dataset.kip !== kip;
+    kok.style.setProperty('--sayfa-yon', String(sayfaYon));
+    kok.innerHTML = '<div class="sayfa' + (gecis ? ' sayfa-gir' : '') + '" data-bilesen="' + sayfa + '">' + bas + html + '</div>';
+    kok.dataset.kip = kip;
     if (karsi) {
       uygula($('#sahne-once'), referans(), true);
       uygula($('#sahne-sonra'), su, true);
@@ -1646,7 +1650,7 @@
 
   function navKur() {
     $('#bilesen-liste').innerHTML =
-      '<ul class="bilesen-ul">' +
+      '<ul class="bilesen-ul"><li class="bilesen-imlec" aria-hidden="true"></li>' +
       SAYFALAR.map(
         ([id, ad]) =>
           '<li><button type="button" class="bilesen-oge" data-git="' + id + '"><span>' + ad + '</span>' +
@@ -1655,11 +1659,61 @@
       '</ul>';
   }
 
+  function imlecYerlestir() {
+    const im = $('.bilesen-imlec');
+    const b = $('#bilesen-liste [aria-current="page"]');
+    if (!im || !b) return;
+    im.style.setProperty('--imlec-y', b.getBoundingClientRect().top - im.parentElement.getBoundingClientRect().top + 'px');
+    im.style.setProperty('--imlec-h', b.offsetHeight + 'px');
+    if (!im.dataset.hazir) requestAnimationFrame(() => (im.dataset.hazir = '1'));
+  }
+
+  function egriFn(b) {
+    const [x1, y1, x2, y2] = b;
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const X = (t) => ((ax * t + bx) * t + cx) * t;
+    const Y = (t) => ((ay * t + by) * t + cy) * t;
+    const dX = (t) => (3 * ax * t + 2 * bx) * t + cx;
+    return (x) => {
+      let t = x;
+      for (let i = 0; i < 8; i++) {
+        const d = dX(t);
+        if (Math.abs(d) < 1e-6) break;
+        t -= (X(t) - x) / d;
+      }
+      return Y(Math.max(0, Math.min(1, t)));
+    };
+  }
+
+  let akanKare = 0;
+  function akanKaydir(kap, hedefY) {
+    cancelAnimationFrame(akanKare);
+    const sure = su.sure.slow;
+    if (su.hareketAz || su.kaydir.davranis === 'auto' || !sure) {
+      kap.scrollTop = hedefY;
+      return;
+    }
+    const f = egriFn(su.egri[su.arayuzEgri] || su.egri.out);
+    const bas = kap.scrollTop;
+    const fark = hedefY - bas;
+    const t0 = performance.now();
+    kap.style.scrollBehavior = 'auto';
+    const adim = (n) => {
+      const x = Math.min(1, (n - t0) / sure);
+      kap.scrollTop = bas + fark * f(x);
+      if (x < 1) akanKare = requestAnimationFrame(adim);
+      else kap.style.scrollBehavior = '';
+    };
+    akanKare = requestAnimationFrame(adim);
+  }
+
   function navGuncelle() {
     for (const b of $$('[data-git]')) {
       if (b.dataset.git === sayfa) b.setAttribute('aria-current', 'page');
       else b.removeAttribute('aria-current');
     }
+    imlecYerlestir();
     for (const x of $$('[data-kip]')) {
       const kapali = TEK.includes(sayfa);
       if (kapali) x.setAttribute('aria-disabled', 'true');
@@ -1699,6 +1753,8 @@
 
   function sayfaAc(id) {
     if (!SAYFALAR.some((x) => x[0] === id)) return;
+    const sira = (s) => SAYFALAR.findIndex((x) => x[0] === s);
+    if (id !== sayfa) sayfaYon = sira(id) > sira(sayfa) ? 1 : -1;
     sayfa = id;
     navGuncelle();
     grupSirala();
@@ -2198,6 +2254,17 @@
     });
     const kok = $('#onizleme');
     kok.addEventListener('click', (e) => {
+      const git = e.target.closest('.gezinti a[href^="#"]');
+      if (git) {
+        const hedef = document.getElementById(git.getAttribute('href').slice(1));
+        if (hedef) {
+          e.preventDefault();
+          const ust = $('.gezinti', kok);
+          const y = hedef.getBoundingClientRect().top - kok.getBoundingClientRect().top + kok.scrollTop - (ust ? ust.offsetHeight : 0);
+          akanKaydir(kok, Math.max(0, y));
+        }
+        return;
+      }
       const olcek = e.target.closest('[data-olcek]');
       if (olcek && window.Skor) {
         const [a, b] = olcek.dataset.olcek.split(',').map(Number);
@@ -2256,6 +2323,7 @@
       true
     );
     const nav = $('#bilesen-liste');
+    window.addEventListener('resize', imlecYerlestir);
     nav.addEventListener('click', (e) => {
       if (e.target.closest('#okunur-puan') && window.Skor) {
         const s = Math.round(skorlar().su.genel);

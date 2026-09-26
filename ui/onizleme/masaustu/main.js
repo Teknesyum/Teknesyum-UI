@@ -45,7 +45,7 @@ function pencere() {
     thickFrame: true,
     autoHideMenuBar: true,
     show: false,
-    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true, nodeIntegration: false },
+    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true, nodeIntegration: false, backgroundThrottling: false },
   });
   const bildir = () => {
     if (!w.isDestroyed()) w.webContents.send('pencere:durum', w.isFullScreen() ? 'fullscreen' : w.isMaximized() ? 'maximized' : 'normal');

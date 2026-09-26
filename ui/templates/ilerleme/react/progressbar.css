@@ -47,7 +47,6 @@
   transform: scaleX(var(--tk-progress-value, 0));
   background: linear-gradient(90deg, var(--tk-blue), var(--tk-purple));
   border-radius: inherit;
-  transition: transform var(--tk-t-base) var(--tk-e-out);
 }
 
 [data-status='done'] .tk-progress__fill {

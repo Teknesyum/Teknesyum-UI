@@ -750,7 +750,7 @@
 
   function ilerlemeHtml(durum, yuzde, adim, ek) {
     return (
-      '<div class="tk-progress" data-status="' + durum + '"' + (ek || '') + '><span class="tk-progress__step">' + adim + '</span><div class="tk-progress__row">' +
+      '<div class="tk-progress" data-status="' + durum + '" data-hedef="' + yuzde + '"' + (ek || '') + '><span class="tk-progress__step">' + adim + '</span><div class="tk-progress__row">' +
       '<div class="tk-progress__track" role="progressbar" aria-valuenow="' + yuzde + '" aria-valuemin="0" aria-valuemax="100" aria-label="' + adim + '">' +
       '<div class="tk-progress__fill" style="--tk-progress-value: ' + yuzde / 100 + '"></div></div>' +
       '<span class="tk-progress__percent">' + yuzde + '%</span></div></div>'
@@ -777,7 +777,7 @@
       oranEtiket(K.ratio(P(R('pink')), P(bilesik(st, R('blue'), 0.1))), { esik: 3 }) +
       '</div>';
     return (
-      blok(on, 'canli', 'Canlı İlerleme', 'Değer her yavaş süre jetonunda (' + st.sure.slow + ' ms) artar; dolgu yalnız transform ile ölçeklenir, genişlik canlanmaz. Bitince düz başarı rengine döner.', canli) +
+      blok(on, 'canli', 'Canlı İlerleme', 'Hedef her yavaş süre jetonunda (' + st.sure.slow + ' ms) farklı büyüklükte sıçrar; gösterilen değer ona 0,1 adımlarla akar. Fark büyüdükçe hızlanır, hedefe yaklaştıkça yavaşlar (zaman sabiti ' + st.sure.slow / 2 + ' ms). Dolgu yalnız transform ile ölçeklenir. Bitince düz başarı rengine döner.', canli) +
       blok(on, 'durumlar', 'Durumlar', 'Çalışırken iki renkli geçiş ve tarama ışığı, bitince düz başarı rengi, hatada tehlike rengi.', cubuklar) +
       blok(on, 'sade', 'Sade Çubuk · Karşıtlık', 'Dolgu ile iz arasında 3:1 eşiği aranır.', sade)
     );
@@ -911,7 +911,7 @@
       '<svg class="tk-installer__icon" viewBox="0 0 48 48" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--tk-blue)">' +
       '<rect x="5" y="5" width="38" height="38" rx="10"/><path d="M16 25l6 6 11-13"/></svg>';
     const kur = (durum, yuzde, adim, alt, satirlar, dugmeler) =>
-      '<div class="tk-installer" data-status="' + durum + '">' +
+      '<div class="tk-installer" data-status="' + durum + '" data-hedef="' + yuzde + '">' +
       '<div class="tk-installer__head">' + simge +
       '<div class="tk-installer__titles"><p class="tk-installer__title">AmeliyatListe<span class="tk-installer__accent">Kurulum</span></p>' +
       '<p class="tk-installer__sub" title="' + alt + '">' + alt + '</p></div></div>' +
@@ -1082,6 +1082,7 @@
     zamanlar.clear();
     ilerlemeNo++;
     ilerlemeDeger = 0;
+    for (const k of akis.keys()) if (k !== 'kaydet') akis.delete(k);
   }
 
   function sayfaIcerik(st, on) {
@@ -1129,6 +1130,10 @@
     kok.scrollTop = kaydirma;
     if (sayfa === 'akicilik' && A()) A().bagla(kok, akisCtx());
     if (sayfa === 'teknik' && window.Teknik) window.Teknik.baslat($('.teknik', kok) || kok);
+    $$('[data-hedef]', kok).forEach((el, i) => {
+      el.dataset.anahtar = 'i' + i;
+      if (!el.hasAttribute('data-demo-ilerleme')) akit(el, Number(el.dataset.hedef), el.dataset.anahtar);
+    });
     if (sayfa === 'ilerleme') {
       if (ayni) for (const el of $$('[data-demo-ilerleme]', kok)) ilerlemeYaz(el, ilerlemeDeger);
       else ilerlemeOynat();
@@ -1152,22 +1157,70 @@
     const bitti = deger >= 100;
     el.dataset.status = bitti ? 'done' : 'running';
     $('.tk-progress__step', el).textContent = bitti ? 'Aktarım bitti' : deger === 0 ? 'Başlamaya hazır' : 'Dosyalar aktarılıyor · ' + deger + ' / 100';
-    $('.tk-progress__percent', el).textContent = deger + '%';
     $('.tk-progress__track', el).setAttribute('aria-valuenow', String(deger));
-    $('.tk-progress__fill', el).style.setProperty('--tk-progress-value', String(deger / 100));
+    el.dataset.hedef = String(deger);
+    akit(el, deger, el.dataset.anahtar);
   }
+
+  const DEMO_SICRAMA = [3, 8, 1, 12, 5, 2, 9, 4, 15, 6];
 
   function ilerlemeOynat() {
     const no = ++ilerlemeNo;
     ilerlemeDeger = 0;
+    let i = 0;
+    for (const el of $$('#onizleme [data-demo-ilerleme]')) akis.delete(el.dataset.anahtar);
     const adim = () => {
       if (no !== ilerlemeNo || sayfa !== 'ilerleme') return;
       for (const el of $$('#onizleme [data-demo-ilerleme]')) ilerlemeYaz(el, ilerlemeDeger);
       if (ilerlemeDeger >= 100) return;
-      ilerlemeDeger = Math.min(100, ilerlemeDeger + 7);
+      ilerlemeDeger = Math.min(100, ilerlemeDeger + DEMO_SICRAMA[i++ % DEMO_SICRAMA.length]);
       zamanla(adim, su.sure.slow);
     };
     adim();
+  }
+
+  const akis = new Map();
+  const ONDALIK = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  let akisKare = 0;
+  let akisOnceki = 0;
+
+  function akisYaz(d) {
+    if (!d.el.isConnected) return;
+    const dolgu = $('.tk-progress__fill', d.el);
+    if (dolgu) dolgu.style.setProperty('--tk-progress-value', String(d.goster / 100));
+    const yuzde = $('.tk-progress__percent, .tk-installer__percent', d.el);
+    if (yuzde) yuzde.textContent = ONDALIK.format(d.goster) + '%';
+  }
+
+  function akit(el, hedef, anahtar) {
+    let d = akis.get(anahtar);
+    if (!d) {
+      d = { goster: 0, hedef: 0 };
+      akis.set(anahtar, d);
+    }
+    d.el = el;
+    d.hedef = hedef;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.goster = hedef;
+    akisYaz(d);
+    if (d.goster !== d.hedef && !akisKare) {
+      akisOnceki = performance.now();
+      akisKare = requestAnimationFrame(akisAdim);
+    }
+  }
+
+  function akisAdim(t) {
+    const dt = Math.min(64, Math.max(0, t - akisOnceki));
+    akisOnceki = t;
+    const k = 1 - Math.exp(-dt / (su.sure.slow / 2));
+    let surer = false;
+    for (const d of akis.values()) {
+      if (d.goster === d.hedef) continue;
+      const fark = d.hedef - d.goster;
+      d.goster = Math.abs(fark) < 0.05 ? d.hedef : d.goster + fark * k;
+      akisYaz(d);
+      if (d.goster !== d.hedef) surer = true;
+    }
+    akisKare = surer ? requestAnimationFrame(akisAdim) : 0;
   }
 
   function sonraki(fn) {
@@ -1986,7 +2039,7 @@
   function ilerlemeCiz(d, hata) {
     const p = $('#kaydet-pencere');
     const durumu = hata || (d.bitti && !d.basarili) ? 'error' : d.bitti ? 'done' : 'running';
-    const yuzde = Math.max(0, Math.min(100, Math.round(d.yuzde || 0)));
+    const yuzde = Math.max(0, Math.min(100, d.yuzde || 0));
     const adim = hata || d.adim || 'Başlıyor';
     const alt = d.surum ? 'Sürüm ' + d.surum : 'Önizlemeden kayıt';
     let dugmeler = '';
@@ -1997,10 +2050,11 @@
       '<div class="tk-installer__head"><div class="tk-installer__titles"><p class="tk-installer__title" id="kaydet-baslik">Teknesyum<span class="tk-installer__accent">Kaydet</span></p>' +
       '<p class="tk-installer__sub">' + kacis(alt) + '</p></div></div>' +
       '<div><div class="tk-installer__row"><span class="tk-installer__step">' + kacis(adim) + '</span><span class="tk-installer__percent">' + yuzde + '%</span></div>' +
-      '<div class="tk-progress__track parca-kur-cubuk" role="progressbar" aria-valuenow="' + yuzde + '" aria-valuemin="0" aria-valuemax="100" aria-label="Kaydet">' +
+      '<div class="tk-progress__track parca-kur-cubuk" role="progressbar" aria-valuenow="' + Math.round(yuzde) + '" aria-valuemin="0" aria-valuemax="100" aria-label="Kaydet">' +
       '<div class="tk-progress__fill" style="--tk-progress-value: ' + yuzde / 100 + '"></div></div></div>' +
       '<ol class="tk-installer__log">' + (d.gunluk || []).slice(-9).map((s) => '<li>' + kacis(s) + '</li>').join('') + '</ol>' +
       '<div class="tk-installer__actions">' + dugmeler + '</div></div>';
+    akit($('.tk-installer', p), yuzde, 'kaydet');
     const y = $('[data-kaydet="yenile"]', p);
     if (y) {
       y.addEventListener('click', () => location.reload());
@@ -2016,6 +2070,7 @@
   async function kaydetGonder() {
     kayitSuruyor = true;
     kaydetGuncelle();
+    akis.delete('kaydet');
     ilerlemeCiz({ yuzde: 0, gunluk: [] });
     let r;
     try {

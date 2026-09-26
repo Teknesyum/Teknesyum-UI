@@ -1749,7 +1749,11 @@
           aralik('arka-durak', 'Degrade Durakları', 2, 32, 1) +
           aralik('arka-aci', 'Açı (Derece)', 0, 360, 1) +
           '<label class="secim"><input type="checkbox" id="arka-don"> Arka Plan Salınsın (150–170°, 48 sn)</label>' +
-          '<p class="ipucu">Degrade başı Siyah, sonu Yüzey rengidir; ikisini renk gruplarından ayarlayın.</p>'
+          [['black', 'Üst Uç (Siyah)'], ['surface', 'Alt Uç (Yüzey)']].map(([ad, et]) =>
+            '<div class="alan"><span class="alan-ust">' + et + '</span><div class="satir"><input type="color" class="secici" data-renk="' + ad + '" data-alan="secici" aria-label="Degrade ' + et + ' Renk Seçici">' +
+            '<input type="text" class="giris hex" data-renk="' + ad + '" data-alan="hex" maxlength="7" spellcheck="false" aria-label="Degrade ' + et + ' Hex"></div></div>'
+          ).join('') +
+          '<p class="ipucu">Degrade üstten Siyaha, alttan Yüzey rengine akar. Yüzey rengi paneller ve kutuların da zeminidir; alt ucu değiştirmek onları da değiştirir.</p>'
       ) +
       grup(
         'parlama',
@@ -2737,20 +2741,31 @@
   }
 
   const ADIMLAR = [
-    { ad: 'Tema', sayfa: 'renkler', grup: [], yol: ['renk', 'koyu'], tema: true, metin: 'Önce temel seçim: koyu, açık ya da hazır bir tema. Önerilen, token dosyasındaki koyu temadır.' },
-    { ad: 'Yüzey Ve Metin', sayfa: 'formlar', grup: ['renk-surface', 'renk-text', 'renk-black'], yol: ['renk.surface', 'renk.text', 'renk.black'], metin: 'Zemin ve yazı rengi okunurluğun temelidir; vurgu renkleri bunların üstüne kurulur. Önce bunları oturt.' },
-    { ad: 'Ana Renk', sayfa: 'dugmeler', grup: ['renk-blue'], yol: ['renk.blue'], metin: 'Birincil düğme, bağlantı ve ilerleme bu renktedir. Rengin yanındaki Hedef Okunurluk düğmesi hedef puana uyan beş öneri verir.' },
-    { ad: 'Vurgular', sayfa: 'dugmeler', grup: ['renk-pink', 'renk-pink-text', 'renk-purple', 'renk-purple-text'], yol: ['renk.pink', 'renk.pink-text', 'renk.purple', 'renk.purple-text'], metin: 'Pembe ve mor ikincil vurgulardır; yazı sürümleri (pink-text, purple-text) zemin üstünde okunacak biçimde ayrıca ayarlanır.' },
-    { ad: 'Durum Renkleri', sayfa: 'rozetler', grup: ['renk-success', 'renk-warning', 'renk-disabled'], yol: ['renk.success', 'renk.warning', 'renk.disabled'], metin: 'Başarı, uyarı ve devre dışı renkleri. Uyarı yalnız yazı, kenar ve ikonda kullanılır; dolgu olmaz.' },
-    { ad: 'Zemin', sayfa: 'arka', grup: ['arka', 'renk-glass-base'], yol: ['arka', 'renk.glass-base'], metin: 'Pencerenin arka planı ve cam yüzeyin tabanı. Degrade siyahtan yüzey rengine akar.' },
-    { ad: 'Yazı', sayfa: 'tipografi', grup: ['yazi'], yol: ['yazi'], metin: 'Yazı ailesi, boyut çarpanı ve ağırlıklar. Kahraman yazısı dışında 700 kullanılmaz.' },
-    { ad: 'Şekil Ve Yoğunluk', sayfa: 'formlar', grup: ['sekil', 'yogunluk', 'dugme'], yol: ['sekil', 'yogunluk', 'kenar', 'dugme'], metin: 'Köşe yarıçapı, boşluk çarpanı, kenar kalınlığı ve düğme boyutu. Formlar sayfası hepsini aynı anda gösterir.' },
-    { ad: 'Üst Çubuk Ve Yüzey', sayfa: 'ustcubuk', grup: ['pencere', 'yuzey'], yol: ['pencere', 'cam', 'golge'], metin: 'Pencere kenarı, üst çubuk yüksekliği, cam bulanıklığı ve gölge gücü.' },
-    { ad: 'Parlama', sayfa: 'dugmeler', grup: ['parlama'], yol: ['parlama', 'parlamaDuzey'], metin: 'Kutu, düğme ve kahraman yazısının halesi. Düzey hepsini birlikte ölçekler.' },
-    { ad: 'Kaydırma', sayfa: 'kaydirma', grup: ['kaydir'], yol: ['kaydir'], metin: 'Kaydırma çubuğunun kalınlığı, rengi, biçimi ve davranışı.' },
-    { ad: 'Hareket', sayfa: 'akicilik', grup: ['hareket', 'egri'], yol: ['egri', 'arayuzEgri', 'sure', 'sureCarpan'], metin: 'Geçiş eğrileri ve süreler. Akıcılık sayfasında her eğriyi canlı görürsün.' },
-    { ad: 'Okunurluk', sayfa: 'okunur', grup: [], yol: [], puan: true, metin: 'Seçimlerinin okunurluk puanı. Düşük kalan öğeleri buradan görüp ilgili renge dönebilirsin.' },
-    { ad: 'Kaydet', sayfa: null, grup: [], yol: [], son: true, metin: 'Seçimlerin yalnız sana ait özel yere kaydedilir; genel depoya hiçbir renk ya da tercih gitmez. Açılışta bu ayarlar yüklenir.' },
+    { ad: 'Tema', sayfa: 'renkler', grup: [], yol: ['renk', 'koyu'], tema: true, metin: 'Önce temel seçim: koyu, açık ya da hazır bir tema. Önerilen, token dosyasındaki koyu temadır. Sonraki her renk bu seçimin üstüne kurulur; tema değişince renkler de değişir.' },
+    { ad: 'Yüzey', sayfa: 'formlar', grup: ['renk-surface'], yol: ['renk.surface'], metin: 'Panellerin, kutuların ve alanların zemini. Tüm okunurluk ölçümleri bu rengin üstünde yapılır; önce bunu oturt. Koyu temada çok koyu, açık temada çok açık kalmalı.' },
+    { ad: 'Metin', sayfa: 'formlar', grup: ['renk-text'], yol: ['renk.text'], metin: 'Gövde yazısının rengi. Yüzey üstünde 7:1 eşiğini geçmeli; kaydırıcıların yanındaki oran bunu gösterir. Etiket ve ipucu tonları bundan türer.' },
+    { ad: 'Arka Plan', sayfa: 'arka', grup: ['arka', 'renk-black'], yol: ['arka', 'renk.black'], metin: 'Pencerenin arkası: tasarım, degrade durakları, açı ve salınım. Üst uç Siyah, alt uç Yüzey rengidir; ikisi de bu grupta. Durak sayısı arttıkça geçiş yumuşar.' },
+    { ad: 'Cam Tabanı', sayfa: 'ustcubuk', grup: ['renk-glass-base'], yol: ['renk.glass-base'], metin: 'Üst çubuk ve cam yüzeylerin altındaki renk. Bulanıklıkla birlikte çalışır; arka planla fazla benzerse cam kaybolur, fazla farklıysa ağırlaşır.' },
+    { ad: 'Ana Renk: Mavi', sayfa: 'dugmeler', grup: ['renk-blue'], yol: ['renk.blue'], metin: 'Birincil düğme, bağlantı, odak ve ilerleme bu renktir. Hedef Okunurluk düğmesi seçtiğin puana uyan beş öneri verir; eğri haritasında bir noktaya tıklamak o rengi uygular.' },
+    { ad: 'Pembe', sayfa: 'dugmeler', grup: ['renk-pink'], yol: ['renk.pink'], metin: 'İkincil vurgu ve dolgu. Pembe düğmenin yazısı dolgunun eşiğinden gelir; dolgu çok açılırsa yazı koyuya döner.' },
+    { ad: 'Pembe Yazı', sayfa: 'dugmeler', grup: ['renk-pink-text'], yol: ['renk.pink-text'], metin: 'Pembenin yüzey üstünde yazı olarak okunan sürümü: üzerine gelinen sekme ve çiplerin yazısı. Dolgu pembeden bağımsız ayarlanır, 7:1 eşiğini geçmeli.' },
+    { ad: 'Mor', sayfa: 'ilerleme', grup: ['renk-purple'], yol: ['renk.purple'], metin: 'Üçüncü vurgu: ilerleme çubuğunun ikinci durağı ve bazı rozetler. Mavi ile pembe arasında ayrı durmalı.' },
+    { ad: 'Mor Yazı', sayfa: 'kaydirma', grup: ['renk-purple-text'], yol: ['renk.purple-text'], metin: 'Morun yazı sürümü; kaydırma çubuğu da önerilen olarak bu rengi kullanır. Yüzey üstünde 7:1 eşiğini geçmeli.' },
+    { ad: 'Başarı', sayfa: 'bildirimler', grup: ['renk-success'], yol: ['renk.success'], metin: 'Tamamlandı, eşitlendi, kaydedildi. Bildirim, rozet ve kurulumun son adımı bu renktir.' },
+    { ad: 'Uyarı', sayfa: 'rozetler', grup: ['renk-warning'], yol: ['renk.warning'], metin: 'Dikkat gerektiren durum. Uyarı yalnız yazı, kenar ve ikonda kullanılır, dolgu olmaz; bu yüzden yüzey üstünde yazı olarak okunmalı.' },
+    { ad: 'Pasif', sayfa: 'dugmeler', grup: ['renk-disabled'], yol: ['renk.disabled'], metin: 'Kullanılamayan düğme ve alan. Soluk görünmeli ama yine okunmalı; neden pasif olduğu title ile söylenir.' },
+    { ad: 'Yazı', sayfa: 'tipografi', grup: ['yazi'], yol: ['yazi'], metin: 'Yazı ailesi, boyut çarpanı ve üç ağırlık: gövde, başlık/etiket, kahraman. 700 yalnız kahraman içindir. Ölçek satırı çarpanla oluşan boyutları gösterir.' },
+    { ad: 'Köşe Yarıçapı', sayfa: 'formlar', grup: ['sekil'], yol: ['sekil'], metin: 'Kutu, düğme ve alan köşeleri ile pencerenin kendi köşesi. Küçük değer keskin ve teknik, büyük değer yumuşak durur.' },
+    { ad: 'Yoğunluk Ve Kenar', sayfa: 'formlar', grup: ['yogunluk'], yol: ['yogunluk', 'kenar'], metin: 'Boşluk çarpanı tüm iç ve dış boşlukları birlikte ölçekler; kenar kalınlığı çerçeveleri. Formlar sayfası ikisinin etkisini aynı anda gösterir.' },
+    { ad: 'Düğme Boyutu', sayfa: 'dugmeler', grup: ['dugme'], yol: ['dugme'], metin: 'Düğme yüksekliği ve yatay dolgusu. Yükseklik dokunma hedefini, dolgu yazının nefesini belirler.' },
+    { ad: 'Pencere Ve Üst Çubuk', sayfa: 'ustcubuk', grup: ['pencere'], yol: ['pencere'], metin: 'Pencere büyütülmemişken çevresindeki 1 px kenarın rengi ve üst çubuğun yüksekliği.' },
+    { ad: 'Cam Ve Gölge', sayfa: 'modal', grup: ['yuzey'], yol: ['cam', 'golge'], metin: 'Cam bulanıklığı ve panel gölgesinin gücü. Modal ve üst çubuk en çok bunlardan etkilenir.' },
+    { ad: 'Parlama', sayfa: 'dugmeler', grup: ['parlama'], yol: ['parlama', 'parlamaDuzey'], metin: 'Kutu, düğme ve kahraman yazısının halesi: saydamlık ve bulanıklık ayrı ayrı. Düzey üçünü birlikte ölçekler; kaydırma çubuğunda hale yoktur.' },
+    { ad: 'Kaydırma Çubuğu', sayfa: 'kaydirma', grup: ['kaydir'], yol: ['kaydir'], metin: 'Kaydırma çubuğunun kalınlığı, rengi, biçimi ve davranışı (anında ya da yumuşak).' },
+    { ad: 'Hareket', sayfa: 'akicilik', grup: ['hareket'], yol: ['arayuzEgri', 'sure', 'sureCarpan'], metin: 'Geçişlerin eğrisi ve süreleri; süre çarpanı hepsini birlikte hızlandırır ya da yavaşlatır. Hareketi Azalt bu makineye özeldir, kaydedilmez.' },
+    { ad: 'Eğri Düzenleyici', sayfa: 'akicilik', grup: ['egri'], yol: ['egri'], metin: 'Her eğrinin dört denetim noktası. Y değeri 1’i aşarsa hareket hedefi geçip geri döner; Akıcılık sayfası eğriyi canlı çizer.' },
+    { ad: 'Okunurluk', sayfa: 'okunur', grup: [], yol: [], puan: true, metin: 'Seçimlerinin okunurluk puanı, panel panel. 70’in altında kalan öğe varsa Geri ile ilgili renge dönüp Hedef Okunurluk önerilerini kullanabilirsin.' },
+    { ad: 'Kaydet', sayfa: null, grup: [], yol: [], son: true, metin: 'Seçimlerin yalnız sana ait özel yere kaydedilir; genel depoya hiçbir renk ya da tercih gitmez. Açılışta bu ayarlar yüklenir, sihirbaz yeniden sormaz.' },
   ];
   let sihirbazAdim = -1;
 
@@ -2776,6 +2791,7 @@
           '<div class="sihirbaz-metin" data-sihirbaz-adim="' + i + '"><h2 class="tk-h3">' + kacis(a.ad) + '</h2><p>' + kacis(a.metin) + '</p>' +
           (a.tema ? '<select class="tk-input" data-sihirbaz-tema aria-label="Tema">' + temaSecenek + '</select>' : '') +
           (a.puan ? '<p class="sihirbaz-puan" data-sihirbaz-puan></p>' : '') +
+          (a.yol.length ? '<p class="sihirbaz-fark" data-sihirbaz-fark></p>' : '') +
           '</div>'
       ).join('') +
       '</div>' +
@@ -2786,10 +2802,14 @@
       if (!e.target.matches('[data-sihirbaz-tema]')) return;
       $('#tema-sec').value = e.target.value;
       temaSec(e.target.value);
+      sihirbazFark();
     });
+    $('#ayarlar').addEventListener('input', () => requestAnimationFrame(sihirbazFark));
+    $('#ayarlar').addEventListener('change', () => requestAnimationFrame(sihirbazFark));
+    $('#tema-sec').addEventListener('change', () => requestAnimationFrame(sihirbazFark));
     k.addEventListener('click', async (e) => {
-      const b = e.target.closest('[data-sihirbaz]');
-      if (!b) return;
+      const b = e.target.closest('button[data-sihirbaz]');
+      if (!b || !k.contains(b)) return;
       const is = b.dataset.sihirbaz;
       if (is === 'kapat') return sihirbazKapat();
       if (is === 'geri') return sihirbazGit(sihirbazAdim - 1);
@@ -2801,6 +2821,15 @@
       }
     });
     $('#sihirbaz-ac').addEventListener('click', () => (sihirbazAdim >= 0 ? sihirbazKapat() : sihirbazGit(0)));
+  }
+
+  function sihirbazFark() {
+    if (sihirbazAdim < 0) return;
+    const a = ADIMLAR[sihirbazAdim];
+    const el = $('.sihirbaz-etkin [data-sihirbaz-fark]');
+    if (!el) return;
+    const n = a.yol.filter((y) => JSON.stringify(yolAl(su, y)) !== JSON.stringify(yolAl(ilk, y))).length;
+    el.textContent = n ? 'Bu adımda ' + n + ' ayar önerilenden farklı.' : 'Bu adımdaki ayarlar önerilen değerde.';
   }
 
   function sihirbazOneri() {
@@ -2815,6 +2844,7 @@
     for (const k of Object.keys(hslBellek)) delete hslBellek[k];
     formDoldur();
     planla();
+    sihirbazFark();
     durum(a.ad + ': önerilen değerlere dönüldü.');
   }
 
@@ -2854,6 +2884,7 @@
       if (d) d.classList.add('sihirbaz-odak');
     }
     if (a.grup.length) ayarAc(a.grup);
+    sihirbazFark();
     document.body.style.setProperty('--sihirbaz-y', k.offsetHeight + 'px');
   }
 

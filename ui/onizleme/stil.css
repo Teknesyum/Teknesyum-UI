@@ -772,6 +772,7 @@ body[data-sihirbaz] .bilesen-liste { padding-bottom: calc(var(--tk-sp-4) * 2 + v
 .sihirbaz-metin select { width: 100%; }
 .sihirbaz-puan { color: var(--tk-blue); font-weight: var(--tk-fw-semi); font-variant-numeric: tabular-nums; }
 .sihirbaz .tk-installer__actions { margin: 0; }
+.sihirbaz-fark { margin: 0; color: var(--tk-text-label); font-variant-numeric: tabular-nums; }
 .grup.sihirbaz-odak { box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-pink-text); }
 .kaydet-not { margin: 0 0 var(--tk-sp-3); color: var(--tk-text-label); font-size: var(--tk-fs-1); }
 

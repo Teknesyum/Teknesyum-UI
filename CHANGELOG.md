@@ -16,6 +16,22 @@ All notable changes to this project are documented here. The format follows
 - Scanner rule `core/avalonia-animator-missing`: an error when a project's `.axaml` animates
   `Window.anim Panel.appbg` but no `.cs` file registers the `ITransform` animator — the app
   crashes at launch without it.
+- Preview scrollbar styles Solan (fades in while hovered or scrolled, fades out after) and
+  İncelen (thin at rest, full width while hovered or scrolled, without shifting the layout).
+- Preview: private themes in `teknesyum-private/teknesyum-ui/temalar/` appear under Özel Temalar.
+
+### Changed
+
+- Preview: Üzerine Gelince shows the scrollbar reliably; hover and scroll are tracked in script.
+- Preview: Önce / Sonra, the Okunurluk summary and the change list compare against Benim Token
+  Dosyam when a private record exists; Token Dosyası stays the standard defaults.
+- Preview: changing a duration or the interface curve replays the Akıcılık demo; the app's own
+  wizard card, wizard steps and settings groups animate with the motion tokens.
+- Preview: button height and padding settings also size the wizard and dialog buttons.
+
+### Removed
+
+- The Karbon theme is no longer public; it lives on the private shelf.
 
 ## [0.8.0] - 2026-09-26
 

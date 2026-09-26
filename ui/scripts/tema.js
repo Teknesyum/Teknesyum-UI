@@ -25,13 +25,30 @@ function oku(dosya) {
   return t;
 }
 
-function liste() {
-  if (!fs.existsSync(DIZIN)) return [];
+function dizinOku(dizin) {
+  if (!dizin || !fs.existsSync(dizin)) return [];
   return fs
-    .readdirSync(DIZIN)
+    .readdirSync(dizin)
     .filter((f) => f.endsWith('.json'))
     .sort()
-    .map((f) => oku(path.join(DIZIN, f)));
+    .map((f) => oku(path.join(dizin, f)));
+}
+
+function liste() {
+  return dizinOku(DIZIN);
+}
+
+function ozelDizin() {
+  const y = require('./ozel').yer();
+  return y.kok ? path.join(y.kok, 'teknesyum-ui', 'temalar') : null;
+}
+
+function ozelListe() {
+  try {
+    return dizinOku(ozelDizin());
+  } catch {
+    return [];
+  }
 }
 
 function degisim(T, renk, tur) {
@@ -65,7 +82,10 @@ function denetle(tema, taban) {
 }
 
 function sayfaVerisi() {
-  return liste().map((t) => ({ ad: t.ad, baslik: t.baslik, tur: t.tur, esin: t.esin, renk: t.renk }));
+  const ozel = ozelListe();
+  const ad = new Set(ozel.map((t) => t.ad));
+  const kart = (t, o) => ({ ad: t.ad, baslik: t.baslik, tur: t.tur, esin: t.esin, renk: t.renk, ozel: o });
+  return [...liste().filter((t) => !ad.has(t.ad)).map((t) => kart(t, false)), ...ozel.map((t) => kart(t, true))];
 }
 
 function main() {
@@ -101,4 +121,4 @@ if (require.main === module)
     process.exitCode = 1;
   }
 
-module.exports = { DIZIN, ALANLAR, oku, liste, degisim, tokenlar, denetle, sayfaVerisi };
+module.exports = { DIZIN, ALANLAR, oku, liste, ozelDizin, ozelListe, degisim, tokenlar, denetle, sayfaVerisi };

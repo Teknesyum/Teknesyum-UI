@@ -906,6 +906,9 @@ body[data-sihirbaz] .bilesen-liste { padding-bottom: calc(var(--tk-sp-4) * 2 + v
 }
 @keyframes sayfa-gir { from { opacity: 0; transform: translateY(var(--tk-sp-2)); } to { opacity: 1; transform: none; } }
 .sayfa-gir { animation: sayfa-gir var(--tk-t-base) var(--tk-e-out); }
+.sihirbaz:not([hidden]) { animation: kaydet-gir var(--tk-t-base) var(--tk-e-out); }
+.sihirbaz-metin:not([aria-hidden='true']) { animation: sayfa-gir var(--tk-t-fast) var(--tk-e-out); }
+.grup[open] > .grup-ic { animation: sayfa-gir var(--tk-t-fast) var(--tk-e-out); }
 
 .durum-izgara {
   display: grid;
@@ -931,7 +934,7 @@ body[data-sihirbaz] .bilesen-liste { padding-bottom: calc(var(--tk-sp-4) * 2 + v
   border-radius: var(--tk-r);
 }
 
-.onizleme .tk-btn { border-width: var(--tk-border-w); min-height: var(--tk-btn-h); padding-block: 0; padding-inline: var(--tk-btn-px); }
+.onizleme .tk-btn, .sihirbaz .tk-btn, .kaydet-pencere .tk-btn { border-width: var(--tk-border-w); min-height: var(--tk-btn-h); padding-block: 0; padding-inline: var(--tk-btn-px); }
 .onizleme .tk-panel { background: var(--tk-panel); box-shadow: var(--tk-shadow-panel); }
 .onizleme .tk-btn.s-uzerinde { transform: scale(var(--tk-scale-hover)); }
 .onizleme .tk-btn-ghost.s-uzerinde { background: var(--tk-purple-10); color: var(--tk-on-purple-10); }
@@ -985,12 +988,15 @@ body[data-sihirbaz] .bilesen-liste { padding-bottom: calc(var(--tk-sp-4) * 2 + v
 [data-kaydir-bicim='hap'] .onizleme::-webkit-scrollbar-track,
 [data-kaydir-bicim='hap'] .uzun-liste:not([data-bicim])::-webkit-scrollbar-track,
 .kaydir-ornek[data-bicim='hap']::-webkit-scrollbar-track { background: transparent; }
-[data-kaydir-bicim='gizli'] .onizleme::-webkit-scrollbar-thumb,
-[data-kaydir-bicim='gizli'] .uzun-liste:not([data-bicim])::-webkit-scrollbar-thumb,
-.kaydir-ornek[data-bicim='gizli']::-webkit-scrollbar-thumb { background: transparent; }
-[data-kaydir-bicim='gizli'] .onizleme:hover::-webkit-scrollbar-thumb,
-[data-kaydir-bicim='gizli'] .uzun-liste:not([data-bicim]):hover::-webkit-scrollbar-thumb,
-.kaydir-ornek[data-bicim='gizli']:hover::-webkit-scrollbar-thumb { background: var(--tk-thumb); }
+@property --kaydir-a { syntax: '<percentage>'; inherits: true; initial-value: 100%; }
+@property --kaydir-bos { syntax: '<length>'; inherits: true; initial-value: 0px; }
+[data-kaydir-bicim='gizli'] .onizleme:not([data-kaydir-etkin])::-webkit-scrollbar-thumb, [data-kaydir-bicim='gizli'] .uzun-liste:not([data-bicim]):not([data-kaydir-etkin])::-webkit-scrollbar-thumb, .kaydir-ornek[data-bicim='gizli']:not([data-kaydir-etkin])::-webkit-scrollbar-thumb { background: transparent; }
+[data-kaydir-bicim='solan'] .onizleme, [data-kaydir-bicim='solan'] .uzun-liste:not([data-bicim]), .kaydir-ornek[data-bicim='solan'] { --kaydir-a: 0%; transition: --kaydir-a calc(var(--tk-t-slow) * 2) var(--tk-e-out); }
+[data-kaydir-bicim='solan'] .onizleme[data-kaydir-etkin], [data-kaydir-bicim='solan'] .uzun-liste:not([data-bicim])[data-kaydir-etkin], .kaydir-ornek[data-bicim='solan'][data-kaydir-etkin] { --kaydir-a: 100%; transition-duration: var(--tk-t-fast); }
+[data-kaydir-bicim='solan'] .onizleme::-webkit-scrollbar-thumb, [data-kaydir-bicim='solan'] .uzun-liste:not([data-bicim])::-webkit-scrollbar-thumb, .kaydir-ornek[data-bicim='solan']::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--tk-thumb) var(--kaydir-a), transparent); }
+[data-kaydir-bicim='incelen'] .onizleme, [data-kaydir-bicim='incelen'] .uzun-liste:not([data-bicim]), .kaydir-ornek[data-bicim='incelen'] { --kaydir-bos: calc(var(--tk-scrollbar-w) / 3); transition: --kaydir-bos var(--tk-t-base) var(--tk-e-out); }
+[data-kaydir-bicim='incelen'] .onizleme[data-kaydir-etkin], [data-kaydir-bicim='incelen'] .uzun-liste:not([data-bicim])[data-kaydir-etkin], .kaydir-ornek[data-bicim='incelen'][data-kaydir-etkin] { --kaydir-bos: 0px; }
+[data-kaydir-bicim='incelen'] .onizleme::-webkit-scrollbar-thumb, [data-kaydir-bicim='incelen'] .uzun-liste:not([data-bicim])::-webkit-scrollbar-thumb, .kaydir-ornek[data-bicim='incelen']::-webkit-scrollbar-thumb { border: var(--kaydir-bos) solid transparent; background-clip: padding-box; }
 .kaydir-ornek::-webkit-scrollbar { width: var(--tk-scrollbar-w); }
 .kaydir-ornek::-webkit-scrollbar-track { background: var(--tk-track); border-radius: var(--tk-r); }
 .kaydir-ornek::-webkit-scrollbar-thumb { background: var(--tk-thumb); border-radius: var(--tk-r); }

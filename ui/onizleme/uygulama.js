@@ -100,6 +100,8 @@
     ['ince', 'İnce'],
     ['hap', 'Hap'],
     ['gizli', 'Üzerine Gelince'],
+    ['solan', 'Solan'],
+    ['incelen', 'İncelen'],
   ];
   const DURUMLAR = [
     ['', 'Normal'],
@@ -798,7 +800,7 @@
       '<button type="button" class="btn btn-hayalet" data-kaydir="bas" data-hedef="' + on + '-uzun">Başa Kaydır</button></div>';
     return (
       blok(on, 'kaydirma', 'Kaydırma Çubuğu', 'Çubukta hale yoktur: ince ve hareketli bir çubuğun çevresindeki parlama bulaşır, gürültü gibi okunur. Kalınlık, renk, biçim ve davranış sağdaki Kaydırma grubundan değişir; önizlemenin kendi çubuğu da aynı ayarı kullanır.', arac + '<ul class="uzun-liste" id="' + on + '-uzun" tabindex="0" aria-label="Uzun liste">' + uzun.join('') + '</ul>') +
-      blok(on, 'bicimler', 'Biçimler', 'Dört biçim yan yana. Seçili biçim (' + BICIMLER.find((b) => b[0] === st.kaydir.bicim)[1] + ') sayfanın ve uzun listenin çubuğuna uygulanır.', '<div class="kaydir-ornekler">' + BICIMLER.map(([b, a]) => ornek(b, a)).join('') + '</div>')
+      blok(on, 'bicimler', 'Biçimler', 'Altı biçim yan yana. Üzerine Gelince, Solan ve İncelen üzerine gelince ya da kaydırınca belirir. Seçili biçim (' + BICIMLER.find((b) => b[0] === st.kaydir.bicim)[1] + ') sayfanın ve uzun listenin çubuğuna uygulanır.', '<div class="kaydir-ornekler">' + BICIMLER.map(([b, a]) => ornek(b, a)).join('') + '</div>')
     );
   }
 
@@ -965,18 +967,35 @@
   };
 
   function farkListesi() {
-    const f = farklar();
+    const f = benim ? farkSatirlari(fark(su, benim), '', benim) : farklar();
     const li = f.length ? f.map((x) => '<li>' + x + '</li>').join('') : '<li>Henüz değişiklik yok.</li>';
-    return '<div class="farklar"><strong>Değişenler</strong><ul>' + li + '</ul></div>';
+    return '<div class="farklar"><strong>' + (benim ? "Benim Token Dosyam'a" : "Token Dosyası'na") + ' Göre Değişenler</strong><ul>' + li + '</ul></div>';
   }
 
   const NOT_KOD = { 'Mükemmel': 'mukemmel', 'İyi': 'iyi', 'Zayıf': 'zayif', 'Kötü': 'kotu' };
   let skorBellek = null;
+  let benim = null;
+
+  function referans() {
+    return benim || ilk;
+  }
+
+  function refAd() {
+    return benim ? 'Benim Token Dosyam' : 'Token Dosyası';
+  }
+
+  function benimKur() {
+    const a = ozelBilgi.ayar;
+    if (!a || !duzNesne(a.fark)) { benim = null; return; }
+    benim = kopya(ilk);
+    birlestir(benim, a.fark, ilk);
+    skorBellek = null;
+  }
 
   function skorlar() {
-    const anahtar = JSON.stringify(su.renk);
+    const anahtar = JSON.stringify(su.renk) + JSON.stringify(referans().renk);
     if (!skorBellek || skorBellek.anahtar !== anahtar)
-      skorBellek = { anahtar, ilk: window.Skor.skorla(T, ilk.renk), su: window.Skor.skorla(T, su.renk) };
+      skorBellek = { anahtar, ilk: window.Skor.skorla(T, ilk.renk), ref: window.Skor.skorla(T, referans().renk), su: window.Skor.skorla(T, su.renk) };
     return skorBellek;
   }
 
@@ -1342,7 +1361,7 @@
   }
 
   function okunurSayfasi() {
-    const { ilk: A, su: B } = skorlar();
+    const { ref: A, su: B } = skorlar();
     const f = Math.round(B.genel) - Math.round(A.genel);
     const kutu = (etiket, ic, alt) => '<div class="okunur-kutu"><span class="bilesen-ad">' + etiket + '</span>' + ic + '<span class="okunur-not">' + alt + '</span></div>';
     const olcek =
@@ -1356,7 +1375,7 @@
       '<p>Puan 0 ile 100 arasıdır; yüksek daha iyidir. 70 ve üstü standardı geçer. Bir parça uygulamalarda ne kadar sık görünüyorsa (×1 – ×10) puana o kadar ağır katılır: gövde yazısı, sekmeler, birincil düğme ve giriş kutusu en ağırlarıdır.</p>' +
       '<div class="okunur-ozet">' +
       kutu('Şu Anki Ayar', puanEtiket(B.genel, 'puan-buyuk'), B.not) +
-      kutu('Token Dosyası', puanEtiket(A.genel, 'puan-buyuk'), A.not) +
+      kutu(refAd(), puanEtiket(A.genel, 'puan-buyuk'), A.not) +
       kutu('Fark', '<span class="puan puan-buyuk ' + farkSinif(f) + '">' + farkYazi(f) + '</span>', f > 0 ? 'Daha okunur' : f < 0 ? 'Daha az okunur' : 'Değişmedi') +
       '</div>' + olcek +
       '<p class="okunur-dip">Her parçanın puanı yazı renginin zeminine karşıtlığından gelir: 3:1 → 30, 4.5:1 → 50, 7:1 → 70, 12:1 → 90, 18:1 ve üstü → 100. Büyük başlıklar daha az karşıtlıkla da okunduğu için aynı renkte daha yüksek puan alır.</p></section>';
@@ -1398,6 +1417,7 @@
       egri: su.egri,
       ilkEgri: ilk.egri,
       sure: Object.assign({}, su.sure),
+      arayuz: su.arayuzEgri,
       sistemAz: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
       duzenle: egriDuzenle,
       guncel: akisCtx,
@@ -1454,14 +1474,14 @@
     else if (karsi)
       html =
         farkListesi() +
-        '<div class="karsi"><section class="sahne" id="sahne-once" aria-label="Önce"><h2 class="sahne-baslik">Önce · Token Dosyası</h2>' + sayfaIcerik(ilk, 'o') + '</section>' +
+        '<div class="karsi"><section class="sahne" id="sahne-once" aria-label="Önce"><h2 class="sahne-baslik">Önce · ' + refAd() + '</h2>' + sayfaIcerik(referans(), 'o') + '</section>' +
         '<section class="sahne" id="sahne-sonra" aria-label="Sonra"><h2 class="sahne-baslik">Sonra · Şu Anki Ayar</h2>' + sayfaIcerik(su, 's') + '</section></div>';
     else html = sayfaIcerik(su, 's');
     const ad = SAYFALAR.find((x) => x[0] === sayfa)[1];
     const bas = TEK.includes(sayfa) ? '' : '<header class="sayfa-ust"><h1 class="sayfa-baslik">' + ad + '</h1></header>';
     kok.innerHTML = '<div class="sayfa' + (ayni ? '' : ' sayfa-gir') + '" data-bilesen="' + sayfa + '">' + bas + html + '</div>';
     if (karsi) {
-      uygula($('#sahne-once'), ilk, true);
+      uygula($('#sahne-once'), referans(), true);
       uygula($('#sahne-sonra'), su, true);
     }
     kok.dataset.sayfa = sayfa;
@@ -2071,7 +2091,7 @@
       d.classList.add('grup-vurgu');
       if (!ilk) ilk = d;
     }
-    if (ilk) ilk.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+    if (ilk) ilk.scrollIntoView({ block: 'nearest', behavior: su.hareketAz ? 'instant' : 'smooth' });
   }
 
   function olaylar() {
@@ -2112,6 +2132,7 @@
     f.addEventListener('change', (e) => {
       const el = e.target;
       if (el.dataset.renk) return;
+      if (/^(sure-|arayuz-egri)/.test(el.id) && sayfa === 'akicilik' && A()) requestAnimationFrame(() => requestAnimationFrame(() => A().oynat($('#onizleme'))));
       if (/^egri-/.test(el.id) && sayfa === 'akicilik' && A()) {
         requestAnimationFrame(() => requestAnimationFrame(() => A().oynat($('#onizleme'))));
         return;
@@ -2627,9 +2648,9 @@
     }
     const grup = (tur, ad) =>
       '<optgroup label="' + ad + '">' +
-      temalar.filter((t) => t.tur === tur).map((t) => '<option value="' + kacis(t.ad) + '">' + kacis(t.baslik) + '</option>').join('') +
+      temalar.filter((t) => (tur === 'ozel' ? t.ozel : !t.ozel && t.tur === tur)).map((t) => '<option value="' + kacis(t.ad) + '">' + kacis(t.baslik) + '</option>').join('') +
       '</optgroup>';
-    if (temalar.length) $('#tema-sec').insertAdjacentHTML('beforeend', grup('koyu', 'Koyu Temalar') + grup('acik', 'Açık Temalar'));
+    if (temalar.length) $('#tema-sec').insertAdjacentHTML('beforeend', (temalar.some((t) => t.ozel) ? grup('ozel', 'Özel Temalar') : '') + grup('koyu', 'Koyu Temalar') + grup('acik', 'Açık Temalar'));
   }
 
   function ozelSecenek() {
@@ -2703,12 +2724,12 @@
     p.reduce((x, k) => x[k], o)[son] = v;
   }
 
-  function farkSatirlari(f, on = '') {
+  function farkSatirlari(f, on = '', taban = ilk) {
     const out = [];
     for (const [k, v] of Object.entries(f)) {
       const yol = on + k;
-      if (duzNesne(v)) out.push(...farkSatirlari(v, yol + '.'));
-      else out.push(yol + ': ' + JSON.stringify(yolAl(ilk, yol)).replace(/"/g, '') + ' → ' + JSON.stringify(v).replace(/"/g, ''));
+      if (duzNesne(v)) out.push(...farkSatirlari(v, yol + '.', taban));
+      else out.push(yol + ': ' + JSON.stringify(yolAl(taban, yol)).replace(/"/g, '') + ' → ' + JSON.stringify(v).replace(/"/g, ''));
     }
     return out;
   }
@@ -2721,6 +2742,7 @@
     const a = ozelBilgi.ayar;
     if (!a || !duzNesne(a.fark)) return;
     birlestir(su, a.fark, ilk);
+    benimKur();
     ozelSecenek();
     $('#tema-sec').value = 'ozel';
   }
@@ -2743,6 +2765,7 @@
       return false;
     }
     ozelBilgi = { var: true, tur: j.tur, ayar: veri };
+    benimKur();
     ozelSecenek();
     for (const s of $$('#tema-sec, [data-sihirbaz-tema]')) s.value = 'ozel';
     if (j.tur !== 'raf' || !j.gonderim) {
@@ -2965,7 +2988,30 @@
     if (!sihirbazBayrak()) sihirbazBayrak('kapandi');
   }
 
+  function kaydirIzle() {
+    const SEC = '.onizleme, .uzun-liste, .kaydir-ornek';
+    const saat = new WeakMap();
+    const bekle = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tk-t-slow')) * 3 || 0;
+    const ac = (el) => { el.dataset.kaydirEtkin = ''; };
+    const kapa = (el) => { if (!el.matches(':hover')) delete el.dataset.kaydirEtkin; };
+    document.addEventListener('scroll', (e) => {
+      const el = e.target;
+      if (!(el instanceof Element) || !el.matches(SEC)) return;
+      ac(el);
+      clearTimeout(saat.get(el));
+      saat.set(el, setTimeout(() => kapa(el), bekle()));
+    }, true);
+    document.addEventListener('pointerenter', (e) => { if (e.target instanceof Element && e.target.matches(SEC)) ac(e.target); }, true);
+    document.addEventListener('pointerleave', (e) => {
+      const el = e.target;
+      if (!(el instanceof Element) || !el.matches(SEC)) return;
+      clearTimeout(saat.get(el));
+      delete el.dataset.kaydirEtkin;
+    }, true);
+  }
+
   async function basla() {
+    kaydirIzle();
     try {
       const r = await fetch('/tokens.json', { cache: 'no-store' });
       T = await r.json();

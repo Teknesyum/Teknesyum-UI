@@ -138,7 +138,17 @@
     );
   }
 
+  function arayuzEsle(ctx, k) {
+    if (!ctx.arayuz || ctx.arayuz === yerel.arayuz || !ctx.egri[ctx.arayuz]) return false;
+    yerel.arayuz = ctx.arayuz;
+    yerel.a = ctx.arayuz;
+    const s = k && $('[data-akis="a"]', k);
+    if (s) s.value = ctx.arayuz;
+    return true;
+  }
+
   function sayfa(ctx) {
+    arayuzEsle(ctx);
     const kartlar = Object.keys(ctx.egri)
       .map((ad) => kart(ad, ctx.egri[ad], ctx.ilkEgri[ad]))
       .join('');
@@ -219,6 +229,7 @@
   function guncelle(kok, ctx) {
     const k = kokBul(kok);
     if (!k) return;
+    arayuzEsle(ctx, k);
     for (const kart of $$('.akis-kart', k)) {
       const ad = kart.dataset.egri;
       const b = ctx.egri[ad];

@@ -6,6 +6,9 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- The preview app has a separate Yayımla step: Kaydet writes the record to this machine only, Yayımla commits and pushes it to the private repository. Both dialogs show the old print on the left and the new one on the right, above the list of differences.
+- Curve cards mark curves that overshoot their target and come back (Hedefi Aşar, Geri Döner).
+- The preview app remembers which setting groups are open and the window position, size and maximized state.
 - The preview app moves with the chosen motion settings: a sliding marker follows the selected page in the left menu, pages enter from the direction of travel, and the Okunurluk section links scroll along the interface curve over the slow duration.
 
 - `setup.js --apply --targets avalonia` now registers the `ITransform` animator the generated
@@ -22,6 +25,7 @@ All notable changes to this project are documented here. The format follows
 - Preview: private themes in `teknesyum-private/teknesyum-ui/temalar/` appear under Özel Temalar.
 
 ### Changed
+- Geri Al in the preview returns to the value in the selected token file (Benim Token Dosyam included), not to the standard.
 
 - **Breaking:** the brand colour tokens are named by order, not by hue: `blue`, `pink`,
   `purple`, `pink-text`, `purple-text` become `renk-1`, `renk-2`, `renk-3`, `renk-2-text`,

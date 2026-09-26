@@ -65,6 +65,10 @@
     );
   }
 
+  function asar(b) {
+    return b[1] > 1 || b[1] < 0 || b[3] > 1 || b[3] < 0;
+  }
+
   function kart(ad, b, ilk) {
     const degisti = ilk && dizi(ilk) !== dizi(b);
     return (
@@ -72,7 +76,7 @@
       '<header class="akis-kart-ust"><div><h3>' + adi(ad) + '</h3><code>--tk-e-' + ad + '</code></div>' +
       '<button type="button" class="arac-dugme" data-akis-duzenle="' + ad + '" title="Sağdaki eğri düzenleyicide aç">Düzenle</button></header>' +
       grafik(b) +
-      '<p class="egri-deger"><code data-deger>' + dizi(b) + '</code><span class="egri-degisti" data-degisti' + (degisti ? '' : ' hidden') + '>Değişti</span></p>' +
+      '<p class="egri-deger"><code data-deger>' + dizi(b) + '</code><span class="egri-degisti" data-degisti' + (degisti ? '' : ' hidden') + '>Değişti</span><span class="egri-asar" data-asar title="Eğrinin Y değeri 0–1 dışında: hareket hedefi geçer ve geri döner. Planlı yay etkisidir."' + (asar(b) ? '' : ' hidden') + '>Hedefi Aşar, Geri Döner</span></p>' +
       demolar() +
       '</article>'
     );
@@ -238,6 +242,7 @@
       $('.egri-yol', kart).setAttribute('d', yol(b));
       $('[data-deger]', kart).textContent = dizi(b);
       $('[data-degisti]', kart).hidden = !ctx.ilkEgri[ad] || dizi(ctx.ilkEgri[ad]) === dizi(b);
+      $('[data-asar]', kart).hidden = !asar(b);
     }
     for (const [ad, ms] of Object.entries(ctx.sure)) {
       const o = $('[data-sure-cikti="' + ad + '"]', k);

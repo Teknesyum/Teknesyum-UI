@@ -981,6 +981,16 @@
     return benim || ilk;
   }
 
+  function taban() {
+    const v = $('#tema-sec') ? $('#tema-sec').value : '';
+    if (v === 'ozel' && benim) return benim;
+    const t = v && temalar.find((x) => x.ad === v);
+    if (!t) return ilk;
+    const s = kopya(ilk);
+    for (const [k, r] of Object.entries(t.renk)) if (DUZENLENEN.includes(k)) s.renk[k] = r;
+    return s;
+  }
+
   function refAd() {
     return benim ? 'Benim Token Dosyam' : 'Token Dosyası';
   }
@@ -1805,6 +1815,36 @@
     return Object.keys(su.egri).map((ad) => [ad, (A() ? A().adi(ad) : ad) + ' (' + ad + ')']);
   }
 
+  function grupHatirla() {
+    let kayit = {};
+    try {
+      kayit = JSON.parse(localStorage.getItem('tk-gruplar') || '{}') || {};
+    } catch {}
+    for (const d of $$('#ayarlar details.grup[data-grup]')) if (d.dataset.grup in kayit) d.open = !!kayit[d.dataset.grup];
+    let tiklanan = null;
+    $('#ayarlar').addEventListener(
+      'click',
+      (e) => {
+        const s = e.target.closest('summary');
+        tiklanan = s ? s.parentElement : null;
+      },
+      true
+    );
+    $('#ayarlar').addEventListener(
+      'toggle',
+      (e) => {
+        const d = e.target;
+        if (d !== tiklanan || !d.matches('details.grup[data-grup]') || 'sihirbaz' in document.body.dataset) return;
+        tiklanan = null;
+        kayit[d.dataset.grup] = d.open;
+        try {
+          localStorage.setItem('tk-gruplar', JSON.stringify(kayit));
+        } catch {}
+      },
+      true
+    );
+  }
+
   function formKur() {
     const AL = aileler();
     const f = $('#ayarlar');
@@ -1922,7 +1962,8 @@
     });
     $('#egri-mini-yol').setAttribute('d', A() ? A().yol(b) : '');
     $('#egri-deger').textContent = egriMetin(b);
-    $('[data-egri-geri]').disabled = !ilk.egri[ad] || egriMetin(ilk.egri[ad]) === egriMetin(b);
+    const tb = taban();
+    $('[data-egri-geri]').disabled = !tb.egri[ad] || egriMetin(tb.egri[ad]) === egriMetin(b);
   }
 
   function egriDuzenle(ad) {
@@ -2233,7 +2274,7 @@
       const g = e.target.closest('[data-geri]');
       if (g) {
         const ad = g.dataset.geri;
-        su.renk[ad] = ilk.renk[ad];
+        su.renk[ad] = taban().renk[ad];
         renkEsle(ad);
         planla();
       }
@@ -2247,7 +2288,8 @@
       }
       if (e.target.closest('[data-egri-geri]')) {
         const ad = $('#egri-sec').value;
-        if (ilk.egri[ad]) su.egri[ad] = ilk.egri[ad].slice();
+        const tb = taban();
+        if (tb.egri[ad]) su.egri[ad] = tb.egri[ad].slice();
         egriDoldur();
         planla();
       }
@@ -2377,6 +2419,7 @@
     $('#kopyala').addEventListener('click', kopyala);
     $('#indir').addEventListener('click', indir);
     $('#kaydet').addEventListener('click', kaydetAc);
+    $('#yayimla').addEventListener('click', yayimlaAc);
     $('#kaydet-pencere').addEventListener('cancel', (e) => {
       if (kayitSuruyor) e.preventDefault();
     });
@@ -2584,27 +2627,111 @@
     return p.length === 3 && p.every(Number.isInteger) ? p[0] + '.' + (p[1] + 1) + '.0' : '?';
   }
 
+  function baskilar(eski, eskiAd, yeni, yeniAd) {
+    const once = sayfa;
+    if (TEK.includes(sayfa)) sayfa = 'dugmeler';
+    const html =
+      '<div class="karsi baski-karsi">' +
+      '<section class="sahne baski" data-baski="eski" aria-label="Eski"><h3 class="sahne-baslik">Eski · ' + kacis(eskiAd) + '</h3>' + sayfaIcerik(eski, 'be') + '</section>' +
+      '<section class="sahne baski" data-baski="yeni" aria-label="Yeni"><h3 class="sahne-baslik">Yeni · ' + kacis(yeniAd) + '</h3>' + sayfaIcerik(yeni, 'by') + '</section></div>';
+    sayfa = once;
+    return html;
+  }
+
+  function baskiUygula(p, eski, yeni) {
+    uygula($('[data-baski="eski"]', p), eski, true);
+    uygula($('[data-baski="yeni"]', p), yeni, true);
+  }
+
   function kaydetAc() {
     const p = $('#kaydet-pencere');
-    const satir = farkSatirlari(fark(su, ilk));
-    const yer = ozelBilgi.tur === 'raf' ? 'Özel raf: teknesyum-private/teknesyum-ui/onizleme/ayarlar.json (özel depoya gönderilir)' : 'Yerel dosya: ui/onizleme/ozel-ayar.json (.gitignore içinde, depoya girmez)';
+    const eski = referans();
+    const satir = farkSatirlari(fark(su, eski), '', eski);
+    const yer = ozelBilgi.tur === 'raf' ? 'Özel raf: teknesyum-private/teknesyum-ui/onizleme/ayarlar.json' : 'Yerel dosya: ui/onizleme/ozel-ayar.json (.gitignore içinde, depoya girmez)';
     p.innerHTML =
-      '<div class="tk-panel tk-modal kaydet-kutu">' +
-      '<h2 class="tk-h3" id="kaydet-baslik">Özel Kaydet</h2>' +
-      '<p class="kaydet-surum">' + (satir.length ? satir.length + ' ayar önerilenden farklı' : 'Tüm ayarlar önerilen değerde') + '</p>' +
+      '<div class="tk-panel tk-modal kaydet-kutu kaydet-genis">' +
+      '<h2 class="tk-h3" id="kaydet-baslik">Kaydet</h2>' +
+      '<p class="kaydet-surum">' + (satir.length ? satir.length + ' ayar ' + refAd() + "'ndan farklı" : 'Değişiklik yok') + '</p>' +
+      baskilar(eski, refAd(), su, 'Şu Anki Ayar') +
       (satir.length ? '<ul class="kaydet-liste">' + satir.map((s) => '<li>' + kacis(s) + '</li>').join('') + '</ul>' : '') +
-      '<p class="kaydet-not">' + kacis(yer) + '. Yalnız önerilenden farkın yazılır; açılışta bu ayarlar yüklenir.</p>' +
+      '<p class="kaydet-not">' + kacis(yer) + '. Yalnız bu makineye yazılır; depoya göndermek için üst çubuktaki Yayımla.</p>' +
       '<div class="tk-installer__actions"><button type="button" class="tk-btn tk-btn-ghost" data-kaydet="vazgec">Vazgeç</button>' +
-      '<button type="button" class="tk-btn tk-btn-ghost" data-kaydet="yayin">Herkese Açık Yayınla…</button>' +
-      '<button type="button" class="tk-btn tk-btn-primary" data-kaydet="ozel">Özel Kaydet</button></div></div>';
+      '<button type="button" class="tk-btn tk-btn-primary" data-kaydet="ozel">Kaydet</button></div></div>';
+    baskiUygula(p, eski, su);
     $('[data-kaydet="vazgec"]', p).addEventListener('click', () => p.close());
-    $('[data-kaydet="yayin"]', p).addEventListener('click', yayinAc);
     $('[data-kaydet="ozel"]', p).addEventListener('click', async () => {
       p.close();
       await ozelKaydet(false);
     });
     if (!p.open) p.showModal();
-    $('[data-kaydet="ozel"]', p).focus();
+    $('[data-kaydet="ozel"]', p).focus({ preventScroll: true });
+    $('.kaydet-kutu', p).scrollTop = 0;
+  }
+
+  const GONDERIM = {
+    gonderildi: 'Yayımlandı: özel depoya gönderildi.',
+    gitsiz: 'Git gönderimi bu oturumda kapalı; yayımlanmadı.',
+    'git-yok': 'Özel raf bir git deposu değil; yayımlanmadı.',
+    'add-durdu': 'git add durdu; yayımlanmadı.',
+    'commit-durdu': 'git commit durdu; yayımlanmadı.',
+    'push-durdu': 'Commit yapıldı ama push durdu; ağ ya da kimlik doğrulamasına bak.',
+  };
+
+  async function yayimlaAc() {
+    const p = $('#kaydet-pencere');
+    if (!benim) return durum('Önce Kaydet: yayımlanacak kayıt yok.');
+    let y = { var: false, ayar: null };
+    try {
+      y = await (await fetch('/ozel-ayar/yayinli', { cache: 'no-store' })).json();
+    } catch {}
+    const eski = kopya(ilk);
+    if (y.var && y.ayar && duzNesne(y.ayar.fark)) birlestir(eski, y.ayar.fark, ilk);
+    const eskiAd = y.var ? 'Yayımlanmış' : 'Token Dosyası (henüz yayımlanmadı)';
+    const satir = farkSatirlari(fark(benim, eski), '', eski);
+    const kaydedilmemis = Object.keys(fark(su, benim)).length > 0;
+    p.innerHTML =
+      '<div class="tk-panel tk-modal kaydet-kutu kaydet-genis">' +
+      '<h2 class="tk-h3" id="kaydet-baslik">Yayımla</h2>' +
+      '<p class="kaydet-surum">' + (satir.length ? satir.length + ' ayar yayımlanmış olandan farklı' : 'Kayıt yayımlanmış olanla aynı') + '</p>' +
+      baskilar(eski, eskiAd, benim, 'Benim Token Dosyam') +
+      (satir.length ? '<ul class="kaydet-liste">' + satir.map((s) => '<li>' + kacis(s) + '</li>').join('') + '</ul>' : '') +
+      (kaydedilmemis ? '<p class="kaydet-uyari">Kaydedilmemiş değişikliklerin var; yalnız kaydedilen yayımlanır.</p>' : '') +
+      '<p class="kaydet-not">Özel depoya (Teknesyum-Private) commit ve push yapılır; herkese açık sürüm değişmez.</p>' +
+      '<div class="tk-installer__actions"><button type="button" class="tk-btn tk-btn-ghost" data-kaydet="vazgec">Vazgeç</button>' +
+      '<button type="button" class="tk-btn tk-btn-ghost" data-kaydet="yayin">Herkese Açık Yayınla…</button>' +
+      '<button type="button" class="tk-btn tk-btn-primary" data-kaydet="yayimla"' + (satir.length ? '' : ' disabled title="Yayımlanacak fark yok."') + '>Özel Depoya Yayımla</button></div></div>';
+    baskiUygula(p, eski, benim);
+    $('[data-kaydet="vazgec"]', p).addEventListener('click', () => p.close());
+    $('[data-kaydet="yayin"]', p).addEventListener('click', yayinAc);
+    $('[data-kaydet="yayimla"]', p).addEventListener('click', async () => {
+      p.close();
+      await ozelYayimla();
+    });
+    if (!p.open) p.showModal();
+    $('[data-kaydet="vazgec"]', p).focus({ preventScroll: true });
+    $('.kaydet-kutu', p).scrollTop = 0;
+  }
+
+  async function ozelYayimla() {
+    let j = {};
+    try {
+      const r = await fetch('/ozel-ayar/yayimla', { method: 'POST', headers: { 'x-onizleme': '1' } });
+      j = await r.json();
+      if (!r.ok) return durum('Yayımlanamadı: ' + (j.hata || 'HTTP ' + r.status));
+    } catch (e) {
+      return durum('Yayımlanamadı: ' + (e.message || e));
+    }
+    if (GONDERIM[j.gonderim]) return durum(GONDERIM[j.gonderim]);
+    durum('Özel depoya gönderiliyor…');
+    const bekle = async (n) => {
+      let g = null;
+      try {
+        g = (await (await fetch('/ozel-ayar/durum', { cache: 'no-store' })).json()).gonderim;
+      } catch {}
+      if (GONDERIM[g]) return durum(GONDERIM[g]);
+      if (n > 0) setTimeout(() => bekle(n - 1), 500);
+    };
+    bekle(60);
   }
 
   async function yayinAc() {
@@ -2847,21 +2974,7 @@
     planla();
     ozelSecenek();
     for (const s of $$('#tema-sec, [data-sihirbaz-tema]')) s.value = 'ozel';
-    if (j.tur !== 'raf' || !j.gonderim) {
-      durum(j.tur === 'raf' ? 'Özel ayar özel rafa kaydedildi; git gönderimi kapalı.' : 'Özel ayar yerel dosyaya kaydedildi (.gitignore içinde).');
-      return true;
-    }
-    durum('Özel ayar kaydedildi; özel depoya gönderiliyor…');
-    const METIN = { gonderildi: 'Özel ayar kaydedildi ve özel depoya gönderildi.', 'git-yok': 'Özel ayar kaydedildi; özel raf bir git deposu değil, gönderilmedi.', 'add-durdu': 'Özel ayar kaydedildi; git add durdu, gönderilmedi.', 'commit-durdu': 'Özel ayar kaydedildi; commit durdu, gönderilmedi.', 'push-durdu': 'Özel ayar kaydedildi; push durdu, yerelde bekliyor.' };
-    const bekle = async (n) => {
-      let g = null;
-      try {
-        g = (await (await fetch('/ozel-ayar/durum', { cache: 'no-store' })).json()).gonderim;
-      } catch {}
-      if (METIN[g]) return durum(METIN[g]);
-      if (n > 0) setTimeout(() => bekle(n - 1), 500);
-    };
-    bekle(60);
+    durum(j.tur === 'raf' ? 'Kaydedildi (özel raf). Depoya göndermek için Yayımla.' : 'Kaydedildi (yerel dosya, .gitignore içinde).');
     return true;
   }
 
@@ -2904,9 +3017,9 @@
     "Parlama": "Sağ panelin en üstünde, Parlama grubunda: Parlama Düzeyi menüsü; kutu, düğme ve kahraman için Saydamlık ve Bulanıklık kaydırıcıları.",
     "Kaydırma Çubuğu": "Sağ panelin en üstünde, Kaydırma grubunda: Çubuk Kalınlığı kaydırıcısı, Çubuk Rengi ve Çubuk Biçimi menüleri, Yumuşak / Anında seçimi.",
     "Hareket": "Sağ panelin en üstünde, Hareket grubunda: Arayüz Eğrisi menüsü, Süre Çarpanı ve her süre için bir kaydırıcı.",
-    "Eğri Düzenleyici": "Sağ panelin en üstünde, Eğri Düzenleyici grubunda: Eğri menüsünden birini seç, X1 Y1 X2 Y2 kaydırıcılarıyla biçimlendir. Geri Al önerilene döner.",
+    "Eğri Düzenleyici": "Sağ panelin en üstünde, Eğri Düzenleyici grubunda: Eğri menüsünden birini seç, X1 Y1 X2 Y2 kaydırıcılarıyla biçimlendir. Geri Al seçili token dosyasındaki değere döner.",
     "Okunurluk": "Ortadaki Okunurluk sayfası puanı panel panel gösterir. Soldaki menüde Okunurluk yanındaki sayı canlı puandır.",
-    "Kaydet": "Aşağıdaki Özel Kaydet düğmesine bas. Sonra da üst çubuktaki Kaydet ile yeniden kaydedebilirsin."
+    "Kaydet": "Aşağıdaki Özel Kaydet düğmesine bas. Sonra da üst çubuktaki Kaydet ile yeniden kaydedebilir, Yayımla ile eskiyi ve yeniyi yan yana görüp özel depoya gönderebilirsin."
   };
 
   function nasil(a) {
@@ -3123,6 +3236,7 @@
     uygula(document.documentElement, ilk, false);
     navKur();
     formKur();
+    grupHatirla();
     formDoldur();
     oneriKur();
     olaylar();

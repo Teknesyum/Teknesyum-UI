@@ -22,6 +22,8 @@ module.exports = function ozel() {
     const geri = JSON.parse(S.istek('GET', '/ozel-ayar', '', {}).body);
     L.ok('the saved diff reads back unchanged', geri.var && JSON.stringify(geri.ayar) === JSON.stringify(veri));
     L.ok('a private save never touches the public repo', !fs.existsSync(O.YEREL) || fs.readFileSync(O.YEREL, 'utf8') !== fs.readFileSync(dosya, 'utf8'));
+    L.ok('saving does not publish', JSON.parse(w.body).gonderim === undefined);
+    L.ok('publishing is a separate request that needs the preview header', S.istek('POST', '/ozel-ayar/yayimla', '', {}).status === 403 && S.istek('POST', '/ozel-ayar/yayimla', '', b).status === 200);
     L.ok('a private save without the preview header is refused', S.istek('POST', '/ozel-ayar', JSON.stringify(veri), {}).status === 403);
     L.ok('a foreign origin is refused', S.istek('POST', '/ozel-ayar', JSON.stringify(veri), Object.assign({ origin: 'https://ornek.com' }, b)).status === 403);
     L.ok('an invalid colour is refused', S.istek('POST', '/ozel-ayar', JSON.stringify({ fark: { renk: { 'renk-1': 'red' } } }), b).status === 400);

@@ -1,7 +1,8 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
-const { app, BrowserWindow, ipcMain, protocol, session, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, protocol, screen, session, shell } = require('electron');
 const { istek, TOKENS } = require(path.join(__dirname, '..', '..', 'scripts', 'onizleme.js'));
 
 const SEMA = 'onizleme';
@@ -34,10 +35,35 @@ function surum() {
   }
 }
 
+function durumYolu() {
+  return path.join(app.getPath('userData'), 'pencere.json');
+}
+
+function durumOku() {
+  try {
+    const d = JSON.parse(fs.readFileSync(durumYolu(), 'utf8'));
+    const s = d && d.sinir;
+    if (!s || !(s.width >= 1024 && s.height >= 640)) return { buyuk: !!(d && d.buyuk) };
+    const ekran = screen.getDisplayMatching(s).workArea;
+    const gorunur = s.x < ekran.x + ekran.width && s.x + s.width > ekran.x && s.y < ekran.y + ekran.height && s.y + s.height > ekran.y;
+    return { sinir: gorunur ? s : { width: s.width, height: s.height }, buyuk: !!d.buyuk };
+  } catch {
+    return {};
+  }
+}
+
+function durumYaz(w) {
+  try {
+    fs.writeFileSync(durumYolu(), JSON.stringify({ sinir: w.getNormalBounds(), buyuk: w.isMaximized() || w.isFullScreen() }));
+  } catch {}
+}
+
 function pencere() {
+  const d = durumOku();
   const w = new BrowserWindow({
     width: 1440,
     height: 920,
+    ...(d.sinir || {}),
     minWidth: 1024,
     minHeight: 640,
     title: 'TeknesyumUI ' + surum(),
@@ -53,7 +79,11 @@ function pencere() {
   };
   for (const o of ['maximize', 'unmaximize', 'enter-full-screen', 'leave-full-screen', 'restore']) w.on(o, bildir);
   w.webContents.on('did-finish-load', bildir);
-  w.once('ready-to-show', () => w.show());
+  w.once('ready-to-show', () => {
+    if (d.buyuk) w.maximize();
+    w.show();
+  });
+  w.on('close', () => durumYaz(w));
   w.on('page-title-updated', (e) => e.preventDefault());
   w.webContents.setWindowOpenHandler(({ url }) => {
     if (/^https?:/.test(url)) shell.openExternal(url);

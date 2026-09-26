@@ -712,6 +712,9 @@ th { color: var(--tk-text-label); font-weight: var(--tk-fw-semi); }
 @keyframes kaydet-gir { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .kaydet-pencere[open] .kaydet-kutu { animation: none; } }
 .kaydet-kutu { width: min(560px, 90vw); max-height: 85vh; overflow: auto; }
+.kaydet-kutu.kaydet-genis { width: min(1280px, 94vw); }
+.baski-karsi { margin-block: var(--tk-sp-4); }
+.baski { max-height: 50vh; overflow: auto; }
 .kombi-kutu { width: min(760px, 92vw); }
 .kombi-hedef { margin-bottom: var(--tk-sp-2); }
 .kombi-hedef output { min-inline-size: 3ch; text-align: end; font-variant-numeric: tabular-nums; }
@@ -1051,6 +1054,7 @@ body[data-sihirbaz] .bilesen-liste { padding-bottom: calc(var(--tk-sp-4) * 2 + v
 .bolum .akis-kart-ust h3 { margin: 0; padding: 0; border: 0; font-size: var(--tk-fs-2); line-height: var(--tk-lh-heading); }
 .egri-deger { display: flex; align-items: center; gap: var(--tk-sp-2); margin: 0; font-size: var(--tk-fs-1); }
 .egri-degisti { color: var(--tk-warning); font-weight: var(--tk-fw-semi); }
+.egri-asar { color: var(--tk-text-label); }
 
 .akis-grafik { padding: var(--tk-sp-3); background: var(--tk-surface); border-radius: var(--tk-r); }
 .egri-alan { position: relative; aspect-ratio: 2 / 1; margin: var(--tk-sp-3) 0; overflow-x: clip; overflow-clip-margin: var(--tk-sp-3); }

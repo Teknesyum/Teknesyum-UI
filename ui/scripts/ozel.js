@@ -3,7 +3,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { spawn } = require('child_process');
+const { spawn, execFileSync } = require('child_process');
 
 const YEREL = path.resolve(__dirname, '..', 'onizleme', 'ozel-ayar.json');
 const ALT = path.join('teknesyum-ui', 'onizleme', 'ayarlar.json');
@@ -80,12 +80,33 @@ function yaz(v) {
   const y = yer();
   fs.mkdirSync(path.dirname(y.dosya), { recursive: true });
   fs.writeFileSync(y.dosya, JSON.stringify(v, null, 2) + '\n');
-  son = y.tur === 'raf' && !process.env.TEKNESYUM_OZEL_GITSIZ ? gonder(y.kok, y.dosya) : null;
-  return { tur: y.tur, yol: y.dosya, gonderim: son ? son.durum : null };
+  return { tur: y.tur, yol: y.dosya };
+}
+
+function yayimla() {
+  const y = yer();
+  if (y.tur !== 'raf') throw new Error('Özel raf yok; yerel kayıt yayımlanmaz.');
+  if (!fs.existsSync(y.dosya)) throw new Error('Önce kaydet.');
+  son = process.env.TEKNESYUM_OZEL_GITSIZ ? { durum: 'gitsiz' } : gonder(y.kok, y.dosya);
+  return { tur: y.tur, gonderim: son.durum };
+}
+
+function yayinli() {
+  const y = yer();
+  if (y.tur !== 'raf') return { var: false, ayar: null };
+  try {
+    const bagil = path.relative(y.kok, y.dosya).split(path.sep).join('/');
+    const metin = execFileSync('git', ['show', 'HEAD:' + bagil], { cwd: y.kok, windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] }).toString('utf8');
+    const ayar = JSON.parse(metin);
+    if (ayar && ayar.fark) ayar.fark = yeniAdlar(ayar.fark);
+    return { var: true, ayar };
+  } catch {
+    return { var: false, ayar: null };
+  }
 }
 
 function gonderim() {
   return son ? son.durum : null;
 }
 
-module.exports = { yer, oku, yaz, dogrula, gonderim, yeniAdlar, YEREL };
+module.exports = { yer, oku, yaz, yayimla, yayinli, dogrula, gonderim, yeniAdlar, YEREL };

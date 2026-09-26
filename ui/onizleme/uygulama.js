@@ -2481,9 +2481,8 @@
   function kaydetGuncelle() {
     const b = $('#kaydet');
     if (!b) return;
-    const bos = Object.keys(tokenDegisimi()).length === 0;
-    b.disabled = bos || kayitSuruyor;
-    b.title = bos ? 'Token dosyasından farklı bir ayar yok.' : 'Değişiklikleri token kaynağına yaz, yeni sürüm yayınla.';
+    b.disabled = kayitSuruyor;
+    b.title = 'Ayarlarını özel olarak kaydet; genel depoya gitmez.';
   }
 
   function sonrakiSurum(s) {
@@ -2491,7 +2490,30 @@
     return p.length === 3 && p.every(Number.isInteger) ? p[0] + '.' + (p[1] + 1) + '.0' : '?';
   }
 
-  async function kaydetAc() {
+  function kaydetAc() {
+    const p = $('#kaydet-pencere');
+    const satir = farkSatirlari(fark(su, ilk));
+    const yer = ozelBilgi.tur === 'raf' ? 'Özel raf: teknesyum-private/teknesyum-ui/onizleme/ayarlar.json (özel depoya gönderilir)' : 'Yerel dosya: ui/onizleme/ozel-ayar.json (.gitignore içinde, depoya girmez)';
+    p.innerHTML =
+      '<div class="tk-panel tk-modal kaydet-kutu">' +
+      '<h2 class="tk-h3" id="kaydet-baslik">Özel Kaydet</h2>' +
+      '<p class="kaydet-surum">' + (satir.length ? satir.length + ' ayar önerilenden farklı' : 'Tüm ayarlar önerilen değerde') + '</p>' +
+      (satir.length ? '<ul class="kaydet-liste">' + satir.map((s) => '<li>' + kacis(s) + '</li>').join('') + '</ul>' : '') +
+      '<p class="kaydet-not">' + kacis(yer) + '. Yalnız önerilenden farkın yazılır; açılışta bu ayarlar yüklenir.</p>' +
+      '<div class="tk-installer__actions"><button type="button" class="tk-btn tk-btn-ghost" data-kaydet="vazgec">Vazgeç</button>' +
+      '<button type="button" class="tk-btn tk-btn-ghost" data-kaydet="yayin">Herkese Açık Yayınla…</button>' +
+      '<button type="button" class="tk-btn tk-btn-primary" data-kaydet="ozel">Özel Kaydet</button></div></div>';
+    $('[data-kaydet="vazgec"]', p).addEventListener('click', () => p.close());
+    $('[data-kaydet="yayin"]', p).addEventListener('click', yayinAc);
+    $('[data-kaydet="ozel"]', p).addEventListener('click', async () => {
+      p.close();
+      await ozelKaydet(false);
+    });
+    if (!p.open) p.showModal();
+    $('[data-kaydet="ozel"]', p).focus();
+  }
+
+  async function yayinAc() {
     const p = $('#kaydet-pencere');
     let surum = '?';
     try {
@@ -2501,18 +2523,19 @@
     const notlar = disaAktar()._ || [];
     p.innerHTML =
       '<div class="tk-panel tk-modal kaydet-kutu">' +
-      '<h2 class="tk-h3" id="kaydet-baslik">Kaydet Ve Yayınla</h2>' +
+      '<h2 class="tk-h3" id="kaydet-baslik">Herkese Açık Yayınla</h2>' +
+      '<p class="kaydet-uyari">Bu, ayarları genel token dosyasına yazar ve GitHub sürümü olarak yayınlar; herkes görür ve indirenler bunları önerilen değer olarak alır.</p>' +
       '<p class="kaydet-surum">Sürüm ' + kacis(surum) + ' → ' + kacis(sonrakiSurum(surum)) + '</p>' +
       '<p class="kaydet-surum">Okunurluk ' + Math.round(skorlar().ilk.genel) + ' → ' + Math.round(skorlar().su.genel) + ' / 100</p>' +
       '<ul class="kaydet-liste">' + satirlar.map((s) => '<li>' + kacis(s) + '</li>').join('') + '</ul>' +
       (notlar.length ? '<p class="kaydet-not">Token karşılığı olmadığı için kaydedilmeyecek:</p><ul class="kaydet-liste">' + notlar.map((s) => '<li>' + kacis(s) + '</li>').join('') + '</ul>' : '') +
       '<p class="kaydet-not">Token kaynağı yazılır, türev dosyalar üretilir, testler ve tarayıcı çalışır; hepsi geçerse sürüm artar, commit, etiket, push ve GitHub sürümü yapılır.</p>' +
       '<div class="tk-installer__actions"><button type="button" class="tk-btn tk-btn-ghost" data-kaydet="vazgec">Vazgeç</button>' +
-      '<button type="button" class="tk-btn tk-btn-primary" data-kaydet="onay">Kaydet Ve Yayınla</button></div></div>';
+      '<button type="button" class="tk-btn tk-btn-primary" data-kaydet="onay"' + (satirlar.length ? '' : ' disabled title="Token dosyasından farklı bir ayar yok."') + '>Herkese Açık Yayınla</button></div></div>';
     $('[data-kaydet="vazgec"]', p).addEventListener('click', () => p.close());
     $('[data-kaydet="onay"]', p).addEventListener('click', kaydetGonder);
-    p.showModal();
-    $('[data-kaydet="onay"]', p).focus();
+    if (!p.open) p.showModal();
+    $('[data-kaydet="vazgec"]', p).focus();
   }
 
   function ilerlemeCiz(d, hata) {
@@ -2618,6 +2641,232 @@
     durum(t ? t.baslik + ' yüklendi' + (t.esin ? ' (esin: ' + t.esin + ')' : '') + '. Düzenleyip Kaydet ile standart yapabilirsiniz.' : 'Token dosyasındaki renklere dönüldü.');
   }
 
+  let ozelBilgi = { var: false, tur: 'yerel', ayar: null };
+
+  function duzNesne(v) {
+    return v && typeof v === 'object' && !Array.isArray(v);
+  }
+
+  function fark(a, b) {
+    const out = {};
+    for (const [k, v] of Object.entries(a)) {
+      if (k === 'hareketAz' || !(k in b)) continue;
+      if (duzNesne(v) && duzNesne(b[k])) {
+        const alt = fark(v, b[k]);
+        if (Object.keys(alt).length) out[k] = alt;
+      } else if (JSON.stringify(v) !== JSON.stringify(b[k])) out[k] = kopya(v);
+    }
+    return out;
+  }
+
+  function birlestir(hedef, f, sablon) {
+    for (const [k, v] of Object.entries(f || {})) {
+      if (k === 'hareketAz' || !(k in sablon)) continue;
+      const s = sablon[k];
+      if (duzNesne(s)) {
+        if (duzNesne(v)) birlestir(hedef[k], v, s);
+      } else if (Array.isArray(s) ? Array.isArray(v) && v.length === s.length : typeof v === typeof s) hedef[k] = kopya(v);
+    }
+  }
+
+  function yolAl(o, yol) {
+    return yol.split('.').reduce((x, k) => (x == null ? x : x[k]), o);
+  }
+
+  function yolKoy(o, yol, v) {
+    const p = yol.split('.');
+    const son = p.pop();
+    p.reduce((x, k) => x[k], o)[son] = v;
+  }
+
+  function farkSatirlari(f, on = '') {
+    const out = [];
+    for (const [k, v] of Object.entries(f)) {
+      const yol = on + k;
+      if (duzNesne(v)) out.push(...farkSatirlari(v, yol + '.'));
+      else out.push(yol + ': ' + JSON.stringify(yolAl(ilk, yol)).replace(/"/g, '') + ' → ' + JSON.stringify(v).replace(/"/g, ''));
+    }
+    return out;
+  }
+
+  async function ozelYukle() {
+    try {
+      const r = await fetch('/ozel-ayar', { cache: 'no-store' });
+      if (r.ok) ozelBilgi = await r.json();
+    } catch {}
+    const a = ozelBilgi.ayar;
+    if (!a || !duzNesne(a.fark)) return;
+    birlestir(su, a.fark, ilk);
+    if (a.tema && temalar.some((t) => t.ad === a.tema)) $('#tema-sec').value = a.tema;
+  }
+
+  async function ozelKaydet(sihirbazla) {
+    const veri = { surum: 1, tarih: new Date().toISOString(), sihirbaz: sihirbazla || !!(ozelBilgi.ayar && ozelBilgi.ayar.sihirbaz), tema: $('#tema-sec').value || null, fark: fark(su, ilk) };
+    let r;
+    try {
+      r = await fetch('/ozel-ayar', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-onizleme': '1' }, body: JSON.stringify(veri) });
+    } catch (e) {
+      durum('Özel ayar kaydedilemedi: ' + (e.message || e));
+      return false;
+    }
+    let j = {};
+    try {
+      j = await r.json();
+    } catch {}
+    if (!r.ok) {
+      durum('Özel ayar kaydedilemedi: ' + (j.hata || 'HTTP ' + r.status));
+      return false;
+    }
+    ozelBilgi = { var: true, tur: j.tur, ayar: veri };
+    if (j.tur !== 'raf' || !j.gonderim) {
+      durum(j.tur === 'raf' ? 'Özel ayar özel rafa kaydedildi; git gönderimi kapalı.' : 'Özel ayar yerel dosyaya kaydedildi (.gitignore içinde).');
+      return true;
+    }
+    durum('Özel ayar kaydedildi; özel depoya gönderiliyor…');
+    const METIN = { gonderildi: 'Özel ayar kaydedildi ve özel depoya gönderildi.', 'git-yok': 'Özel ayar kaydedildi; özel raf bir git deposu değil, gönderilmedi.', 'add-durdu': 'Özel ayar kaydedildi; git add durdu, gönderilmedi.', 'commit-durdu': 'Özel ayar kaydedildi; commit durdu, gönderilmedi.', 'push-durdu': 'Özel ayar kaydedildi; push durdu, yerelde bekliyor.' };
+    const bekle = async (n) => {
+      let g = null;
+      try {
+        g = (await (await fetch('/ozel-ayar/durum', { cache: 'no-store' })).json()).gonderim;
+      } catch {}
+      if (METIN[g]) return durum(METIN[g]);
+      if (n > 0) setTimeout(() => bekle(n - 1), 500);
+    };
+    bekle(60);
+    return true;
+  }
+
+  const ADIMLAR = [
+    { ad: 'Tema', sayfa: 'renkler', grup: [], yol: ['renk', 'koyu'], tema: true, metin: 'Önce temel seçim: koyu, açık ya da hazır bir tema. Önerilen, token dosyasındaki koyu temadır.' },
+    { ad: 'Yüzey Ve Metin', sayfa: 'formlar', grup: ['renk-surface', 'renk-text', 'renk-black'], yol: ['renk.surface', 'renk.text', 'renk.black'], metin: 'Zemin ve yazı rengi okunurluğun temelidir; vurgu renkleri bunların üstüne kurulur. Önce bunları oturt.' },
+    { ad: 'Ana Renk', sayfa: 'dugmeler', grup: ['renk-blue'], yol: ['renk.blue'], metin: 'Birincil düğme, bağlantı ve ilerleme bu renktedir. Rengin yanındaki Hedef Okunurluk düğmesi hedef puana uyan beş öneri verir.' },
+    { ad: 'Vurgular', sayfa: 'dugmeler', grup: ['renk-pink', 'renk-pink-text', 'renk-purple', 'renk-purple-text'], yol: ['renk.pink', 'renk.pink-text', 'renk.purple', 'renk.purple-text'], metin: 'Pembe ve mor ikincil vurgulardır; yazı sürümleri (pink-text, purple-text) zemin üstünde okunacak biçimde ayrıca ayarlanır.' },
+    { ad: 'Durum Renkleri', sayfa: 'rozetler', grup: ['renk-success', 'renk-warning', 'renk-disabled'], yol: ['renk.success', 'renk.warning', 'renk.disabled'], metin: 'Başarı, uyarı ve devre dışı renkleri. Uyarı yalnız yazı, kenar ve ikonda kullanılır; dolgu olmaz.' },
+    { ad: 'Zemin', sayfa: 'arka', grup: ['arka', 'renk-glass-base'], yol: ['arka', 'renk.glass-base'], metin: 'Pencerenin arka planı ve cam yüzeyin tabanı. Degrade siyahtan yüzey rengine akar.' },
+    { ad: 'Yazı', sayfa: 'tipografi', grup: ['yazi'], yol: ['yazi'], metin: 'Yazı ailesi, boyut çarpanı ve ağırlıklar. Kahraman yazısı dışında 700 kullanılmaz.' },
+    { ad: 'Şekil Ve Yoğunluk', sayfa: 'formlar', grup: ['sekil', 'yogunluk', 'dugme'], yol: ['sekil', 'yogunluk', 'kenar', 'dugme'], metin: 'Köşe yarıçapı, boşluk çarpanı, kenar kalınlığı ve düğme boyutu. Formlar sayfası hepsini aynı anda gösterir.' },
+    { ad: 'Üst Çubuk Ve Yüzey', sayfa: 'ustcubuk', grup: ['pencere', 'yuzey'], yol: ['pencere', 'cam', 'golge'], metin: 'Pencere kenarı, üst çubuk yüksekliği, cam bulanıklığı ve gölge gücü.' },
+    { ad: 'Parlama', sayfa: 'dugmeler', grup: ['parlama'], yol: ['parlama', 'parlamaDuzey'], metin: 'Kutu, düğme ve kahraman yazısının halesi. Düzey hepsini birlikte ölçekler.' },
+    { ad: 'Kaydırma', sayfa: 'kaydirma', grup: ['kaydir'], yol: ['kaydir'], metin: 'Kaydırma çubuğunun kalınlığı, rengi, biçimi ve davranışı.' },
+    { ad: 'Hareket', sayfa: 'akicilik', grup: ['hareket', 'egri'], yol: ['egri', 'arayuzEgri', 'sure', 'sureCarpan'], metin: 'Geçiş eğrileri ve süreler. Akıcılık sayfasında her eğriyi canlı görürsün.' },
+    { ad: 'Okunurluk', sayfa: 'okunur', grup: [], yol: [], puan: true, metin: 'Seçimlerinin okunurluk puanı. Düşük kalan öğeleri buradan görüp ilgili renge dönebilirsin.' },
+    { ad: 'Kaydet', sayfa: null, grup: [], yol: [], son: true, metin: 'Seçimlerin yalnız sana ait özel yere kaydedilir; genel depoya hiçbir renk ya da tercih gitmez. Açılışta bu ayarlar yüklenir.' },
+  ];
+  let sihirbazAdim = -1;
+
+  function sihirbazBayrak(v) {
+    try {
+      if (v === undefined) return localStorage.getItem('tk-sihirbaz');
+      localStorage.setItem('tk-sihirbaz', v);
+    } catch {}
+    return null;
+  }
+
+  function sihirbazKur() {
+    const k = $('#sihirbaz');
+    const temaSecenek = $('#tema-sec').innerHTML;
+    k.innerHTML =
+      '<div class="sihirbaz-bas"><p class="sihirbaz-etiket" id="sihirbaz-baslik">Kurulum Sihirbazı</p>' +
+      '<p class="sihirbaz-sayac" data-sihirbaz-sayac></p>' +
+      '<button type="button" class="tk-titlebar__control tk-titlebar__control--close" data-sihirbaz="kapat" aria-label="Sihirbazı Kapat" title="Kapat"><span class="tk-titlebar__close" aria-hidden="true"></span></button></div>' +
+      '<div class="tk-progress__track" role="progressbar" aria-valuemin="0" aria-valuemax="' + ADIMLAR.length + '" aria-label="Sihirbaz İlerlemesi"><div class="tk-progress__fill" data-sihirbaz-dolgu></div></div>' +
+      '<div class="sihirbaz-yigin">' +
+      ADIMLAR.map(
+        (a, i) =>
+          '<div class="sihirbaz-metin" data-sihirbaz-adim="' + i + '"><h2 class="tk-h3">' + kacis(a.ad) + '</h2><p>' + kacis(a.metin) + '</p>' +
+          (a.tema ? '<select class="tk-input" data-sihirbaz-tema aria-label="Tema">' + temaSecenek + '</select>' : '') +
+          (a.puan ? '<p class="sihirbaz-puan" data-sihirbaz-puan></p>' : '') +
+          '</div>'
+      ).join('') +
+      '</div>' +
+      '<div class="tk-installer__actions"><button type="button" class="tk-btn tk-btn-ghost" data-sihirbaz="geri">Geri</button>' +
+      '<button type="button" class="tk-btn tk-btn-ghost" data-sihirbaz="oneri">Önerileni Kullan</button>' +
+      '<button type="button" class="tk-btn tk-btn-primary" data-sihirbaz="ileri"><span class="sihirbaz-yigin"><span data-sihirbaz-etiket="ileri">İleri</span><span data-sihirbaz-etiket="kaydet">Özel Kaydet</span></span></button></div>';
+    k.addEventListener('change', (e) => {
+      if (!e.target.matches('[data-sihirbaz-tema]')) return;
+      $('#tema-sec').value = e.target.value;
+      temaSec(e.target.value);
+    });
+    k.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-sihirbaz]');
+      if (!b) return;
+      const is = b.dataset.sihirbaz;
+      if (is === 'kapat') return sihirbazKapat();
+      if (is === 'geri') return sihirbazGit(sihirbazAdim - 1);
+      if (is === 'oneri') return sihirbazOneri();
+      if (!ADIMLAR[sihirbazAdim].son) return sihirbazGit(sihirbazAdim + 1);
+      if (await ozelKaydet(true)) {
+        sihirbazBayrak('bitti');
+        sihirbazKapat();
+      }
+    });
+    $('#sihirbaz-ac').addEventListener('click', () => (sihirbazAdim >= 0 ? sihirbazKapat() : sihirbazGit(0)));
+  }
+
+  function sihirbazOneri() {
+    const a = ADIMLAR[sihirbazAdim];
+    if (a.tema) {
+      $('#tema-sec').value = '';
+      $('[data-sihirbaz-tema]').value = '';
+      temaSec('');
+      return;
+    }
+    for (const y of a.yol) yolKoy(su, y, kopya(yolAl(ilk, y)));
+    for (const k of Object.keys(hslBellek)) delete hslBellek[k];
+    formDoldur();
+    planla();
+    durum(a.ad + ': önerilen değerlere dönüldü.');
+  }
+
+  function sihirbazGit(i) {
+    if (i < 0 || i >= ADIMLAR.length) return;
+    const k = $('#sihirbaz');
+    const a = ADIMLAR[i];
+    sihirbazAdim = i;
+    k.hidden = false;
+    document.body.dataset.sihirbaz = '';
+    $('#sihirbaz-ac').setAttribute('aria-pressed', 'true');
+    for (const m of $$('[data-sihirbaz-adim]', k)) {
+      const bu = Number(m.dataset.sihirbazAdim) === i;
+      m.classList.toggle('sihirbaz-etkin', bu);
+      if (bu) m.removeAttribute('aria-hidden');
+      else m.setAttribute('aria-hidden', 'true');
+    }
+    for (const s of $$('[data-sihirbaz-etiket]', k)) {
+      const bu = (s.dataset.sihirbazEtiket === 'kaydet') === !!a.son;
+      if (bu) s.removeAttribute('aria-hidden');
+      else s.setAttribute('aria-hidden', 'true');
+    }
+    $('[data-sihirbaz-sayac]', k).textContent = 'Adım ' + (i + 1) + ' / ' + ADIMLAR.length;
+    $('[data-sihirbaz-dolgu]', k).style.setProperty('--tk-progress-value', String((i + 1) / ADIMLAR.length));
+    $('.tk-progress__track', k).setAttribute('aria-valuenow', String(i + 1));
+    $('[data-sihirbaz="geri"]', k).disabled = i === 0;
+    $('[data-sihirbaz="oneri"]', k).disabled = !a.yol.length;
+    if (a.tema) $('[data-sihirbaz-tema]', k).value = $('#tema-sec').value;
+    if (a.puan) {
+      const p = skorlar();
+      $('[data-sihirbaz-puan]', k).textContent = 'Genel okunurluk ' + Math.round(p.su.genel) + ' / 100 · önerilen ' + Math.round(p.ilk.genel);
+    }
+    for (const d of $$('#ayarlar .sihirbaz-odak')) d.classList.remove('sihirbaz-odak');
+    if (a.sayfa) sayfaAc(a.sayfa);
+    for (const g of a.grup) {
+      const d = $('#ayarlar [data-grup="' + g + '"]');
+      if (d) d.classList.add('sihirbaz-odak');
+    }
+    if (a.grup.length) ayarAc(a.grup);
+    document.body.style.setProperty('--sihirbaz-y', k.offsetHeight + 'px');
+  }
+
+  function sihirbazKapat() {
+    const k = $('#sihirbaz');
+    k.hidden = true;
+    sihirbazAdim = -1;
+    delete document.body.dataset.sihirbaz;
+    $('#sihirbaz-ac').setAttribute('aria-pressed', 'false');
+    for (const d of $$('#ayarlar .sihirbaz-odak')) d.classList.remove('sihirbaz-odak');
+    if (!sihirbazBayrak()) sihirbazBayrak('kapandi');
+  }
+
   async function basla() {
     try {
       const r = await fetch('/tokens.json', { cache: 'no-store' });
@@ -2629,6 +2878,7 @@
     ilk = durumKur(T);
     su = kopya(ilk);
     await temalarYukle();
+    await ozelYukle();
     const baglanti = new URLSearchParams(location.hash.slice(1));
     let bolum = null;
     const varMi = (id) => SAYFALAR.some((x) => x[0] === id);
@@ -2658,7 +2908,9 @@
     ciz();
     const hedef = bolum && document.getElementById('o-' + bolum);
     if (hedef) hedef.scrollIntoView({ behavior: 'instant' });
-    window.Onizleme = { durum: () => su, ilk: () => ilk, disaAktar, T: () => T, sonCizim: () => sonCizim, sayfa: () => sayfa, sayfaAc };
+    window.Onizleme = { durum: () => su, ilk: () => ilk, disaAktar, T: () => T, sonCizim: () => sonCizim, sayfa: () => sayfa, sayfaAc, sihirbaz: sihirbazGit, sihirbazAdim: () => sihirbazAdim, ozel: () => ozelBilgi, fark: () => fark(su, ilk) };
+    sihirbazKur();
+    if (!ozelBilgi.var && !sihirbazBayrak()) sihirbazGit(0);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', basla);

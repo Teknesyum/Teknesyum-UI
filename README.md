@@ -187,7 +187,14 @@ body text, tabs and the primary button weigh most. It shows the score now agains
 file, per panel, the parts a colour change moved most and the parts under 70; the toolbar tab
 carries the live score. Before / After puts the
 token values next to the current ones. Export copies or downloads only the changed fields
-in `neon.tokens.json` shape. **Kaydet** releases them: after a confirm dialog listing the
+in `neon.tokens.json` shape. **Kaydet** saves your settings privately: only the difference from
+the token values goes to `teknesyum-private/teknesyum-ui/onizleme/ayarlar.json` (committed and
+pushed to the private repo) or, without the private shelf, to the gitignored
+`ui/onizleme/ozel-ayar.json`; the preview loads it on start. **Sihirbaz** walks every setting in
+order (theme, surface and text, main colour, accents, states, background, type, shape, title
+bar, glow, scrollbar, motion, readability) and ends with that private save; a fresh install
+starts it once with the recommended token values selected. **Herkese Açık Yayınla…** in the
+save dialog releases the values publicly: after a warning listing the
 changes and the next version, `ui/scripts/kaydet.js` writes the token source and its copy,
 re-measures every `on` pair and ratio rationale, swaps the old hex in the installer and
 fixtures, runs `generate.js` and the tests (scanner included), bumps the minor version,

@@ -11,6 +11,13 @@ All notable changes to this project are documented here. The format follows
   single-colour scope it draws a hue × lightness field with the 95, 90 and 85 readability curves
   and the target curve dashed; hovering shows hex and score, clicking applies that colour.
 - The preview is titled TeknesyumUI (title bar, window and page title).
+- Setup wizard in the preview (Sihirbaz): fourteen steps from theme to readability, each opening
+  its page and highlighting its settings, with Geri / Önerileni Kullan / İleri; a fresh install
+  starts it once with the recommended token values selected.
+- Private settings: Kaydet now writes only the difference from the token values to
+  `teknesyum-private/teknesyum-ui/onizleme/ayarlar.json` and pushes the private repo, or to the
+  gitignored `ui/onizleme/ozel-ayar.json`; the preview loads it on start (`GET`/`POST
+  /ozel-ayar`). Public release moved behind Herkese Açık Yayınla… with a warning.
 
 ### Fixed
 

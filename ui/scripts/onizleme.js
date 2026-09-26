@@ -13,6 +13,7 @@ const KONTRAST = path.join(__dirname, 'kontrast.js');
 const SKOR = path.join(__dirname, 'skor.js');
 const KAYDET = require('./kaydet');
 const TEMA = require('./tema');
+const OZEL = require('./ozel');
 const PORT = 4317;
 const VARLIK = path.join(UI, 'skills', 'teknesyum-ui', 'assets');
 const SABLON = path.join(UI, 'templates');
@@ -89,6 +90,18 @@ function istek(yontem, yol, govde, basliklar) {
   const b = basliklar || {};
   if (temiz === '/surum') return json(200, { surum: KAYDET.surum() });
   if (temiz === '/kaydet/durum') return json(200, KAYDET.durum());
+  if (temiz === '/ozel-ayar/durum') return json(200, { gonderim: OZEL.gonderim() });
+  if (temiz === '/ozel-ayar') {
+    if (yontem === 'GET') return json(200, OZEL.oku());
+    if (yontem !== 'POST') return json(405, { hata: 'Yalnız GET veya POST.' });
+    if (b['x-onizleme'] !== '1' || !/^application\/json/.test(b['content-type'] || '')) return json(403, { hata: 'İstek önizlemeden gelmedi.' });
+    if (b.origin && !/^(onizleme:\/\/sayfa|http:\/\/127\.0\.0\.1:\d+)$/.test(b.origin)) return json(403, { hata: 'Yabancı köken.' });
+    try {
+      return json(200, OZEL.yaz(JSON.parse(govde || '')));
+    } catch (e) {
+      return json(400, { hata: e.message });
+    }
+  }
   if (temiz === '/kaydet') {
     if (yontem !== 'POST') return json(405, { hata: 'Yalnız POST.' });
     if (b['x-onizleme'] !== '1' || !/^application\/json/.test(b['content-type'] || '')) return json(403, { hata: 'İstek önizlemeden gelmedi.' });

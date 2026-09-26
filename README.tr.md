@@ -189,7 +189,13 @@ sekmeler ve birincil düğme en ağırlarıdır. Şu anki puanı token dosyasıy
 renk değişiminin en çok oynattığı ve 70'in altında kalan parçalarla gösterir; araç çubuğundaki
 sekme canlı puanı taşır. Önce / Sonra kipi token değerlerini şimdikilerin yanına koyar. Dışa aktarma
 yalnız değişen alanları `neon.tokens.json` biçiminde kopyalar ya da indirir. **Kaydet**
-bunları yayınlar: değişiklikleri ve sonraki sürümü gösteren onaydan sonra
+ayarlarını özel kaydeder: token değerlerinden yalnız fark
+`teknesyum-private/teknesyum-ui/onizleme/ayarlar.json` dosyasına yazılır ve özel depoya gönderilir;
+özel raf yoksa `.gitignore` içindeki `ui/onizleme/ozel-ayar.json` kullanılır. Önizleme açılışta
+bunu yükler. **Sihirbaz** tüm ayarları sırayla gezdirir (tema, yüzey ve metin, ana renk,
+vurgular, durumlar, zemin, yazı, şekil, üst çubuk, parlama, kaydırma, hareket, okunurluk) ve
+özel kayıtla biter; yeni kurulumda önerilen token değerleri seçili olarak bir kez kendiliğinden
+açılır. Kayıt penceresindeki **Herkese Açık Yayınla…** değerleri herkese yayınlar: değişiklikleri ve sonraki sürümü gösteren onaydan sonra
 `ui/scripts/kaydet.js` token kaynağını ve kopyasını yazar, her `on` çiftini ve oran geçen
 gerekçeyi yeniden ölçer, kurulum betiği ile fixture'lardaki eski hex'i değiştirir,
 `generate.js` ve testleri (tarayıcı dahil) çalıştırır, küçük sürümü artırır, CHANGELOG'u

@@ -745,6 +745,34 @@ th { color: var(--tk-text-label); font-weight: var(--tk-fw-semi); }
 #okunur-puan { cursor: pointer; }
 .kaydet-surum { margin: 0 0 var(--tk-sp-3); color: var(--tk-blue); font-weight: var(--tk-fw-semi); }
 .kaydet-liste { margin: 0 0 var(--tk-sp-3); padding-left: var(--tk-sp-4); font-size: var(--tk-fs-1); }
+.kaydet-uyari { margin: 0 0 var(--tk-sp-3); padding: var(--tk-sp-2) var(--tk-sp-3); color: var(--tk-warning); border: var(--tk-border-w) solid var(--tk-warning); border-radius: var(--tk-r); font-size: var(--tk-fs-1); }
+.sihirbaz {
+  position: fixed;
+  left: var(--tk-sp-4);
+  bottom: var(--tk-sp-4);
+  z-index: 4;
+  display: grid;
+  gap: var(--tk-sp-3);
+  width: min(440px, calc(100vw - var(--tk-sp-4) * 2));
+  padding: var(--tk-sp-4);
+  box-shadow: var(--tk-shadow-panel);
+}
+.sihirbaz[hidden] { display: none; }
+body[data-sihirbaz] .durum { bottom: calc(var(--tk-sp-4) * 2 + var(--sihirbaz-y, 0px)); }
+body[data-sihirbaz] .onizleme,
+body[data-sihirbaz] .bilesen-liste { padding-bottom: calc(var(--tk-sp-4) * 2 + var(--sihirbaz-y, 0px)); }
+.sihirbaz-bas { display: flex; align-items: center; gap: var(--tk-sp-3); }
+.sihirbaz-etiket { margin: 0; font-size: var(--tk-fs-1); font-weight: var(--tk-fw-semi); letter-spacing: var(--tk-tr-label); color: var(--tk-pink-text); }
+.sihirbaz-sayac { margin: 0 0 0 auto; min-inline-size: 10ch; text-align: end; font-size: var(--tk-fs-1); color: var(--tk-text-label); font-variant-numeric: tabular-nums; }
+.sihirbaz-yigin { display: grid; }
+.sihirbaz-yigin > * { grid-area: 1 / 1; }
+.sihirbaz-yigin > [aria-hidden='true'] { visibility: hidden; }
+.sihirbaz-metin h2 { margin: 0 0 var(--tk-sp-2); }
+.sihirbaz-metin p { margin: 0 0 var(--tk-sp-2); font-size: var(--tk-fs-1); line-height: var(--tk-lh-body); }
+.sihirbaz-metin select { width: 100%; }
+.sihirbaz-puan { color: var(--tk-blue); font-weight: var(--tk-fw-semi); font-variant-numeric: tabular-nums; }
+.sihirbaz .tk-installer__actions { margin: 0; }
+.grup.sihirbaz-odak { box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-pink-text); }
 .kaydet-not { margin: 0 0 var(--tk-sp-3); color: var(--tk-text-label); font-size: var(--tk-fs-1); }
 
 [data-not='mukemmel'] { color: var(--tk-success); }

@@ -1,0 +1,14 @@
+<Styles xmlns="https://github.com/avaloniaui">
+  <Style Selector="Window.anim Panel.appbg">
+    <Style.Animations>
+      <Animation Duration="0:0:48" IterationCount="Infinite">
+        <KeyFrame Cue="0%">
+          <Setter Property="RenderTransform" Value="scale(1.12) rotate(-4.39deg)"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="RenderTransform" Value="scale(1.12) rotate(4.03deg)"/>
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
+  </Style>
+</Styles>

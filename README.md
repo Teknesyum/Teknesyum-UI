@@ -81,6 +81,14 @@ assembly component) URI, and the project gets the resource item. `--app <csproj>
 project when there are several. The generated theme sets every window to FontSans at fs-2
 (Avalonia `:is(Window)`, WPF `TkWindow`), and `typography.scale` is read from the token file.
 
+The generated Avalonia theme animates its background layer's `RenderTransform`
+(`Window.anim Panel.appbg`), and Avalonia has no built-in animator for that: without one the
+app crashes on launch. `setup.js` writes a `TransformAnimator.cs` beside the app's
+`App.axaml.cs` and adds `Animation.RegisterCustomAnimator<ITransform, TransformAnimator>()` as
+the first line of `Initialize()`, skipping it if it is already there. When `App.axaml.cs` or
+its `Initialize()` method is not where expected, it prints a warning instead of failing the
+run — `scan.js`'s `core/avalonia-animator-missing` then catches the gap.
+
 Neon is the ready answer, not the only one — `--template custom` takes three brand colours
 and a surface, and derives the rest on the same formulas.
 

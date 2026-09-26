@@ -454,6 +454,104 @@ function embedFont(root, target, outDir, force) {
   );
 }
 
+const TRANSFORM_ANIMATOR_REG = /RegisterCustomAnimator\s*<\s*ITransform\s*,/;
+const INITIALIZE_RE = /(public\s+override\s+void\s+Initialize\s*\(\s*\)\s*\r?\n?\s*\{)(\r\n|\n)/;
+
+function findAppCodeBehind(app) {
+  const dir = path.dirname(app.file);
+  for (const name of ['App.axaml.cs', 'App.xaml.cs']) {
+    const p = path.join(dir, name);
+    if (fs.existsSync(p)) return { file: p, dir };
+  }
+  return null;
+}
+
+function rootNamespace(app) {
+  const m = /<RootNamespace>\s*([^<\s]+)\s*<\/RootNamespace>/.exec(app.text);
+  return (m && m[1]) || app.assembly;
+}
+
+function transformAnimatorSource(ns) {
+  return [
+    'using Avalonia.Animation;',
+    'using Avalonia.Media.Transformation;',
+    '',
+    'namespace ' + ns + ';',
+    '',
+    'public sealed class TransformAnimator : InterpolatingAnimator<ITransform>',
+    '{',
+    '    public override ITransform Interpolate(double progress, ITransform oldValue, ITransform newValue) =>',
+    '        TransformOperations.Interpolate(oldValue as TransformOperations ?? TransformOperations.Identity,',
+    '            newValue as TransformOperations ?? TransformOperations.Identity, progress);',
+    '}',
+    '',
+  ].join('\n');
+}
+
+function ensureUsing(text, name) {
+  const re = new RegExp('^using\\s+' + name.replace(/\./g, '\\.') + '\\s*;\\s*$', 'm');
+  if (re.test(text)) return text;
+  const block = /^(using[^\n]*\r?\n)+/.exec(text);
+  if (block) return text.slice(0, block[0].length) + 'using ' + name + ';\r\n' + text.slice(block[0].length);
+  return 'using ' + name + ';\r\n' + text;
+}
+
+function installAnimator(root, target, outDir, force) {
+  if (target !== 'avalonia') return null;
+  const themeFile = path.join(outDir, THEME_FILE[target]);
+  let themeText;
+  try {
+    themeText = fs.readFileSync(themeFile, 'utf8');
+  } catch {
+    return null;
+  }
+  if (!/<Style\s+Selector="Window\.anim\b/.test(themeText)) return null;
+
+  const app = appProject(root, target);
+  if (!app) return '  animator no ' + target + ' app .csproj found; register Animation.RegisterCustomAnimator<ITransform, TransformAnimator>() by hand (pass --app <csproj>)';
+
+  const found = findAppCodeBehind(app);
+  if (!found)
+    return '  animator no App.axaml.cs found next to ' + app.file + '; register Animation.RegisterCustomAnimator<ITransform, TransformAnimator>() in Initialize() by hand';
+
+  let text;
+  try {
+    text = fs.readFileSync(found.file, 'utf8');
+  } catch (e) {
+    return '  animator could not read ' + found.file + ': ' + e.message;
+  }
+
+  if (TRANSFORM_ANIMATOR_REG.test(text)) return '  animator already registered in ' + found.file;
+
+  const animatorFile = path.join(found.dir, 'TransformAnimator.cs');
+  let wroteAnimator = true;
+  if (fs.existsSync(animatorFile) && !force) {
+    wroteAnimator = false;
+  } else {
+    fs.writeFileSync(animatorFile, transformAnimatorSource(rootNamespace(app)), 'utf8');
+  }
+
+  if (!INITIALIZE_RE.test(text))
+    return (
+      '  animator ' +
+      animatorFile +
+      (wroteAnimator ? ' written' : ' kept') +
+      ', but Initialize() was not found in ' +
+      found.file +
+      '; add `Animation.RegisterCustomAnimator<ITransform, TransformAnimator>();` as its first line by hand'
+    );
+
+  text = ensureUsing(text, 'Avalonia.Animation');
+  text = ensureUsing(text, 'Avalonia.Media.Transformation');
+  text = text.replace(
+    INITIALIZE_RE,
+    (all, head, eol) => head + eol + '        Animation.RegisterCustomAnimator<ITransform, TransformAnimator>();' + eol
+  );
+  fs.writeFileSync(found.file, text, 'utf8');
+
+  return '  animator ' + found.file + ' (registration added, ' + animatorFile + (wroteAnimator ? ' written' : ' kept') + ')';
+}
+
 function copyInto(fromDir, toDir, names, force) {
   const written = [];
   const skipped = [];
@@ -633,6 +731,10 @@ function apply(answers) {
           ')'
       );
       if (THEME_FILE[t]) lines.push(embedFont(root, t, dir, force));
+      if (t === 'avalonia') {
+        const animatorMsg = installAnimator(root, t, dir, force);
+        if (animatorMsg) lines.push(animatorMsg);
+      }
     }
   } finally {
     fs.rmSync(stage, { recursive: true, force: true });

@@ -3,6 +3,20 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+
+- `setup.js --apply --targets avalonia` now registers the `ITransform` animator the generated
+  `Theme.axaml` needs for its `Window.anim Panel.appbg` background loop: it writes a
+  `TransformAnimator.cs` beside the app's `App.axaml.cs`/`App.xaml.cs` and inserts the
+  `Animation.RegisterCustomAnimator<ITransform, TransformAnimator>()` call as the first line of
+  `Initialize()`, skipping it when already present. Without `App.axaml.cs` or an `Initialize()`
+  method it prints a clear warning instead of stopping the run.
+- Scanner rule `core/avalonia-animator-missing`: an error when a project's `.axaml` animates
+  `Window.anim Panel.appbg` but no `.cs` file registers the `ITransform` animator — the app
+  crashes at launch without it.
+
 ## [0.8.0] - 2026-09-26
 
 ### Added

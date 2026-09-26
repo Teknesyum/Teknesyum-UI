@@ -135,6 +135,98 @@ function embedsFont() {
   L.ok('a second --apply leaves the font and csproj alone', /\b0 file\(s\) written/.test(again.stdout) && fs.readFileSync(path.join(root, 'src', 'Deneme', 'Deneme.csproj'), 'utf8') === csproj, again.stdout);
 }
 
+function registersAnimator() {
+  const root = L.tmp('tkui-animator-');
+  const projDir = path.join(root, 'src', 'Deneme');
+  L.write(
+    path.join(projDir, 'Deneme.csproj'),
+    [
+      '<Project Sdk="Microsoft.NET.Sdk">',
+      '  <PropertyGroup>',
+      '    <OutputType>WinExe</OutputType>',
+      '    <AssemblyName>Deneme</AssemblyName>',
+      '  </PropertyGroup>',
+      '  <ItemGroup>',
+      '    <PackageReference Include="Avalonia" Version="11.3.20" />',
+      '  </ItemGroup>',
+      '</Project>',
+      '',
+    ].join('\r\n')
+  );
+  L.write(
+    path.join(projDir, 'App.axaml.cs'),
+    [
+      'using Avalonia;',
+      'using Avalonia.Markup.Xaml;',
+      '',
+      'namespace Deneme;',
+      '',
+      'public class App : Application',
+      '{',
+      '    public override void Initialize()',
+      '    {',
+      '        AvaloniaXamlLoader.Load(this);',
+      '    }',
+      '}',
+      '',
+    ].join('\r\n')
+  );
+
+  const r = setup(root, ['--apply', '--template', 'neon', '--targets', 'avalonia']);
+  L.ok('--apply with an unregistered Avalonia app exits 0', r.status === 0, r.stderr || r.stdout);
+
+  const animatorFile = path.join(projDir, 'TransformAnimator.cs');
+  L.ok('TransformAnimator.cs is written next to App.axaml.cs', fs.existsSync(animatorFile));
+  const animatorText = fs.existsSync(animatorFile) ? fs.readFileSync(animatorFile, 'utf8') : '';
+  L.ok('TransformAnimator.cs carries the app namespace', animatorText.includes('namespace Deneme;'), animatorText);
+  L.ok('TransformAnimator.cs derives ITransform', animatorText.includes('InterpolatingAnimator<ITransform>'), animatorText);
+
+  const appText = fs.readFileSync(path.join(projDir, 'App.axaml.cs'), 'utf8');
+  L.ok(
+    'the registration line lands as the first statement of Initialize()',
+    /Initialize\(\)\s*\r?\n\s*\{\r?\n\s*Animation\.RegisterCustomAnimator<ITransform, TransformAnimator>\(\);/.test(appText),
+    appText
+  );
+  L.ok('the using for Avalonia.Animation is added', appText.includes('using Avalonia.Animation;'), appText);
+
+  const again = setup(root, ['--apply', '--template', 'neon', '--targets', 'avalonia']);
+  const appAgain = fs.readFileSync(path.join(projDir, 'App.axaml.cs'), 'utf8');
+  L.ok(
+    'a second --apply does not register the animator twice',
+    (appAgain.match(/RegisterCustomAnimator/g) || []).length === 1,
+    appAgain
+  );
+  L.ok('a second --apply exits 0 for the animator step', again.status === 0, again.stderr || again.stdout);
+}
+
+function animatorSkipsOddStructure() {
+  const root = L.tmp('tkui-animator-odd-');
+  const projDir = path.join(root, 'src', 'Tuhaf');
+  L.write(
+    path.join(projDir, 'Tuhaf.csproj'),
+    [
+      '<Project Sdk="Microsoft.NET.Sdk">',
+      '  <PropertyGroup>',
+      '    <OutputType>WinExe</OutputType>',
+      '    <AssemblyName>Tuhaf</AssemblyName>',
+      '  </PropertyGroup>',
+      '  <ItemGroup>',
+      '    <PackageReference Include="Avalonia" Version="11.3.20" />',
+      '  </ItemGroup>',
+      '</Project>',
+      '',
+    ].join('\r\n')
+  );
+  L.write(
+    path.join(projDir, 'App.axaml.cs'),
+    ['using Avalonia;', '', 'namespace Tuhaf;', '', 'public class App : Application { }', ''].join('\r\n')
+  );
+
+  const r = setup(root, ['--apply', '--template', 'neon', '--targets', 'avalonia']);
+  L.ok('--apply does not stop the job when Initialize() is not found', r.status === 0, r.stderr || r.stdout);
+  L.ok('--apply prints a clear warning for the unexpected structure', /Initialize\(\) was not found/.test(r.stdout), r.stdout);
+}
+
 function switches(root) {
   const off = setup(root, ['--off']);
   L.ok('--off exits 0', off.status === 0, off.stderr);
@@ -166,6 +258,8 @@ module.exports = function install() {
   const root = applyNeon();
   applyCustom();
   embedsFont();
+  registersAnimator();
+  animatorSkipsOddStructure();
   switches(root);
   check(root);
 };

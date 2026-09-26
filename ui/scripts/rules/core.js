@@ -400,6 +400,16 @@ function tauriWindows(json) {
 
 const WINDOW_CODE_EXT = new Set(['.ts', '.js', '.tsx', '.jsx']);
 const WINDOW_XAML_EXT = new Set(['.xaml', '.axaml']);
+const AVALONIA_WINDOW_ANIM = /<Style\s+Selector="Window\.anim\b[^"]*"/;
+const TRANSFORM_ANIMATOR_REG = /RegisterCustomAnimator\s*<\s*ITransform\s*,/;
+
+function avaloniaWindowAnim(ctx) {
+  return ctx.files.some((f) => f.ext === '.axaml' && AVALONIA_WINDOW_ANIM.test(f.text));
+}
+
+function avaloniaAnimatorRegistered(ctx) {
+  return ctx.files.some((f) => f.ext === '.cs' && TRANSFORM_ANIMATOR_REG.test(f.text));
+}
 
 function windowFixedSize(ctx) {
   const found = tauriConfig(ctx);
@@ -745,6 +755,24 @@ module.exports = {
             line: 0,
             message: 'no prefers-reduced-motion block in any file',
             fix: target ? 'addReducedMotion' : null,
+          },
+        ];
+      },
+    },
+    {
+      id: 'avalonia-animator-missing',
+      severity: 'error',
+      check(ctx) {
+        if (!avaloniaWindowAnim(ctx)) return [];
+        if (avaloniaAnimatorRegistered(ctx)) return [];
+        return [
+          {
+            file: '',
+            line: 0,
+            message:
+              'Window.anim animates RenderTransform but no ITransform animator is registered ' +
+              '(Animation.RegisterCustomAnimator<ITransform, ...>() in Initialize()) — the app ' +
+              'crashes on launch. `setup.js --apply --targets avalonia` adds it automatically.',
           },
         ];
       },

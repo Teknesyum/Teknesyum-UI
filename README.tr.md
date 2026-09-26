@@ -84,6 +84,14 @@ component) adresine döner ve projeye kaynak öğesi eklenir. Birden çok proje 
 `--app <csproj>` seçer. Üretilen tema her pencereyi fs-2 boyunda FontSans ile açar (Avalonia
 `:is(Window)`, WPF `TkWindow`); `typography.scale` token dosyasından okunur.
 
+Üretilen Avalonia teması arka plan katmanının `RenderTransform`'unu animasyonlar
+(`Window.anim Panel.appbg`); Avalonia'da buna hazır bir animatör yoktur, kaydı yoksa uygulama
+açılışta çöker. `setup.js` uygulamanın `App.axaml.cs` dosyasının yanına bir
+`TransformAnimator.cs` yazar ve `Animation.RegisterCustomAnimator<ITransform,
+TransformAnimator>()` satırını `Initialize()`'ın ilk satırı olarak ekler; zaten varsa ikinci
+kez eklemez. `App.axaml.cs` ya da `Initialize()` beklenen yerde değilse işi durdurmadan bir
+uyarı basar — `scan.js`'in `core/avalonia-animator-missing` kuralı bu eksikliği yakalar.
+
 Neon hazır yanıttır, tek yanıt değil — `--template custom` üç marka rengi ve bir yüzey alır,
 gerisini aynı formüllerle türetir.
 

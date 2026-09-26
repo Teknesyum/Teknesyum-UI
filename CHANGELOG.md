@@ -49,6 +49,7 @@ All notable changes to this project are documented here. The format follows
   waiting and local states.
 
 ### Changed
+- The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - The scrollbar thumb has no glow any more; only its fill colour transitions.
 - Title bar: tabs and buttons lose their outline. On hover the text turns pink and an
   indicator grows from the centre under it (`scaleX`, interruptible). Every item has the
@@ -87,6 +88,7 @@ All notable changes to this project are documented here. The format follows
   Tested in `test/onizleme.js`.
 
 ### Changed
+- The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - `setup.js` writes the Avalonia signature as `teknesyum-ui/avalonia/Signature.axaml.example`.
   It needs `Teknesyum.Localization.Str` and a code-behind `Click` handler, so as a `.axaml`
   it broke `dotnet build` in a bare project; as an example it stays out of the compiled glob.
@@ -102,6 +104,7 @@ All notable changes to this project are documented here. The format follows
 ## [0.6.0] - 2026-09-24
 
 ### Changed
+- The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - Scaffold target `denetim`: the Avalonia and WPF contrast tests now measure every button at
   rest, hover, pressed, focus and disabled (disabled is reported, not failed), each run of a
   multi-colour text and every icon (`Shape` fill or stroke), and take the worst stop of a
@@ -130,6 +133,7 @@ All notable changes to this project are documented here. The format follows
   scaffold target `denetim` writes a headless Avalonia or WPF contrast test.
 
 ### Changed
+- The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - `core/contrast` exempts only the approved text colours; fill cuts used as text are measured.
   The danger button, ghost hover, title-bar hover and `TkIconButton` states take their `on`
   colours, since the old pairs measured under 7:1.
@@ -168,6 +172,7 @@ All notable changes to this project are documented here. The format follows
 - Test suite `raf` and cases for `--files` and the scaffolder's shelf note.
 
 ### Changed
+- The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - `SKILL.md` no longer carries the prose standard. It says where the shelf is, which book
   belongs to which work, and that a book is read once per session. 132 lines to 80.
 - The Stop hook scans only the files the turn changed and does not repeat a finding it has
@@ -193,6 +198,7 @@ All notable changes to this project are documented here. The format follows
 - Skill section "The Best Program Shows It Is Working".
 
 ### Changed
+- The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - README links Teknesyum Core by full URL and explains the marketplace layout.
 - `trash/` is no longer tracked.
 
@@ -222,6 +228,7 @@ First release after the split from Teknesyum Base on 2026-08-28.
 - Test suite with cost assertions (`npm test`).
 
 ### Changed
+- The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - Core contracts and leftovers moved out of this repository.
 - Scanner reports exactly what it scans and no longer scans itself.
 

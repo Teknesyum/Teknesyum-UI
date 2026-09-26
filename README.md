@@ -157,6 +157,8 @@ node ui/scripts/onizleme.js [--tarayici [--port 4317] [--no-open]]
 Opens in its own Electron window (`ui/onizleme/masaustu/`, Electron is installed there on
 the first run); `--tarayici` serves the same page on `127.0.0.1` instead.
 
+The window has no system title bar. It draws the standard `tk-titlebar`: brand, Tek Görünüm and Önce / Sonra as tabs, theme picker, Sıfırla, Kopyala, İndir, Kaydet as the one outlined chip, and window controls with a restore glyph when maximised. Dragging, double-click to maximise, Aero Snap, edge resize and `Alt+F4` still work. A 1 px edge frames the window unless it is maximised. The whole app takes the settings live, and the Pencere Ve Üst Çubuk group sets the edge colour and the bar height.
+
 The layout has three columns. The left one lists 15 components: colours, buttons, forms, title bar,
 progress, scrollbar, background, badges, toasts, installer, modal, type, Akıcılık, Okunurluk and
 Teknik. The middle one draws the chosen component with every example and state (normal, hover,

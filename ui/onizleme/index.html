@@ -13,19 +13,25 @@
 <script src="/uygulama.js" defer></script>
 </head>
 <body>
-<header class="ust">
-  <h1 class="ust-baslik">Bileşen Önizleme</h1>
-  <div class="ust-arac">
-    <div class="kip" role="group" aria-label="Görünüm Kipi">
-      <button type="button" class="arac-dugme" data-kip="tek" aria-pressed="true">Tek Görünüm</button>
-      <button type="button" class="arac-dugme" data-kip="karsi" aria-pressed="false">Önce / Sonra</button>
+<header class="tk-titlebar uygulama-cubuk">
+  <div class="tk-titlebar__brand">
+    <h1 class="tk-titlebar__name">Teknesyum<span class="tk-titlebar__accent">Önizleme</span></h1>
+  </div>
+  <nav class="tk-titlebar__tabs kip" aria-label="Görünüm Kipi">
+    <button type="button" class="tk-titlebar__tab" data-kip="tek" aria-current="page" tabindex="0">Tek Görünüm</button>
+    <button type="button" class="tk-titlebar__tab" data-kip="karsi" tabindex="-1">Önce / Sonra</button>
+  </nav>
+  <div class="tk-titlebar__tools">
+    <select class="cubuk-sec tema-sec" id="tema-sec" aria-label="Tema"><option value="">Token Dosyası</option></select>
+    <button type="button" class="tk-titlebar__chip" id="sifirla">Sıfırla</button>
+    <button type="button" class="tk-titlebar__chip" id="kopyala">Kopyala</button>
+    <button type="button" class="tk-titlebar__chip" id="indir">İndir</button>
+    <button type="button" class="tk-titlebar__chip tk-titlebar__chip--outlined" id="kaydet">Kaydet</button>
+    <div class="tk-titlebar__window" id="pencere-denetim" hidden>
+      <button type="button" class="tk-titlebar__control" data-pencere="kucult" aria-label="Küçült" title="Küçült"><span class="tk-titlebar__minimize" aria-hidden="true"></span></button>
+      <button type="button" class="tk-titlebar__control" data-pencere="buyut" aria-label="Büyüt" title="Büyüt"><span class="tk-titlebar__maximize" aria-hidden="true"></span></button>
+      <button type="button" class="tk-titlebar__control tk-titlebar__control--close" data-pencere="kapat" aria-label="Kapat" title="Kapat"><span class="tk-titlebar__close" aria-hidden="true"></span></button>
     </div>
-    <select class="giris tema-sec" id="tema-sec" aria-label="Tema"><option value="">Token Dosyası</option></select>
-    <button type="button" class="arac-dugme" id="sifirla">Tümünü Sıfırla</button>
-    <button type="button" class="arac-dugme" id="kopyala">Panoya Kopyala</button>
-    <button type="button" class="arac-dugme" id="indir">İndir</button>
-    <button type="button" class="arac-dugme arac-birincil" id="kaydet">Kaydet</button>
-    <span class="durum" id="durum" role="status" aria-live="polite"></span>
   </div>
 </header>
 <div class="duzen">
@@ -37,6 +43,8 @@
     <form id="ayarlar" autocomplete="off"></form>
   </aside>
 </div>
+<p class="durum" id="durum" role="status" aria-live="polite"></p>
+<div class="tk-window-edge" aria-hidden="true"></div>
 <dialog class="kaydet-pencere" id="kaydet-pencere" aria-labelledby="kaydet-baslik"></dialog>
 </body>
 </html>

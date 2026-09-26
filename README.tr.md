@@ -157,6 +157,8 @@ node ui/scripts/onizleme.js [--tarayici [--port 4317] [--no-open]]
 Kendi Electron penceresinde açılır (`ui/onizleme/masaustu/`, Electron ilk açılışta oraya
 kurulur); `--tarayici` aynı sayfayı `127.0.0.1` üstünden sunar.
 
+Pencerede sistem başlık çubuğu yoktur; standart `tk-titlebar` çizilir. Çubukta sırasıyla marka, sekme olarak Tek Görünüm ve Önce / Sonra, tema seçici, Sıfırla, Kopyala, İndir, tek çerçeveli çip olarak Kaydet ve pencere düğmeleri durur. Pencere büyütülünce büyütme düğmesinin simgesi geri alma simgesine döner. Sürükleme, çift tıkla büyütme, Aero Snap, kenardan boyutlandırma ve `Alt+F4` çalışır. Pencere büyütülmemişken 1 px'lik bir kenar onu çevreler. Ayarlar uygulamanın tamamına canlı işler. Pencere Ve Üst Çubuk grubu kenar rengini ve çubuk yüksekliğini ayarlar.
+
 Düzen üç sütunludur. Soldaki sütun 15 bileşeni listeler: renkler, düğmeler, formlar, üst çubuk,
 ilerleme, kaydırma çubuğu, arka plan, rozetler, bildirimler, kurulum, modal, tipografi, Akıcılık,
 Okunurluk ve Teknik. Ortadaki sütun seçilen bileşeni bütün örnekleri ve durumlarıyla (normal,

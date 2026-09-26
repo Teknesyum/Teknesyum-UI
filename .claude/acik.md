@@ -1,5 +1,0 @@
-- [x] ajan: Önizleme yeniden tasarımı — 2026-09-26 14:36 — sonucu aktarılacak
-- [x] Yumuşaklık eğrileri: hızlı başla-yavaşla-hızlı bitir vb. seçenekler (easing tokenları + önizleme seçimi) — 2026-09-26 14:38 — tokenlar bitti, önizleme seçimi önizleme ajanında
-- [x] Akıcılık gösterimi ve Teknik panel (FPS, kare süresi, animasyon demoları) — 2026-09-26 14:38 — önizleme ajanı çalışıyor
-- [x] Önizleme yeniden tasarımı: bileşene tıkla → örnekleri gör (bar, arka plan...), seçenekleri çoğalt — 2026-09-26 14:38 — önizleme ajanı çalışıyor
-- [x] Test, tarayıcı, README/CHANGELOG, commit + push, kısayolla doğrulama — 2026-09-26 14:38 — önizleme ajanını bekliyor

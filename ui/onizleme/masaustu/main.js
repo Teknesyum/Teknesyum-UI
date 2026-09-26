@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const { app, BrowserWindow, protocol, session, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, protocol, session, shell } = require('electron');
 const { istek, TOKENS } = require(path.join(__dirname, '..', '..', 'scripts', 'onizleme.js'));
 
 const SEMA = 'onizleme';
@@ -41,10 +41,17 @@ function pencere() {
     minHeight: 480,
     title: 'Teknesyum Renk Önizleme ' + surum(),
     backgroundColor: yuzey(),
+    frame: false,
+    thickFrame: true,
     autoHideMenuBar: true,
     show: false,
-    webPreferences: { contextIsolation: true, sandbox: true, nodeIntegration: false },
+    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true, nodeIntegration: false },
   });
+  const bildir = () => {
+    if (!w.isDestroyed()) w.webContents.send('pencere:durum', w.isFullScreen() ? 'fullscreen' : w.isMaximized() ? 'maximized' : 'normal');
+  };
+  for (const o of ['maximize', 'unmaximize', 'enter-full-screen', 'leave-full-screen', 'restore']) w.on(o, bildir);
+  w.webContents.on('did-finish-load', bildir);
   w.once('ready-to-show', () => w.show());
   w.on('page-title-updated', (e) => e.preventDefault());
   w.webContents.setWindowOpenHandler(({ url }) => {
@@ -67,6 +74,14 @@ app.on('second-instance', () => {
   ana.webContents.reloadIgnoringCache();
   if (ana.isMinimized()) ana.restore();
   ana.focus();
+});
+
+ipcMain.on('pencere:komut', (e, komut) => {
+  const w = BrowserWindow.fromWebContents(e.sender);
+  if (!w) return;
+  if (komut === 'kucult') w.minimize();
+  else if (komut === 'buyut') w.isMaximized() ? w.unmaximize() : w.maximize();
+  else if (komut === 'kapat') w.close();
 });
 
 app.whenReady().then(async () => {

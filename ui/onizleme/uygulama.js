@@ -64,7 +64,7 @@
     renkler: ['renk'],
     dugmeler: ['renk-blue', 'renk-pink', 'renk-pink-text', 'renk-purple', 'renk-purple-text', 'renk-disabled', 'parlama', 'sekil', 'yogunluk', 'hareket'],
     formlar: ['renk-text', 'renk-surface', 'renk-blue', 'renk-pink-text', 'renk-disabled', 'sekil', 'yogunluk', 'yazi'],
-    ustcubuk: ['renk-glass-base', 'renk-text', 'renk-pink-text', 'renk-purple-text', 'yazi', 'sekil', 'yuzey'],
+    ustcubuk: ['pencere', 'renk-glass-base', 'renk-text', 'renk-pink-text', 'renk-purple-text', 'yazi', 'sekil', 'yuzey'],
     ilerleme: ['renk-blue', 'renk-purple', 'renk-success', 'parlama', 'hareket'],
     kaydirma: ['kaydir', 'renk-purple-text', 'renk-pink-text'],
     arka: ['arka', 'renk-black', 'renk-surface', 'renk-blue', 'renk-pink', 'renk-purple', 'yuzey'],
@@ -167,6 +167,7 @@
       kenar: t.shape['border-w'] ? t.shape['border-w'].value : 1,
       cam: 16,
       golge: 1,
+      pencere: { kenar: 'border-strong', cubuk: T.size['titlebar-h-min'] ? T.size['titlebar-h-min'].value : 32 },
       renk,
       koyu: t.meta.dark !== false,
       arka: { tur: 'degrade', durak: t.derived['bg-gradient'].stops, aci: 160, don: false },
@@ -334,6 +335,9 @@
     v['--tk-shadow-panel'] = '0 0 ' + Math.round(sp.blur * st.golge) + 'px ' + rgba(R(sp.ref), Math.min(1, sp.alpha * st.golge));
     v['--tk-glass-blur'] = st.cam + 'px';
     v['--tk-border-w'] = st.kenar + 'px';
+    const pk = st.pencere.kenar;
+    v['--tk-window-edge'] = pk === 'yok' ? 'transparent' : pk === 'border-strong' ? rgba(R(T.derived['border-strong'].ref), T.derived['border-strong'].alpha) : R(pk);
+    v['--tk-titlebar-h-min'] = st.pencere.cubuk + 'px';
     for (const k of Object.keys(T.on)) if (k !== '_') v['--tk-on-' + k] = onRenk(st, k);
     v['--tk-font'] = (A[st.yazi.aile] || A.sans)[1];
     v['--tk-font-mono'] = A.mono[1];
@@ -1090,6 +1094,7 @@
     const t0 = performance.now();
     const kok = $('#onizleme');
     uygula(kok, su, true);
+    uygula(document.documentElement, su, false);
     const ayni = kok.dataset.sayfa === sayfa;
     if (ayni && sayfa === 'akicilik' && A() && $('[data-akis]', kok)) {
       A().guncelle(kok, akisCtx());
@@ -1245,8 +1250,10 @@
       else b.removeAttribute('aria-current');
     }
     for (const x of $$('[data-kip]')) {
-      x.disabled = TEK.includes(sayfa);
-      x.title = x.disabled ? 'Bu bileşen tek görünümdür' : '';
+      const kapali = TEK.includes(sayfa);
+      if (kapali) x.setAttribute('aria-disabled', 'true');
+      else x.removeAttribute('aria-disabled');
+      x.title = kapali ? 'Bu bileşen tek görünümdür' : '';
     }
   }
 
@@ -1387,6 +1394,12 @@
       ) +
       grup('sekil', 'Köşe Yarıçapı', aralik('sekil-r', 'Yarıçap (r)', 0, 20, 1) + aralik('sekil-rp', 'Pencere Yarıçapı', 0, 24, 1)) +
       grup('yogunluk', 'Yoğunluk Ve Kenar', aralik('yogunluk', 'Yoğunluk (Boşluk Çarpanı)', 0.75, 1.5, 0.05) + aralik('kenar', 'Kenar Kalınlığı (px)', 0, 3, 1)) +
+      grup(
+        'pencere',
+        'Pencere Ve Üst Çubuk',
+        secim('pencere-kenar', 'Pencere Kenarı (Büyütülmemişken)', [['border-strong', 'Güçlü Kenar'], ['blue', 'Mavi'], ['pink', 'Pembe'], ['purple', 'Mor'], ['yok', 'Yok']]) +
+          aralik('pencere-cubuk', 'Üst Çubuk Yüksekliği (px)', 28, 48, 1)
+      ) +
       grup('yuzey', 'Yüzey', aralik('cam', 'Cam Bulanıklığı (px)', 0, 48, 1) + aralik('golge', 'Gölge Gücü', 0, 2, 0.05)) +
       grup(
         'kaydir',
@@ -1468,6 +1481,8 @@
     $('#sekil-rp').value = su.sekil.rPencere;
     $('#yogunluk').value = su.yogunluk;
     $('#kenar').value = su.kenar;
+    $('#pencere-kenar').value = su.pencere.kenar;
+    $('#pencere-cubuk').value = su.pencere.cubuk;
     $('#cam').value = su.cam;
     $('#golge').value = su.golge;
     $('#kay-kalinlik').value = su.kaydir.kalinlik;
@@ -1501,6 +1516,7 @@
     yaz('sekil-rp', su.sekil.rPencere + ' px');
     yaz('yogunluk', '×' + Number(su.yogunluk).toFixed(2));
     yaz('kenar', su.kenar + ' px');
+    yaz('pencere-cubuk', su.pencere.cubuk + ' px');
     yaz('cam', su.cam + ' px');
     yaz('golge', '×' + Number(su.golge).toFixed(2));
     yaz('kay-kalinlik', su.kaydir.kalinlik + ' px');
@@ -1706,13 +1722,25 @@
       h.focus();
       sayfaAc(h.dataset.git);
     });
-    for (const b of $$('[data-kip]'))
-      b.addEventListener('click', () => {
-        kip = b.dataset.kip;
-        for (const x of $$('[data-kip]')) x.setAttribute('aria-pressed', String(x === b));
-        hashYaz();
-        planla();
-      });
+    const kipSec = (b) => {
+      if (b.getAttribute('aria-disabled') === 'true') return;
+      kip = b.dataset.kip;
+      kipIsaretle();
+      hashYaz();
+      planla();
+    };
+    for (const b of $$('[data-kip]')) b.addEventListener('click', () => kipSec(b));
+    $('.kip').addEventListener('keydown', (e) => {
+      const hepsi = $$('[data-kip]').filter((x) => x.getAttribute('aria-disabled') !== 'true');
+      const j = hepsi.indexOf(document.activeElement);
+      const yeni = { ArrowRight: j + 1, ArrowLeft: j - 1, Home: 0, End: hepsi.length - 1 }[e.key];
+      if (yeni === undefined || !hepsi.length) return;
+      e.preventDefault();
+      const h = hepsi[(yeni + hepsi.length) % hepsi.length];
+      h.focus();
+      kipSec(h);
+    });
+    pencereBagla();
     $('#tema-sec').addEventListener('change', (e) => temaSec(e.target.value));
     $('#sifirla').addEventListener('click', () => {
       su = kopya(ilk);
@@ -1749,6 +1777,8 @@
     su.kenar = Number($('#kenar').value);
     su.cam = Number($('#cam').value);
     su.golge = Number($('#golge').value);
+    su.pencere.kenar = $('#pencere-kenar').value;
+    su.pencere.cubuk = Number($('#pencere-cubuk').value);
     su.kaydir.kalinlik = Number($('#kay-kalinlik').value);
     su.kaydir.renk = $('#kay-renk').value;
     su.kaydir.bicim = $('#kay-bicim').value;
@@ -1804,6 +1834,8 @@
     if (su.kenar !== ilk.kenar) notlar.push('Kenar kalınlığı: ' + su.kenar + ' px.');
     if (su.cam !== ilk.cam) notlar.push('Cam bulanıklığı: ' + su.cam + ' px.');
     if (su.golge !== ilk.golge) notlar.push('Panel gölgesi gücü: ×' + su.golge + '.');
+    if (su.pencere.kenar !== ilk.pencere.kenar) notlar.push('Pencere kenarı: ' + su.pencere.kenar + '.');
+    if (su.pencere.cubuk !== ilk.pencere.cubuk) notlar.push('Üst çubuk yüksekliği: ' + su.pencere.cubuk + ' px (titlebar-h-min).');
     if (notlar.length) out._ = notlar;
     return out;
   }
@@ -1843,8 +1875,35 @@
     return JSON.stringify(disaAktar(), null, 2) + '\n';
   }
 
+  let durumSayac = 0;
   function durum(m) {
     $('#durum').textContent = m;
+    clearTimeout(durumSayac);
+    if (m) durumSayac = setTimeout(() => ($('#durum').textContent = ''), 8000);
+  }
+
+  function kipIsaretle() {
+    for (const x of $$('[data-kip]')) {
+      const bu = x.dataset.kip === kip;
+      if (bu) x.setAttribute('aria-current', 'page');
+      else x.removeAttribute('aria-current');
+      x.tabIndex = bu ? 0 : -1;
+    }
+  }
+
+  function pencereBagla() {
+    const p = window.pencere;
+    if (!p) return;
+    $('#pencere-denetim').hidden = false;
+    for (const b of $$('[data-pencere]')) b.addEventListener('click', () => p.komut(b.dataset.pencere));
+    p.durum((d) => {
+      document.documentElement.dataset.window = d;
+      const b = $('[data-pencere="buyut"]');
+      const buyuk = d !== 'normal';
+      b.setAttribute('aria-label', buyuk ? 'Geri Al' : 'Büyüt');
+      b.title = buyuk ? 'Geri Al' : 'Büyüt';
+      b.firstElementChild.className = buyuk ? 'tk-titlebar__restore' : 'tk-titlebar__maximize';
+    });
   }
 
   async function kopyala() {
@@ -2073,7 +2132,7 @@
       else if (ESKI[bolum]) sayfa = ESKI[bolum];
       bolum = null;
     }
-    for (const x of $$('[data-kip]')) x.setAttribute('aria-pressed', String(x.dataset.kip === kip));
+    kipIsaretle();
     uygula(document.documentElement, ilk, false);
     navKur();
     formKur();

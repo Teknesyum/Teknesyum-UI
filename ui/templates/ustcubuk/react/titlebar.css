@@ -12,6 +12,7 @@
 
 .tk-titlebar a,
 .tk-titlebar button,
+.tk-titlebar select,
 .tk-titlebar__language {
   -webkit-app-region: no-drag;
 }
@@ -138,14 +139,16 @@
 }
 
 .tk-titlebar__tab[aria-disabled='true'],
-.tk-titlebar__chip[aria-disabled='true'] {
+.tk-titlebar__chip[aria-disabled='true'],
+.tk-titlebar__chip:disabled {
   color: var(--tk-disabled);
   cursor: not-allowed;
   transform: none;
 }
 
 .tk-titlebar__tab[aria-disabled='true']::after,
-.tk-titlebar__chip[aria-disabled='true']::after {
+.tk-titlebar__chip[aria-disabled='true']::after,
+.tk-titlebar__chip:disabled::after {
   cursor: not-allowed;
   transform: scaleX(0);
 }
@@ -251,6 +254,46 @@
 
 .tk-titlebar__close::after {
   transform: rotate(-45deg);
+}
+
+.tk-titlebar__restore {
+  position: relative;
+  width: var(--tk-sp-3);
+  height: var(--tk-sp-3);
+}
+
+.tk-titlebar__restore::before,
+.tk-titlebar__restore::after {
+  content: '';
+  position: absolute;
+  width: calc(100% - var(--tk-sp-1));
+  height: calc(100% - var(--tk-sp-1));
+  border: var(--tk-border-w) solid currentColor;
+}
+
+.tk-titlebar__restore::before {
+  top: 0;
+  right: 0;
+  border-bottom: 0;
+  border-left: 0;
+}
+
+.tk-titlebar__restore::after {
+  bottom: 0;
+  left: 0;
+}
+
+.tk-window-edge {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  border: var(--tk-border-w) solid var(--tk-window-edge, var(--tk-border-strong));
+  pointer-events: none;
+}
+
+[data-window='maximized'] .tk-window-edge,
+[data-window='fullscreen'] .tk-window-edge {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

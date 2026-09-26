@@ -12,7 +12,7 @@ Tokens, scanner, hooks.
 |---|---|
 | Scanner rules | 102, in 9 modules (`scan.js --list-rules`) |
 | Themes | 9 — 5 light, 4 dark; every one passes 7:1 and scores 85 or more (`tema.js denetle`) |
-| Tests | 433 assertions, no dependencies (`npm test`) |
+| Tests | 439 assertions, no dependencies (`npm test`) |
 | Cost of an ordinary turn | 0 tokens — no hook writes context on a turn |
 | Cost of a session start | 0 tokens on a clean project; one note of about 150–250 tokens when there is UI work to do |
 | Cost of the skill | `SKILL.md`, 93 lines, about 1,000 tokens, loaded only when UI work starts |
@@ -211,7 +211,8 @@ node <plugin>/scripts/scan.js <project-root> [--fix] [--json] [--files a.css,b.t
 ```
 
 ```bash
-node <plugin>/scripts/raf.js [book]
+node <plugin>/scripts/raf.js [book] | --uyan [root] | --uydu <book> --project <root>
+node <plugin>/scripts/uc.js [--project <root>] [scope]
 ```
 
 ```bash
@@ -241,7 +242,8 @@ ui/scripts/setup.js       install and generate
 ui/scripts/generate.js    tokens -> theme.css, Theme.xaml, Theme.axaml, Palette.cs
 ui/scripts/scan.js        the scanner
 ui/scripts/rules/*.js     the rules, one module per domain
-ui/scripts/raf.js         reads the private shelf
+ui/scripts/raf.js         reads the private shelf and records applied books
+ui/scripts/uc.js          writes the instruction for the Core `uc` mark
 ui/scripts/ozel.js        private record and token file
 ui/scripts/kaydet.js      public release of new token values
 ui/hooks/baslangic.js     SessionStart: check first when needed
@@ -261,7 +263,7 @@ docs/DECISIONS.md         why it is shaped this way
 npm test
 ```
 
-433 assertions. Cost assertions fail if a hook other than the session hook writes context, if
+439 assertions. Cost assertions fail if a hook other than the session hook writes context, if
 `SKILL.md` grows past its budget, or if a slash command reappears. The standard also has to
 pass its own scanner.
 

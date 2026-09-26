@@ -5,6 +5,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-09-27
+
+### Added
+- `scripts/uc.js` writes the instruction for the `uc` mark (Teknesyum Core 0.47.0 hands it over): the owner's layout applied to every window, panel and dialog from a screen inventory, setup when the project is not bound, the pending shelf books, the scan, live contrast and the finish line. It reads the procedure through `raf.js ui-denetim`.
+
 ## [0.10.1] - 2026-09-27
 
 ### Fixed
@@ -402,6 +407,6 @@ First release after the split from Teknesyum Base on 2026-08-28.
 - Core contracts and leftovers moved out of this repository.
 - Scanner reports exactly what it scans and no longer scans itself.
 
-[Unreleased]: https://github.com/Teknesyum/Teknesyum-UI/compare/v0.10.1...HEAD
+[Unreleased]: https://github.com/Teknesyum/Teknesyum-UI/compare/v0.11.0...HEAD
 [0.3.0]: https://github.com/Teknesyum/Teknesyum-UI/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Teknesyum/Teknesyum-UI/releases/tag/v0.2.0

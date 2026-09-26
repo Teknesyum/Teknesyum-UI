@@ -12,7 +12,7 @@ Tokenlar, tarayıcı, kancalar.
 |---|---|
 | Tarayıcı kuralları | 9 modülde 102 (`scan.js --list-rules`) |
 | Temalar | 9 — 5 açık, 4 koyu; hepsi 7:1'i geçer ve 85 veya üzeri puan alır (`tema.js denetle`) |
-| Testler | 433 doğrulama, bağımlılık yok (`npm test`) |
+| Testler | 439 doğrulama, bağımlılık yok (`npm test`) |
 | Sıradan bir turun maliyeti | 0 token — hiçbir kanca bir turda bağlam yazmaz |
 | Oturum başlangıcının maliyeti | Temiz bir projede 0 token; yapılacak arayüz işi varsa 150–250 token civarı bir not |
 | Skill'in maliyeti | `SKILL.md`, 93 satır, yaklaşık 1.000 token, yalnızca arayüz işi başladığında yüklenir |
@@ -218,7 +218,8 @@ node <plugin>/scripts/scan.js <project-root> [--fix] [--json] [--files a.css,b.t
 ```
 
 ```bash
-node <plugin>/scripts/raf.js [book]
+node <plugin>/scripts/raf.js [book] | --uyan [root] | --uydu <book> --project <root>
+node <plugin>/scripts/uc.js [--project <root>] [scope]
 ```
 
 ```bash
@@ -249,7 +250,8 @@ ui/scripts/setup.js       kurulum ve üretim
 ui/scripts/generate.js    tokenlar -> theme.css, Theme.xaml, Theme.axaml, Palette.cs
 ui/scripts/scan.js        tarayıcı
 ui/scripts/rules/*.js     kurallar, alan başına bir modül
-ui/scripts/raf.js         özel rafı okur
+ui/scripts/raf.js         özel rafı okur, uygulanan kitapları kaydeder
+ui/scripts/uc.js          Core `uc` işaretinin talimatını yazar
 ui/scripts/ozel.js        özel kayıt ve token dosyası
 ui/scripts/kaydet.js      yeni token değerlerinin kamuya açık yayımı
 ui/hooks/baslangic.js     SessionStart: gerektiğinde önce denetle
@@ -269,7 +271,7 @@ docs/DECISIONS.md         neden bu şekilde tasarlandı
 npm test
 ```
 
-433 doğrulama. Maliyet doğrulamaları; oturum kancası dışında bir kanca bağlam yazarsa,
+439 doğrulama. Maliyet doğrulamaları; oturum kancası dışında bir kanca bağlam yazarsa,
 `SKILL.md` bütçesinin ötesine geçerse ya da bir slash komutu yeniden ortaya çıkarsa
 başarısız olur. Standart da kendi tarayıcısından geçmek zorundadır.
 

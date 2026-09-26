@@ -168,8 +168,24 @@ function scanRule(e) {
   L.ok('scan reports a missing required file', f.some((x) => x.rule === 'raf/ister' && /LICENSE is missing/.test(x.message)));
 }
 
+function ucText(e) {
+  const UC = path.join(L.UI, 'scripts', 'uc.js');
+  const p = project();
+  let r = run(UC, ['--project', p, 'ayarlar', 'ekranı'], e);
+  L.ok('uc names the procedure and the rules books through raf.js', /raf\.js" ui-denetim/.test(r.stdout) && /raf\.js" ui-duzeni/.test(r.stdout), r.stdout);
+  L.ok('uc asks for setup on a project that is not bound', /setup\.js" --check/.test(r.stdout), r.stdout);
+  L.ok('uc lists the pending shelf books', /Bekleyen raf kitapları: lisans/.test(r.stdout), r.stdout);
+  L.ok('uc carries the scope', /Kapsam: ayarlar ekranı/.test(r.stdout), r.stdout);
+  L.write(path.join(p, '.claude', 'teknesyum-ui.json'), JSON.stringify(CONFIG));
+  r = run(UC, ['--project', p], e);
+  L.ok('uc skips setup on a bound project', !/setup\.js/.test(r.stdout) && !/Kapsam/.test(r.stdout), r.stdout);
+  r = run(UC, ['--project', p], { ...e, TEKNESYUM_PRIVATE: path.join(p, 'yok') });
+  L.ok('without a shelf uc says only the scanner applies', /özel raf yok/.test(r.stdout) && !/raf\.js" ui-denetim/.test(r.stdout), r.stdout);
+}
+
 module.exports = function rafkitap() {
   const e = env(shelf(), cfg());
+  ucText(e);
   metaAndMatch(e);
   uyduCli(e);
   sessionNote(e);

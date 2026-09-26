@@ -1,0 +1,2 @@
+- [ ] Core'da uc'yi raf.js ui-denetim okutacak şekilde düzelt — 2026-09-27 01:17 — sahibin onayını bekliyor
+- [ ] VidShrink renk kaynağı seçimi — 2026-09-27 01:17 — sahibin kararı

@@ -240,7 +240,7 @@
   },
   "metric": {
     "target-min": { "value": 24, "unit": "px", "rationale": "Minimum interactive target, 24\u00d724 DIP (SKILL \u00a75.3); the checkbox cell takes the same value." },
-    "scrollbar-w": { "value": 10, "unit": "px", "rationale": "Scrollbar track width and height (SKILL \u00a75.3)." },
+    "scrollbar-w": { "value": 4, "unit": "px", "rationale": "Scrollbar track width and height (SKILL \u00a75.3)." },
     "titlebar-h-min": { "value": 32, "unit": "px", "rationale": "Drawn title bar floor (SKILL \u00a74, desktop.md \u00a710)." },
     "titlebar-h-max": { "value": 40, "unit": "px", "rationale": "Drawn title bar ceiling; the source gives a range, not one number." },
     "sidebar-w": { "value": 240, "unit": "px", "rationale": "Open sidebar width (layout.md \u00a75.7)." },

@@ -126,7 +126,7 @@ public static class Palette
     public const int ToastGap      = 12;
 
     public const int    TargetMin             = 24;
-    public const int    ScrollbarWidth        = 10;
+    public const int    ScrollbarWidth        = 4;
     public const int    TitleBarHeightMin     = 32;
     public const int    TitleBarHeightMax     = 40;
     public const int    SidebarWidth          = 240;

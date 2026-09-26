@@ -62,7 +62,7 @@
   const ESKI = { renk: 'renkler', parca: 'ustcubuk', tonlar: 'renkler', yanyana: 'renkler', yuzeyler: 'renkler', bilesenler: 'formlar', form: 'formlar' };
   const ILGILI = {
     renkler: ['renk'],
-    dugmeler: ['renk-blue', 'renk-pink', 'renk-pink-text', 'renk-purple', 'renk-purple-text', 'renk-disabled', 'parlama', 'sekil', 'yogunluk', 'hareket'],
+    dugmeler: ['dugme', 'renk-blue', 'renk-pink', 'renk-pink-text', 'renk-purple', 'renk-purple-text', 'renk-disabled', 'parlama', 'sekil', 'yogunluk', 'hareket'],
     formlar: ['renk-text', 'renk-surface', 'renk-blue', 'renk-pink-text', 'renk-disabled', 'sekil', 'yogunluk', 'yazi'],
     ustcubuk: ['pencere', 'renk-glass-base', 'renk-text', 'renk-pink-text', 'renk-purple-text', 'yazi', 'sekil', 'yuzey'],
     ilerleme: ['renk-blue', 'renk-purple', 'renk-success', 'parlama', 'hareket'],
@@ -168,6 +168,7 @@
       cam: 16,
       golge: 1,
       pencere: { kenar: 'border-strong', cubuk: T.size['titlebar-h-min'] ? T.size['titlebar-h-min'].value : 32 },
+      dugme: { h: Math.round(t.size['fs-2'].value * t.size['lh-heading'].value + 14 * 2 + 2), px: 20 },
       renk,
       koyu: t.meta.dark !== false,
       arka: { tur: 'degrade', durak: t.derived['bg-gradient'].stops, aci: 160, don: false },
@@ -338,6 +339,8 @@
     const pk = st.pencere.kenar;
     v['--tk-window-edge'] = pk === 'yok' ? 'transparent' : pk === 'border-strong' ? rgba(R(T.derived['border-strong'].ref), T.derived['border-strong'].alpha) : R(pk);
     v['--tk-titlebar-h-min'] = st.pencere.cubuk + 'px';
+    v['--tk-btn-h'] = st.dugme.h + 'px';
+    v['--tk-btn-px'] = st.dugme.px + 'px';
     for (const k of Object.keys(T.on)) if (k !== '_') v['--tk-on-' + k] = onRenk(st, k);
     v['--tk-font'] = (A[st.yazi.aile] || A.sans)[1];
     v['--tk-font-mono'] = A.mono[1];
@@ -777,8 +780,8 @@
       oranEtiket(K.ratio(P(R('pink')), P(bilesik(st, R('blue'), 0.1))), { esik: 3 }) +
       '</div>';
     return (
-      blok(on, 'canli', 'Canlı İlerleme', 'Hedef her yavaş süre jetonunda (' + st.sure.slow + ' ms) farklı büyüklükte sıçrar; gösterilen değer ona 0,1 adımlarla akar. Fark büyüdükçe hızlanır, hedefe yaklaştıkça yavaşlar (zaman sabiti ' + st.sure.slow / 2 + ' ms). Dolgu yalnız transform ile ölçeklenir. Bitince düz başarı rengine döner.', canli) +
-      blok(on, 'durumlar', 'Durumlar', 'Çalışırken iki renkli geçiş ve tarama ışığı, bitince düz başarı rengi, hatada tehlike rengi.', cubuklar) +
+      blok(on, 'canli', 'Canlı İlerleme', 'Hedef her yavaş süre jetonunda (' + st.sure.slow + ' ms) farklı büyüklükte sıçrar; gösterilen değer ona 0,1 adımlarla akar. Fark büyüdükçe hızlanır, hedefe yaklaştıkça yavaşlar (zaman sabiti ' + st.sure.slow / 2 + ' ms). Dolgu clip-path ile kesilir; / / / taralar kayar, tarama ışığı yalnız dolu kısımda geçer. Bitince düz başarı rengine döner.', canli) +
+      blok(on, 'durumlar', 'Durumlar', 'Çalışırken iki renkli geçiş, kayan taralar ve dolu kısımda tarama ışığı, bitince düz başarı rengi, hatada tehlike rengi.', cubuklar) +
       blok(on, 'sade', 'Sade Çubuk · Karşıtlık', 'Dolgu ile iz arasında 3:1 eşiği aranır.', sade)
     );
   }
@@ -995,8 +998,7 @@
     const y = $('#okunur-puan');
     if (!y || !window.Skor) return;
     const s = skorlar();
-    const f = Math.round(s.su.genel) - Math.round(s.ilk.genel);
-    y.textContent = Math.round(s.su.genel) + (f ? ' (' + farkYazi(f) + ')' : '');
+    y.textContent = String(Math.round(s.su.genel));
     y.dataset.not = NOT_KOD[s.su.not];
   }
 
@@ -1451,13 +1453,14 @@
         'pencere',
         'Pencere Ve Üst Çubuk',
         secim('pencere-kenar', 'Pencere Kenarı (Büyütülmemişken)', [['border-strong', 'Güçlü Kenar'], ['blue', 'Mavi'], ['pink', 'Pembe'], ['purple', 'Mor'], ['yok', 'Yok']]) +
-          aralik('pencere-cubuk', 'Üst Çubuk Yüksekliği (px)', 28, 48, 1)
+          aralik('pencere-cubuk', 'Üst Çubuk Yüksekliği (px)', 20, 48, 1)
       ) +
+      grup('dugme', 'Düğme Boyutu', aralik('dugme-h', 'Düğme Yüksekliği (px)', 24, 64, 1) + aralik('dugme-px', 'Yatay Dolgu (px)', 8, 40, 1)) +
       grup('yuzey', 'Yüzey', aralik('cam', 'Cam Bulanıklığı (px)', 0, 48, 1) + aralik('golge', 'Gölge Gücü', 0, 2, 0.05)) +
       grup(
         'kaydir',
         'Kaydırma',
-        aralik('kay-kalinlik', 'Çubuk Kalınlığı (px)', 4, 20, 1) +
+        aralik('kay-kalinlik', 'Çubuk Kalınlığı (px)', 2, 20, 1) +
           secim('kay-renk', 'Çubuk Rengi', KAYDIRMA_RENK) +
           secim('kay-bicim', 'Çubuk Biçimi', BICIMLER) +
           '<fieldset class="alan"><legend>Kaydırma Davranışı</legend>' +
@@ -1536,6 +1539,8 @@
     $('#kenar').value = su.kenar;
     $('#pencere-kenar').value = su.pencere.kenar;
     $('#pencere-cubuk').value = su.pencere.cubuk;
+    $('#dugme-h').value = su.dugme.h;
+    $('#dugme-px').value = su.dugme.px;
     $('#cam').value = su.cam;
     $('#golge').value = su.golge;
     $('#kay-kalinlik').value = su.kaydir.kalinlik;
@@ -1570,6 +1575,8 @@
     yaz('yogunluk', '×' + Number(su.yogunluk).toFixed(2));
     yaz('kenar', su.kenar + ' px');
     yaz('pencere-cubuk', su.pencere.cubuk + ' px');
+    yaz('dugme-h', su.dugme.h + ' px');
+    yaz('dugme-px', su.dugme.px + ' px');
     yaz('cam', su.cam + ' px');
     yaz('golge', '×' + Number(su.golge).toFixed(2));
     yaz('kay-kalinlik', su.kaydir.kalinlik + ' px');
@@ -1634,6 +1641,43 @@
       return true;
     }
     return false;
+  }
+
+  const TIK_AYAR = [
+    ['.tk-btn-primary', ['dugme', 'renk-blue', 'parlama']],
+    ['.tk-btn-danger', ['dugme', 'renk-pink', 'parlama']],
+    ['.tk-btn-ghost', ['dugme', 'renk-purple']],
+    ['.tk-btn, .btn', ['dugme']],
+    ['.tk-titlebar__control, .tk-titlebar__chip, .tk-titlebar__tab', ['pencere', 'renk-blue', 'renk-pink-text']],
+    ['.tk-titlebar, .baslik-cubugu', ['pencere', 'renk-glass-base']],
+    ['.tk-progress, .tk-installer', ['renk-blue', 'renk-purple', 'renk-success', 'hareket']],
+    ['.kaydir-ornek, .uzun-liste', ['kaydir']],
+    ['.tk-input, input, select, textarea', ['yogunluk', 'renk-surface', 'sekil']],
+    ['.tk-toast, .tk-modal', ['yuzey', 'hareket']],
+    ['[class*="badge"], [class*="rozet"]', ['sekil', 'renk-success', 'renk-warning']],
+    ['h1, h2, h3, p, .tk-h3', ['yazi', 'renk-text']],
+  ];
+
+  function tikGruplari(hedef) {
+    let el = hedef;
+    for (let n = 0; el && el.id !== 'onizleme' && n < 30; n++, el = el.parentElement) {
+      for (const [secici, gruplar] of TIK_AYAR) if (el.matches(secici)) return gruplar;
+    }
+    return [];
+  }
+
+  function ayarAc(gruplar) {
+    let ilk = null;
+    for (const id of gruplar) {
+      const d = $('#ayarlar [data-grup="' + id + '"]');
+      if (!d) continue;
+      d.open = true;
+      d.classList.remove('grup-vurgu');
+      void d.offsetWidth;
+      d.classList.add('grup-vurgu');
+      if (!ilk) ilk = d;
+    }
+    if (ilk) ilk.scrollIntoView({ block: 'nearest', behavior: 'instant' });
   }
 
   function olaylar() {
@@ -1710,6 +1754,7 @@
     });
     const kok = $('#onizleme');
     kok.addEventListener('click', (e) => {
+      ayarAc(tikGruplari(e.target));
       const k = e.target.closest('[data-kaydir]');
       if (k) {
         const liste = document.getElementById(k.dataset.hedef);
@@ -1832,6 +1877,8 @@
     su.golge = Number($('#golge').value);
     su.pencere.kenar = $('#pencere-kenar').value;
     su.pencere.cubuk = Number($('#pencere-cubuk').value);
+    su.dugme.h = Number($('#dugme-h').value);
+    su.dugme.px = Number($('#dugme-px').value);
     su.kaydir.kalinlik = Number($('#kay-kalinlik').value);
     su.kaydir.renk = $('#kay-renk').value;
     su.kaydir.bicim = $('#kay-bicim').value;
@@ -1888,6 +1935,7 @@
     if (su.cam !== ilk.cam) notlar.push('Cam bulanıklığı: ' + su.cam + ' px.');
     if (su.golge !== ilk.golge) notlar.push('Panel gölgesi gücü: ×' + su.golge + '.');
     if (su.pencere.kenar !== ilk.pencere.kenar) notlar.push('Pencere kenarı: ' + su.pencere.kenar + '.');
+    if (su.dugme.h !== ilk.dugme.h || su.dugme.px !== ilk.dugme.px) notlar.push('Düğme: ' + su.dugme.h + ' px yükseklik, ' + su.dugme.px + ' px yatay dolgu.');
     if (su.pencere.cubuk !== ilk.pencere.cubuk) notlar.push('Üst çubuk yüksekliği: ' + su.pencere.cubuk + ' px (titlebar-h-min).');
     if (notlar.length) out._ = notlar;
     return out;

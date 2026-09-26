@@ -657,7 +657,7 @@ body {
 }
 
 /* --- scrollbar --- */
-::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar { width: var(--tk-scrollbar-w); height: var(--tk-scrollbar-w); }
 ::-webkit-scrollbar-track { background: ${rgba('black', 0.3)}; border-radius: 4px; }
 ::-webkit-scrollbar-thumb {
   background: var(--tk-purple-text); border-radius: 4px;

@@ -32,7 +32,7 @@ const TAMSAYI = {
   'size.fs-5': [10, 96],
   'shape.r': [0, 24],
   'shape.r-window': [0, 32],
-  'metric.scrollbar-w': [4, 24],
+  'metric.scrollbar-w': [2, 24],
   'derived.bg-gradient': [2, 64],
 };
 const SURELER = ['instant', 'fast', 'base', 'slow'];

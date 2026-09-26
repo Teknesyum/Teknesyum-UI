@@ -12,6 +12,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 app.commandLine.appendSwitch('disable-http-cache');
+app.commandLine.appendSwitch('disable-smooth-scrolling');
 
 if (!app.requestSingleInstanceLock()) app.exit(0);
 

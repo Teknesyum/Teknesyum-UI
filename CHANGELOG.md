@@ -6,6 +6,12 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- Progress bars carry animated `/ / /` stripes, run thinner, and the scan light stays inside the
+  filled part. Clicking a button or other object in the preview opens its settings group. New
+  button size settings (height, horizontal padding); the title bar can be made much thinner and
+  its text scales with it. The scrollbar is 4 px wide (range 2–24), and the preview turns off
+  wheel smoothing so scrolling has no delay. Okunurluk shows a single number; Kaydet has no
+  outline; outlined chips in the state grid no longer have their glow cut by the next cell.
 - Ten standard themes in `ui/templates/temalar/`: five dark (gece, grafit, kadife, karbon,
   kor) and five light (kar, kirik, kagit, buz, keskin), drawn from 36 market palettes
   (`docs/arastirma/temalar.md`) and designed with fable (consult 004). Every theme passes the

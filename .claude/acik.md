@@ -1,0 +1,2 @@
+- [x] ajan: Fable okunurluk renk ayarı — 2026-09-26 14:06 — sonucu aktarılacak
+- [x] Fable ile okunurluk skoruna göre renk önerisi; önizlemede düzenlenebilir öneri olarak yükle — 2026-09-26 14:11 — jobs.md

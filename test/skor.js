@@ -30,6 +30,13 @@ module.exports = function skor() {
   L.ok('onSec keeps the token pair above 7:1', S.onSec(T, {}, 'blue').ad === T.on.blue.on);
   L.ok('onSec switches when the pair drops below 7:1', S.onSec(T, { blue: '#2050c0' }, 'blue').ad === 'text');
 
+  const on = O.yanit('/oneri.json');
+  if (on.status === 200) {
+    const o = JSON.parse(on.body);
+    L.ok('the proposal starts from the token file and scores higher', Object.entries(o.taban).every(([k, v]) => (T.brand[k] || T.role[k]).value.toLocaleLowerCase('en') === v) && S.skorla(T, o.renk).genel > A.genel);
+  }
+  L.ok('a missing file answers 404', O.yanit('/yok.json').status === 404);
+
   const r = O.yanit('/skor.js');
   L.ok('/skor.js is served for the page', r.status === 200 && r.body.includes('window.Skor = module.exports'));
 };

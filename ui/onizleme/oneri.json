@@ -1,0 +1,6 @@
+{
+  "baslik": "Fable okunurluk önerisi (Danışma 002, dengeli set)",
+  "kaynak": "docs/danisma/002-fable-okunurluk-ayar.md",
+  "taban": { "blue": "#5aa8ff", "disabled": "#7c7f88" },
+  "renk": { "blue": "#6ab2ff", "disabled": "#9a9da6" }
+}

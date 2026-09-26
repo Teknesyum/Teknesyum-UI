@@ -6,6 +6,12 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+- Preview proposals: `ui/onizleme/oneri.json` loads a suggested colour set on start when the
+  token file still holds its base values. The first one is fable's balanced readability set
+  (blue #6ab2ff, disabled #9a9da6: score 85 → 87.4, consult 002).
+- The preview now edits text, disabled, success and warning too; the save accepts glass-base.
+- The desktop app keeps one window: a second launch reloads it, and the HTTP and code caches
+  are cleared on start. The window title shows the version.
 - Readability score (`ui/scripts/skor.js`): 0–100, higher is better, from every text/fill pair
   in the standard CSS, weighted by how often each part appears. A new "Okunurluk" tab in the
   preview shows it against the token file, per panel, the most affected and the weak parts;

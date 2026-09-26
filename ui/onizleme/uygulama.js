@@ -12,6 +12,8 @@
     surface: 'Yüzey',
     black: 'Siyah',
     'glass-base': 'Cam Tabanı',
+    disabled: 'Pasif',
+    warning: 'Uyarı',
     text: 'Metin',
     success: 'Başarı',
     danger: 'Tehlike',
@@ -20,7 +22,7 @@
     glass: 'Cam',
   };
 
-  const DUZENLENEN = ['blue', 'pink', 'pink-text', 'purple', 'purple-text', 'surface', 'black', 'glass-base'];
+  const DUZENLENEN = ['blue', 'pink', 'pink-text', 'purple', 'purple-text', 'surface', 'black', 'glass-base', 'text', 'disabled', 'success', 'warning'];
   const ACIK = ['blue', 'pink'];
   const TURETILIR = { 'pink-text': 'pink', 'purple-text': 'purple' };
 
@@ -1106,7 +1108,7 @@
       out[bolum] = out[bolum] || {};
       out[bolum][anahtar] = deger;
     };
-    for (const ad of DUZENLENEN) if (su.renk[ad] !== ilk.renk[ad]) koy('brand', ad, { value: su.renk[ad] });
+    for (const ad of DUZENLENEN) if (su.renk[ad] !== ilk.renk[ad]) koy(T.role[ad] ? 'role' : 'brand', ad, { value: su.renk[ad] });
     if (su.yazi.carpan !== ilk.yazi.carpan)
       for (let n = 1; n <= 5; n++) koy('size', 'fs-' + n, { value: Math.round(T.size['fs-' + n].value * su.yazi.carpan), unit: 'px' });
     if (su.yazi.govde !== ilk.yazi.govde) koy('size', 'fw-body', { value: su.yazi.govde });
@@ -1302,6 +1304,27 @@
     bekle();
   }
 
+  async function oneriYukle() {
+    let o;
+    try {
+      const r = await fetch('/oneri.json', { cache: 'no-store' });
+      if (!r.ok) return null;
+      o = await r.json();
+    } catch {
+      return null;
+    }
+    const taban = o && o.taban ? o.taban : {};
+    const gecerli = Object.entries(taban).every(([k, v]) => ilk.renk[k] === String(v).toLocaleLowerCase('en'));
+    if (!gecerli || !o.renk) return null;
+    let n = 0;
+    for (const [k, v] of Object.entries(o.renk))
+      if (DUZENLENEN.includes(k) && /^#[0-9a-f]{6}$/i.test(v)) {
+        su.renk[k] = v.toLocaleLowerCase('en');
+        n++;
+      }
+    return n ? (o.baslik || 'Öneri') + ' yüklendi (' + n + ' renk). Düzenleyip Kaydet ile yayınlayın; Tümünü Sıfırla token dosyasına döner.' : null;
+  }
+
   async function basla() {
     try {
       const r = await fetch('/tokens.json', { cache: 'no-store' });
@@ -1314,6 +1337,7 @@
     su = kopya(ilk);
     const baglanti = new URLSearchParams(location.hash.slice(1));
     let bolum = null;
+    const oneri = [...baglanti.keys()].some((k) => DUZENLENEN.includes(k)) ? null : await oneriYukle();
     for (const [k, v] of baglanti) {
       if (DUZENLENEN.includes(k) && /^[0-9a-fA-F]{6}$/.test(v)) su.renk[k] = '#' + v.toLocaleLowerCase('tr');
       else if (k === 'kip' && (v === 'tek' || v === 'karsi')) kip = v;
@@ -1334,6 +1358,7 @@
     ciz();
     const hedef = bolum && document.getElementById(({ parca: 'p-', okunur: 'o-' }[sayfa] || 's-') + bolum);
     if (hedef) hedef.scrollIntoView({ behavior: 'instant' });
+    if (oneri) durum(oneri);
     window.Onizleme = { durum: () => su, ilk: () => ilk, disaAktar, T: () => T };
   }
 

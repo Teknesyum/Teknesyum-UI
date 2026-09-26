@@ -38,6 +38,7 @@ const YOL = {
   '/stil.css': path.join(SAYFA, 'stil.css'),
   '/uygulama.js': path.join(SAYFA, 'uygulama.js'),
   '/tokens.json': TOKENS,
+  '/oneri.json': path.join(SAYFA, 'oneri.json'),
 };
 
 function tarayici(dosya, ad) {
@@ -68,7 +69,7 @@ function yanit(yol) {
     if (temiz === '/skor.js') return { status: 200, type: TUR['.js'], body: tarayici(SKOR, 'Skor') };
     if (temiz === '/standart.css') return { status: 200, type: TUR['.css'], body: standartCss() };
     const dosya = YOL[temiz];
-    if (!dosya) return { status: 404, type: 'text/plain; charset=utf-8', body: 'Bulunamadı' };
+    if (!dosya || !fs.existsSync(dosya)) return { status: 404, type: 'text/plain; charset=utf-8', body: 'Bulunamadı' };
     return { status: 200, type: TUR[path.extname(dosya)], body: fs.readFileSync(dosya, 'utf8') };
   } catch (e) {
     return { status: 500, type: 'text/plain; charset=utf-8', body: String(e && e.message ? e.message : e) };

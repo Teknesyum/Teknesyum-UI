@@ -21,7 +21,7 @@ const SURUMLER = [
   path.join(UI, 'onizleme', 'masaustu', 'package-lock.json'),
 ];
 
-const RENKLER = ['blue', 'pink', 'purple', 'pink-text', 'purple-text', 'surface', 'black', 'text', 'disabled', 'success', 'warning'];
+const RENKLER = ['blue', 'pink', 'purple', 'pink-text', 'purple-text', 'surface', 'black', 'glass-base', 'text', 'disabled', 'success', 'warning'];
 const HEX = /^#[0-9a-f]{6}$/;
 const AGIRLIK = { 100: 'Thin', 200: 'ExtraLight', 300: 'Light', 400: 'Normal', 500: 'Medium', 600: 'SemiBold', 700: 'Bold', 800: 'ExtraBold', 900: 'Black' };
 const TAMSAYI = {

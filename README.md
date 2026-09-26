@@ -217,7 +217,8 @@ pushed to the private repo) or, without the private shelf, to the gitignored
 `ui/onizleme/ozel-ayar.json`; the preview loads it on start. **Sihirbaz** walks every setting in
 order (theme, surface and text, main colour, accents, states, background, type, shape, title
 bar, glow, scrollbar, motion, readability) and ends with that private save; a fresh install
-starts it once with the recommended token values selected. **Herkese Açık Yayınla…** in the
+opens it only from the **Sihirbaz** button; each step names the control to use and lifts its
+settings group to the top of the panel. **Herkese Açık Yayınla…** in the
 save dialog releases the values publicly: after a warning listing the
 changes and the next version, `ui/scripts/kaydet.js` writes the token source and its copy,
 re-measures every `on` pair and ratio rationale, swaps the old hex in the installer and

@@ -1741,6 +1741,7 @@
     f.innerHTML =
       '<p class="grup-ayrac" data-ayrac="ilgili">Bu Bileşenin Ayarları</p>' +
       '<p class="grup-ayrac" data-ayrac="diger">Diğer Ayarlar</p>' +
+      '<p class="grup-ayrac sihirbaz-ayrac" data-ayrac="sihirbaz" hidden></p>' +
       DUZENLENEN.map(renkDenetimi).join('') +
       grup(
         'arka',
@@ -2767,6 +2768,29 @@
     { ad: 'Okunurluk', sayfa: 'okunur', grup: [], yol: [], puan: true, metin: 'Seçimlerinin okunurluk puanı, panel panel. 70’in altında kalan öğe varsa Geri ile ilgili renge dönüp Hedef Okunurluk önerilerini kullanabilirsin.' },
     { ad: 'Kaydet', sayfa: null, grup: [], yol: [], son: true, metin: 'Seçimlerin yalnız sana ait özel yere kaydedilir; genel depoya hiçbir renk ya da tercih gitmez. Açılışta bu ayarlar yüklenir, sihirbaz yeniden sormaz.' },
   ];
+  const NASIL = {
+    "Tema": "Bu kartın içindeki kutudan seç. Aynı seçim üst çubuktaki Token Dosyası menüsündedir.",
+    "Arka Plan": "Sağ panelin en üstünde, Arka Plan grubunda: Tasarım menüsü, Degrade Durakları ve Açı kaydırıcıları, Salınım kutusu; en altta Üst Uç ve Alt Uç renk kutuları.",
+    "Yazı": "Sağ panelin en üstünde, Yazı grubunda: Yazı Ailesi menüsü, Boyut Çarpanı kaydırıcısı ve üç ağırlık menüsü.",
+    "Köşe Yarıçapı": "Sağ panelin en üstünde, Köşe Yarıçapı grubunda: Yarıçap ve Pencere Yarıçapı kaydırıcıları. Altlarındaki sayı çipleri tek tıkla değer verir.",
+    "Yoğunluk Ve Kenar": "Sağ panelin en üstünde, Yoğunluk Ve Kenar grubunda: Boşluk Çarpanı ve Kenar Kalınlığı kaydırıcıları.",
+    "Düğme Boyutu": "Sağ panelin en üstünde, Düğme Boyutu grubunda: Düğme Yüksekliği ve Yatay Dolgu kaydırıcıları.",
+    "Pencere Ve Üst Çubuk": "Sağ panelin en üstünde, Pencere Ve Üst Çubuk grubunda: Pencere Kenarı menüsü ve Üst Çubuk Yüksekliği kaydırıcısı.",
+    "Cam Ve Gölge": "Sağ panelin en üstünde, Yüzey grubunda: Cam Bulanıklığı ve Gölge Gücü kaydırıcıları.",
+    "Parlama": "Sağ panelin en üstünde, Parlama grubunda: Parlama Düzeyi menüsü; kutu, düğme ve kahraman için Saydamlık ve Bulanıklık kaydırıcıları.",
+    "Kaydırma Çubuğu": "Sağ panelin en üstünde, Kaydırma grubunda: Çubuk Kalınlığı kaydırıcısı, Çubuk Rengi ve Çubuk Biçimi menüleri, Yumuşak / Anında seçimi.",
+    "Hareket": "Sağ panelin en üstünde, Hareket grubunda: Arayüz Eğrisi menüsü, Süre Çarpanı ve her süre için bir kaydırıcı.",
+    "Eğri Düzenleyici": "Sağ panelin en üstünde, Eğri Düzenleyici grubunda: Eğri menüsünden birini seç, X1 Y1 X2 Y2 kaydırıcılarıyla biçimlendir. Geri Al önerilene döner.",
+    "Okunurluk": "Ortadaki Okunurluk sayfası puanı panel panel gösterir. Soldaki menüde Okunurluk yanındaki sayı canlı puandır.",
+    "Kaydet": "Aşağıdaki Özel Kaydet düğmesine bas. Sonra da üst çubuktaki Kaydet ile yeniden kaydedebilirsin."
+  };
+
+  function nasil(a) {
+    if (NASIL[a.ad]) return NASIL[a.ad];
+    const renk = a.grup.find((g) => g.startsWith('renk-'));
+    if (renk) return 'Sağ panelin en üstünde, pembe çerçeveli ' + adi(renk.slice(5)) + ' grubunda: renk kutusuna tıklayıp seç ya da hex yaz; Ton, Doygunluk, Açıklık kaydırıcılarıyla ince ayar yap. Hedef Okunurluk düğmesi beş öneri verir.';
+    return '';
+  }
   let sihirbazAdim = -1;
 
   function sihirbazBayrak(v) {
@@ -2789,6 +2813,7 @@
       ADIMLAR.map(
         (a, i) =>
           '<div class="sihirbaz-metin" data-sihirbaz-adim="' + i + '"><h2 class="tk-h3">' + kacis(a.ad) + '</h2><p>' + kacis(a.metin) + '</p>' +
+          (nasil(a) ? '<p class="sihirbaz-nasil"><span class="sihirbaz-nasil-et">Nerede, Nasıl</span>' + kacis(nasil(a)) + '</p>' : '') +
           (a.tema ? '<select class="tk-input" data-sihirbaz-tema aria-label="Tema">' + temaSecenek + '</select>' : '') +
           (a.puan ? '<p class="sihirbaz-puan" data-sihirbaz-puan></p>' : '') +
           (a.yol.length ? '<p class="sihirbaz-fark" data-sihirbaz-fark></p>' : '') +
@@ -2879,11 +2904,19 @@
     }
     for (const d of $$('#ayarlar .sihirbaz-odak')) d.classList.remove('sihirbaz-odak');
     if (a.sayfa) sayfaAc(a.sayfa);
+    const ayrac = $('[data-ayrac="sihirbaz"]');
+    ayrac.hidden = !a.grup.length;
+    ayrac.textContent = 'Sihirbaz · Adım ' + (i + 1) + ': ' + a.ad;
+    ayrac.style.order = '-2';
     for (const g of a.grup) {
       const d = $('#ayarlar [data-grup="' + g + '"]');
-      if (d) d.classList.add('sihirbaz-odak');
+      if (!d) continue;
+      d.classList.add('sihirbaz-odak');
+      d.style.order = '-1';
     }
     if (a.grup.length) ayarAc(a.grup);
+    const sag = $('.sag');
+    if (sag && a.grup.length) sag.scrollTop = 0;
     sihirbazFark();
     document.body.style.setProperty('--sihirbaz-y', k.offsetHeight + 'px');
   }
@@ -2895,6 +2928,8 @@
     delete document.body.dataset.sihirbaz;
     $('#sihirbaz-ac').setAttribute('aria-pressed', 'false');
     for (const d of $$('#ayarlar .sihirbaz-odak')) d.classList.remove('sihirbaz-odak');
+    $('[data-ayrac="sihirbaz"]').hidden = true;
+    grupSirala();
     if (!sihirbazBayrak()) sihirbazBayrak('kapandi');
   }
 
@@ -2941,7 +2976,6 @@
     if (hedef) hedef.scrollIntoView({ behavior: 'instant' });
     window.Onizleme = { durum: () => su, ilk: () => ilk, disaAktar, T: () => T, sonCizim: () => sonCizim, sayfa: () => sayfa, sayfaAc, sihirbaz: sihirbazGit, sihirbazAdim: () => sihirbazAdim, ozel: () => ozelBilgi, fark: () => fark(su, ilk) };
     sihirbazKur();
-    if (!ozelBilgi.var && !sihirbazBayrak()) sihirbazGit(0);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', basla);

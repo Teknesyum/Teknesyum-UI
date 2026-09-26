@@ -218,8 +218,8 @@ ayarlarını özel kaydeder: token değerlerinden yalnız fark
 özel raf yoksa `.gitignore` içindeki `ui/onizleme/ozel-ayar.json` kullanılır. Önizleme açılışta
 bunu yükler. **Sihirbaz** tüm ayarları sırayla gezdirir (tema, yüzey ve metin, ana renk,
 vurgular, durumlar, zemin, yazı, şekil, üst çubuk, parlama, kaydırma, hareket, okunurluk) ve
-özel kayıtla biter; yeni kurulumda önerilen token değerleri seçili olarak bir kez kendiliğinden
-açılır. Kayıt penceresindeki **Herkese Açık Yayınla…** değerleri herkese yayınlar: değişiklikleri ve sonraki sürümü gösteren onaydan sonra
+özel kayıtla biter; yalnız **Sihirbaz** düğmesiyle açılır, her adım hangi denetimi kullanacağını
+söyler ve ayar grubunu panelin en üstüne taşır. Kayıt penceresindeki **Herkese Açık Yayınla…** değerleri herkese yayınlar: değişiklikleri ve sonraki sürümü gösteren onaydan sonra
 `ui/scripts/kaydet.js` token kaynağını ve kopyasını yazar, her `on` çiftini ve oran geçen
 gerekçeyi yeniden ölçer, kurulum betiği ile fixture'lardaki eski hex'i değiştirir,
 `generate.js` ve testleri (tarayıcı dahil) çalıştırır, küçük sürümü artırır, CHANGELOG'u

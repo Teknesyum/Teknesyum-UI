@@ -39,8 +39,9 @@ All notable changes to this project are documented here. The format follows
 - Setup wizard in the preview (Sihirbaz): twenty-five steps from theme through every colour,
   type, shape, surface, glow, scrollbar and motion setting to readability, each opening its page
   and highlighting its settings, with Geri / Önerileni Kullan / İleri and a line saying how many
-  of the step's settings differ from the recommended ones; a fresh install starts it once with the
-  recommended token values selected.
+  of the step's settings differ from the recommended ones, and a Nerede, Nasıl line naming the
+  control to use. The step's settings group moves to the top of the settings panel. It opens only
+  from the Sihirbaz button.
 - The Arka Plan group sets both gradient ends (top Siyah, bottom Yüzey) directly.
 - Private settings: Kaydet now writes only the difference from the token values to
   `teknesyum-private/teknesyum-ui/onizleme/ayarlar.json` and pushes the private repo, or to the

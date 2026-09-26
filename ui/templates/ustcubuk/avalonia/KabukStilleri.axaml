@@ -26,10 +26,10 @@
         </ControlTemplate>
       </Setter>
       <Style Selector="^:pointerover /template/ Border#bd">
-        <Setter Property="Background" Value="{StaticResource NeonBlue20}"/>
+        <Setter Property="Background" Value="{StaticResource Renk1x20}"/>
       </Style>
       <Style Selector="^:pressed /template/ Border#bd">
-        <Setter Property="Background" Value="{StaticResource NeonBlue30}"/>
+        <Setter Property="Background" Value="{StaticResource Renk1x30}"/>
       </Style>
       <Style Selector="^.close:pointerover /template/ Border#bd">
         <Setter Property="Background" Value="{StaticResource DangerText}"/>
@@ -123,8 +123,8 @@
 
     <ControlTheme x:Key="SigChip" TargetType="Button">
       <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource NeonBlue}"/>
+      <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource Renk1}"/>
       <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
       <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
@@ -162,27 +162,27 @@
         </ControlTemplate>
       </Setter>
       <Style Selector="^:not(.destek):pointerover">
-        <Setter Property="Background" Value="{StaticResource NeonBlue20}"/>
+        <Setter Property="Background" Value="{StaticResource Renk1x20}"/>
         <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
       </Style>
       <Style Selector="^:not(.destek):focus-visible">
-        <Setter Property="Background" Value="{StaticResource NeonBlue10}"/>
+        <Setter Property="Background" Value="{StaticResource Renk1x10}"/>
         <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
       </Style>
       <Style Selector="^:pressed /template/ Border#bd">
         <Setter Property="RenderTransform" Value="scale(0.98)"/>
       </Style>
       <Style Selector="^.destek">
-        <Setter Property="Foreground" Value="{StaticResource PinkText}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource PinkText}"/>
+        <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Renk2Text}"/>
       </Style>
       <Style Selector="^.destek:pointerover">
-        <Setter Property="Background" Value="{StaticResource NeonPink20}"/>
-        <Setter Property="Foreground" Value="{StaticResource PinkText}"/>
+        <Setter Property="Background" Value="{StaticResource Renk2x20}"/>
+        <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
       </Style>
       <Style Selector="^.destek:focus-visible">
-        <Setter Property="Background" Value="{StaticResource NeonPink10}"/>
-        <Setter Property="Foreground" Value="{StaticResource PinkText}"/>
+        <Setter Property="Background" Value="{StaticResource Renk2x10}"/>
+        <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
       </Style>
       <Style Selector="^:disabled">
         <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
@@ -193,7 +193,7 @@
 
     <ControlTheme x:Key="GhostButton" TargetType="Button">
       <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="Foreground" Value="{StaticResource PurpleText}"/>
+      <Setter Property="Foreground" Value="{StaticResource Renk3Text}"/>
       <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
       <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
       <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
@@ -231,10 +231,10 @@
         </ControlTemplate>
       </Setter>
       <Style Selector="^:pointerover /template/ Border#bd">
-        <Setter Property="BorderBrush" Value="{StaticResource PurpleText}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Renk3Text}"/>
       </Style>
       <Style Selector="^:focus-visible /template/ Border#bd">
-        <Setter Property="BorderBrush" Value="{StaticResource PurpleText}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Renk3Text}"/>
       </Style>
       <Style Selector="^:pressed /template/ Border#bd">
         <Setter Property="RenderTransform" Value="scale(0.98)"/>

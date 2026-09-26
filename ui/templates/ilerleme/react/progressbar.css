@@ -29,7 +29,7 @@
   inset: 0;
   overflow: hidden;
   clip-path: inset(0 calc((1 - var(--tk-progress-value, 0)) * 100%) 0 0 round var(--tk-r-chip));
-  background: linear-gradient(90deg, var(--tk-blue), var(--tk-purple));
+  background: linear-gradient(90deg, var(--tk-renk-1), var(--tk-renk-3));
   border-radius: inherit;
 }
 
@@ -85,7 +85,7 @@
   background: var(--tk-danger);
 }
 .tk-progress__percent {
-  color: var(--tk-blue);
+  color: var(--tk-renk-1);
   font-size: var(--tk-fs-1);
   font-variant-numeric: tabular-nums;
 }

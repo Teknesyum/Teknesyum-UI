@@ -3,15 +3,15 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-  <Color x:Key="NeonBlueColor">#FF5AA8FF</Color>
-  <Color x:Key="NeonPinkColor">#FFC82EE0</Color>
-  <Color x:Key="NeonPurpleColor">#FF9455EA</Color>
-  <Color x:Key="PinkTextColor">#FFF0ABFC</Color>
-  <Color x:Key="PurpleTextColor">#FFD4B3FF</Color>
+  <Color x:Key="Renk1Color">#FF5AA8FF</Color>
+  <Color x:Key="Renk2Color">#FFC82EE0</Color>
+  <Color x:Key="Renk3Color">#FF9455EA</Color>
+  <Color x:Key="Renk2TextColor">#FFF0ABFC</Color>
+  <Color x:Key="Renk3TextColor">#FFD4B3FF</Color>
 
-  <SolidColorBrush x:Key="NeonBlue"    Color="#FF5AA8FF"/>
-  <SolidColorBrush x:Key="NeonPink"    Color="#FFC82EE0"/>
-  <SolidColorBrush x:Key="NeonPurple"  Color="#FF9455EA"/>
+  <SolidColorBrush x:Key="Renk1"     Color="#FF5AA8FF"/>
+  <SolidColorBrush x:Key="Renk2"     Color="#FFC82EE0"/>
+  <SolidColorBrush x:Key="Renk3"     Color="#FF9455EA"/>
   <SolidColorBrush x:Key="Success"     Color="#FF4ADE80"/>
   <SolidColorBrush x:Key="Surface"     Color="#F5101115"/>
   <SolidColorBrush x:Key="AppBg"       Color="#FF0A0B0E"/>
@@ -56,8 +56,8 @@
                      Duration="0:0:48"/>
   </Storyboard>
 
-  <SolidColorBrush x:Key="PinkText"   Color="#FFF0ABFC"/>
-  <SolidColorBrush x:Key="PurpleText" Color="#FFD4B3FF"/>
+  <SolidColorBrush x:Key="Renk2Text" Color="#FFF0ABFC"/>
+  <SolidColorBrush x:Key="Renk3Text" Color="#FFD4B3FF"/>
 
   <!-- SEMANTIC ROLE LAYER (SKILL §2).
        THE ROLE WINS: every control that reports state (error text, form
@@ -71,10 +71,10 @@
        is not a brand colour, it is a role. The same rename applies in
        Theme.axaml (U7's file).
        `Info` IS DELIBERATELY ABSENT: there is no info box today, and an unused
-       token is debt. If one opens it binds to blue, and an info fill is never
+       token is debt. If one opens it binds to renk-1, and an info fill is never
        used on the same screen as a primary button. -->
   <SolidColorBrush x:Key="Danger"     Color="#FFC82EE0"/>
-  <!-- The TEXT role of danger. The fill pink falls below the 7:1 threshold as
+  <!-- The TEXT role of danger. The fill renk-2 falls below the 7:1 threshold as
        text; error text writes this brush. -->
   <SolidColorBrush x:Key="DangerText" Color="#FFF0ABFC"/>
 
@@ -83,7 +83,7 @@
        The ban was measured: white text on an amber fill is 1.67:1, it collapses.
        WHAT REPLACES IT: warning text `Warning` (11.30:1), border
        `Warning50` (3.60:1 on #101115, clears the 3:1 threshold), icon same colour.
-       If an action is needed the button is primary (blue) or `Danger` (pink).
+       If an action is needed the button is primary (renk-1) or `Danger` (renk-2).
        COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does
        not separate from success under protanopia, dE2000 15.2
        A warning row carries an icon or text in
@@ -107,53 +107,53 @@
   <!-- On pairs: the text brush each fill takes, measured by generate.js at 7:1
        after compositing a translucent fill over Surface. A fill with no On brush
        carries no text. -->
-  <SolidColorBrush x:Key="OnBlue"        Color="#FF0A0B0E"/>
+  <SolidColorBrush x:Key="OnRenk1"       Color="#FF0A0B0E"/>
   <SolidColorBrush x:Key="OnSuccess"     Color="#FF0A0B0E"/>
   <SolidColorBrush x:Key="OnDangerText"  Color="#FF0A0B0E"/>
   <SolidColorBrush x:Key="OnPanel"       Color="#FFF2F3F6"/>
   <SolidColorBrush x:Key="OnGlass"       Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="OnBlue10"      Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="OnBlue20"      Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="OnBlue30"      Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="OnPink10"      Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="OnPink20"      Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="OnPink30"      Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="OnPink50"      Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="OnPink60"      Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="OnPurple10"    Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="OnPurple20"    Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="OnPurple30"    Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="OnPurple50"    Color="#FFF2F3F6"/>
-  <SolidColorBrush x:Key="OnPurple60"    Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="OnRenk1x10"    Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="OnRenk1x20"    Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="OnRenk1x30"    Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="OnRenk2x10"    Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="OnRenk2x20"    Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="OnRenk2x30"    Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="OnRenk2x50"    Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="OnRenk2x60"    Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="OnRenk3x10"    Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="OnRenk3x20"    Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="OnRenk3x30"    Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="OnRenk3x50"    Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="OnRenk3x60"    Color="#FFF2F3F6"/>
 
-  <SolidColorBrush x:Key="NeonBlue10"   Color="#1A5AA8FF"/>
-  <SolidColorBrush x:Key="NeonBlue20"   Color="#335AA8FF"/>
-  <SolidColorBrush x:Key="NeonBlue30"   Color="#4D5AA8FF"/>
-  <SolidColorBrush x:Key="NeonBlue50"   Color="#805AA8FF"/>
-  <SolidColorBrush x:Key="NeonBlue60"   Color="#995AA8FF"/>
+  <SolidColorBrush x:Key="Renk1x10"     Color="#1A5AA8FF"/>
+  <SolidColorBrush x:Key="Renk1x20"     Color="#335AA8FF"/>
+  <SolidColorBrush x:Key="Renk1x30"     Color="#4D5AA8FF"/>
+  <SolidColorBrush x:Key="Renk1x50"     Color="#805AA8FF"/>
+  <SolidColorBrush x:Key="Renk1x60"     Color="#995AA8FF"/>
 
-  <SolidColorBrush x:Key="NeonPink10"   Color="#1AC82EE0"/>
-  <SolidColorBrush x:Key="NeonPink20"   Color="#33C82EE0"/>
-  <SolidColorBrush x:Key="NeonPink30"   Color="#4DC82EE0"/>
-  <SolidColorBrush x:Key="NeonPink50"   Color="#80C82EE0"/>
-  <SolidColorBrush x:Key="NeonPink60"   Color="#99C82EE0"/>
+  <SolidColorBrush x:Key="Renk2x10"     Color="#1AC82EE0"/>
+  <SolidColorBrush x:Key="Renk2x20"     Color="#33C82EE0"/>
+  <SolidColorBrush x:Key="Renk2x30"     Color="#4DC82EE0"/>
+  <SolidColorBrush x:Key="Renk2x50"     Color="#80C82EE0"/>
+  <SolidColorBrush x:Key="Renk2x60"     Color="#99C82EE0"/>
 
-  <SolidColorBrush x:Key="NeonPurple10" Color="#1A9455EA"/>
-  <SolidColorBrush x:Key="NeonPurple20" Color="#339455EA"/>
-  <SolidColorBrush x:Key="NeonPurple30" Color="#4D9455EA"/>
-  <SolidColorBrush x:Key="NeonPurple50" Color="#809455EA"/>
-  <SolidColorBrush x:Key="NeonPurple60" Color="#999455EA"/>
+  <SolidColorBrush x:Key="Renk3x10"     Color="#1A9455EA"/>
+  <SolidColorBrush x:Key="Renk3x20"     Color="#339455EA"/>
+  <SolidColorBrush x:Key="Renk3x30"     Color="#4D9455EA"/>
+  <SolidColorBrush x:Key="Renk3x50"     Color="#809455EA"/>
+  <SolidColorBrush x:Key="Renk3x60"     Color="#999455EA"/>
 
-  <SolidColorBrush x:Key="PinkText50"   Color="#80F0ABFC"/>
-  <SolidColorBrush x:Key="PurpleText50" Color="#80D4B3FF"/>
+  <SolidColorBrush x:Key="Renk2Text50"  Color="#80F0ABFC"/>
+  <SolidColorBrush x:Key="Renk3Text50"  Color="#80D4B3FF"/>
 
   <SolidColorBrush x:Key="BorderDefault"    Color="#8C5AA8FF"/>
   <SolidColorBrush x:Key="BorderStrong"     Color="#B35AA8FF"/>
   <SolidColorBrush x:Key="BorderDecorative" Color="#335AA8FF"/>
 
   <!-- The chain's only source is SKILL §3; the order matches. Atkinson
-       Hyperlegible Next is the default and is EMBEDDED in the project (pack URI),
-       not assumed present on the system. -->
+       Hyperlegible Next is the default and is EMBEDDED in the project: setup.js
+       copies it into the app's Assets/Fonts and rewrites this line. -->
   <FontFamily x:Key="FontSans">Atkinson Hyperlegible Next, Segoe UI</FontFamily>
   <FontFamily x:Key="FontMono">Cascadia Mono, Consolas</FontFamily>
 
@@ -271,7 +271,7 @@
     <Setter Property="FontWeight" Value="SemiBold"/>
     <Setter Property="LineHeight" Value="29"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
-    <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
+    <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
   </Style>
 
   <Style x:Key="H3" TargetType="TextBlock">
@@ -318,7 +318,7 @@
     <Setter Property="FontWeight" Value="Black"/>
     <Setter Property="LineHeight" Value="36"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
-    <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
+    <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
     <Setter Property="Effect" Value="{StaticResource HeroGlow}"/>
   </Style>
 
@@ -328,7 +328,7 @@
     <Setter Property="FontWeight" Value="SemiBold"/>
     <Setter Property="LineHeight" Value="22"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
-    <Setter Property="Foreground" Value="{StaticResource PinkText}"/>
+    <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
   </Style>
 
   <Style x:Key="Panel" TargetType="Border">
@@ -352,16 +352,22 @@
     <Setter Property="Foreground" Value="{StaticResource Warning}"/>
   </Style>
 
-  <!-- Error text writes the text pink, not the fill pink — the 7:1 threshold. -->
+  <!-- Error text writes the text renk-2, not the fill renk-2 — the 7:1 threshold. -->
   <Style x:Key="DangerBody" TargetType="TextBlock" BasedOn="{StaticResource Body}">
     <Setter Property="Foreground" Value="{StaticResource DangerText}"/>
   </Style>
 
+  <Style x:Key="TkWindow" TargetType="Window">
+    <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+  </Style>
+
   <Style x:Key="PrimaryButton" TargetType="Button">
-    <Setter Property="Background" Value="{StaticResource NeonBlue}"/>
+    <Setter Property="Background" Value="{StaticResource Renk1}"/>
     <Setter Property="Foreground" Value="Black"/>
     <Setter Property="FontWeight" Value="SemiBold"/>
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
     <Setter Property="Padding" Value="20,14"/>
     <Setter Property="BorderThickness" Value="0"/>
     <Setter Property="Cursor" Value="Hand"/>
@@ -374,7 +380,7 @@
               <ScaleTransform ScaleX="1" ScaleY="1"/>
             </Border.RenderTransform>
             <Border.Effect>
-              <DropShadowEffect Color="{StaticResource NeonBlueColor}" BlurRadius="20" ShadowDepth="0" Opacity="0.35"/>
+              <DropShadowEffect Color="{StaticResource Renk1Color}" BlurRadius="20" ShadowDepth="0" Opacity="0.35"/>
             </Border.Effect>
             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
           </Border>
@@ -435,6 +441,11 @@
         </ControlTemplate>
       </Setter.Value>
     </Setter>
+  </Style>
+
+  <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+    <Setter Property="Background" Value="{StaticResource DangerText}"/>
+    <Setter Property="Foreground" Value="{StaticResource OnDangerText}"/>
   </Style>
 
 </ResourceDictionary>

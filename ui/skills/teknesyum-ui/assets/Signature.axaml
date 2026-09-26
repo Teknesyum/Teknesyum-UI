@@ -56,32 +56,32 @@
   </StackPanel.Resources>
 
   <Button Theme="{StaticResource SigChip}" Classes="sigchip"
-          BorderBrush="{StaticResource PinkText}"
+          BorderBrush="{StaticResource Renk2Text}"
           Margin="0,0,8,0"
           Tag="https://github.com/sponsors/Teknesyum"
           Click="OnSignatureNavigate"
           ToolTip.Tip="{loc:Str sig.supportTitle}">
     <StackPanel Orientation="Horizontal">
       <Canvas Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0">
-        <Path Stroke="{StaticResource PinkText}" StrokeThickness="2"
+        <Path Stroke="{StaticResource Renk2Text}" StrokeThickness="2"
               StrokeJoin="Round" StrokeLineCap="Round"
               Data="M2 4.5 H8.5 V8 A2 2 0 0 1 6.5 10 H4 A2 2 0 0 1 2 8 Z
                     M8.5 5.5 H9.25 A1.25 1.25 0 0 1 9.25 8 H8.5
                     M4 1.25 V2.25 M6 1.25 V2.25"/>
       </Canvas>
       <TextBlock Theme="{StaticResource SigText}"
-                 Foreground="{StaticResource PinkText}"
+                 Foreground="{StaticResource Renk2Text}"
                  Text="{loc:Str sig.support}"/>
     </StackPanel>
   </Button>
 
   <Button Theme="{StaticResource SigChip}" Classes="sigchip"
-          BorderBrush="{StaticResource NeonBlue}"
+          BorderBrush="{StaticResource Renk1}"
           Tag="https://github.com/Teknesyum"
           Click="OnSignatureNavigate"
           ToolTip.Tip="{loc:Str sig.brandTitle}">
     <TextBlock Theme="{StaticResource SigText}"
-               Foreground="{StaticResource NeonBlue}"
+               Foreground="{StaticResource Renk1}"
                Text="{loc:Str sig.brand}"/>
   </Button>
 </StackPanel>

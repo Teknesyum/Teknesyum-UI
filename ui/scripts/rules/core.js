@@ -34,7 +34,7 @@ const STORYBOARD = ['.xaml', '.axaml', '.cs'];
 const MANIFEST_NAME = /^package(?:-lock)?\.json$/i;
 const cache = new WeakMap();
 const textCache = new WeakMap();
-const TEXT_COLOURS = ['text', 'text-label', 'pink-text', 'purple-text', 'success', 'warning', 'danger-text', 'disabled'];
+const TEXT_COLOURS = ['text', 'text-label', 'renk-2-text', 'renk-3-text', 'success', 'warning', 'danger-text', 'disabled'];
 
 function normHex(value, argb) {
   const v = String(value).toLowerCase();

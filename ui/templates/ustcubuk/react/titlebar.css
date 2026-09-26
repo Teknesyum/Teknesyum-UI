@@ -60,7 +60,7 @@
 }
 
 .tk-titlebar__accent {
-  color: var(--tk-pink-text);
+  color: var(--tk-renk-2-text);
 }
 
 .tk-titlebar__tab,
@@ -75,7 +75,7 @@
   border: 0;
   border-radius: 0;
   background: transparent;
-  color: var(--tk-blue);
+  color: var(--tk-renk-1);
   font: inherit;
   font-size: min(var(--tk-fs-1), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
   font-weight: var(--tk-fw-semi);
@@ -102,14 +102,14 @@
 }
 
 .tk-titlebar__chip--support {
-  color: var(--tk-purple-text);
+  color: var(--tk-renk-3-text);
 }
 
 .tk-titlebar__tab:hover,
 .tk-titlebar__tab:focus-visible,
 .tk-titlebar__chip:hover,
 .tk-titlebar__chip:focus-visible {
-  color: var(--tk-pink-text);
+  color: var(--tk-renk-2-text);
 }
 
 .tk-titlebar__tab:hover::after,
@@ -122,7 +122,7 @@
 
 .tk-titlebar__tab:active::after,
 .tk-titlebar__chip:active::after {
-  background: var(--tk-pink);
+  background: var(--tk-renk-2);
   transform: scaleX(1);
 }
 
@@ -132,14 +132,14 @@
 
 .tk-titlebar__tab:active,
 .tk-titlebar__chip:active {
-  color: var(--tk-pink-text);
+  color: var(--tk-renk-2-text);
   transform: scale(var(--tk-scale-press));
   transition-duration: var(--tk-t-instant);
 }
 
 .tk-titlebar__tab:focus-visible,
 .tk-titlebar__chip:focus-visible {
-  outline: var(--tk-focus-w) solid var(--tk-pink-text);
+  outline: var(--tk-focus-w) solid var(--tk-renk-2-text);
   outline-offset: calc(var(--tk-focus-w) * -1);
   box-shadow: inset 0 0 0 calc(var(--tk-focus-w) * 2) var(--tk-bg-from);
 }
@@ -190,7 +190,7 @@
   border: 0;
   border-radius: 0;
   background: transparent;
-  color: var(--tk-blue);
+  color: var(--tk-renk-1);
   cursor: pointer;
   transition:
     color var(--tk-t-instant) var(--tk-e-out),
@@ -202,8 +202,8 @@
 }
 
 .tk-titlebar__control:hover {
-  background-color: color-mix(in srgb, var(--tk-purple) 30%, transparent);
-  color: var(--tk-on-purple-30, var(--tk-text));
+  background-color: color-mix(in srgb, var(--tk-renk-3) 30%, transparent);
+  color: var(--tk-on-renk-3-30, var(--tk-text));
 }
 
 .tk-titlebar__control--close:hover {
@@ -212,14 +212,14 @@
 }
 
 .tk-titlebar__control:focus-visible {
-  outline: var(--tk-focus-w) solid var(--tk-pink-text);
+  outline: var(--tk-focus-w) solid var(--tk-renk-2-text);
   outline-offset: calc(var(--tk-focus-w) * -1);
   box-shadow: inset 0 0 0 calc(var(--tk-focus-w) * 2) var(--tk-bg-from);
 }
 
 .tk-titlebar__control:active {
-  background-color: color-mix(in srgb, var(--tk-pink) 30%, transparent);
-  color: var(--tk-on-pink-30, var(--tk-text));
+  background-color: color-mix(in srgb, var(--tk-renk-2) 30%, transparent);
+  color: var(--tk-on-renk-2-30, var(--tk-text));
 }
 
 .tk-titlebar__control:disabled {

@@ -89,7 +89,8 @@ the first line of `Initialize()`, skipping it if it is already there. When `App.
 its `Initialize()` method is not where expected, it prints a warning instead of failing the
 run — `scan.js`'s `core/avalonia-animator-missing` then catches the gap.
 
-Neon is the ready answer, not the only one — `--template custom` takes three brand colours
+The standard is deliberately plain — black, white and grey, no glow — so an app starts from a
+neutral base and brings its own colours. Neon is the ready answer, not the only one — `--template custom` takes three brand colours
 and a surface, and derives the rest on the same formulas.
 
 ## Check your work
@@ -189,17 +190,17 @@ Teknik. The middle one draws the chosen component with every example and state (
 pressed, focus, disabled). The right one shows that component's settings first. The settings
 include glow (none, thin, token, neon, custom), UI easing, duration scale, density, border
 width, glass blur, shadow strength and scrollbar style. Akıcılık plays the easing curves side by
-side, and Teknik measures FPS and frame time. `ui/templates/temalar/` holds ten themes
-(`node ui/scripts/tema.js liste`, `denetle [ad]`), five light and five dark. Each passes 7:1 and
+side, and Teknik measures FPS and frame time. `ui/templates/temalar/` holds nine themes
+(`node ui/scripts/tema.js liste`, `denetle [ad]`), five light and four dark. Each passes 7:1 and
 scores at least 85.
 
 A page for trying new brand colours before touching the tokens. It
 starts from `ui/templates/neon.tokens.json` and measures with the same `kontrast.js` the
-scanner uses, served to the browser as is. The left panel sets blue, pink, their text cuts,
-purple, surface and the background (flat, token gradient, glass, grid, glow; stops and
+scanner uses, served to the browser as is. The left panel sets renk-1, renk-2, their text cuts,
+renk-3, surface and the background (flat, token gradient, glass, grid, glow; stops and
 angle), font family, size scale, weights, radius, scrollbar width and colour, scroll
 behaviour and reduced motion. The right side shows every tone-scale step, text-scale cut
-and `on` pair with its hex and ratio on surface (under 7:1 is marked), blue and pink side by
+and `on` pair with its hex and ratio on surface (under 7:1 is marked), renk-1 and renk-2 side by
 side, buttons in all five states, badge, chip, input, selected row, title bar, progress,
 a long scrolling list, the type scale and panel, card and glass. The "Uygulama Parçaları" tab draws the shipped
 components from the standard's own CSS: title bar, sync and update badges, the installer panel

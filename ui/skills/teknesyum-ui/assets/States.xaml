@@ -60,9 +60,9 @@
 
             <!-- static, on. The thumb movement is never left without a transition (SKILL §5.4). -->
             <Trigger Property="IsChecked" Value="True">
-              <Setter TargetName="track" Property="Background" Value="{StaticResource NeonBlue30}"/>
-              <Setter TargetName="track" Property="BorderBrush" Value="{StaticResource NeonBlue60}"/>
-              <Setter TargetName="thumb" Property="Background" Value="{StaticResource NeonBlue}"/>
+              <Setter TargetName="track" Property="Background" Value="{StaticResource Renk1x30}"/>
+              <Setter TargetName="track" Property="BorderBrush" Value="{StaticResource Renk1x60}"/>
+              <Setter TargetName="thumb" Property="Background" Value="{StaticResource Renk1}"/>
               <Trigger.EnterActions>
                 <BeginStoryboard>
                   <Storyboard>
@@ -167,7 +167,7 @@
       <Setter.Value>
         <ControlTemplate TargetType="Thumb">
           <Border x:Name="thumb" Width="16" Height="16" CornerRadius="8"
-                  Background="{StaticResource NeonBlue}"/>
+                  Background="{StaticResource Renk1}"/>
           <ControlTemplate.Triggers>
             <Trigger Property="IsEnabled" Value="False">
               <Setter TargetName="thumb" Property="Background" Value="{StaticResource Disabled}"/>
@@ -263,7 +263,7 @@
     <Setter Property="FontFamily" Value="{StaticResource FontMono}"/>
     <Setter Property="FontSize" Value="16"/>
     <Setter Property="FontWeight" Value="SemiBold"/>
-    <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
+    <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="ToggleButton">
@@ -282,8 +282,8 @@
 
             <!-- static, selected -->
             <Trigger Property="IsChecked" Value="True">
-              <Setter TargetName="bd" Property="Background" Value="{StaticResource NeonBlue20}"/>
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource NeonBlue50}"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource Renk1x20}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Renk1x50}"/>
               <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
             </Trigger>
 
@@ -293,7 +293,7 @@
                 <Condition Property="IsMouseOver" Value="True"/>
                 <Condition Property="IsEnabled" Value="True"/>
               </MultiTrigger.Conditions>
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource NeonBlue50}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Renk1x50}"/>
             </MultiTrigger>
 
             <!-- focus. Hover's twin. -->
@@ -302,7 +302,7 @@
                 <Condition Property="IsKeyboardFocused" Value="True"/>
                 <Condition Property="IsEnabled" Value="True"/>
               </MultiTrigger.Conditions>
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource NeonBlue50}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Renk1x50}"/>
             </MultiTrigger>
 
             <!-- pressed. The second carrier is the border. -->
@@ -386,15 +386,15 @@
           </Border>
           <ControlTemplate.Triggers>
 
-            <!-- hover: fill pink /10 (1.06), border pink /50 (2.17), text OnPink10: PinkText on it is 6.89:1 -->
+            <!-- hover: fill renk-2 /10 (1.06), border renk-2 /50 (2.17), text OnRenk2x10: Renk2Text on it is 6.89:1 -->
             <MultiTrigger>
               <MultiTrigger.Conditions>
                 <Condition Property="IsMouseOver" Value="True"/>
                 <Condition Property="IsEnabled" Value="True"/>
               </MultiTrigger.Conditions>
-              <Setter TargetName="bd" Property="Background" Value="{StaticResource NeonPink10}"/>
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource NeonPink50}"/>
-              <Setter Property="Foreground" Value="{StaticResource OnPink10}"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource Renk2x10}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Renk2x50}"/>
+              <Setter Property="Foreground" Value="{StaticResource OnRenk2x10}"/>
             </MultiTrigger>
 
             <!-- focus: hover's twin, the same three values -->
@@ -403,21 +403,21 @@
                 <Condition Property="IsKeyboardFocused" Value="True"/>
                 <Condition Property="IsEnabled" Value="True"/>
               </MultiTrigger.Conditions>
-              <Setter TargetName="bd" Property="Background" Value="{StaticResource NeonPink10}"/>
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource NeonPink50}"/>
-              <Setter Property="Foreground" Value="{StaticResource OnPink10}"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource Renk2x10}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Renk2x50}"/>
+              <Setter Property="Foreground" Value="{StaticResource OnRenk2x10}"/>
             </MultiTrigger>
 
-            <!-- pressed: fill /10 to /30 (1.06 to 1.42), border /50 to FULL pink (2.17 to 6.11).
+            <!-- pressed: fill /10 to /30 (1.06 to 1.42), border /50 to FULL renk-2 (2.17 to 6.11).
                  The border carries the jump, not scale. -->
             <MultiTrigger>
               <MultiTrigger.Conditions>
                 <Condition Property="IsPressed" Value="True"/>
                 <Condition Property="IsEnabled" Value="True"/>
               </MultiTrigger.Conditions>
-              <Setter TargetName="bd" Property="Background" Value="{StaticResource NeonPink30}"/>
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource NeonPink}"/>
-              <Setter Property="Foreground" Value="{StaticResource OnPink30}"/>
+              <Setter TargetName="bd" Property="Background" Value="{StaticResource Renk2x30}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Renk2}"/>
+              <Setter Property="Foreground" Value="{StaticResource OnRenk2x30}"/>
               <MultiTrigger.EnterActions>
                 <BeginStoryboard>
                   <Storyboard>

@@ -21,20 +21,15 @@ module.exports = function skor() {
   const elle = w.reduce((t, o) => t + o.puan * o.agirlik, 0) / w.reduce((t, o) => t + o.agirlik, 0);
   L.ok('genel is the usage-weighted mean', yakin(A.genel, elle));
 
-  const koyu = S.skorla(T, { blue: '#2050c0' });
-  L.ok('a darker blue lowers the score', koyu.genel < A.genel);
-  L.ok('the blue parts drop, the body text holds', koyu.paneller[0].ogeler[0].puan === A.paneller[0].ogeler[0].puan && koyu.paneller[0].ogeler[2].puan < A.paneller[0].ogeler[2].puan);
+  const koyu = S.skorla(T, { 'renk-1': '#2050c0' });
+  L.ok('a darker renk-1 lowers the score', koyu.genel < A.genel);
+  L.ok('the renk-1 parts drop, the body text holds', koyu.paneller[0].ogeler[0].puan === A.paneller[0].ogeler[0].puan && koyu.paneller[0].ogeler[2].puan < A.paneller[0].ogeler[2].puan);
   const soluk = S.skorla(T, { text: '#50535c' });
   L.ok('heavy parts weigh more than light ones', A.genel - soluk.genel > A.genel - S.skorla(T, { disabled: '#202228' }).genel);
 
-  L.ok('onSec keeps the token pair above 7:1', S.onSec(T, {}, 'blue').ad === T.on.blue.on);
-  L.ok('onSec switches when the pair drops below 7:1', S.onSec(T, { blue: '#2050c0' }, 'blue').ad === 'text');
+  L.ok('onSec keeps the token pair above 7:1', S.onSec(T, {}, 'renk-1').ad === T.on['renk-1'].on);
+  L.ok('onSec switches when the pair drops below 7:1', S.onSec(T, { 'renk-1': '#2050c0' }, 'renk-1').ad === 'text');
 
-  const on = O.yanit('/oneri.json');
-  if (on.status === 200) {
-    const o = JSON.parse(on.body);
-    L.ok('the proposal starts from the token file and scores higher', Object.entries(o.taban).every(([k, v]) => (T.brand[k] || T.role[k]).value.toLocaleLowerCase('en') === v) && S.skorla(T, o.renk).genel > A.genel);
-  }
   L.ok('a missing file answers 404', O.yanit('/yok.json').status === 404);
 
   const r = O.yanit('/skor.js');

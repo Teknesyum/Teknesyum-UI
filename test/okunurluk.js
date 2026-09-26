@@ -39,7 +39,7 @@ function gate() {
   const bos = cift.filter((k) => !tokens.on[k].on);
   L.ok('theme.css carries --tk-on-<fill> for every on pair', dolu.length > 0 && dolu.every((k) => css.includes('--tk-on-' + k + ': ' + renk(tokens.on[k].on) + ';')));
   L.ok('a fill without an on pair gets no --tk-on var', bos.every((k) => !css.includes('--tk-on-' + k + ':')));
-  const pascal = (s) => s.split('-').map((p) => p[0].toLocaleUpperCase('en') + p.slice(1)).join('');
+  const pascal = (s) => s.split('-').reduce((o, p) => o + (/^\d/.test(p) && /\d$/.test(o) ? 'x' : '') + p[0].toLocaleUpperCase('en') + p.slice(1), '');
   L.ok('Theme.xaml carries On<Fill> brushes', dolu.every((k) => new RegExp('x:Key="On' + pascal(k) + '"\\s+Color="#FF' + renk(tokens.on[k].on).slice(1).toLocaleUpperCase('en') + '"').test(xaml)));
 
   const bad = JSON.parse(JSON.stringify(tokens));
@@ -66,13 +66,13 @@ function gate() {
 
 function contrast() {
   const root = project({
-    'pink.css': '.a { color: #ff00ea; }\n',
-    'pinktext.css': '.a { color: #ff54eb; }\n',
+    'renk-2.css': '.a { color: #ff00ea; }\n',
+    'renk-2-text.css': '.a { color: #ff54eb; }\n',
     'pair.css': '.a { background: #ff00ea; color: #000; }\n',
   });
   const found = scan(root, 'core').filter((f) => f.rule === 'core/contrast' || f.rule === 'contrast');
-  L.ok('contrast flags the pink fill cut used as text', found.some((f) => /pink\.css$/.test(f.file)), JSON.stringify(found));
-  L.ok('contrast exempts the approved pink-text cut', !found.some((f) => /pinktext\.css$/.test(f.file)));
+  L.ok('contrast flags the renk-2 fill cut used as text', found.some((f) => /renk-2\.css$/.test(f.file)), JSON.stringify(found));
+  L.ok('contrast exempts the approved renk-2-text cut', !found.some((f) => /renk-2-text\.css$/.test(f.file)));
   L.ok('contrast leaves a fill+text line to pair-contrast', !found.some((f) => /pair\.css$/.test(f.file)));
 }
 
@@ -99,18 +99,18 @@ function pairs() {
   L.ok('pair-contrast findings are errors', found.length > 0 && found.every((f) => f.severity === 'error'));
 
   const more = project({
-    'src/Tokens.cs': 'static class Tokens { public const string Purple = "#B026FF"; public const string PurpleText = "#C67EFF"; }\n',
+    'src/Tokens.cs': 'static class Tokens { public const string Renk3 = "#B026FF"; public const string Renk3Text = "#C67EFF"; }\n',
     'src/Palette.cs':
-      'using System.Drawing;\nstatic class Palette {\n  public static readonly Color NeonPurple = ColorTranslator.FromHtml(Tokens.Purple);\n  public static readonly Color PurpleText = ColorTranslator.FromHtml(Tokens.PurpleText);\n}\n',
+      'using System.Drawing;\nstatic class Palette {\n  public static readonly Color Renk3 = ColorTranslator.FromHtml(Tokens.Renk3);\n  public static readonly Color Renk3Text = ColorTranslator.FromHtml(Tokens.Renk3Text);\n}\n',
     'src/NeonButton.cs':
-      'class NeonButton : Button {\n  bool _hover;\n  protected override void OnPaint(PaintEventArgs e) {\n    var g = e.Graphics;\n    if (Primary) {\n      using var fill = new SolidBrush(Color.White);\n      g.FillPath(fill, path);\n    } else if (_hover) {\n      using var fill = new SolidBrush(Color.FromArgb(30, Palette.NeonPurple));\n      g.FillPath(fill, path);\n    }\n    var textColor = Primary ? Color.Black : Palette.PurpleText;\n    TextRenderer.DrawText(g, Text, Font, bounds, textColor);\n  }\n}\n',
+      'class NeonButton : Button {\n  bool _hover;\n  protected override void OnPaint(PaintEventArgs e) {\n    var g = e.Graphics;\n    if (Primary) {\n      using var fill = new SolidBrush(Color.White);\n      g.FillPath(fill, path);\n    } else if (_hover) {\n      using var fill = new SolidBrush(Color.FromArgb(30, Palette.Renk3));\n      g.FillPath(fill, path);\n    }\n    var textColor = Primary ? Color.Black : Palette.Renk3Text;\n    TextRenderer.DrawText(g, Text, Font, bounds, textColor);\n  }\n}\n',
     'src/a.css': '.drawer { --muted: #1f4e79; }\n.row { background: #000; color: var(--muted, #ffffff); }\n',
     'Views/Theme.axaml':
       '<Styles xmlns="https://github.com/avaloniaui">\n  <Style Selector="Button">\n    <Setter Property="Foreground" Value="#FFFFFF"/>\n    <Style Selector="^:pointerover">\n      <Setter Property="Foreground" Value="#000000"/>\n    </Style>\n    <Style Selector="^:pointerover /template/ Border#Root">\n      <Setter Property="Background" Value="#00F3FF"/>\n    </Style>\n  </Style>\n</Styles>\n',
   });
   const rows = scan(more, 'okunurluk');
   const paint = rows.filter((f) => /NeonButton\.cs$/.test(f.file));
-  L.ok('pair-contrast follows a C# paint method through locals, branches and symbols', paint.length === 1 && /bg Palette\.NeonPurple @30 .* on fg Palette\.PurpleText .* 6\.5:1/.test(paint[0].message), JSON.stringify(rows));
+  L.ok('pair-contrast follows a C# paint method through locals, branches and symbols', paint.length === 1 && /bg Palette\.Renk3 @30 .* on fg Palette\.Renk3Text .* 6\.5:1/.test(paint[0].message), JSON.stringify(rows));
   L.ok('a var scoped to another selector yields to the fallback', !rows.some((f) => /a\.css$/.test(f.file)));
   L.ok('a template state style takes the text of its sibling state style', !rows.some((f) => /Theme\.axaml$/.test(f.file)), JSON.stringify(rows));
 }

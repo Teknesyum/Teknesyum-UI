@@ -6,7 +6,7 @@
   border-color: var(--tk-border-strong);
 }
 [data-tk='cell']:active:not(:disabled) {
-  border-color: var(--tk-pink);
+  border-color: var(--tk-renk-2);
   transform: scale(0.98);
 }
 [data-tk='cell']:disabled {

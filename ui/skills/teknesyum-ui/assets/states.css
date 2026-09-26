@@ -101,16 +101,16 @@
 }
 [data-tk='icon-button']:hover:not(:disabled),
 [data-tk='icon-button']:focus-visible:not(:disabled) {
-  color: var(--tk-pink-text);
-  background-color: color-mix(in srgb, var(--tk-pink) 10%, transparent);
-  border-color: color-mix(in srgb, var(--tk-pink) 50%, transparent);
+  color: var(--tk-renk-2-text);
+  background-color: color-mix(in srgb, var(--tk-renk-2) 10%, transparent);
+  border-color: color-mix(in srgb, var(--tk-renk-2) 50%, transparent);
 }
 /* Pressed: fill 1.06 → 1.42, border 2.17 → 6.11. The border carries the jump, not
    `scale` — under reduced motion the scale snaps without travel and the border remains. */
 [data-tk='icon-button']:active:not(:disabled) {
-  color: var(--tk-pink-text);
-  background-color: color-mix(in srgb, var(--tk-pink) 30%, transparent);
-  border-color: var(--tk-pink);
+  color: var(--tk-renk-2-text);
+  background-color: color-mix(in srgb, var(--tk-renk-2) 30%, transparent);
+  border-color: var(--tk-renk-2);
   transform: scale(0.98);
 }
 [data-tk='icon-button']:disabled {

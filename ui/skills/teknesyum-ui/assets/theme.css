@@ -1,12 +1,12 @@
 /* Teknesyum Neon — single source. Do not override these values in a project. */
 
 @theme {
-  --color-neon-blue: #5aa8ff;
-  --color-neon-pink: #c82ee0;
-  --color-neon-purple: #9455ea;
+  --color-neon-renk-1: #5aa8ff;
+  --color-neon-renk-2: #c82ee0;
+  --color-neon-renk-3: #9455ea;
   --color-neon-success: #4ade80;
-  --color-pink-text: #f0abfc;
-  --color-purple-text: #d4b3ff;
+  --color-renk-2-text: #f0abfc;
+  --color-renk-3-text: #d4b3ff;
   --color-surface: #101115;
   --color-dark-glass: rgba(20, 21, 26, 0.9);
 
@@ -32,9 +32,9 @@
 }
 
 :root {
-  --tk-blue: #5aa8ff;
-  --tk-pink: #c82ee0;
-  --tk-purple: #9455ea;
+  --tk-renk-1: #5aa8ff;
+  --tk-renk-2: #c82ee0;
+  --tk-renk-3: #9455ea;
   --tk-success: #4ade80;
   --tk-surface: #101115;
   --tk-bg-rotate: 48s;
@@ -61,8 +61,8 @@
   );
   --tk-glass: rgba(20, 21, 26, 0.9);
 
-  --tk-pink-text: #f0abfc;
-  --tk-purple-text: #d4b3ff;
+  --tk-renk-2-text: #f0abfc;
+  --tk-renk-3-text: #d4b3ff;
 
   /* --- semantic role layer (SKILL §2) ---
      THE ROLE WINS. Every component that reports state — error text, form
@@ -75,15 +75,15 @@
      `--tk-success` is defined above and is already a role token; no second name
      was given, because a single value with two names eventually diverges.
      `--tk-info` IS DELIBERATELY ABSENT: there is no info box today and an unused
-     token is debt. If one opens it binds to blue (`var(--tk-blue)`) and an info
+     token is debt. If one opens it binds to renk-1 (`var(--tk-renk-1)`) and an info
      fill is never used on the same screen as a primary button — both would be
-     blue fills and the user could not tell which one is clickable. */
-  --tk-danger: var(--tk-pink);
-  /* The TEXT role of danger. The fill pink falls below §2's 7:1 threshold as
+     renk-1 fills and the user could not tell which one is clickable. */
+  --tk-danger: var(--tk-renk-2);
+  /* The TEXT role of danger. The fill renk-2 falls below §2's 7:1 threshold as
      text; error text therefore writes this token rather than the fill token.
-     The pink/purple fill-vs-text split continues in the
+     The renk-2/renk-3 fill-vs-text split continues in the
      role layer. */
-  --tk-danger-text: var(--tk-pink-text);
+  --tk-danger-text: var(--tk-renk-2-text);
 
   /* `warning #fbbf24` — WARNING SURFACE ONLY: text, border, icon.
      No fill, no button. The constraint is the same pattern as `success`, not a
@@ -93,9 +93,9 @@
      text, border and icon.
      WHAT REPLACES IT: warning text `--tk-warning` (11.30:1), border
      `--tk-warning-border` (3.60:1 on `#101115` — clears 1.4.11's 3:1 threshold;
-     pink /50 at 1.91 and purple /50 at 1.92 did NOT carry this rung, amber does),
-     icon the same colour. If an action is needed the button is primary (blue) or
-     `danger` (pink) — the warning colour never enters a button.
+     renk-2 /50 at 1.91 and renk-3 /50 at 1.92 did NOT carry this rung, amber does),
+     icon the same colour. If an action is needed the button is primary (renk-1) or
+     `danger` (renk-2) — the warning colour never enters a button.
      COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does
      not separate from `success` under protanopia, ΔE2000 15.2
      A warning row carries an icon or text in
@@ -118,24 +118,24 @@
   /* On pairs: the text colour each fill takes, measured by generate.js at 7:1
      after compositing a translucent fill over surface. A fill with no on pair
      carries no text. */
-  --tk-on-blue: #0a0b0e;
+  --tk-on-renk-1: #0a0b0e;
   --tk-on-success: #0a0b0e;
   --tk-on-danger-text: #0a0b0e;
   --tk-on-panel: #f2f3f6;
   --tk-on-glass: #f2f3f6;
-  --tk-on-blue-10: #f2f3f6;
-  --tk-on-blue-20: #f2f3f6;
-  --tk-on-blue-30: #f2f3f6;
-  --tk-on-pink-10: #f2f3f6;
-  --tk-on-pink-20: #f2f3f6;
-  --tk-on-pink-30: #f2f3f6;
-  --tk-on-pink-50: #f2f3f6;
-  --tk-on-pink-60: #f2f3f6;
-  --tk-on-purple-10: #f2f3f6;
-  --tk-on-purple-20: #f2f3f6;
-  --tk-on-purple-30: #f2f3f6;
-  --tk-on-purple-50: #f2f3f6;
-  --tk-on-purple-60: #f2f3f6;
+  --tk-on-renk-1-10: #f2f3f6;
+  --tk-on-renk-1-20: #f2f3f6;
+  --tk-on-renk-1-30: #f2f3f6;
+  --tk-on-renk-2-10: #f2f3f6;
+  --tk-on-renk-2-20: #f2f3f6;
+  --tk-on-renk-2-30: #f2f3f6;
+  --tk-on-renk-2-50: #f2f3f6;
+  --tk-on-renk-2-60: #f2f3f6;
+  --tk-on-renk-3-10: #f2f3f6;
+  --tk-on-renk-3-20: #f2f3f6;
+  --tk-on-renk-3-30: #f2f3f6;
+  --tk-on-renk-3-50: #f2f3f6;
+  --tk-on-renk-3-60: #f2f3f6;
 
   --tk-border: rgba(90, 168, 255, 0.55);
   --tk-border-strong: rgba(90, 168, 255, 0.7);
@@ -245,9 +245,9 @@
   --tk-e-sharp: cubic-bezier(0.4, 0, 0.6, 1);
   --tk-e-linear: cubic-bezier(0, 0, 1, 1);
 
-  --tk-glow-blue: 0 0 16px rgba(90, 168, 255, 0.18);
-  --tk-glow-pink: 0 0 16px rgba(200, 46, 224, 0.18);
-  --tk-glow-purple: 0 0 16px rgba(148, 85, 234, 0.18);
+  --tk-glow-renk-1: 0 0 16px rgba(90, 168, 255, 0.18);
+  --tk-glow-renk-2: 0 0 16px rgba(200, 46, 224, 0.18);
+  --tk-glow-renk-3: 0 0 16px rgba(148, 85, 234, 0.18);
   /* The hero glow is one token and gives the same intensity on both platforms:
      blur 8, opacity 0.8. Its XAML counterpart is `HeroGlow` (Theme.xaml). */
   --tk-glow-hero: 0 0 8px rgba(90, 168, 255, 0.8);
@@ -286,7 +286,7 @@ body {
 .tk-h2 {
   font-size: var(--tk-fs-4); font-weight: 600;
   line-height: var(--tk-lh-heading); letter-spacing: var(--tk-tr-h2);
-  color: var(--tk-blue);
+  color: var(--tk-renk-1);
 }
 .tk-h3 {
   font-size: var(--tk-fs-3); font-weight: 600;
@@ -302,13 +302,13 @@ body {
   font-family: var(--font-mono, monospace);
   font-size: var(--tk-fs-2); font-weight: 600;
   line-height: var(--tk-lh-mono);
-  color: var(--tk-pink-text);
+  color: var(--tk-renk-2-text);
 }
 .tk-hero {
   font-family: var(--font-mono, monospace);
   font-size: var(--tk-fs-5); font-weight: var(--tk-fw-hero);
   line-height: var(--tk-lh-heading); letter-spacing: var(--tk-tr-hero);
-  color: var(--tk-blue); filter: drop-shadow(var(--tk-glow-hero));
+  color: var(--tk-renk-1); filter: drop-shadow(var(--tk-glow-hero));
 }
 .tk-hint {
   font-size: var(--tk-fs-1); line-height: var(--tk-lh-body); color: var(--tk-text);
@@ -331,7 +331,7 @@ body {
 
 /* --- focus: two layers, no transition, keyboard modality only --- */
 :focus-visible {
-  outline: 2px solid var(--tk-blue);
+  outline: 2px solid var(--tk-renk-1);
   outline-offset: 2px;
   box-shadow: 0 0 0 2px #0a0b0e;
   transition: none;
@@ -360,23 +360,23 @@ body {
   border-color: var(--tk-border-strong);
   transition-duration: var(--tk-t-instant);
 }
-.tk-btn-primary   { background: var(--tk-blue);   color: var(--tk-on-blue); box-shadow: var(--tk-glow-blue); }
-/* Hover is carried by scale alone: black on blue /80 measured 5.47:1, below 7:1. */
+.tk-btn-primary   { background: var(--tk-renk-1);   color: var(--tk-on-renk-1); box-shadow: var(--tk-glow-renk-1); }
+/* Hover is carried by scale alone: black on renk-1 /80 measured 5.47:1, below 7:1. */
 /* The class name was already in role language; its contents moved to the role
    token too. The glow stays on the brand token — a glow is decoration, it does
-   not report state. The fill is the danger TEXT cut: black on the fill pink is
-   4.61:1, below 7:1, so pink carries no text (tokens: on.danger); black on
+   not report state. The fill is the danger TEXT cut: black on the fill renk-2 is
+   4.61:1, below 7:1, so renk-2 carries no text (tokens: on.danger); black on
    danger-text is 11.19:1. Hover is carried by scale alone. */
-.tk-btn-danger    { background: var(--tk-danger-text); color: var(--tk-on-danger-text); box-shadow: var(--tk-glow-pink); }
+.tk-btn-danger    { background: var(--tk-danger-text); color: var(--tk-on-danger-text); box-shadow: var(--tk-glow-renk-2); }
 /* A tint and its own hue never meet on one surface (ui-duzeni): the ghost keeps its
-   colour in the border and writes body text. Hover adds the purple /10 fill under its
+   colour in the border and writes body text. Hover adds the renk-3 /10 fill under its
    on pair. */
 .tk-btn-ghost {
   background: transparent;
-  border-color: var(--tk-purple-text);
+  border-color: var(--tk-renk-3-text);
   color: var(--tk-text);
 }
-.tk-btn-ghost:hover { background: rgba(148, 85, 234, 0.1); color: var(--tk-on-purple-10); }
+.tk-btn-ghost:hover { background: rgba(148, 85, 234, 0.1); color: var(--tk-on-renk-3-10); }
 /* The disabled state does not end at dimming: `title` text is mandatory (§2). */
 .tk-btn:disabled {
   color: var(--tk-disabled);
@@ -391,13 +391,13 @@ body {
 ::-webkit-scrollbar { width: var(--tk-scrollbar-w); height: var(--tk-scrollbar-w); }
 ::-webkit-scrollbar-track { background: rgba(10, 11, 14, 0.3); border-radius: 4px; }
 ::-webkit-scrollbar-thumb {
-  background: var(--tk-purple-text); border-radius: 4px;
+  background: var(--tk-renk-3-text); border-radius: 4px;
   /* No glow on the scrollbar: a halo on a thin moving bar smears and reads as noise
      (user feedback, 2026-09-26). Only the fill colour transitions. */
   transition: background-color var(--tk-t-instant) var(--tk-e-out);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--tk-pink-text);
+  background: var(--tk-renk-2-text);
 }
 
 /* --- title bar and signature (§4) --- */
@@ -423,7 +423,7 @@ body {
 /* Warning text can also stand alone, without a box. No glow: text is never given
    a glow (§2), the sole exception being hero. */
 .tk-warn-text { color: var(--tk-warning); }
-/* Error text writes the text pink, not the fill pink — the 7:1 threshold. */
+/* Error text writes the text renk-2, not the fill renk-2 — the 7:1 threshold. */
 .tk-danger-text { color: var(--tk-danger-text); }
 
 /* --- motion: reduced-motion preference (detail: references/motion.md) --- */

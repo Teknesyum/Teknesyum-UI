@@ -184,7 +184,7 @@ function Renk([string]$h, [int]$a = 255) { [System.Drawing.Color]::FromArgb($a, 
 function Yazi([int]$px, [string]$stil = "Regular", [string]$aile = "Segoe UI") { New-Object System.Drawing.Font($aile, $px, [System.Drawing.FontStyle]$stil, [System.Drawing.GraphicsUnit]::Pixel) }
 
 $R = @{
-  zemin = Renk "#101115"; metin = Renk "#f2f3f6"; mavi = Renk "#5aa8ff"; mor = Renk "#9455ea"
+  zemin = Renk "#101115"; metin = Renk "#f2f3f6"; renk1 = Renk "#5aa8ff"; renk3 = Renk "#9455ea"
   basari = Renk "#4ade80"; tehlike = Renk "#f0abfc"; vurgu = Renk "#f0abfc"; sonuk = Renk "#7c7f88"
   kenar = Renk "#5aa8ff" 140; iz = Renk "#5aa8ff" 51
 }
@@ -236,14 +236,14 @@ $f.Add_Paint({
   $yg = $cz.MeasureString($yuzdeMetin, $YZ.adim).Width
   $alan = New-Object System.Drawing.RectangleF(24, 100, ($w - 60 - $yg), 22)
   $cz.DrawString($S.adim, $YZ.adim, (New-Object System.Drawing.SolidBrush $renk), $alan, $bicim)
-  $cz.DrawString($yuzdeMetin, $YZ.adim, $B.mavi, ($w - 24 - $yg), 100)
+  $cz.DrawString($yuzdeMetin, $YZ.adim, $B.renk1, ($w - 24 - $yg), 100)
 
   $bx = 24; $by = 132; $bw = $w - 48; $bh = 8
   $cz.FillRectangle((New-Object System.Drawing.SolidBrush $R.iz), $bx, $by, $bw, $bh)
   $dolu = [int]($bw * [math]::Min(100, $G.goster) / 100)
   if ($dolu -gt 1) {
     $dik = New-Object System.Drawing.Rectangle($bx, $by, $dolu, $bh)
-    if ($S.durum -eq "calisiyor") { $fr = New-Object System.Drawing.Drawing2D.LinearGradientBrush($dik, $R.mavi, $R.mor, 0.0) }
+    if ($S.durum -eq "calisiyor") { $fr = New-Object System.Drawing.Drawing2D.LinearGradientBrush($dik, $R.renk1, $R.renk3, 0.0) }
     else { $fr = New-Object System.Drawing.SolidBrush $renk }
     $cz.FillRectangle($fr, $dik)
     for ($i = 1; $i -le 3; $i++) { $cz.FillRectangle((New-Object System.Drawing.SolidBrush ([System.Drawing.Color]::FromArgb([int](40 / $i), $renk))), $bx, $by - $i, $dolu, $bh + 2 * $i) }
@@ -266,7 +266,7 @@ $f.Add_Paint({
   $bas = [math]::Max(0, $n - 9)
   $y = 160
   for ($i = $bas; $i -lt $n; $i++) {
-    $fircaLog = if ($i -eq $n - 1) { $B.mavi } else { $B.sonuk }
+    $fircaLog = if ($i -eq $n - 1) { $B.renk1 } else { $B.sonuk }
     $cz.DrawString($satirlar[$i], $YZ.log, $fircaLog, (New-Object System.Drawing.RectangleF(24, $y, ($w - 48), 20)), $bicim)
     $y += 20
   }
@@ -280,8 +280,8 @@ function Dugme([string]$metin, [bool]$birincil, [int]$x) {
   $dg.Size = New-Object System.Drawing.Size(160, 36)
   $dg.Location = New-Object System.Drawing.Point($x, 364)
   $dg.Cursor = "Hand"
-  if ($birincil) { $dg.BackColor = $R.mavi; $dg.ForeColor = $R.zemin; $dg.FlatAppearance.BorderSize = 0 }
-  else { $dg.BackColor = $R.zemin; $dg.ForeColor = $R.metin; $dg.FlatAppearance.BorderColor = $R.mavi }
+  if ($birincil) { $dg.BackColor = $R.renk1; $dg.ForeColor = $R.zemin; $dg.FlatAppearance.BorderSize = 0 }
+  else { $dg.BackColor = $R.zemin; $dg.ForeColor = $R.metin; $dg.FlatAppearance.BorderColor = $R.renk1 }
   $dg.Visible = $false
   $f.Controls.Add($dg)
   $dg

@@ -154,21 +154,21 @@ const QUESTIONS = [
     custom: true,
     ask: 'Primary brand colour (#rrggbb)',
     parse: (v) => hex(v, 'primary'),
-    fallback: neonColour('blue', '#5aa8ff'),
+    fallback: neonColour('renk-1', '#5aa8ff'),
   },
   {
     key: 'secondary',
     custom: true,
     ask: 'Secondary brand colour (#rrggbb)',
     parse: (v) => hex(v, 'secondary'),
-    fallback: neonColour('pink', '#c82ee0'),
+    fallback: neonColour('renk-2', '#c82ee0'),
   },
   {
     key: 'tertiary',
     custom: true,
     ask: 'Tertiary brand colour (#rrggbb)',
     parse: (v) => hex(v, 'tertiary'),
-    fallback: neonColour('purple', '#9455ea'),
+    fallback: neonColour('renk-3', '#9455ea'),
   },
   {
     key: 'surface',
@@ -320,20 +320,20 @@ function buildTokens(palette, name) {
     T[group][key].rationale = why;
   };
 
-  set('brand', 'blue', palette.primary, 'Primary brand colour: primary fill, heading, label, focus ring.');
-  set('brand', 'pink', palette.secondary, 'Secondary brand colour, fill cut.');
-  set('brand', 'purple', palette.tertiary, 'Tertiary brand colour: decoration, scrollbar, ghost button.');
+  set('brand', 'renk-1', palette.primary, 'Primary brand colour: primary fill, heading, label, focus ring.');
+  set('brand', 'renk-2', palette.secondary, 'Secondary brand colour, fill cut.');
+  set('brand', 'renk-3', palette.tertiary, 'Tertiary brand colour: decoration, scrollbar, ghost button.');
   set('brand', 'surface', surface, 'Surface base; every contrast is measured against it.');
   set('brand', 'black', extreme, 'Opening end of the background gradient.');
   set(
     'brand',
-    'pink-text',
+    'renk-2-text',
     textCut(palette.secondary, surface, dark),
     'Text cut of the secondary colour, lifted to 7:1 on the surface.'
   );
   set(
     'brand',
-    'purple-text',
+    'renk-3-text',
     textCut(palette.tertiary, surface, dark),
     'Text cut of the tertiary colour, lifted to 7:1 on the surface.'
   );
@@ -687,9 +687,9 @@ function apply(answers) {
     if (!tokensFile) throw new Error('neon template not found under ' + path.join(pluginDir(), 'templates'));
     const neon = read(tokensFile);
     cfg.palette = {
-      primary: neon.brand.blue.value,
-      secondary: neon.brand.pink.value,
-      tertiary: neon.brand.purple.value,
+      primary: neon.brand['renk-1'].value,
+      secondary: neon.brand['renk-2'].value,
+      tertiary: neon.brand['renk-3'].value,
       surface: neon.brand.surface.value,
       dark: neon.meta.dark !== false,
     };
@@ -808,8 +808,8 @@ function help() {
     '',
     'Examples',
     '  node setup.js --apply --template neon --targets css,react --project .',
-    '  node setup.js --apply --template custom --primary ' + neonColour('blue') + ' --secondary ' + neonColour('pink') + ' \\',
-    '    --tertiary ' + neonColour('purple') + ' --surface ' + neonColour('surface') + ' --dark yes',
+    '  node setup.js --apply --template custom --primary ' + neonColour('renk-1') + ' --secondary ' + neonColour('renk-2') + ' \\',
+    '    --tertiary ' + neonColour('renk-3') + ' --surface ' + neonColour('surface') + ' --dark yes',
   ].join('\n');
 }
 

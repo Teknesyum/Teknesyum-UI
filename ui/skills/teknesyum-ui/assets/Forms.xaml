@@ -14,8 +14,8 @@
     <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
     <Setter Property="BorderThickness" Value="1"/>
     <Setter Property="VerticalContentAlignment" Value="Center"/>
-    <Setter Property="CaretBrush" Value="{StaticResource NeonBlue}"/>
-    <Setter Property="SelectionBrush" Value="{StaticResource NeonBlue30}"/>
+    <Setter Property="CaretBrush" Value="{StaticResource Renk1}"/>
+    <Setter Property="SelectionBrush" Value="{StaticResource Renk1x30}"/>
     <Setter Property="SelectionOpacity" Value="1"/>
     <!-- Varsayilan WPF hata anahati (kirmizi Adorner) KAPATILIR; palet disidir.
          Yerine asagidaki TkErrorTemplate cizer. -->
@@ -256,7 +256,7 @@
           </Border>
           <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="ic" Property="Stroke" Value="{StaticResource NeonBlue}"/>
+              <Setter TargetName="ic" Property="Stroke" Value="{StaticResource Renk1}"/>
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>

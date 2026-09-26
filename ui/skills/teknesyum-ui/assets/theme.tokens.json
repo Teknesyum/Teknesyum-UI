@@ -15,25 +15,25 @@
     "rationale": "The standard is dark only — until a second theme is defined (SKILL §1)."
   },
   "brand": {
-    "blue": {
+    "renk-1": {
       "value": "#5aa8ff",
       "rationale": "Primary brand colour: primary button fill, heading, label, focus ring."
     },
-    "pink": {
+    "renk-2": {
       "value": "#c82ee0",
-      "rationale": "The FILL cut of the secondary brand colour; as text it gives 4.42:1, so text work goes to pink-text."
+      "rationale": "The FILL cut of the secondary brand colour; as text it gives 4.42:1, so text work goes to renk-2-text."
     },
-    "purple": {
+    "renk-3": {
       "value": "#9455ea",
       "rationale": "Tertiary brand colour: decoration, scrollbar, ghost button."
     },
-    "pink-text": {
+    "renk-2-text": {
       "value": "#f0abfc",
-      "rationale": "The TEXT cut of pink: 10.72:1 on #101115, clears §2's 7:1 threshold."
+      "rationale": "The TEXT cut of renk-2: 10.72:1 on #101115, clears §2's 7:1 threshold."
     },
-    "purple-text": {
+    "renk-3-text": {
       "value": "#d4b3ff",
-      "rationale": "The TEXT cut of purple; the fill purple does not clear the 7:1 text threshold."
+      "rationale": "The TEXT cut of renk-3; the fill renk-3 does not clear the 7:1 text threshold."
     },
     "surface": {
       "value": "#101115",
@@ -54,12 +54,12 @@
       "rationale": "Success role; it has no counterpart in the brand triad and carries its own hex. Renamed from NeonSuccess to a role on 2026-08-23."
     },
     "danger": {
-      "ref": "pink",
+      "ref": "renk-2",
       "rationale": "A role follows the brand's VALUE, not a copy of it; danger fill and danger button."
     },
     "danger-text": {
-      "ref": "pink-text",
-      "rationale": "Error text writes the text pink, not the fill pink — the 7:1 threshold (10.72:1)."
+      "ref": "renk-2-text",
+      "rationale": "Error text writes the text renk-2, not the fill renk-2 — the 7:1 threshold (10.72:1)."
     },
     "warning": {
       "value": "#fbbf24",
@@ -68,15 +68,15 @@
     "warning-border": {
       "ref": "warning",
       "alpha": 0.5,
-      "rationale": "3.60:1 on #101115 — clears 1.4.11's 3:1 threshold; pink /50 (1.91) and purple /50 (1.92) did not."
+      "rationale": "3.60:1 on #101115 — clears 1.4.11's 3:1 threshold; renk-2 /50 (1.91) and renk-3 /50 (1.92) did not."
     },
     "text": {
       "value": "#f2f3f6",
       "rationale": "Body text. No mid greys; for secondary text the answer is not grey, it is deleting the text (SKILL §2)."
     },
     "text-label": {
-      "ref": "blue",
-      "rationale": "Label and h3 colour; bound to blue, not a copy of it."
+      "ref": "renk-1",
+      "rationale": "Label and h3 colour; bound to renk-1, not a copy of it."
     },
     "disabled": {
       "value": "#7c7f88",
@@ -95,44 +95,44 @@
       "rationale": "Glass surface (dark-glass); title bar and translucent layers."
     },
     "border": {
-      "ref": "blue",
+      "ref": "renk-1",
       "alpha": 0.55,
       "rationale": "Default border."
     },
     "border-strong": {
-      "ref": "blue",
+      "ref": "renk-1",
       "alpha": 0.7,
       "rationale": "Emphasised border."
     },
     "border-decorative": {
-      "ref": "blue",
+      "ref": "renk-1",
       "alpha": 0.2,
       "rationale": "Decorative rule; carries no information, outside the scope of 1.4.11."
     },
     "tone-scale": {
-      "bases": ["blue", "pink", "purple"],
+      "bases": ["renk-1", "renk-2", "renk-3"],
       "steps": [10, 20, 30, 50, 60],
       "rationale": "XAML/Avalonia has no var(); alpha cuts are generated as named brushes."
     },
     "text-scale": {
-      "bases": ["pink-text", "purple-text"],
+      "bases": ["renk-2-text", "renk-3-text"],
       "steps": [50],
       "rationale": "Translucent brushes for the text cuts."
     },
     "glow": {
-      "bases": ["blue", "pink", "purple"],
+      "bases": ["renk-1", "renk-2", "renk-3"],
       "alpha": 0.18,
       "blur": 16,
       "rationale": "Box glow; text is never given a glow, the sole exception being hero (SKILL §2)."
     },
     "glow-hero": {
-      "ref": "blue",
+      "ref": "renk-1",
       "alpha": 0.8,
       "blur": 8,
       "rationale": "The hero glow is the same intensity on both platforms: blur 8, opacity 0.8."
     },
     "glow-button": {
-      "ref": "blue",
+      "ref": "renk-1",
       "alpha": 0.35,
       "blur": 20,
       "rationale": "Primary button halo; in BoxShadow opacity is not a separate property but the colour alpha (0.35 × 255 = 89 = 0x59)."
@@ -157,29 +157,29 @@
   },
   "on": {
     "_": ["Which text colour sits on each fill. on names an existing colour; null means the fill carries no text.","generate.js composites a translucent fill over surface, measures the pair and refuses to generate below 7:1."],
-    "blue": { "on": "black", "rationale": "black on blue: 7.95:1." },
-    "pink": { "on": null, "rationale": "Carries no text: the best pair, black on pink, is 4.61:1, below 7:1." },
-    "purple": { "on": null, "rationale": "Carries no text: the best pair, black on purple, is 4.45:1, below 7:1." },
+    "renk-1": { "on": "black", "rationale": "black on renk-1: 7.95:1." },
+    "renk-2": { "on": null, "rationale": "Carries no text: the best pair, black on renk-2, is 4.61:1, below 7:1." },
+    "renk-3": { "on": null, "rationale": "Carries no text: the best pair, black on renk-3, is 4.45:1, below 7:1." },
     "success": { "on": "black", "rationale": "black on success: 11.29:1." },
     "danger": { "on": null, "rationale": "Carries no text: the best pair, black on danger, is 4.61:1, below 7:1. The danger button fills with danger-text instead." },
     "danger-text": { "on": "black", "rationale": "black on danger-text: 11.19:1." },
     "panel": { "on": "text", "rationale": "text on panel over surface: 17.00:1." },
     "glass": { "on": "text", "rationale": "text on glass over surface: 16.49:1." },
-    "blue-10": { "on": "text", "rationale": "text on blue 10% over surface: 14.76:1." },
-    "blue-20": { "on": "text", "rationale": "text on blue 20% over surface: 12.21:1." },
-    "blue-30": { "on": "text", "rationale": "text on blue 30% over surface: 9.80:1." },
-    "blue-50": { "on": null, "rationale": "Carries no text: the best pair, text on blue 50% over surface, is 6.17:1, below 7:1." },
-    "blue-60": { "on": null, "rationale": "Carries no text: the best pair, text on blue 60% over surface, is 4.93:1, below 7:1." },
-    "pink-10": { "on": "text", "rationale": "text on pink 10% over surface: 15.76:1." },
-    "pink-20": { "on": "text", "rationale": "text on pink 20% over surface: 14.12:1." },
-    "pink-30": { "on": "text", "rationale": "text on pink 30% over surface: 12.32:1." },
-    "pink-50": { "on": "text", "rationale": "text on pink 50% over surface: 8.92:1." },
-    "pink-60": { "on": "text", "rationale": "text on pink 60% over surface: 7.50:1." },
-    "purple-10": { "on": "text", "rationale": "text on purple 10% over surface: 15.57:1." },
-    "purple-20": { "on": "text", "rationale": "text on purple 20% over surface: 13.86:1." },
-    "purple-30": { "on": "text", "rationale": "text on purple 30% over surface: 12.08:1." },
-    "purple-50": { "on": "text", "rationale": "text on purple 50% over surface: 8.84:1." },
-    "purple-60": { "on": "text", "rationale": "text on purple 60% over surface: 7.50:1." }
+    "renk-1-10": { "on": "text", "rationale": "text on renk-1 10% over surface: 14.76:1." },
+    "renk-1-20": { "on": "text", "rationale": "text on renk-1 20% over surface: 12.21:1." },
+    "renk-1-30": { "on": "text", "rationale": "text on renk-1 30% over surface: 9.80:1." },
+    "renk-1-50": { "on": null, "rationale": "Carries no text: the best pair, text on renk-1 50% over surface, is 6.17:1, below 7:1." },
+    "renk-1-60": { "on": null, "rationale": "Carries no text: the best pair, text on renk-1 60% over surface, is 4.93:1, below 7:1." },
+    "renk-2-10": { "on": "text", "rationale": "text on renk-2 10% over surface: 15.76:1." },
+    "renk-2-20": { "on": "text", "rationale": "text on renk-2 20% over surface: 14.12:1." },
+    "renk-2-30": { "on": "text", "rationale": "text on renk-2 30% over surface: 12.32:1." },
+    "renk-2-50": { "on": "text", "rationale": "text on renk-2 50% over surface: 8.92:1." },
+    "renk-2-60": { "on": "text", "rationale": "text on renk-2 60% over surface: 7.50:1." },
+    "renk-3-10": { "on": "text", "rationale": "text on renk-3 10% over surface: 15.57:1." },
+    "renk-3-20": { "on": "text", "rationale": "text on renk-3 20% over surface: 13.86:1." },
+    "renk-3-30": { "on": "text", "rationale": "text on renk-3 30% over surface: 12.08:1." },
+    "renk-3-50": { "on": "text", "rationale": "text on renk-3 50% over surface: 8.84:1." },
+    "renk-3-60": { "on": "text", "rationale": "text on renk-3 60% over surface: 7.50:1." }
   },
   "duration": {
     "instant": { "ms": 90, "rationale": "Press/release response." },

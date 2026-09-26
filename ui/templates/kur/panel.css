@@ -52,7 +52,7 @@
 }
 
 .tk-installer__accent {
-  color: var(--tk-pink-text);
+  color: var(--tk-renk-2-text);
 }
 
 .tk-installer__sub,
@@ -89,7 +89,7 @@
 }
 
 .tk-installer__percent {
-  color: var(--tk-blue);
+  color: var(--tk-renk-1);
   font-variant-numeric: tabular-nums;
 }
 
@@ -105,7 +105,7 @@
 }
 
 .tk-installer__log li:last-child {
-  color: var(--tk-blue);
+  color: var(--tk-renk-1);
 }
 
 .tk-installer__actions {

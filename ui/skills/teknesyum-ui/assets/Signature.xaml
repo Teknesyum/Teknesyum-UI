@@ -51,14 +51,14 @@
     </Style>
   </StackPanel.Resources>
 
-  <Border Style="{StaticResource SigChip}" BorderBrush="{StaticResource PinkText}"
+  <Border Style="{StaticResource SigChip}" BorderBrush="{StaticResource Renk2Text}"
           Margin="0,0,8,0" ToolTip="{loc:Str sig.supportTitle}">
     <Border.RenderTransform>
       <ScaleTransform ScaleX="1" ScaleY="1"/>
     </Border.RenderTransform>
     <StackPanel Orientation="Horizontal">
       <Canvas Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0">
-        <Path Stroke="{StaticResource PinkText}" StrokeThickness="2" StrokeLineJoin="Round"
+        <Path Stroke="{StaticResource Renk2Text}" StrokeThickness="2" StrokeLineJoin="Round"
               StrokeStartLineCap="Round" StrokeEndLineCap="Round"
               Data="M2 4.5 H8.5 V8 A2 2 0 0 1 6.5 10 H4 A2 2 0 0 1 2 8 Z
                     M8.5 5.5 H9.25 A1.25 1.25 0 0 1 9.25 8 H8.5
@@ -66,7 +66,7 @@
       </Canvas>
       <TextBlock Style="{StaticResource SigText}">
         <Hyperlink NavigateUri="https://github.com/sponsors/Teknesyum"
-                   TextDecorations="None" Foreground="{StaticResource PinkText}"
+                   TextDecorations="None" Foreground="{StaticResource Renk2Text}"
                    RequestNavigate="OnSignatureNavigate">
           <Run Text="{loc:Str sig.support}"/>
         </Hyperlink>
@@ -74,14 +74,14 @@
     </StackPanel>
   </Border>
 
-  <Border Style="{StaticResource SigChip}" BorderBrush="{StaticResource NeonBlue}"
+  <Border Style="{StaticResource SigChip}" BorderBrush="{StaticResource Renk1}"
           ToolTip="{loc:Str sig.brandTitle}">
     <Border.RenderTransform>
       <ScaleTransform ScaleX="1" ScaleY="1"/>
     </Border.RenderTransform>
     <TextBlock Style="{StaticResource SigText}">
       <Hyperlink NavigateUri="https://github.com/Teknesyum"
-                 TextDecorations="None" Foreground="{StaticResource NeonBlue}"
+                 TextDecorations="None" Foreground="{StaticResource Renk1}"
                  RequestNavigate="OnSignatureNavigate">
         <Run Text="{loc:Str sig.brand}"/>
       </Hyperlink>

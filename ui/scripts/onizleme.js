@@ -42,7 +42,6 @@ const YOL = {
   '/akicilik.js': path.join(SAYFA, 'akicilik.js'),
   '/teknik.js': path.join(SAYFA, 'teknik.js'),
   '/tokens.json': TOKENS,
-  '/oneri.json': path.join(SAYFA, 'oneri.json'),
 };
 
 function tarayici(dosya, ad) {

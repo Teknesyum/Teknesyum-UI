@@ -21,7 +21,7 @@ const SURUMLER = [
   path.join(UI, 'onizleme', 'masaustu', 'package-lock.json'),
 ];
 
-const RENKLER = ['blue', 'pink', 'purple', 'pink-text', 'purple-text', 'surface', 'black', 'glass-base', 'text', 'disabled', 'success', 'warning'];
+const RENKLER = ['renk-1', 'renk-2', 'renk-3', 'renk-2-text', 'renk-3-text', 'surface', 'black', 'glass-base', 'text', 'disabled', 'success', 'warning'];
 const HEX = /^#[0-9a-f]{6}$/;
 const AGIRLIK = { 100: 'Thin', 200: 'ExtraLight', 300: 'Light', 400: 'Normal', 500: 'Medium', 600: 'SemiBold', 700: 'Bold', 800: 'ExtraBold', 900: 'Black' };
 const TAMSAYI = {
@@ -182,16 +182,16 @@ function onGerekce(T, ad, eski) {
 const BEYAZ = { r: 255, g: 255, b: 255, a: 1 };
 const f2 = (n) => n.toFixed(2);
 const IDDIALAR = [
-  ['brand', 'pink', /(as text it gives )(\d+\.\d+)(:1)/, (T) => f2(olc(T, zemin(T), 'pink'))],
-  ['brand', 'pink-text', /()(\d+\.\d+)(:1 on )/, (T) => f2(olc(T, zemin(T), 'pink-text'))],
-  ['brand', 'pink-text', /(:1 on )(#[0-9a-f]{6})()/, (T) => T.brand.surface.value],
+  ['brand', 'renk-2', /(as text it gives )(\d+\.\d+)(:1)/, (T) => f2(olc(T, zemin(T), 'renk-2'))],
+  ['brand', 'renk-2-text', /()(\d+\.\d+)(:1 on )/, (T) => f2(olc(T, zemin(T), 'renk-2-text'))],
+  ['brand', 'renk-2-text', /(:1 on )(#[0-9a-f]{6})()/, (T) => T.brand.surface.value],
   ['role', 'danger-text', /(\()(\d+\.\d+)(:1\))/, (T) => f2(olc(T, zemin(T), 'danger-text'))],
   ['role', 'warning', /(text \()(\d+\.\d+)(:1\))/, (T) => f2(olc(T, zemin(T), 'warning'))],
   ['role', 'warning', /(amber fill is )(\d+\.\d+)(:1)/, (T) => f2(olc(T, renk(T, 'warning'), BEYAZ))],
   ['role', 'warning-border', /^()(\d+\.\d+)(:1 on )/, (T) => f2(olc(T, zemin(T), renk(T, 'warning-border')))],
   ['role', 'warning-border', /(:1 on )(#[0-9a-f]{6})()/, (T) => T.brand.surface.value],
-  ['role', 'warning-border', /(pink \/50 \()(\d+\.\d+)(\))/, (T) => f2(olc(T, zemin(T), { ...renk(T, 'pink'), a: 0.5 }))],
-  ['role', 'warning-border', /(purple \/50 \()(\d+\.\d+)(\))/, (T) => f2(olc(T, zemin(T), { ...renk(T, 'purple'), a: 0.5 }))],
+  ['role', 'warning-border', /(renk-2 \/50 \()(\d+\.\d+)(\))/, (T) => f2(olc(T, zemin(T), { ...renk(T, 'renk-2'), a: 0.5 }))],
+  ['role', 'warning-border', /(renk-3 \/50 \()(\d+\.\d+)(\))/, (T) => f2(olc(T, zemin(T), { ...renk(T, 'renk-3'), a: 0.5 }))],
 ];
 
 function yenidenOlc(metin) {

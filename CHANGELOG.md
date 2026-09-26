@@ -22,16 +22,30 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- **Breaking:** the brand colour tokens are named by order, not by hue: `blue`, `pink`,
+  `purple`, `pink-text`, `purple-text` become `renk-1`, `renk-2`, `renk-3`, `renk-2-text`,
+  `renk-3-text`, with every derived name (`--tk-renk-1-10`, `--tk-on-renk-2-30`,
+  `--tk-glow-renk-3`, `--color-neon-renk-1`). Platform names follow `generate.js`'s
+  kebab-to-Pascal rule, with `x` between two numbers: `NeonBlue` → `Renk1`, `NeonBlue20` →
+  `Renk1x20`, `NeonBlueColor` → `Renk1Color`, `PinkText` → `Renk2Text`, `PinkText50` →
+  `Renk2Text50`, `OnPink10` → `OnRenk2x10`, ANSI `Blue` → `Renk1`. The preview labels read
+  Renk 1 / Renk 2 / Renk 3. A private record or theme saved with the old names is read with
+  the new ones.
 - Preview: Üzerine Gelince shows the scrollbar reliably; hover and scroll are tracked in script.
 - Preview: Önce / Sonra, the Okunurluk summary and the change list compare against Benim Token
   Dosyam when a private record exists; Token Dosyası stays the standard defaults.
 - Preview: changing a duration or the interface curve replays the Akıcılık demo; the app's own
   wizard card, wizard steps and settings groups animate with the motion tokens.
 - Preview: button height and padding settings also size the wizard and dialog buttons.
+- **Breaking:** the public standard token is plain: `renk-1` to `renk-3`, their text cuts,
+  success and warning are white and greys, and the three glows are off (alpha 0). Tuned
+  palettes live in themes and private records, not in the standard. Every pair still clears 7:1.
+- Preview: choosing Token Dosyası resets every setting to the standard, not only the colours.
 
 ### Removed
 
 - The Karbon theme is no longer public; it lives on the private shelf.
+- `ui/onizleme/oneri.json` (fable's tuned readability proposal) and its `/oneri.json` route.
 
 ## [0.8.0] - 2026-09-26
 

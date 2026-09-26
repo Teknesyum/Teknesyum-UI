@@ -4,11 +4,11 @@
   const K = window.Kontrast;
 
   const AD = {
-    blue: 'Mavi',
-    pink: 'Pembe',
-    'pink-text': 'Pembe Yazı Kesimi',
-    purple: 'Mor',
-    'purple-text': 'Mor Yazı Kesimi',
+    'renk-1': 'Renk 1',
+    'renk-2': 'Renk 2',
+    'renk-2-text': 'Renk 2 Yazı Kesimi',
+    'renk-3': 'Renk 3',
+    'renk-3-text': 'Renk 3 Yazı Kesimi',
     surface: 'Yüzey',
     black: 'Siyah',
     'glass-base': 'Cam Tabanı',
@@ -22,9 +22,9 @@
     glass: 'Cam',
   };
 
-  const DUZENLENEN = ['blue', 'pink', 'pink-text', 'purple', 'purple-text', 'surface', 'black', 'glass-base', 'text', 'disabled', 'success', 'warning'];
-  const ACIK = ['blue', 'pink'];
-  const TURETILIR = { 'pink-text': 'pink', 'purple-text': 'purple' };
+  const DUZENLENEN = ['renk-1', 'renk-2', 'renk-2-text', 'renk-3', 'renk-3-text', 'surface', 'black', 'glass-base', 'text', 'disabled', 'success', 'warning'];
+  const ACIK = ['renk-1', 'renk-2'];
+  const TURETILIR = { 'renk-2-text': 'renk-2', 'renk-3-text': 'renk-3' };
 
   const ARKALAR = [
     ['duz', 'Düz Yüzey'],
@@ -35,10 +35,10 @@
   ];
 
   const KAYDIRMA_RENK = [
-    ['purple', 'Mor'],
-    ['blue', 'Mavi'],
-    ['pink', 'Pembe'],
-    ['purple-text', 'Mor Yazı Kesimi'],
+    ['renk-3', 'Renk 3'],
+    ['renk-1', 'Renk 1'],
+    ['renk-2', 'Renk 2'],
+    ['renk-3-text', 'Renk 3 Yazı Kesimi'],
   ];
 
   const SAYFALAR = [
@@ -62,17 +62,17 @@
   const ESKI = { renk: 'renkler', parca: 'ustcubuk', tonlar: 'renkler', yanyana: 'renkler', yuzeyler: 'renkler', bilesenler: 'formlar', form: 'formlar' };
   const ILGILI = {
     renkler: ['renk'],
-    dugmeler: ['dugme', 'renk-blue', 'renk-pink', 'renk-pink-text', 'renk-purple', 'renk-purple-text', 'renk-disabled', 'parlama', 'sekil', 'yogunluk', 'hareket'],
-    formlar: ['renk-text', 'renk-surface', 'renk-blue', 'renk-pink-text', 'renk-disabled', 'sekil', 'yogunluk', 'yazi'],
-    ustcubuk: ['pencere', 'renk-glass-base', 'renk-text', 'renk-pink-text', 'renk-purple-text', 'yazi', 'sekil', 'yuzey'],
-    ilerleme: ['renk-blue', 'renk-purple', 'renk-success', 'parlama', 'hareket'],
-    kaydirma: ['kaydir', 'renk-purple-text', 'renk-pink-text'],
-    arka: ['arka', 'renk-black', 'renk-surface', 'renk-blue', 'renk-pink', 'renk-purple', 'yuzey'],
-    rozetler: ['renk-success', 'renk-warning', 'renk-blue', 'renk-pink', 'renk-purple-text', 'sekil'],
+    dugmeler: ['dugme', 'renk-renk-1', 'renk-renk-2', 'renk-renk-2-text', 'renk-renk-3', 'renk-renk-3-text', 'renk-disabled', 'parlama', 'sekil', 'yogunluk', 'hareket'],
+    formlar: ['renk-text', 'renk-surface', 'renk-renk-1', 'renk-renk-2-text', 'renk-disabled', 'sekil', 'yogunluk', 'yazi'],
+    ustcubuk: ['pencere', 'renk-glass-base', 'renk-text', 'renk-renk-2-text', 'renk-renk-3-text', 'yazi', 'sekil', 'yuzey'],
+    ilerleme: ['renk-renk-1', 'renk-renk-3', 'renk-success', 'parlama', 'hareket'],
+    kaydirma: ['kaydir', 'renk-renk-3-text', 'renk-renk-2-text'],
+    arka: ['arka', 'renk-black', 'renk-surface', 'renk-renk-1', 'renk-renk-2', 'renk-renk-3', 'yuzey'],
+    rozetler: ['renk-success', 'renk-warning', 'renk-renk-1', 'renk-renk-2', 'renk-renk-3-text', 'sekil'],
     bildirimler: ['renk-success', 'renk-warning', 'renk-surface', 'hareket', 'yuzey'],
-    kurulum: ['renk-blue', 'renk-success', 'renk-surface', 'yuzey', 'yazi'],
+    kurulum: ['renk-renk-1', 'renk-success', 'renk-surface', 'yuzey', 'yazi'],
     modal: ['yuzey', 'hareket', 'renk-surface', 'renk-text', 'renk-black'],
-    tipografi: ['yazi', 'renk-text', 'renk-blue', 'parlama'],
+    tipografi: ['yazi', 'renk-text', 'renk-renk-1', 'parlama'],
     akicilik: ['egri', 'hareket'],
     okunur: ['renk'],
     teknik: ['hareket', 'parlama', 'yuzey'],
@@ -182,7 +182,7 @@
         kahraman: t.size['fw-hero'].value,
       },
       sekil: { r: t.shape.r.value, rPencere: t.shape['r-window'].value },
-      kaydir: { kalinlik: t.metric['scrollbar-w'].value, renk: 'purple-text', davranis: 'auto', bicim: 'dolu' },
+      kaydir: { kalinlik: t.metric['scrollbar-w'].value, renk: 'renk-3-text', davranis: 'auto', bicim: 'dolu' },
       hareketAz: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
     };
   }
@@ -282,9 +282,9 @@
 
   function hale(st) {
     return (
-      'radial-gradient(circle at 15% 10%, ' + rgba(coz(st, 'blue'), 0.18) + ', transparent 45%), ' +
-      'radial-gradient(circle at 85% 30%, ' + rgba(coz(st, 'pink'), 0.14) + ', transparent 45%), ' +
-      'radial-gradient(circle at 50% 90%, ' + rgba(coz(st, 'purple'), 0.14) + ', transparent 50%)'
+      'radial-gradient(circle at 15% 10%, ' + rgba(coz(st, 'renk-1'), 0.18) + ', transparent 45%), ' +
+      'radial-gradient(circle at 85% 30%, ' + rgba(coz(st, 'renk-2'), 0.14) + ', transparent 45%), ' +
+      'radial-gradient(circle at 50% 90%, ' + rgba(coz(st, 'renk-3'), 0.14) + ', transparent 50%)'
     );
   }
 
@@ -292,7 +292,7 @@
     const don = st.arka.don && !st.hareketAz && st.arka.tur !== 'duz';
     const aci = don ? 'var(--tk-bg-angle)' : st.arka.aci + 'deg';
     const g = degrade(st, aci);
-    const cizgi = rgba(coz(st, 'blue'), 0.08);
+    const cizgi = rgba(coz(st, 'renk-1'), 0.08);
     switch (st.arka.tur) {
       case 'duz':
         return { deger: coz(st, 'surface'), don: false };
@@ -315,13 +315,13 @@
     const v = {};
     const R = (ad) => coz(st, ad);
     const A = aileler();
-    for (const ad of ['blue', 'pink', 'purple', 'pink-text', 'purple-text', 'surface', 'black', 'text', 'disabled', 'success', 'warning'])
+    for (const ad of ['renk-1', 'renk-2', 'renk-3', 'renk-2-text', 'renk-3-text', 'surface', 'black', 'text', 'disabled', 'success', 'warning'])
       v['--tk-' + ad] = R(ad);
     v['--tk-danger'] = R('danger');
     v['--tk-danger-text'] = R('danger-text');
     v['--tk-text-label'] = R('text-label');
     v['--tk-warning-border'] = rgba(R('warning'), T.role['warning-border'].alpha);
-    for (const b of ['blue', 'pink', 'purple'])
+    for (const b of ['renk-1', 'renk-2', 'renk-3'])
       for (const a of [10, 20, 30, 50, 60, 80]) v['--tk-' + b + '-' + a] = rgba(R(b), a / 100);
     for (const b of T.derived['text-scale'].bases)
       for (const a of T.derived['text-scale'].steps) v['--tk-' + b + '-' + a] = rgba(R(b), a / 100);
@@ -363,7 +363,7 @@
     v['--tk-titlebar-h'] = T.metric['titlebar-h-max'].value + 'px';
     v['--tk-scrollbar-w'] = st.kaydir.kalinlik + 'px';
     v['--tk-thumb'] = R(st.kaydir.renk);
-    v['--tk-thumb-hover'] = R(st.kaydir.renk === 'pink' ? 'blue' : 'pink');
+    v['--tk-thumb-hover'] = R(st.kaydir.renk === 'renk-2' ? 'renk-1' : 'renk-2');
     v['--tk-track'] = rgba(R('black'), 0.3);
     v['--tk-scroll-behavior'] = st.hareketAz ? 'auto' : st.kaydir.davranis;
     for (const [k] of SURELER) v['--tk-t-' + k] = st.sure[k] + 'ms';
@@ -479,10 +479,10 @@
     return (
       '<section class="bolum" id="' + on + '-tonlar"><h2>Tonlar</h2>' +
       '<p>Her kare yüzey (' + coz(st, 'surface') + ') üstünde ölçülür. Kesik kenarlı ve ✕ işaretli kareler 7:1 eşiğinin altındadır.</p>' +
-      bas('blue') + bas('pink') + bas('purple') +
+      bas('renk-1') + bas('renk-2') + bas('renk-3') +
       '<h3>Yazı Kesimleri · Text Scale</h3><div class="kareler">' + yaziTonlari(st) + '</div>' +
-      '<h3>Mavi · Açıklık Rampası (Aynı Ton Ve Doygunluk)</h3><div class="kareler">' + rampa(st, 'blue') + '</div>' +
-      '<h3>Pembe · Açıklık Rampası (Aynı Ton Ve Doygunluk)</h3><div class="kareler">' + rampa(st, 'pink') + '</div>' +
+      '<h3>Renk 1 · Açıklık Rampası (Aynı Ton Ve Doygunluk)</h3><div class="kareler">' + rampa(st, 'renk-1') + '</div>' +
+      '<h3>Renk 2 · Açıklık Rampası (Aynı Ton Ve Doygunluk)</h3><div class="kareler">' + rampa(st, 'renk-2') + '</div>' +
       '<h3>On Eşleri · Dolgu Ve Üstündeki Yazı</h3><div class="kareler">' + onlar(st) + '</div>' +
       '</section>'
     );
@@ -513,12 +513,12 @@
       );
     };
     const satir = (ad, a, b, secenek) => '<tr><th scope="row">' + ad + '</th><td>' + oranEtiket(a, secenek) + '</td><td>' + oranEtiket(b, secenek) + '</td></tr>';
-    const B = coz(st, 'blue');
-    const Pk = coz(st, 'pink');
+    const B = coz(st, 'renk-1');
+    const Pk = coz(st, 'renk-2');
     return (
-      '<section class="bolum" id="' + on + '-yanyana"><h2>Mavi Ve Pembe Yan Yana</h2>' +
-      '<div class="yanyana">' + taraf('blue', 'blue') + taraf('pink', 'pink-text') + '</div>' +
-      '<h3>Oran Tablosu</h3><div class="tablo-kap"><table><thead><tr><th scope="col">Ölçü</th><th scope="col">Mavi</th><th scope="col">Pembe</th></tr></thead><tbody>' +
+      '<section class="bolum" id="' + on + '-yanyana"><h2>Renk 1 Ve Renk 2 Yan Yana</h2>' +
+      '<div class="yanyana">' + taraf('renk-1', 'renk-1') + taraf('renk-2', 'renk-2-text') + '</div>' +
+      '<h3>Oran Tablosu</h3><div class="tablo-kap"><table><thead><tr><th scope="col">Ölçü</th><th scope="col">Renk 1</th><th scope="col">Renk 2</th></tr></thead><tbody>' +
       satir('Dolgu Yazı Olarak', yaziOlarak(st, B), yaziOlarak(st, Pk)) +
       satir('Siyah Dolgu Üstünde', oran(st, B, 1, coz(st, 'black')), oran(st, Pk, 1, coz(st, 'black'))) +
       satir('Metin %10 Üstünde', oran(st, B, 0.1, coz(st, 'text')), oran(st, Pk, 0.1, coz(st, 'text'))) +
@@ -532,9 +532,9 @@
   function dugmeBolumu(st, on) {
     const R = (a) => coz(st, a);
     const tur = [
-      ['birincil', 'Birincil', [R('blue'), 1, R('black')], [R('blue'), 0.8, R('black')]],
-      ['ikincil', 'İkincil', [R('pink'), 0.1, R('pink-text')], [R('pink'), 0.2, R('text')]],
-      ['hayalet', 'Hayalet', [R('purple'), 0.1, R('purple-text')], [R('purple'), 0.2, R('text')]],
+      ['birincil', 'Birincil', [R('renk-1'), 1, R('black')], [R('renk-1'), 0.8, R('black')]],
+      ['ikincil', 'İkincil', [R('renk-2'), 0.1, R('renk-2-text')], [R('renk-2'), 0.2, R('text')]],
+      ['hayalet', 'Hayalet', [R('renk-3'), 0.1, R('renk-3-text')], [R('renk-3'), 0.2, R('text')]],
       ['tehlike', 'Tehlike', [R('danger-text'), 1, onRenk(st, 'danger-text')], [R('danger-text'), 1, onRenk(st, 'danger-text')]],
     ];
     const durumlar = ['Canlı', 'Dinlenik', 'Üzerinde', 'Basılı', 'Odak', 'Edilgen'];
@@ -570,11 +570,11 @@
     return (
       '<section class="bolum" id="' + on + '-tipografi"><h2>Tipografi Ölçeği</h2>' + uyari +
       '<div class="tipo">' +
-      satir('fs-5 · Kahraman', px(5) + ' px · ' + st.yazi.kahraman, '<span class="t-hero">1 248,50</span>', oranEtiket(yaziOlarak(st, R('blue')))) +
-      satir('fs-4 · h2', px(4) + ' px · ' + st.yazi.yari, '<span class="t-h2">Bölüm Başlığı</span>', oranEtiket(yaziOlarak(st, R('blue')))) +
+      satir('fs-5 · Kahraman', px(5) + ' px · ' + st.yazi.kahraman, '<span class="t-hero">1 248,50</span>', oranEtiket(yaziOlarak(st, R('renk-1')))) +
+      satir('fs-4 · h2', px(4) + ' px · ' + st.yazi.yari, '<span class="t-h2">Bölüm Başlığı</span>', oranEtiket(yaziOlarak(st, R('renk-1')))) +
       satir('fs-3 · h3', px(3) + ' px · ' + st.yazi.yari, '<span class="t-h3">Alt Başlık</span>', oranEtiket(yaziOlarak(st, R('text-label')))) +
       satir('fs-2 · Gövde', px(2) + ' px · ' + st.yazi.govde, '<span class="t-govde">Arayüz metni okunaklı kalır; ikincil yazı için gri değil, silmek gerekir.</span>', oranEtiket(yaziOlarak(st, R('text')))) +
-      satir('fs-2 · Mono', px(2) + ' px · ' + st.yazi.yari, '<span class="t-mono">0x00F3FF · 12:45:09</span>', oranEtiket(yaziOlarak(st, R('pink-text')))) +
+      satir('fs-2 · Mono', px(2) + ' px · ' + st.yazi.yari, '<span class="t-mono">0x00F3FF · 12:45:09</span>', oranEtiket(yaziOlarak(st, R('renk-2-text')))) +
       satir('fs-1 · Etiket', px(1) + ' px · ' + st.yazi.yari, '<span class="t-etiket">ETİKET METNİ</span>', oranEtiket(yaziOlarak(st, R('text-label')))) +
       satir('fs-1 · İpucu', px(1) + ' px · ' + st.yazi.govde, '<span class="t-ipucu">Kısa yardım metni, gövdeden küçük.</span>', oranEtiket(yaziOlarak(st, R('text')))) +
       satir('fs-2 · Hata', px(2) + ' px', '<span class="t-hata">Dosya kaydedilemedi.</span>', oranEtiket(yaziOlarak(st, R('danger-text')))) +
@@ -591,7 +591,7 @@
       '<div class="yuzey-arka"><div class="' + sinif + '"><span class="y-ad">' + ad + '</span>' + oranEtiket(r) + '<p>' + metin + '</p></div></div>';
     return (
       '<section class="bolum" id="' + on + '-yuzeyler"><h2>Kart, Panel Ve Cam</h2><div class="yuzeyler">' +
-      u('Panel', 'y-panel', panelR, 'Yüzey %95, kenarlık mavi %50, gölge.') +
+      u('Panel', 'y-panel', panelR, 'Yüzey %95, kenarlık Renk 1 %50, gölge.') +
       u('Cam', 'y-cam', camR, 'Cam tabanı %85 ve bulanıklık; arkadaki hale görünür.') +
       u('Kart', 'y-kart', yaziOlarak(st, R('text')), 'Düz yüzey, dekoratif kenarlık.') +
       u('Uyarı Yüzeyi', 'y-uyari', yaziOlarak(st, R('warning')), 'Dolgu yok; kenarlık ve yazı uyarı rengi.') +
@@ -631,8 +631,8 @@
     ]);
     const oranlar =
       '<div class="satir oran-satir">' +
-      '<span class="kare-not">Birincil</span>' + oranEtiket(oran(st, R('blue'), 1, onRenk(st, 'blue'))) +
-      '<span class="kare-not">Hayalet Üzerinde</span>' + oranEtiket(oran(st, R('purple'), 0.1, R('text'))) +
+      '<span class="kare-not">Birincil</span>' + oranEtiket(oran(st, R('renk-1'), 1, onRenk(st, 'renk-1'))) +
+      '<span class="kare-not">Hayalet Üzerinde</span>' + oranEtiket(oran(st, R('renk-3'), 0.1, R('text'))) +
       '<span class="kare-not">Tehlike</span>' + oranEtiket(oran(st, R('danger-text'), 1, onRenk(st, 'danger-text'))) +
       '</div>';
     return (
@@ -674,11 +674,11 @@
           '<input class="ornek-giris" id="' + on + '-ep" value="adres@" aria-invalid="true" aria-describedby="' + on + '-ep-h">' +
           '<span class="hata-yazi" id="' + on + '-ep-h">Geçerli bir adres yazın.</span>' + oranEtiket(yaziOlarak(st, R('danger-text')))
       ) +
-      kutucuk('Seçili Liste Satırı', oranEtiket(oran(st, R('blue'), 0.2, R('text'))) + '<ul class="liste" role="listbox" aria-label="Klasörler">' + satirlar + '</ul>') +
+      kutucuk('Seçili Liste Satırı', oranEtiket(oran(st, R('renk-1'), 0.2, R('text'))) + '<ul class="liste" role="listbox" aria-label="Klasörler">' + satirlar + '</ul>') +
       '</div>';
     return (
       blok(on, 'form', 'Form Alanları', 'Normal, hatalı, salt okunur, edilgen. Etiket hep görünür; hata metni alanın altındadır ve alana bağlıdır.', form) +
-      blok(on, 'giris-durum', 'Giriş Kutusu · Durumlar', 'Normal sütunu canlıdır. Üzerinde ve basılıda kenar güçlenir, basılıda imleç pembeye döner, odakta iki katmanlı halka çizilir.', izgara) +
+      blok(on, 'giris-durum', 'Giriş Kutusu · Durumlar', 'Normal sütunu canlıdır. Üzerinde ve basılıda kenar güçlenir, basılıda imleç Renk 2 rengine döner, odakta iki katmanlı halka çizilir.', izgara) +
       blok(on, 'karsitlik', 'Karşıtlık Ölçümleri', 'Etiket, değer ve hata metni yüzey üstünde ölçülür.', karsit)
     );
   }
@@ -747,7 +747,7 @@
       '</div></div><div class="pencere-govde">Pencere gövdesi, panel yüzeyi.</div></div>';
     return (
       blok(on, 'sekmeli', 'Sekmeli Gezinme', 'Seçili sekme aria-current ile işaretlenir: yazı gövde rengine döner, altında gösterge çizgisi sabit durur. Üzerine gelin, basın, Tab ile gezin.', sekmeli) +
-      blok(on, 'anahatsiz', 'Anahatsız Düğmeler · Durumlar', 'Sekme, çip ve pencere düğmelerinde anahat yoktur. Üzerine gelince yazı pembe yazı kesimine döner, metnin altında ortadan açılan bir çizgi belirir. Normal sütunu canlıdır.', anahatsiz) +
+      blok(on, 'anahatsiz', 'Anahatsız Düğmeler · Durumlar', 'Sekme, çip ve pencere düğmelerinde anahat yoktur. Üzerine gelince yazı Renk 2 yazı kesimine döner, metnin altında ortadan açılan bir çizgi belirir. Normal sütunu canlıdır.', anahatsiz) +
       blok(on, 'cerceveli', 'Çerçeveli İstisna', 'Tek istisna çerçeveli çiptir: kenarı yazı rengindedir, çubukta dikey ortalı durur ve alt çizgi göstermez.', cerceveli) +
       blok(on, 'sade', 'Sade Başlık Çubuğu · Karşıtlık', 'Cam yüzey üstünde gövde yazısı ölçülür.', sade)
     );
@@ -775,11 +775,11 @@
       '</div>';
     const sade =
       '<div class="parca-yigin">' +
-      '<div class="satir"><span class="mono">%64</span>' + oranEtiket(yaziOlarak(st, R('blue'))) + '</div>' +
-      '<div class="ilerleme" role="progressbar" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Mavi ilerleme"><span style="width: 64%"></span></div>' +
-      '<span class="kare-not">Dolgu / İz · Eşik 3:1</span>' + oranEtiket(K.ratio(P(R('blue')), P(bilesik(st, R('blue'), 0.1))), { esik: 3 }) +
-      '<div class="ilerleme ilerleme-pembe" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100" aria-label="Pembe ilerleme"><span style="width: 38%"></span></div>' +
-      oranEtiket(K.ratio(P(R('pink')), P(bilesik(st, R('blue'), 0.1))), { esik: 3 }) +
+      '<div class="satir"><span class="mono">%64</span>' + oranEtiket(yaziOlarak(st, R('renk-1'))) + '</div>' +
+      '<div class="ilerleme" role="progressbar" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Renk 1 ilerleme"><span style="width: 64%"></span></div>' +
+      '<span class="kare-not">Dolgu / İz · Eşik 3:1</span>' + oranEtiket(K.ratio(P(R('renk-1')), P(bilesik(st, R('renk-1'), 0.1))), { esik: 3 }) +
+      '<div class="ilerleme ilerleme-renk-2" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100" aria-label="Renk 2 ilerleme"><span style="width: 38%"></span></div>' +
+      oranEtiket(K.ratio(P(R('renk-2')), P(bilesik(st, R('renk-1'), 0.1))), { esik: 3 }) +
       '</div>';
     return (
       blok(on, 'canli', 'Canlı İlerleme', 'Hedef her yavaş süre jetonunda (' + st.sure.slow + ' ms) farklı büyüklükte sıçrar; gösterilen değer ona 0,1 adımlarla akar. Fark büyüdükçe hızlanır, hedefe yaklaştıkça yavaşlar (zaman sabiti ' + st.sure.slow / 2 + ' ms). Dolgu clip-path ile kesilir; / / / taralar kayar, tarama ışığı yalnız dolu kısımda geçer. Bitince düz başarı rengine döner.', canli) +
@@ -833,15 +833,15 @@
       '<div class="bilesenler">' +
       kutucuk(
         'Sayı Rozeti',
-        '<div class="satir"><span class="rozet rozet-mavi">7</span>' + oranEtiket(oran(st, R('blue'), 1, onRenk(st, 'blue'))) + '</div>' +
+        '<div class="satir"><span class="rozet rozet-renk-1">7</span>' + oranEtiket(oran(st, R('renk-1'), 1, onRenk(st, 'renk-1'))) + '</div>' +
           '<div class="satir"><span class="rozet rozet-basari">12</span>' + oranEtiket(oran(st, R('success'), 1, onRenk(st, 'success'))) + '</div>' +
           '<div class="satir"><span class="rozet rozet-tehlike">3</span>' + oranEtiket(oran(st, R('danger-text'), 1, onRenk(st, 'danger-text'))) + '</div>'
       ) +
       kutucuk(
         'Çip',
-        '<div class="satir"><span class="cip cip-mavi">Mavi Çip</span>' + oranEtiket(oran(st, R('blue'), 0.1, R('text'))) + '</div>' +
-          '<div class="satir"><span class="cip cip-pembe">Pembe Çip</span>' + oranEtiket(oran(st, R('pink'), 0.1, R('text'))) + '</div>' +
-          '<div class="satir"><span class="cip cip-mor">Mor Çip</span>' + oranEtiket(oran(st, R('purple'), 0.1, R('text'))) + '</div>'
+        '<div class="satir"><span class="cip cip-renk-1">Renk 1 Çip</span>' + oranEtiket(oran(st, R('renk-1'), 0.1, R('text'))) + '</div>' +
+          '<div class="satir"><span class="cip cip-renk-2">Renk 2 Çip</span>' + oranEtiket(oran(st, R('renk-2'), 0.1, R('text'))) + '</div>' +
+          '<div class="satir"><span class="cip cip-renk-3">Renk 3 Çip</span>' + oranEtiket(oran(st, R('renk-3'), 0.1, R('text'))) + '</div>'
       ) +
       kutucuk(
         'Durum Noktası',
@@ -913,7 +913,7 @@
       'Kurulum tamamlandı',
     ];
     const simge =
-      '<svg class="tk-installer__icon" viewBox="0 0 48 48" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--tk-blue)">' +
+      '<svg class="tk-installer__icon" viewBox="0 0 48 48" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--tk-renk-1)">' +
       '<rect x="5" y="5" width="38" height="38" rx="10"/><path d="M16 25l6 6 11-13"/></svg>';
     const kur = (durum, yuzde, adim, alt, satirlar, dugmeler) =>
       '<div class="tk-installer" data-status="' + durum + '" data-hedef="' + yuzde + '">' +
@@ -1014,7 +1014,7 @@
   }
 
   const KOMBI_HEDEF = [70, 75, 80, 85, 90, 95, 100];
-  const AILE = { blue: [190, 250], pink: [300, 350], purple: [255, 295], success: [120, 160], warning: [30, 52] };
+  const AILE = { 'renk-1': [190, 250], 'renk-2': [300, 350], 'renk-3': [255, 295], success: [120, 160], warning: [30, 52] };
   let kombiHedef = null;
   let kombiAd = null;
   let kombiler = [];
@@ -1043,7 +1043,7 @@
   function tekBul(hedef, ad) {
     const rs = (a, b) => a + Math.random() * (b - a);
     const taban = hsl(su.renk[ad]);
-    const aile = AILE[ad.replace('-text', '')];
+    const aile = taban.s >= 10 ? AILE[ad.replace('-text', '')] : null;
     const koyu = su.koyu !== false;
     let en = null;
     for (let deneme = 0; deneme < 12; deneme++) {
@@ -1088,8 +1088,8 @@
       disabled: hslHex(z.h, t.yazi.s, L(42, 74)),
     };
     for (const ad of Object.keys(AILE)) r[ad] = hslHex(t[ad].h, t[ad].s, L(52, 90));
-    r['pink-text'] = hslHex(t.pink.h, t.pink.s, L(66, 94));
-    r['purple-text'] = hslHex(t.purple.h, t.purple.s, L(66, 94));
+    r['renk-2-text'] = hslHex(t['renk-2'].h, t['renk-2'].s, L(66, 94));
+    r['renk-3-text'] = hslHex(t['renk-3'].h, t['renk-3'].s, L(66, 94));
     return r;
   }
 
@@ -1121,7 +1121,7 @@
     return en;
   }
 
-  const EGRILER = [[95, '--tk-success'], [90, '--tk-blue'], [85, '--tk-warning']];
+  const EGRILER = [[95, '--tk-success'], [90, '--tk-renk-1'], [85, '--tk-warning']];
   const ALAN_H = 10;
   const ALAN_L = 2.5;
   const alanBellek = {};
@@ -1183,9 +1183,9 @@
         ctx.fillStyle = 'hsl(' + (px / g) * 360 + ', ' + s + '%, ' + (1 - py / y) * 100 + '%)';
         ctx.fillRect(px, py, 4, 4);
       }
-    const esikler = EGRILER.concat(EGRILER.some(([e]) => e === kombiHedef) ? [] : [[kombiHedef, '--tk-pink-text']]);
+    const esikler = EGRILER.concat(EGRILER.some(([e]) => e === kombiHedef) ? [] : [[kombiHedef, '--tk-renk-2-text']]);
     for (const [esik, renk] of esikler) {
-      ctx.setLineDash(renk === '--tk-pink-text' ? [6, 4] : []);
+      ctx.setLineDash(renk === '--tk-renk-2-text' ? [6, 4] : []);
       ctx.strokeStyle = v('--tk-black');
       ctx.lineWidth = 4;
       egriCiz(ctx, izgara, esik, g, y);
@@ -1242,10 +1242,10 @@
       return (
         '<button type="button" class="kombi-kart" data-kombi="' + i + '" aria-label="Palet ' + (i + 1) + ', okunurluk ' + Math.round(k.puan) + '">' +
         '<span class="kombi-sahne" style="background:' + r.surface + ';color:' + r.text + '">' +
-        '<span class="kombi-baslik" style="color:' + r.blue + '">Aa</span>' +
-        '<span>Gövde <span style="color:' + r['pink-text'] + '">vurgu</span> <span style="color:' + r.disabled + '">pasif</span></span>' +
-        '<span class="kombi-dugme" style="background:' + r.blue + ';color:' + onRenkHex(r, 'blue') + '">Uygula</span>' +
-        '<span class="kombi-noktalar">' + ['blue', 'pink', 'purple', 'success', 'warning'].map(nokta).join('') + '</span></span>' +
+        '<span class="kombi-baslik" style="color:' + r['renk-1'] + '">Aa</span>' +
+        '<span>Gövde <span style="color:' + r['renk-2-text'] + '">vurgu</span> <span style="color:' + r.disabled + '">pasif</span></span>' +
+        '<span class="kombi-dugme" style="background:' + r['renk-1'] + ';color:' + onRenkHex(r, 'renk-1') + '">Uygula</span>' +
+        '<span class="kombi-noktalar">' + ['renk-1', 'renk-2', 'renk-3', 'success', 'warning'].map(nokta).join('') + '</span></span>' +
         '<span class="kombi-puan puan" data-not="' + NOT_KOD[window.Skor.not(k.puan)] + '">' + Math.round(k.puan) + '</span></button>'
       );
     };
@@ -1253,7 +1253,7 @@
       const hex = k.renk[kombiAd];
       const r = Object.assign({}, su.renk, k.renk);
       const sahne = ZEMINLER.includes(kombiAd)
-        ? '<span class="kombi-sahne" style="background:' + hex + ';color:' + r.text + '"><span class="kombi-baslik">Aa</span><span>Gövde <span style="color:' + r['pink-text'] + '">vurgu</span></span>'
+        ? '<span class="kombi-sahne" style="background:' + hex + ';color:' + r.text + '"><span class="kombi-baslik">Aa</span><span>Gövde <span style="color:' + r['renk-2-text'] + '">vurgu</span></span>'
         : '<span class="kombi-sahne" style="background:' + r.surface + ';color:' + r.text + '"><span class="kombi-baslik" style="color:' + hex + '">Aa</span>' +
           (AILE[kombiAd] ? '<span class="kombi-dugme" style="background:' + hex + ';color:' + onRenkHex(r, kombiAd) + '">Uygula</span>' : '<span style="color:' + hex + '">Örnek metin</span>');
       return (
@@ -1816,7 +1816,7 @@
       grup(
         'pencere',
         'Pencere Ve Üst Çubuk',
-        secim('pencere-kenar', 'Pencere Kenarı (Büyütülmemişken)', [['border-strong', 'Güçlü Kenar'], ['blue', 'Mavi'], ['pink', 'Pembe'], ['purple', 'Mor'], ['yok', 'Yok']]) +
+        secim('pencere-kenar', 'Pencere Kenarı (Büyütülmemişken)', [['border-strong', 'Güçlü Kenar'], ['renk-1', 'Renk 1'], ['renk-2', 'Renk 2'], ['renk-3', 'Renk 3'], ['yok', 'Yok']]) +
           aralik('pencere-cubuk', 'Üst Çubuk Yüksekliği (px)', 20, 48, 1)
       ) +
       grup('dugme', 'Düğme Boyutu', aralik('dugme-h', 'Düğme Yüksekliği (px)', 24, 64, 1) + aralik('dugme-px', 'Yatay Dolgu (px)', 8, 40, 1)) +
@@ -2058,13 +2058,13 @@
   }
 
   const TIK_AYAR = [
-    ['.tk-btn-primary', ['dugme', 'renk-blue', 'parlama']],
-    ['.tk-btn-danger', ['dugme', 'renk-pink', 'parlama']],
-    ['.tk-btn-ghost', ['dugme', 'renk-purple']],
+    ['.tk-btn-primary', ['dugme', 'renk-renk-1', 'parlama']],
+    ['.tk-btn-danger', ['dugme', 'renk-renk-2', 'parlama']],
+    ['.tk-btn-ghost', ['dugme', 'renk-renk-3']],
     ['.tk-btn, .btn', ['dugme']],
-    ['.tk-titlebar__control, .tk-titlebar__chip, .tk-titlebar__tab', ['pencere', 'renk-blue', 'renk-pink-text']],
+    ['.tk-titlebar__control, .tk-titlebar__chip, .tk-titlebar__tab', ['pencere', 'renk-renk-1', 'renk-renk-2-text']],
     ['.tk-titlebar, .baslik-cubugu', ['pencere', 'renk-glass-base']],
-    ['.tk-progress, .tk-installer', ['renk-blue', 'renk-purple', 'renk-success', 'hareket']],
+    ['.tk-progress, .tk-installer', ['renk-renk-1', 'renk-renk-3', 'renk-success', 'hareket']],
     ['.kaydir-ornek, .uzun-liste', ['kaydir']],
     ['.tk-input, input, select, textarea', ['yogunluk', 'renk-surface', 'sekil']],
     ['.tk-toast, .tk-modal', ['yuzey', 'hareket']],
@@ -2673,6 +2673,16 @@
       durum('Benim Token Dosyam yüklendi.');
       return;
     }
+    if (!ad) {
+      const az = su.hareketAz;
+      su = kopya(ilk);
+      su.hareketAz = az;
+      for (const k of Object.keys(hslBellek)) delete hslBellek[k];
+      formDoldur();
+      planla();
+      durum('Token dosyasının standart ayarlarına dönüldü.');
+      return;
+    }
     const t = temalar.find((x) => x.ad === ad);
     su.renk = kopya(ilk.renk);
     su.koyu = ilk.koyu;
@@ -2766,6 +2776,7 @@
     }
     ozelBilgi = { var: true, tur: j.tur, ayar: veri };
     benimKur();
+    planla();
     ozelSecenek();
     for (const s of $$('#tema-sec, [data-sihirbaz-tema]')) s.value = 'ozel';
     if (j.tur !== 'raf' || !j.gonderim) {
@@ -2792,11 +2803,11 @@
     { ad: 'Metin', sayfa: 'formlar', grup: ['renk-text'], yol: ['renk.text'], metin: 'Gövde yazısının rengi. Yüzey üstünde 7:1 eşiğini geçmeli; kaydırıcıların yanındaki oran bunu gösterir. Etiket ve ipucu tonları bundan türer.' },
     { ad: 'Arka Plan', sayfa: 'arka', grup: ['arka', 'renk-black'], yol: ['arka', 'renk.black'], metin: 'Pencerenin arkası: tasarım, degrade durakları, açı ve salınım. Üst uç Siyah, alt uç Yüzey rengidir; ikisi de bu grupta. Durak sayısı arttıkça geçiş yumuşar.' },
     { ad: 'Cam Tabanı', sayfa: 'ustcubuk', grup: ['renk-glass-base'], yol: ['renk.glass-base'], metin: 'Üst çubuk ve cam yüzeylerin altındaki renk. Bulanıklıkla birlikte çalışır; arka planla fazla benzerse cam kaybolur, fazla farklıysa ağırlaşır.' },
-    { ad: 'Ana Renk: Mavi', sayfa: 'dugmeler', grup: ['renk-blue'], yol: ['renk.blue'], metin: 'Birincil düğme, bağlantı, odak ve ilerleme bu renktir. Hedef Okunurluk düğmesi seçtiğin puana uyan beş öneri verir; eğri haritasında bir noktaya tıklamak o rengi uygular.' },
-    { ad: 'Pembe', sayfa: 'dugmeler', grup: ['renk-pink'], yol: ['renk.pink'], metin: 'İkincil vurgu ve dolgu. Pembe düğmenin yazısı dolgunun eşiğinden gelir; dolgu çok açılırsa yazı koyuya döner.' },
-    { ad: 'Pembe Yazı', sayfa: 'dugmeler', grup: ['renk-pink-text'], yol: ['renk.pink-text'], metin: 'Pembenin yüzey üstünde yazı olarak okunan sürümü: üzerine gelinen sekme ve çiplerin yazısı. Dolgu pembeden bağımsız ayarlanır, 7:1 eşiğini geçmeli.' },
-    { ad: 'Mor', sayfa: 'ilerleme', grup: ['renk-purple'], yol: ['renk.purple'], metin: 'Üçüncü vurgu: ilerleme çubuğunun ikinci durağı ve bazı rozetler. Mavi ile pembe arasında ayrı durmalı.' },
-    { ad: 'Mor Yazı', sayfa: 'kaydirma', grup: ['renk-purple-text'], yol: ['renk.purple-text'], metin: 'Morun yazı sürümü; kaydırma çubuğu da önerilen olarak bu rengi kullanır. Yüzey üstünde 7:1 eşiğini geçmeli.' },
+    { ad: 'Renk 1 (Ana Renk)', sayfa: 'dugmeler', grup: ['renk-renk-1'], yol: ['renk.renk-1'], metin: 'Birincil düğme, bağlantı, odak ve ilerleme bu renktir. Hedef Okunurluk düğmesi seçtiğin puana uyan beş öneri verir; eğri haritasında bir noktaya tıklamak o rengi uygular.' },
+    { ad: 'Renk 2', sayfa: 'dugmeler', grup: ['renk-renk-2'], yol: ['renk.renk-2'], metin: 'İkincil vurgu ve dolgu. Renk 2 düğmesinin yazısı dolgunun eşiğinden gelir; dolgu çok açılırsa yazı koyuya döner.' },
+    { ad: 'Renk 2 Yazı', sayfa: 'dugmeler', grup: ['renk-renk-2-text'], yol: ['renk.renk-2-text'], metin: 'Renk 2 dolgusunun yüzey üstünde yazı olarak okunan sürümü: üzerine gelinen sekme ve çiplerin yazısı. Dolgu bundan bağımsız ayarlanır, 7:1 eşiğini geçmeli.' },
+    { ad: 'Renk 3', sayfa: 'ilerleme', grup: ['renk-renk-3'], yol: ['renk.renk-3'], metin: 'Üçüncü vurgu: ilerleme çubuğunun ikinci durağı ve bazı rozetler. Renk 1 ile Renk 2 arasında ayrı durmalı.' },
+    { ad: 'Renk 3 Yazı', sayfa: 'kaydirma', grup: ['renk-renk-3-text'], yol: ['renk.renk-3-text'], metin: 'Renk 3 dolgusunun yazı sürümü; kaydırma çubuğu da önerilen olarak bu rengi kullanır. Yüzey üstünde 7:1 eşiğini geçmeli.' },
     { ad: 'Başarı', sayfa: 'bildirimler', grup: ['renk-success'], yol: ['renk.success'], metin: 'Tamamlandı, eşitlendi, kaydedildi. Bildirim, rozet ve kurulumun son adımı bu renktir.' },
     { ad: 'Uyarı', sayfa: 'rozetler', grup: ['renk-warning'], yol: ['renk.warning'], metin: 'Dikkat gerektiren durum. Uyarı yalnız yazı, kenar ve ikonda kullanılır, dolgu olmaz; bu yüzden yüzey üstünde yazı olarak okunmalı.' },
     { ad: 'Pasif', sayfa: 'dugmeler', grup: ['renk-disabled'], yol: ['renk.disabled'], metin: 'Kullanılamayan düğme ve alan. Soluk görünmeli ama yine okunmalı; neden pasif olduğu title ile söylenir.' },
@@ -2833,7 +2844,7 @@
   function nasil(a) {
     if (NASIL[a.ad]) return NASIL[a.ad];
     const renk = a.grup.find((g) => g.startsWith('renk-'));
-    if (renk) return 'Sağ panelin en üstünde, pembe çerçeveli ' + adi(renk.slice(5)) + ' grubunda: renk kutusuna tıklayıp seç ya da hex yaz; Ton, Doygunluk, Açıklık kaydırıcılarıyla ince ayar yap. Hedef Okunurluk düğmesi beş öneri verir.';
+    if (renk) return 'Sağ panelin en üstünde, Renk 2 çerçeveli ' + adi(renk.slice(5)) + ' grubunda: renk kutusuna tıklayıp seç ya da hex yaz; Ton, Doygunluk, Açıklık kaydırıcılarıyla ince ayar yap. Hedef Okunurluk düğmesi beş öneri verir.';
     return '';
   }
   let sihirbazAdim = -1;
@@ -3026,7 +3037,9 @@
     const baglanti = new URLSearchParams(location.hash.slice(1));
     let bolum = null;
     const varMi = (id) => SAYFALAR.some((x) => x[0] === id);
-    for (const [k, v] of baglanti) {
+    const ESKI_RENK = { blue: 'renk-1', pink: 'renk-2', purple: 'renk-3', 'pink-text': 'renk-2-text', 'purple-text': 'renk-3-text' };
+    for (const [e, v] of baglanti) {
+      const k = ESKI_RENK[e] || e;
       if (DUZENLENEN.includes(k) && /^[0-9a-fA-F]{6}$/.test(v)) su.renk[k] = '#' + v.toLocaleLowerCase('tr');
       else if (k === 'kip' && (v === 'tek' || v === 'karsi')) kip = v;
       else if (k === 'sayfa' && varMi(ESKI[v] || v)) sayfa = ESKI[v] || v;

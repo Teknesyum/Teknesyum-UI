@@ -15,5 +15,5 @@
   transition: background-color var(--tk-t-instant) var(--tk-e-out);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background-color: var(--tk-blue);
+  background-color: var(--tk-renk-1);
 }

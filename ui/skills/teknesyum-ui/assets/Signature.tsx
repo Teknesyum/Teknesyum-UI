@@ -12,9 +12,9 @@ const BASE =
   'px-2.5 py-1 ease-[--tk-e-out] duration-[--tk-t-instant] hover:scale-[1.02] ' +
   'transition-[transform]';
 
-const SUPPORT = `${BASE} gap-1.5 text-[var(--tk-pink-text)] border-[var(--tk-pink-text)]`;
+const SUPPORT = `${BASE} gap-1.5 text-[var(--tk-renk-2-text)] border-[var(--tk-renk-2-text)]`;
 
-const BRAND = `${BASE} text-[var(--tk-blue)] border-[var(--tk-blue)]`;
+const BRAND = `${BASE} text-[var(--tk-renk-1)] border-[var(--tk-renk-1)]`;
 
 function CoffeeIcon() {
   return (

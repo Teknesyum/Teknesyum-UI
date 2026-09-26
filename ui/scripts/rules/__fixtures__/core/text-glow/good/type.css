@@ -4,6 +4,6 @@
 }
 .tk-hero {
   font-size: var(--tk-fs-5);
-  color: var(--tk-blue);
+  color: var(--tk-renk-1);
   filter: drop-shadow(var(--tk-glow-hero));
 }

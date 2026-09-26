@@ -7,15 +7,17 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const KAYDET = require('./kaydet');
 const SKOR = require('./skor');
+const { yeniAdlar } = require('./ozel');
 
 const DIZIN = path.resolve(__dirname, '..', 'templates', 'temalar');
-const ALANLAR = ['blue', 'pink', 'purple', 'pink-text', 'purple-text', 'surface', 'black', 'glass-base', 'text', 'disabled', 'success', 'warning'];
+const ALANLAR = ['renk-1', 'renk-2', 'renk-3', 'renk-2-text', 'renk-3-text', 'surface', 'black', 'glass-base', 'text', 'disabled', 'success', 'warning'];
 const HEX = /^#[0-9a-f]{6}$/;
 
 function oku(dosya) {
   const t = JSON.parse(fs.readFileSync(dosya, 'utf8'));
   if (!/^[a-z-]+$/.test(t.ad || '')) throw new Error(dosya + ': ad küçük harf ve tire olmalı.');
   if (t.tur !== 'acik' && t.tur !== 'koyu') throw new Error(t.ad + ': tur "acik" ya da "koyu" olmalı.');
+  t.renk = yeniAdlar(t.renk || {});
   for (const k of ALANLAR) {
     const v = String((t.renk || {})[k] || '').toLocaleLowerCase('en');
     if (!HEX.test(v)) throw new Error(t.ad + ': renk.' + k + ' #rrggbb olmalı.');
@@ -44,11 +46,17 @@ function ozelDizin() {
 }
 
 function ozelListe() {
-  try {
-    return dizinOku(ozelDizin());
-  } catch {
-    return [];
+  const dizin = ozelDizin();
+  if (!dizin || !fs.existsSync(dizin)) return [];
+  const out = [];
+  for (const f of fs.readdirSync(dizin).filter((f) => f.endsWith('.json')).sort()) {
+    try {
+      out.push(oku(path.join(dizin, f)));
+    } catch (e) {
+      process.stderr.write('Özel tema atlandı: ' + f + ' — ' + e.message + '\n');
+    }
   }
+  return out;
 }
 
 function degisim(T, renk, tur) {

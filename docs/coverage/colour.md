@@ -13,8 +13,8 @@ Token definition files are exempt by basename: `theme.css`, `theme.tokens.json`,
 | No raw hex / rgb in components | `raw-colour` | error | all | — |
 | No arbitrary Tailwind palette | `tailwind-palette` | error | web | — |
 | No mid greys | `mid-grey` | error | all | palette |
-| Mono value colour is `pink-text` | `mono-value-colour` | error | all | `pink`, `pink-text` |
-| Ghost button text is `purple-text` | `ghost-button-text` | error | all | `purple`, `purple-text` |
+| Mono value colour is `renk-2-text` | `mono-value-colour` | error | all | `renk-2`, `renk-2-text` |
+| Ghost button text is `renk-3-text` | `ghost-button-text` | error | all | `renk-3`, `renk-3-text` |
 | Filled button text is black | `filled-button-text` | error | all | `black` |
 | Default border `/50`, `/30` decorative only | `border-alpha` | warn | css/vue/svelte | `border`, `border-decorative` alpha |
 | `warning` never a fill | `warning-fill` | error | all | `warning` |

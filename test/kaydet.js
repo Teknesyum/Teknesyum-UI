@@ -10,7 +10,7 @@ module.exports = function kaydet() {
   const metin = fs.readFileSync(K.TOKENS, 'utf8');
   const T = JSON.parse(metin);
 
-  L.ok('dogrula accepts a colour, a weight and a stop count', K.dogrula({ brand: { blue: { value: '#4499FF' } }, size: { 'fw-semi': { value: 500 } }, derived: { 'bg-gradient': { stops: 12 } } }, T).length === 4);
+  L.ok('dogrula accepts a colour, a weight and a stop count', K.dogrula({ brand: { 'renk-1': { value: '#4499FF' } }, size: { 'fw-semi': { value: 500 } }, derived: { 'bg-gradient': { stops: 12 } } }, T).length === 4);
   const hata = (d) => {
     try {
       K.dogrula(d, T);
@@ -19,21 +19,21 @@ module.exports = function kaydet() {
       return e.message;
     }
   };
-  L.ok('dogrula rejects a bad hex', /#rrggbb/.test(hata({ brand: { blue: { value: 'mavi' } } })));
+  L.ok('dogrula rejects a bad hex', /#rrggbb/.test(hata({ brand: { 'renk-1': { value: 'renk' } } })));
   L.ok('dogrula rejects an out-of-range size', /tamsayı/.test(hata({ shape: { r: { value: 99 } } })));
   L.ok('dogrula rejects an unknown field', /kaydedilemez/.test(hata({ brand: { gizli: { value: '#000000' } } })));
   L.ok('dogrula rejects a font name with markup', /yazı ailesi/.test(hata({ font: { sans: { chain: ['<b>'] } } })));
   L.ok('dogrula ignores the notes key', K.dogrula({ _: ['not'] }, T).length === 0);
 
-  const eskiMavi = T.brand.blue.value.toLocaleLowerCase('en');
-  const r = K.tokenMetni(metin, { brand: { blue: { value: '#4499ff' } }, shape: { r: { value: T.shape.r.value + 1 } } });
+  const eskiRenk1 = T.brand['renk-1'].value.toLocaleLowerCase('en');
+  const r = K.tokenMetni(metin, { brand: { 'renk-1': { value: '#4499ff' } }, shape: { r: { value: T.shape.r.value + 1 } } });
   const Y = JSON.parse(r.metin);
-  L.ok('tokenMetni writes the new values', Y.brand.blue.value === '#4499ff' && Y.shape.r.value === T.shape.r.value + 1);
+  L.ok('tokenMetni writes the new values', Y.brand['renk-1'].value === '#4499ff' && Y.shape.r.value === T.shape.r.value + 1);
   L.ok('tokenMetni keeps the line count', r.metin.split('\n').length === metin.split('\n').length);
-  L.ok('tokenMetni reports the old and new colour', r.eski.blue === eskiMavi && r.yeni.blue === '#4499ff' && r.ozet.length === 3 && /readability score/.test(r.ozet[2]));
-  L.ok('tokenMetni is a no-op for unchanged values', K.tokenMetni(metin, { brand: { blue: { value: eskiMavi } } }).ozet.length === 0);
+  L.ok('tokenMetni reports the old and new colour', r.eski['renk-1'] === eskiRenk1 && r.yeni['renk-1'] === '#4499ff' && r.ozet.length === 3 && /readability score/.test(r.ozet[2]));
+  L.ok('tokenMetni is a no-op for unchanged values', K.tokenMetni(metin, { brand: { 'renk-1': { value: eskiRenk1 } } }).ozet.length === 0);
 
-  const p = K.paletDegistir('a ' + eskiMavi + ' #FF' + eskiMavi.slice(1).toLocaleUpperCase('en') + ' rgba(' + [1, 3, 5].map((i) => parseInt(eskiMavi.slice(i, i + 2), 16)).join(', ') + ', 0.5)', r.eski, r.yeni, '.xaml');
+  const p = K.paletDegistir('a ' + eskiRenk1 + ' #FF' + eskiRenk1.slice(1).toLocaleUpperCase('en') + ' rgba(' + [1, 3, 5].map((i) => parseInt(eskiRenk1.slice(i, i + 2), 16)).join(', ') + ', 0.5)', r.eski, r.yeni, '.xaml');
   L.ok('paletDegistir swaps hex, ARGB and rgba', p === 'a #4499ff #FF4499FF rgba(68, 153, 255, 0.5)');
 
   L.ok('surumArtir bumps the minor', K.surumArtir('0.7.3') === '0.8.0');
@@ -49,7 +49,7 @@ module.exports = function kaydet() {
   L.ok('/kaydet refuses a request without the header', S.istek('POST', '/kaydet', '{}', { 'content-type': 'application/json' }).status === 403);
   L.ok('/kaydet refuses a foreign origin', S.istek('POST', '/kaydet', '{}', { ...gecerli, origin: 'https://ornek.com' }).status === 403);
   L.ok('/kaydet refuses a bad body', S.istek('POST', '/kaydet', 'x', gecerli).status === 400);
-  L.ok('/kaydet refuses an invalid field', S.istek('POST', '/kaydet', '{"brand":{"blue":{"value":"x"}}}', gecerli).status === 400);
+  L.ok('/kaydet refuses an invalid field', S.istek('POST', '/kaydet', '{"brand":{"renk-1":{"value":"x"}}}', gecerli).status === 400);
   const hareket = K.tokenMetni(metin, { meta: { dark: false }, easing: { sharp: { bezier: [0.3, 0, 0.7, 1] } }, duration: { fast: { ms: 140 } }, derived: { glow: { alpha: 0.1, blur: 8 } } });
   const H = JSON.parse(hareket.metin);
   L.ok('tokenMetni writes easing, duration, glow and meta.dark', H.easing.sharp.bezier.join() === '0.3,0,0.7,1' && H.duration.fast.ms === 140 && H.derived.glow.alpha === 0.1 && H.derived.glow.blur === 8 && H.meta.dark === false);

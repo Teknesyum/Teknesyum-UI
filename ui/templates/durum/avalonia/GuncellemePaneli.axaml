@@ -30,13 +30,13 @@
 
       <Grid Name="Ilerleme" Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="{StaticResource Space3}">
         <Border Name="Iz" Grid.Column="0" Height="{StaticResource Space2}" CornerRadius="{StaticResource Radius}"
-                Background="{StaticResource NeonBlue10}" VerticalAlignment="Center" ClipToBounds="True">
+                Background="{StaticResource Renk1x10}" VerticalAlignment="Center" ClipToBounds="True">
           <Border Name="Dolgu" HorizontalAlignment="Stretch" CornerRadius="{StaticResource Radius}"
                   RenderTransformOrigin="0%,50%">
             <Border.Background>
               <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
-                <GradientStop Offset="0" Color="{StaticResource NeonBlueColor}"/>
-                <GradientStop Offset="1" Color="{StaticResource NeonPinkColor}"/>
+                <GradientStop Offset="0" Color="{StaticResource Renk1Color}"/>
+                <GradientStop Offset="1" Color="{StaticResource Renk2Color}"/>
               </LinearGradientBrush>
             </Border.Background>
           </Border>

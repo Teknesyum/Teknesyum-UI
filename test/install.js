@@ -77,7 +77,7 @@ function applyCustom() {
   L.ok('--apply with a custom palette exits 0', r.status === 0, r.stderr || r.stdout);
 
   const tokens = L.readJson(path.join(root, 'teknesyum-ui', 'theme.tokens.json'));
-  L.ok('the custom palette reaches the tokens', !!tokens && tokens.brand.blue.value === '#3355ff', tokens && tokens.brand.blue.value);
+  L.ok('the custom palette reaches the tokens', !!tokens && tokens.brand['renk-1'].value === '#3355ff', tokens && tokens.brand['renk-1'].value);
 
   const cfg = L.readJson(path.join(root, '.claude', 'teknesyum-ui.json')) || {};
   L.ok(

@@ -92,7 +92,8 @@ TransformAnimator>()` satırını `Initialize()`'ın ilk satırı olarak ekler; 
 kez eklemez. `App.axaml.cs` ya da `Initialize()` beklenen yerde değilse işi durdurmadan bir
 uyarı basar — `scan.js`'in `core/avalonia-animator-missing` kuralı bu eksikliği yakalar.
 
-Neon hazır yanıttır, tek yanıt değil — `--template custom` üç marka rengi ve bir yüzey alır,
+Standart bilerek sadedir — siyah, beyaz ve gri, parlama yok — uygulama tarafsız bir tabandan
+başlar ve kendi renklerini getirir. Neon hazır yanıttır, tek yanıt değil — `--template custom` üç marka rengi ve bir yüzey alır,
 gerisini aynı formüllerle türetir.
 
 ## İşinizi denetleyin
@@ -190,18 +191,18 @@ Okunurluk ve Teknik. Ortadaki sütun seçilen bileşeni bütün örnekleri ve du
 Ayarlar arasında parlama (yok, ince, token, neon, özel), arayüz eğrisi, süre çarpanı, yoğunluk,
 kenar kalınlığı, cam bulanıklığı, gölge gücü ve kaydırma çubuğu biçimi var. Akıcılık eğrileri
 yan yana oynatır, Teknik ise FPS'i ve kare süresini ölçer. `ui/templates/temalar/` beşi açık,
-beşi koyu on tema tutar (`node ui/scripts/tema.js liste`, `denetle [ad]`). Her tema 7:1'i geçer
+dördü koyu dokuz tema tutar (`node ui/scripts/tema.js liste`, `denetle [ad]`). Her tema 7:1'i geçer
 ve en az 85 puan alır.
 
 Token'a dokunmadan önce yeni
 marka renklerini denemek için bir sayfa.
 `ui/templates/neon.tokens.json` değerleriyle açılır ve tarayıcıya olduğu gibi sunulan,
-`scan.js`'in kullandığı `kontrast.js` ile ölçer. Sol panel mavi, pembe, yazı kesimleri,
-mor, yüzey ve arka planı (düz, token degradesi, cam, ızgara, hale; durak ve açı), yazı
+`scan.js`'in kullandığı `kontrast.js` ile ölçer. Sol panel Renk 1, Renk 2, yazı kesimleri,
+Renk 3, yüzey ve arka planı (düz, token degradesi, cam, ızgara, hale; durak ve açı), yazı
 ailesini, boyut ölçeğini, ağırlıkları, yarıçapı, kaydırma çubuğu kalınlığı ve rengini,
 kaydırma davranışını ve hareket azaltmayı ayarlar. Sağ taraf her tone-scale kademesini,
 text-scale kesimini ve `on` eşini hex'i ve yüzey üstündeki oranıyla gösterir (7:1 altı
-işaretlenir); mavi ve pembeyi yan yana, beş durumuyla düğmeleri, rozet, çip, giriş kutusu,
+işaretlenir); Renk 1 ve Renk 2'yi yan yana, beş durumuyla düğmeleri, rozet, çip, giriş kutusu,
 seçili satır, başlık çubuğu, ilerleme, uzun kayan liste, tipografi ölçeği ve panel, kart,
 camı gösterir. "Uygulama Parçaları" sekmesi standardın kendi CSS'iyle hazır parçaları çizer:
 üst çubuk, senkron ve güncelleme rozetleri, üç durumda kurulum paneli, ilerleme çubukları,

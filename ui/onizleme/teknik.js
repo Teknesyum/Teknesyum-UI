@@ -153,7 +153,7 @@
   function renkOku() {
     const cs = getComputedStyle(kok);
     const v = (ad) => cs.getPropertyValue(ad).trim();
-    renkler = { cubuk: v('--tk-blue'), kotu: v('--tk-danger-text'), cizgi: v('--tk-warning'), zemin: v('--tk-border-decorative') };
+    renkler = { cubuk: v('--tk-renk-1'), kotu: v('--tk-danger-text'), cizgi: v('--tk-warning'), zemin: v('--tk-border-decorative') };
   }
 
   function ciz() {

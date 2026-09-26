@@ -15,7 +15,7 @@ public static class Sahne
         new DrawingImage(new GeometryDrawing
         {
             Geometry = Geometry.Parse("M11 0L22 11L11 22L0 11Z"),
-            Brush = (IBrush)Kaynak("NeonBlue")!
+            Brush = (IBrush)Kaynak("Renk1")!
         });
 
     public static TitleBar UstCubuk() =>

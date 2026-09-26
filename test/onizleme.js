@@ -27,7 +27,7 @@ module.exports = function onizleme() {
   L.ok('the browser build exposes the shared contrast API', !!B && ['parse', 'pair', 'ratio', 'over', 'withAlpha', 'hex', 'fmt'].every((f) => typeof B[f] === 'function'));
   L.ok('browser and node share one formula', B && B.ratio.toString() === K.ratio.toString() && B.pair.toString() === K.pair.toString());
   const r = B && B.pair(B.parse('#00f3ff'), B.parse('#000000'), B.parse('#08090a')).ratio;
-  L.ok('the served module measures black on blue as the node module does', r === K.pair(K.parse('#00f3ff'), K.parse('#000000'), K.parse('#08090a')).ratio && B.fmt(r) === '15.3');
+  L.ok('the served module measures black on renk-1 as the node module does', r === K.pair(K.parse('#00f3ff'), K.parse('#000000'), K.parse('#08090a')).ratio && B.fmt(r) === '15.3');
 
   const uyg = fs.readFileSync(path.join(SAYFA, 'uygulama.js'), 'utf8');
   L.ok('the page carries no copy of the luminance formula', !/0\.2126|0\.7152|0\.03928/.test(uyg) && /window\.Kontrast/.test(uyg));
@@ -44,7 +44,7 @@ module.exports = function onizleme() {
     "  const u = 'http://127.0.0.1:' + s.address().port;" +
     "  const t = await (await fetch(u + '/tokens.json')).json();" +
     "  const k = await (await fetch(u + '/kontrast.js')).text();" +
-    "  process.stdout.write(JSON.stringify({ name: t.meta.name, blue: t.brand.blue.value, shared: k.includes('window.Kontrast') }));" +
+    "  process.stdout.write(JSON.stringify({ name: t.meta.name, 'renk-1': t.brand['renk-1'].value, shared: k.includes('window.Kontrast') }));" +
     "  s.close();" +
     "});";
   const h = L.run(process.execPath, ['-e', kod], { timeout: 30000 });
@@ -56,7 +56,7 @@ module.exports = function onizleme() {
   }
   L.ok(
     'the live server returns the tokens over http',
-    yanit && yanit.name === dosya.meta.name && yanit.blue === dosya.brand.blue.value && yanit.shared,
+    yanit && yanit.name === dosya.meta.name && yanit['renk-1'] === dosya.brand['renk-1'].value && yanit.shared,
     h.stdout + h.stderr
   );
 };

@@ -88,12 +88,11 @@ function gradientXaml(indent) {
   ).join('\n');
 }
 
-const xamlName = { blue: 'NeonBlue', pink: 'NeonPink', purple: 'NeonPurple', 'pink-text': 'PinkText', 'purple-text': 'PurpleText' };
 function scaleXaml(indent) {
   const tone = T.derived['tone-scale'];
   const text = T.derived['text-scale'];
   const row = (base, step) => {
-    const key = '"' + xamlName[base] + step + '"';
+    const key = '"' + pascal(base + '-' + step) + '"';
     return indent + '<SolidColorBrush x:Key=' + key.padEnd(15) + 'Color="' + xa(base, step / 100) + '"/>';
   };
   const groups = tone.bases.map(base => tone.steps.map(step => row(base, step)).join('\n'));
@@ -141,7 +140,9 @@ function onGate() {
   }
   return bad;
 }
-function pascal(name) { return name.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(''); }
+function pascal(name) {
+  return name.split('-').reduce((out, s) => out + (/^\d/.test(s) && /\d$/.test(out) ? 'x' : '') + s.charAt(0).toUpperCase() + s.slice(1), '');
+}
 function onCss() {
   const rows = onPairs().filter(p => p.on !== null);
   if (!rows.length) return '';
@@ -307,12 +308,12 @@ function emitCss() {
   return `/* Teknesyum Neon — single source. Do not override these values in a project. */
 
 @theme {
-  --color-neon-blue: ${h('blue')};
-  --color-neon-pink: ${h('pink')};
-  --color-neon-purple: ${h('purple')};
+  --color-neon-renk-1: ${h('renk-1')};
+  --color-neon-renk-2: ${h('renk-2')};
+  --color-neon-renk-3: ${h('renk-3')};
   --color-neon-success: ${h('success')};
-  --color-pink-text: ${h('pink-text')};
-  --color-purple-text: ${h('purple-text')};
+  --color-renk-2-text: ${h('renk-2-text')};
+  --color-renk-3-text: ${h('renk-3-text')};
   --color-surface: ${h('surface')};
   --color-dark-glass: ${rgba('glass')};
 
@@ -338,9 +339,9 @@ function emitCss() {
 }
 
 :root {
-  --tk-blue: ${h('blue')};
-  --tk-pink: ${h('pink')};
-  --tk-purple: ${h('purple')};
+  --tk-renk-1: ${h('renk-1')};
+  --tk-renk-2: ${h('renk-2')};
+  --tk-renk-3: ${h('renk-3')};
   --tk-success: ${h('success')};
   --tk-surface: ${h('surface')};
   --tk-bg-rotate: ${durationCss('bg-rotate')};
@@ -352,8 +353,8 @@ ${gradientCss()}
   );
   --tk-glass: ${rgba('glass')};
 
-  --tk-pink-text: ${h('pink-text')};
-  --tk-purple-text: ${h('purple-text')};
+  --tk-renk-2-text: ${h('renk-2-text')};
+  --tk-renk-3-text: ${h('renk-3-text')};
 
   /* --- semantic role layer (SKILL §2) ---
      THE ROLE WINS. Every component that reports state — error text, form
@@ -366,15 +367,15 @@ ${gradientCss()}
      \`--tk-success\` is defined above and is already a role token; no second name
      was given, because a single value with two names eventually diverges.
      \`--tk-info\` IS DELIBERATELY ABSENT: there is no info box today and an unused
-     token is debt. If one opens it binds to blue (\`var(--tk-blue)\`) and an info
+     token is debt. If one opens it binds to renk-1 (\`var(--tk-renk-1)\`) and an info
      fill is never used on the same screen as a primary button — both would be
-     blue fills and the user could not tell which one is clickable. */
-  --tk-danger: var(--tk-pink);
-  /* The TEXT role of danger. The fill pink falls below §2's 7:1 threshold as
+     renk-1 fills and the user could not tell which one is clickable. */
+  --tk-danger: var(--tk-renk-2);
+  /* The TEXT role of danger. The fill renk-2 falls below §2's 7:1 threshold as
      text; error text therefore writes this token rather than the fill token.
-     The pink/purple fill-vs-text split continues in the
+     The renk-2/renk-3 fill-vs-text split continues in the
      role layer. */
-  --tk-danger-text: var(--tk-pink-text);
+  --tk-danger-text: var(--tk-renk-2-text);
 
   /* \`warning ${h('warning')}\` — WARNING SURFACE ONLY: text, border, icon.
      No fill, no button. The constraint is the same pattern as \`success\`, not a
@@ -384,9 +385,9 @@ ${gradientCss()}
      text, border and icon.
      WHAT REPLACES IT: warning text \`--tk-warning\` (${oran('surface', 'warning')}:1), border
      \`--tk-warning-border\` (${oran('surface', resolve('warning-border'))}:1 on \`${h('surface')}\` — clears 1.4.11's 3:1 threshold;
-     pink /50 at ${oran('surface', { ...resolve('pink'), a: 0.5 })} and purple /50 at ${oran('surface', { ...resolve('purple'), a: 0.5 })} did NOT carry this rung, amber does),
-     icon the same colour. If an action is needed the button is primary (blue) or
-     \`danger\` (pink) — the warning colour never enters a button.
+     renk-2 /50 at ${oran('surface', { ...resolve('renk-2'), a: 0.5 })} and renk-3 /50 at ${oran('surface', { ...resolve('renk-3'), a: 0.5 })} did NOT carry this rung, amber does),
+     icon the same colour. If an action is needed the button is primary (renk-1) or
+     \`danger\` (renk-2) — the warning colour never enters a button.
      COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does
      not separate from \`success\` under protanopia, ΔE2000 15.2
      A warning row carries an icon or text in
@@ -514,9 +515,9 @@ ${onCss()}
   --tk-e-sharp: ${bezier('sharp')};
   --tk-e-linear: ${bezier('linear')};
 
-  --tk-glow-blue: ${glowCss('blue')};
-  --tk-glow-pink: ${glowCss('pink')};
-  --tk-glow-purple: ${glowCss('purple')};
+  --tk-glow-renk-1: ${glowCss('renk-1')};
+  --tk-glow-renk-2: ${glowCss('renk-2')};
+  --tk-glow-renk-3: ${glowCss('renk-3')};
   /* The hero glow is one token and gives the same intensity on both platforms:
      blur 8, opacity 0.8. Its XAML counterpart is \`HeroGlow\` (Theme.xaml). */
   --tk-glow-hero: ${glowCssHero()};
@@ -555,7 +556,7 @@ body {
 .tk-h2 {
   font-size: var(--tk-fs-4); font-weight: 600;
   line-height: var(--tk-lh-heading); letter-spacing: var(--tk-tr-h2);
-  color: var(--tk-blue);
+  color: var(--tk-renk-1);
 }
 .tk-h3 {
   font-size: var(--tk-fs-3); font-weight: 600;
@@ -571,13 +572,13 @@ body {
   font-family: var(--font-mono, monospace);
   font-size: var(--tk-fs-2); font-weight: 600;
   line-height: var(--tk-lh-mono);
-  color: var(--tk-pink-text);
+  color: var(--tk-renk-2-text);
 }
 .tk-hero {
   font-family: var(--font-mono, monospace);
   font-size: var(--tk-fs-5); font-weight: var(--tk-fw-hero);
   line-height: var(--tk-lh-heading); letter-spacing: var(--tk-tr-hero);
-  color: var(--tk-blue); filter: drop-shadow(var(--tk-glow-hero));
+  color: var(--tk-renk-1); filter: drop-shadow(var(--tk-glow-hero));
 }
 .tk-hint {
   font-size: var(--tk-fs-1); line-height: var(--tk-lh-body); color: var(--tk-text);
@@ -600,7 +601,7 @@ body {
 
 /* --- focus: two layers, no transition, keyboard modality only --- */
 :focus-visible {
-  outline: 2px solid var(--tk-blue);
+  outline: 2px solid var(--tk-renk-1);
   outline-offset: 2px;
   box-shadow: 0 0 0 2px ${h('black')};
   transition: none;
@@ -629,23 +630,23 @@ body {
   border-color: var(--tk-border-strong);
   transition-duration: var(--tk-t-instant);
 }
-.tk-btn-primary   { background: var(--tk-blue);   color: var(--tk-on-blue); box-shadow: var(--tk-glow-blue); }
-/* Hover is carried by scale alone: ${T.on.blue.on} on blue /80 measured ${oran('blue', T.on.blue.on, 0.8)}:1, below 7:1. */
+.tk-btn-primary   { background: var(--tk-renk-1);   color: var(--tk-on-renk-1); box-shadow: var(--tk-glow-renk-1); }
+/* Hover is carried by scale alone: ${T.on['renk-1'].on} on renk-1 /80 measured ${oran('renk-1', T.on['renk-1'].on, 0.8)}:1, below 7:1. */
 /* The class name was already in role language; its contents moved to the role
    token too. The glow stays on the brand token — a glow is decoration, it does
-   not report state. The fill is the danger TEXT cut: black on the fill pink is
-   ${oran('pink', 'black')}:1, below 7:1, so pink carries no text (tokens: on.danger); ${T.on['danger-text'].on} on
+   not report state. The fill is the danger TEXT cut: black on the fill renk-2 is
+   ${oran('renk-2', 'black')}:1, below 7:1, so renk-2 carries no text (tokens: on.danger); ${T.on['danger-text'].on} on
    danger-text is ${oran('danger-text', T.on['danger-text'].on)}:1. Hover is carried by scale alone. */
-.tk-btn-danger    { background: var(--tk-danger-text); color: var(--tk-on-danger-text); box-shadow: var(--tk-glow-pink); }
+.tk-btn-danger    { background: var(--tk-danger-text); color: var(--tk-on-danger-text); box-shadow: var(--tk-glow-renk-2); }
 /* A tint and its own hue never meet on one surface (ui-duzeni): the ghost keeps its
-   colour in the border and writes body text. Hover adds the purple /10 fill under its
+   colour in the border and writes body text. Hover adds the renk-3 /10 fill under its
    on pair. */
 .tk-btn-ghost {
   background: transparent;
-  border-color: var(--tk-purple-text);
+  border-color: var(--tk-renk-3-text);
   color: var(--tk-text);
 }
-.tk-btn-ghost:hover { background: ${rgba('purple', 0.1)}; color: var(--tk-on-purple-10); }
+.tk-btn-ghost:hover { background: ${rgba('renk-3', 0.1)}; color: var(--tk-on-renk-3-10); }
 /* The disabled state does not end at dimming: \`title\` text is mandatory (§2). */
 .tk-btn:disabled {
   color: var(--tk-disabled);
@@ -660,13 +661,13 @@ body {
 ::-webkit-scrollbar { width: var(--tk-scrollbar-w); height: var(--tk-scrollbar-w); }
 ::-webkit-scrollbar-track { background: ${rgba('black', 0.3)}; border-radius: 4px; }
 ::-webkit-scrollbar-thumb {
-  background: var(--tk-purple-text); border-radius: 4px;
+  background: var(--tk-renk-3-text); border-radius: 4px;
   /* No glow on the scrollbar: a halo on a thin moving bar smears and reads as noise
      (user feedback, 2026-09-26). Only the fill colour transitions. */
   transition: background-color var(--tk-t-instant) var(--tk-e-out);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--tk-pink-text);
+  background: var(--tk-renk-2-text);
 }
 
 /* --- title bar and signature (§4) --- */
@@ -692,7 +693,7 @@ body {
 /* Warning text can also stand alone, without a box. No glow: text is never given
    a glow (§2), the sole exception being hero. */
 .tk-warn-text { color: var(--tk-warning); }
-/* Error text writes the text pink, not the fill pink — the 7:1 threshold. */
+/* Error text writes the text renk-2, not the fill renk-2 — the 7:1 threshold. */
 .tk-danger-text { color: var(--tk-danger-text); }
 
 /* --- motion: reduced-motion preference (detail: references/motion.md) --- */
@@ -713,15 +714,15 @@ function emitXaml() {
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-  <Color x:Key="NeonBlueColor">${x('blue')}</Color>
-  <Color x:Key="NeonPinkColor">${x('pink')}</Color>
-  <Color x:Key="NeonPurpleColor">${x('purple')}</Color>
-  <Color x:Key="PinkTextColor">${x('pink-text')}</Color>
-  <Color x:Key="PurpleTextColor">${x('purple-text')}</Color>
+  <Color x:Key="Renk1Color">${x('renk-1')}</Color>
+  <Color x:Key="Renk2Color">${x('renk-2')}</Color>
+  <Color x:Key="Renk3Color">${x('renk-3')}</Color>
+  <Color x:Key="Renk2TextColor">${x('renk-2-text')}</Color>
+  <Color x:Key="Renk3TextColor">${x('renk-3-text')}</Color>
 
-  <SolidColorBrush x:Key="NeonBlue"    Color="${x('blue')}"/>
-  <SolidColorBrush x:Key="NeonPink"    Color="${x('pink')}"/>
-  <SolidColorBrush x:Key="NeonPurple"  Color="${x('purple')}"/>
+  <SolidColorBrush x:Key="Renk1"     Color="${x('renk-1')}"/>
+  <SolidColorBrush x:Key="Renk2"     Color="${x('renk-2')}"/>
+  <SolidColorBrush x:Key="Renk3"     Color="${x('renk-3')}"/>
   <SolidColorBrush x:Key="Success"     Color="${x('success')}"/>
   <SolidColorBrush x:Key="Surface"     Color="${xa('panel')}"/>
   <SolidColorBrush x:Key="AppBg"       Color="${x('black')}"/>
@@ -751,8 +752,8 @@ ${gradientXaml('    ')}
                      Duration="${durationXaml('bg-rotate')}"/>
   </Storyboard>
 
-  <SolidColorBrush x:Key="PinkText"   Color="${x('pink-text')}"/>
-  <SolidColorBrush x:Key="PurpleText" Color="${x('purple-text')}"/>
+  <SolidColorBrush x:Key="Renk2Text" Color="${x('renk-2-text')}"/>
+  <SolidColorBrush x:Key="Renk3Text" Color="${x('renk-3-text')}"/>
 
   <!-- SEMANTIC ROLE LAYER (SKILL §2).
        THE ROLE WINS: every control that reports state (error text, form
@@ -766,10 +767,10 @@ ${gradientXaml('    ')}
        is not a brand colour, it is a role. The same rename applies in
        Theme.axaml (U7's file).
        \`Info\` IS DELIBERATELY ABSENT: there is no info box today, and an unused
-       token is debt. If one opens it binds to blue, and an info fill is never
+       token is debt. If one opens it binds to renk-1, and an info fill is never
        used on the same screen as a primary button. -->
   <SolidColorBrush x:Key="Danger"     Color="${x('danger')}"/>
-  <!-- The TEXT role of danger. The fill pink falls below the 7:1 threshold as
+  <!-- The TEXT role of danger. The fill renk-2 falls below the 7:1 threshold as
        text; error text writes this brush. -->
   <SolidColorBrush x:Key="DangerText" Color="${x('danger-text')}"/>
 
@@ -778,7 +779,7 @@ ${gradientXaml('    ')}
        The ban was measured: white text on an amber fill is ${oran('warning', WHITE)}:1, it collapses.
        WHAT REPLACES IT: warning text \`Warning\` (${oran('surface', 'warning')}:1), border
        \`Warning50\` (${oran('surface', resolve('warning-border'))}:1 on ${h('surface')}, clears the 3:1 threshold), icon same colour.
-       If an action is needed the button is primary (blue) or \`Danger\` (pink).
+       If an action is needed the button is primary (renk-1) or \`Danger\` (renk-2).
        COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does
        not separate from success under protanopia, dE2000 15.2
        A warning row carries an icon or text in
@@ -816,7 +817,7 @@ ${scaleXaml('  ')}
   <Duration x:Key="TBase">${durationXaml('base')}</Duration>
   <Duration x:Key="TSlow">${durationXaml('slow')}</Duration>
   <!-- Hero glow: same intensity as the CSS token \`tk-glow-hero\` — blur 8, opacity 0.8. -->
-  <DropShadowEffect x:Key="HeroGlow" x:Shared="False" Color="${x('blue')}"
+  <DropShadowEffect x:Key="HeroGlow" x:Shared="False" Color="${x('renk-1')}"
                     BlurRadius="${T.derived['glow-hero'].blur}" ShadowDepth="0" Opacity="${T.derived['glow-hero'].alpha}"/>
 
   <CubicEase x:Key="EOut" EasingMode="EaseOut"/>
@@ -835,7 +836,7 @@ ${metricXaml('  ', 'Duration')}
             <Rectangle Margin="4" RadiusX="7" RadiusY="7"
                        Stroke="${x('black')}" StrokeThickness="2"/>
             <Rectangle Margin="2" RadiusX="9" RadiusY="9"
-                       Stroke="${x('blue')}" StrokeThickness="2"/>
+                       Stroke="${x('renk-1')}" StrokeThickness="2"/>
           </Grid>
         </ControlTemplate>
       </Setter.Value>
@@ -858,7 +859,7 @@ ${metricXaml('  ', 'Duration')}
     <Setter Property="FontWeight" Value="SemiBold"/>
     <Setter Property="LineHeight" Value="29"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
-    <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
+    <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
   </Style>
 
   <Style x:Key="H3" TargetType="TextBlock">
@@ -905,7 +906,7 @@ ${metricXaml('  ', 'Duration')}
     <Setter Property="FontWeight" Value="Black"/>
     <Setter Property="LineHeight" Value="36"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
-    <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
+    <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
     <Setter Property="Effect" Value="{StaticResource HeroGlow}"/>
   </Style>
 
@@ -915,7 +916,7 @@ ${metricXaml('  ', 'Duration')}
     <Setter Property="FontWeight" Value="SemiBold"/>
     <Setter Property="LineHeight" Value="22"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
-    <Setter Property="Foreground" Value="{StaticResource PinkText}"/>
+    <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
   </Style>
 
   <Style x:Key="Panel" TargetType="Border">
@@ -939,7 +940,7 @@ ${metricXaml('  ', 'Duration')}
     <Setter Property="Foreground" Value="{StaticResource Warning}"/>
   </Style>
 
-  <!-- Error text writes the text pink, not the fill pink — the 7:1 threshold. -->
+  <!-- Error text writes the text renk-2, not the fill renk-2 — the 7:1 threshold. -->
   <Style x:Key="DangerBody" TargetType="TextBlock" BasedOn="{StaticResource Body}">
     <Setter Property="Foreground" Value="{StaticResource DangerText}"/>
   </Style>
@@ -950,7 +951,7 @@ ${metricXaml('  ', 'Duration')}
   </Style>
 
   <Style x:Key="PrimaryButton" TargetType="Button">
-    <Setter Property="Background" Value="{StaticResource NeonBlue}"/>
+    <Setter Property="Background" Value="{StaticResource Renk1}"/>
     <Setter Property="Foreground" Value="Black"/>
     <Setter Property="FontWeight" Value="SemiBold"/>
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
@@ -967,7 +968,7 @@ ${metricXaml('  ', 'Duration')}
               <ScaleTransform ScaleX="1" ScaleY="1"/>
             </Border.RenderTransform>
             <Border.Effect>
-              <DropShadowEffect Color="{StaticResource NeonBlueColor}" BlurRadius="${T.derived['glow-button'].blur}" ShadowDepth="0" Opacity="${T.derived['glow-button'].alpha}"/>
+              <DropShadowEffect Color="{StaticResource Renk1Color}" BlurRadius="${T.derived['glow-button'].blur}" ShadowDepth="0" Opacity="${T.derived['glow-button'].alpha}"/>
             </Border.Effect>
             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
           </Border>
@@ -1055,15 +1056,15 @@ function emitAxaml() {
 
   <Styles.Resources>
 
-    <Color x:Key="NeonBlueColor">${x('blue')}</Color>
-    <Color x:Key="NeonPinkColor">${x('pink')}</Color>
-    <Color x:Key="NeonPurpleColor">${x('purple')}</Color>
-    <Color x:Key="PinkTextColor">${x('pink-text')}</Color>
-    <Color x:Key="PurpleTextColor">${x('purple-text')}</Color>
+    <Color x:Key="Renk1Color">${x('renk-1')}</Color>
+    <Color x:Key="Renk2Color">${x('renk-2')}</Color>
+    <Color x:Key="Renk3Color">${x('renk-3')}</Color>
+    <Color x:Key="Renk2TextColor">${x('renk-2-text')}</Color>
+    <Color x:Key="Renk3TextColor">${x('renk-3-text')}</Color>
 
-    <SolidColorBrush x:Key="NeonBlue"    Color="${x('blue')}"/>
-    <SolidColorBrush x:Key="NeonPink"    Color="${x('pink')}"/>
-    <SolidColorBrush x:Key="NeonPurple"  Color="${x('purple')}"/>
+    <SolidColorBrush x:Key="Renk1"     Color="${x('renk-1')}"/>
+    <SolidColorBrush x:Key="Renk2"     Color="${x('renk-2')}"/>
+    <SolidColorBrush x:Key="Renk3"     Color="${x('renk-3')}"/>
     <SolidColorBrush x:Key="Success"     Color="${x('success')}"/>
     <SolidColorBrush x:Key="Surface"     Color="${xa('panel')}"/>
     <SolidColorBrush x:Key="AppBg"       Color="${x('black')}"/>
@@ -1088,8 +1089,8 @@ ${gradientXaml('      ')}
          sub-property (Background.EndPoint). The counterpart is the
          "Window.anim Panel.appbg" rule below. -->
 
-    <SolidColorBrush x:Key="PinkText"   Color="${x('pink-text')}"/>
-    <SolidColorBrush x:Key="PurpleText" Color="${x('purple-text')}"/>
+    <SolidColorBrush x:Key="Renk2Text" Color="${x('renk-2-text')}"/>
+    <SolidColorBrush x:Key="Renk3Text" Color="${x('renk-3-text')}"/>
 
     <!-- SEMANTIC ROLE LAYER (SKILL §2). Identical to Theme.xaml; the rationale is
          written there and is not repeated here. The hex comes from the single
@@ -1137,7 +1138,7 @@ ${scaleXaml('    ')}
          and the only way to glow text. The deviation is recorded in the contract's
          Output section. The WPF-specific ShadowDepth property is ABSENT here and
          the test looks for it. -->
-    <DropShadowEffect x:Key="HeroGlow" Color="${x('blue')}"
+    <DropShadowEffect x:Key="HeroGlow" Color="${x('renk-1')}"
                       BlurRadius="${T.derived['glow-hero'].blur}" OffsetX="0" OffsetY="0" Opacity="${T.derived['glow-hero'].alpha}"/>
 
     <!-- SKILL §5.4 tokens: e-out cubic-bezier(0.2,0,0,1), e-in (0.4,0,1,1).
@@ -1166,7 +1167,7 @@ ${metricXaml('    ', 'sys:TimeSpan')}
       <Setter Property="FontSize" Value="24"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="LineHeight" Value="29"/>
-      <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
+      <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
     </ControlTheme>
 
     <ControlTheme x:Key="H3" TargetType="TextBlock">
@@ -1215,7 +1216,7 @@ ${metricXaml('    ', 'sys:TimeSpan')}
       <Setter Property="FontSize" Value="30"/>
       <Setter Property="FontWeight" Value="Black"/>
       <Setter Property="LineHeight" Value="36"/>
-      <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
+      <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
       <!-- This is the only role where text is given a glow (SKILL §2). -->
       <Setter Property="Effect" Value="{StaticResource HeroGlow}"/>
     </ControlTheme>
@@ -1225,7 +1226,7 @@ ${metricXaml('    ', 'sys:TimeSpan')}
       <Setter Property="FontSize" Value="16"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="LineHeight" Value="22"/>
-      <Setter Property="Foreground" Value="{StaticResource PinkText}"/>
+      <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
     </ControlTheme>
 
     <ControlTheme x:Key="Panel" TargetType="Border">
@@ -1252,7 +1253,7 @@ ${metricXaml('    ', 'sys:TimeSpan')}
       <Setter Property="Foreground" Value="{StaticResource Warning}"/>
     </ControlTheme>
 
-    <!-- Error text writes the text pink, not the fill pink — the 7:1 threshold. -->
+    <!-- Error text writes the text renk-2, not the fill renk-2 — the 7:1 threshold. -->
     <ControlTheme x:Key="DangerBody" TargetType="TextBlock"
                   BasedOn="{StaticResource Body}">
       <Setter Property="Foreground" Value="{StaticResource DangerText}"/>
@@ -1269,7 +1270,7 @@ ${metricXaml('    ', 'sys:TimeSpan')}
          to you: do not write
          <Setter Property="RenderTransform"><ScaleTransform .../></Setter>. -->
     <ControlTheme x:Key="PrimaryButton" TargetType="Button">
-      <Setter Property="Background" Value="{StaticResource NeonBlue}"/>
+      <Setter Property="Background" Value="{StaticResource Renk1}"/>
       <Setter Property="Foreground" Value="Black"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
@@ -1366,7 +1367,7 @@ ${metricXaml('    ', 'sys:TimeSpan')}
           <Rectangle Margin="4" RadiusX="7" RadiusY="7"
                      Stroke="${x('black')}" StrokeThickness="2"/>
           <Rectangle Margin="2" RadiusX="9" RadiusY="9"
-                     Stroke="${x('blue')}" StrokeThickness="2"/>
+                     Stroke="${x('renk-1')}" StrokeThickness="2"/>
         </Panel>
       </FocusAdornerTemplate>
     </Setter>
@@ -1451,13 +1452,13 @@ namespace Teknesyum.Theme;
 /// Teknesyum Neon — WinForms/console palette. Do not change these values.
 public static class Palette
 {
-    public static readonly Color NeonBlue   = ColorTranslator.FromHtml("${csx('blue')}");
-    public static readonly Color NeonPink   = ColorTranslator.FromHtml("${csx('pink')}");
-    public static readonly Color NeonPurple = ColorTranslator.FromHtml("${csx('purple')}");
+    public static readonly Color Renk1      = ColorTranslator.FromHtml("${csx('renk-1')}");
+    public static readonly Color Renk2      = ColorTranslator.FromHtml("${csx('renk-2')}");
+    public static readonly Color Renk3      = ColorTranslator.FromHtml("${csx('renk-3')}");
     public static readonly Color Success    = ColorTranslator.FromHtml("${csx('success')}");
 
-    public static readonly Color PinkText   = ColorTranslator.FromHtml("${csx('pink-text')}");
-    public static readonly Color PurpleText = ColorTranslator.FromHtml("${csx('purple-text')}");
+    public static readonly Color Renk2Text  = ColorTranslator.FromHtml("${csx('renk-2-text')}");
+    public static readonly Color Renk3Text  = ColorTranslator.FromHtml("${csx('renk-3-text')}");
 
     // --- semantic role layer (SKILL §2) ---
     //
@@ -1471,13 +1472,13 @@ public static class Palette
     //
     // \`Success\` is defined above and is already a role field; no second name was
     // given. \`Info\` IS DELIBERATELY ABSENT: there is no info box today, and an
-    // unused token is debt. If one opens it binds to blue, and an info fill is
+    // unused token is debt. If one opens it binds to renk-1, and an info fill is
     // never used on the same screen as a primary button.
-    public static readonly Color Danger     = NeonPink;
+    public static readonly Color Danger     = Renk2;
 
-    /// The TEXT role of danger. The fill pink falls below §2's 7:1 threshold as text;
+    /// The TEXT role of danger. The fill renk-2 falls below §2's 7:1 threshold as text;
     /// error text writes this rather than the fill field.
-    public static readonly Color DangerText = PinkText;
+    public static readonly Color DangerText = Renk2Text;
 
     /// \`warning #FBBF24\` — WARNING SURFACE ONLY: text, border, icon.
     /// NO FILL, NO BUTTON. The constraint is the same pattern as \`Success\`, not a
@@ -1485,10 +1486,10 @@ public static class Palette
     ///
     /// The ban was measured: white text on an amber fill is 1.50:1 — it collapses.
     /// WHAT REPLACES IT: warning text \`Warning\` (11.30:1), border
-    /// \`Warning50\` (3.60:1 on \`#101115\`, clears 1.4.11's 3:1 threshold — pink /50
-    /// at 1.94 and purple /50 at 1.92 did not carry this rung, amber does), icon
-    /// the same colour. If an action is needed the button is primary (blue) or
-    /// \`Danger\` (pink); the warning colour never enters a button.
+    /// \`Warning50\` (3.60:1 on \`#101115\`, clears 1.4.11's 3:1 threshold — renk-2 /50
+    /// at 1.94 and renk-3 /50 at 1.92 did not carry this rung, amber does), icon
+    /// the same colour. If an action is needed the button is primary (renk-1) or
+    /// \`Danger\` (renk-2); the warning colour never enters a button.
     ///
     /// COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does
     /// not separate from \`Success\` under protanopia, ΔE2000 15.2
@@ -1508,7 +1509,7 @@ public static class Palette
     public static readonly Color BorderStrong     = Color.FromArgb(${argb('border-strong')});
     public static readonly Color BorderDecorative = Color.FromArgb(${argb('border-decorative')});
 
-    public static readonly Color FocusRing      = ColorTranslator.FromHtml("${csx('blue')}");
+    public static readonly Color FocusRing      = ColorTranslator.FromHtml("${csx('renk-1')}");
     public static readonly Color FocusRingInner = ColorTranslator.FromHtml("${csx('black')}");
 
     public static readonly Color TextBody   = ColorTranslator.FromHtml("${csx('text')}");
@@ -1645,17 +1646,17 @@ public static class Palette
 /// ANSI console colours (for CLI projects such as Runly).
 public static class Ansi
 {
-    public const string Blue       = "${ansi('blue')}";
-    public const string Pink       = "${ansi('pink')}";
-    public const string Purple     = "${ansi('purple')}";
-    public const string PinkText   = "${ansi('pink-text')}";
-    public const string PurpleText = "${ansi('purple-text')}";
+    public const string Renk1      = "${ansi('renk-1')}";
+    public const string Renk2      = "${ansi('renk-2')}";
+    public const string Renk3      = "${ansi('renk-3')}";
+    public const string Renk2Text  = "${ansi('renk-2-text')}";
+    public const string Renk3Text  = "${ansi('renk-3-text')}";
     public const string Success    = "${ansi('success')}";
     // Role colours enter ANSI too; without them the terminal output drifts from the
     // palette. Danger and DangerText take the value of the brand constant, the hex
     // is not copied.
-    public const string Danger     = Pink;
-    public const string DangerText = PinkText;
+    public const string Danger     = Renk2;
+    public const string DangerText = Renk2Text;
     // Warning: warning text only. A terminal has no fill anyway, so the constraint
     // holds by itself.
     public const string Warning    = "${ansi('warning')}";

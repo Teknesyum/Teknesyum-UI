@@ -4,11 +4,11 @@
 
 | Value | Where it lives now | Token name | Note |
 |---|---|---|---|
-| `#00f3ff` | SKILL §2, tokens `marka.blue` | `blue` | existing |
-| `#ff00ea` | SKILL §2, tokens `marka.pink` | `pink` | existing — fill only |
-| `#b026ff` | SKILL §2, tokens `marka.purple` | `purple` | existing — fill only |
-| `#ff54eb` | SKILL §2, tokens `marka.pink-text` | `pink-text` | existing — text cut |
-| `#c67eff` | SKILL §2, tokens `marka.purple-text` | `purple-text` | existing — text cut |
+| `#00f3ff` | SKILL §2, tokens `marka.renk-1` | `renk-1` | existing |
+| `#ff00ea` | SKILL §2, tokens `marka.renk-2` | `renk-2` | existing — fill only |
+| `#b026ff` | SKILL §2, tokens `marka.renk-3` | `renk-3` | existing — fill only |
+| `#ff54eb` | SKILL §2, tokens `marka.renk-2-text` | `renk-2-text` | existing — text cut |
+| `#c67eff` | SKILL §2, tokens `marka.renk-3-text` | `renk-3-text` | existing — text cut |
 | `#08090a` | SKILL §2, tokens `marka.surface` | `surface` | existing |
 | `#000000` | SKILL §2, tokens `marka.black` | `black` | existing |
 | `#0a0a0f` | tokens `marka.glass-base` | `glass-base` | existing |
@@ -16,13 +16,13 @@
 | `#fbbf24` | SKILL §2, tokens `rol.warning` | `warning` | existing — surface/text/border only |
 | `#ffffff` | SKILL §2, tokens `rol.text` | `text` | existing |
 | `#71717a` | SKILL §2, tokens `rol.disabled` | `disabled` | existing |
-| `danger` → pink, `danger-text` → pink-text, `text-label` → blue | tokens `rol.*` | role refs | existing |
+| `danger` → renk-2, `danger-text` → renk-2-text, `text-label` → renk-1 | tokens `rol.*` | role refs | existing |
 | `warning-border` = warning @ 0.5 | tokens `rol.warning-border` | `warning-border` | existing |
 | panel = surface @ 0.95 | tokens `turetilmis.panel` | `panel` | existing |
 | glass = glass-base @ 0.85 | tokens `turetilmis.glass` | `glass` | existing |
 | border 0.5 · border-strong 0.6 · border-decorative 0.3 | tokens `turetilmis.*` | `border*` | existing |
-| alpha ladder 10 / 20 / 30 / 50 / 60 on blue, pink, purple | tokens `ton-merdiveni` | `<base>/<step>` | existing |
-| text ladder step 50 on pink-text, purple-text | tokens `metin-merdiveni` | — | existing |
+| alpha ladder 10 / 20 / 30 / 50 / 60 on renk-1, renk-2, renk-3 | tokens `ton-merdiveni` | `<base>/<step>` | existing |
+| text ladder step 50 on renk-2-text, renk-3-text | tokens `metin-merdiveni` | — | existing |
 | glow: alpha 0.3, blur 20 | tokens `turetilmis.glow` | `glow-<base>` | existing |
 | glow-hero: alpha 0.8, blur 8 | tokens `glow-hero` | `glow-hero` | existing |
 | glow-button: alpha 0.35, blur 20 (`0x59`) | tokens `glow-buton` | `glow-buton` | existing |
@@ -72,7 +72,7 @@
 | Frame budget 16 ms (95th pct) | motion.md M15 | — | missing |
 | Icon sizes 14 / 16 / 22 / 56 | components.md | — | missing |
 | Resize grip 7px on three edges | desktop.md §10 | — | missing |
-| Selection background = blue/30, caret = blue | forms.md §1 | — | existing (border-decorative) |
+| Selection background = renk-1/30, caret = renk-1 | forms.md §1 | — | existing (border-decorative) |
 | Support link `https://github.com/sponsors/Teknesyum`, GitHub `https://github.com/Teknesyum` | assets/links.json | — | existing |
 
 ## SCAN
@@ -91,8 +91,8 @@
 | WPF text styles carry `LineStackingStrategy="BlockLineHeight"` | attribute present where `LineHeight` set | error | SKILL §3 |
 | Body sets `font-variant-numeric: tabular-nums` / `NumeralAlignment="Tabular"` | declaration present | warn | SKILL §3 |
 | Data numbers use mono class | `.tk-mono` / `MonoValue` on value cells | warn | SKILL §3 |
-| Mono value color is `pink-text`, never `pink` | selector color compare | error | SKILL §3 |
-| Ghost button text is `purple-text`, never `purple` | selector color compare | error | SKILL §2 |
+| Mono value color is `renk-2-text`, never `renk-2` | selector color compare | error | SKILL §3 |
+| Ghost button text is `renk-3-text`, never `renk-3` | selector color compare | error | SKILL §2 |
 | Filled button text is `#000` | `.tk-btn-primary` / `-danger` color | error | SKILL §2 |
 | Default border is `/50`; `/30` only on decorative selectors | alpha step per selector role | error | SKILL §2 |
 | `warning` never used as fill or button background | `background` using warning token | error | SKILL §2 |
@@ -167,7 +167,7 @@
 | Black text on filled buttons | Model defaults to white on coloured fill | Filled neon buttons take `color: #000`. White on neon is 1.38:1. |
 | No dim text | Model builds hierarchy with grey | No mid greys. If text is worth showing, show it white; otherwise delete it. |
 | Hierarchy by size | Model reaches for bold and brightness | Heading hierarchy is size: 24 / 20 / 14. Need emphasis? Go one step up, don't embolden. |
-| Pink and purple are indistinguishable | Model cannot see this; measured ΔE 5.8 | Pink and purple can never be the sole differentiator on one screen. Make one blue or add a second carrier. |
+| renk-2 and renk-3 are indistinguishable | Model cannot see this; measured ΔE 5.8 | renk-2 and renk-3 can never be the sole differentiator on one screen. Make one renk-1 or add a second carrier. |
 | No `info` role | Model invents one for status sets | There is no `info` colour. A neutral notice takes the default border and white text. |
 | Warning is surface-only | Model uses amber as a fill | `warning` is text, border and icon only. Never a fill or a button. |
 | No placeholder | Model adds placeholders reflexively | No placeholders. Visible label plus help text below the field. |

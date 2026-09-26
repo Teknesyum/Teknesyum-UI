@@ -7,13 +7,13 @@ namespace Teknesyum.Theme;
 /// Teknesyum Neon — WinForms/console palette. Do not change these values.
 public static class Palette
 {
-    public static readonly Color NeonBlue   = ColorTranslator.FromHtml("#5AA8FF");
-    public static readonly Color NeonPink   = ColorTranslator.FromHtml("#C82EE0");
-    public static readonly Color NeonPurple = ColorTranslator.FromHtml("#9455EA");
+    public static readonly Color Renk1      = ColorTranslator.FromHtml("#5AA8FF");
+    public static readonly Color Renk2      = ColorTranslator.FromHtml("#C82EE0");
+    public static readonly Color Renk3      = ColorTranslator.FromHtml("#9455EA");
     public static readonly Color Success    = ColorTranslator.FromHtml("#4ADE80");
 
-    public static readonly Color PinkText   = ColorTranslator.FromHtml("#F0ABFC");
-    public static readonly Color PurpleText = ColorTranslator.FromHtml("#D4B3FF");
+    public static readonly Color Renk2Text  = ColorTranslator.FromHtml("#F0ABFC");
+    public static readonly Color Renk3Text  = ColorTranslator.FromHtml("#D4B3FF");
 
     // --- semantic role layer (SKILL §2) ---
     //
@@ -27,13 +27,13 @@ public static class Palette
     //
     // `Success` is defined above and is already a role field; no second name was
     // given. `Info` IS DELIBERATELY ABSENT: there is no info box today, and an
-    // unused token is debt. If one opens it binds to blue, and an info fill is
+    // unused token is debt. If one opens it binds to renk-1, and an info fill is
     // never used on the same screen as a primary button.
-    public static readonly Color Danger     = NeonPink;
+    public static readonly Color Danger     = Renk2;
 
-    /// The TEXT role of danger. The fill pink falls below §2's 7:1 threshold as text;
+    /// The TEXT role of danger. The fill renk-2 falls below §2's 7:1 threshold as text;
     /// error text writes this rather than the fill field.
-    public static readonly Color DangerText = PinkText;
+    public static readonly Color DangerText = Renk2Text;
 
     /// `warning #FBBF24` — WARNING SURFACE ONLY: text, border, icon.
     /// NO FILL, NO BUTTON. The constraint is the same pattern as `Success`, not a
@@ -41,10 +41,10 @@ public static class Palette
     ///
     /// The ban was measured: white text on an amber fill is 1.50:1 — it collapses.
     /// WHAT REPLACES IT: warning text `Warning` (11.30:1), border
-    /// `Warning50` (3.60:1 on `#101115`, clears 1.4.11's 3:1 threshold — pink /50
-    /// at 1.94 and purple /50 at 1.92 did not carry this rung, amber does), icon
-    /// the same colour. If an action is needed the button is primary (blue) or
-    /// `Danger` (pink); the warning colour never enters a button.
+    /// `Warning50` (3.60:1 on `#101115`, clears 1.4.11's 3:1 threshold — renk-2 /50
+    /// at 1.94 and renk-3 /50 at 1.92 did not carry this rung, amber does), icon
+    /// the same colour. If an action is needed the button is primary (renk-1) or
+    /// `Danger` (renk-2); the warning colour never enters a button.
     ///
     /// COLOUR ALONE CARRIES NO MEANING, amber included from the start: amber does
     /// not separate from `Success` under protanopia, ΔE2000 15.2
@@ -201,17 +201,17 @@ public static class Palette
 /// ANSI console colours (for CLI projects such as Runly).
 public static class Ansi
 {
-    public const string Blue       = "[38;2;90;168;255m";
-    public const string Pink       = "[38;2;200;46;224m";
-    public const string Purple     = "[38;2;148;85;234m";
-    public const string PinkText   = "[38;2;240;171;252m";
-    public const string PurpleText = "[38;2;212;179;255m";
+    public const string Renk1      = "[38;2;90;168;255m";
+    public const string Renk2      = "[38;2;200;46;224m";
+    public const string Renk3      = "[38;2;148;85;234m";
+    public const string Renk2Text  = "[38;2;240;171;252m";
+    public const string Renk3Text  = "[38;2;212;179;255m";
     public const string Success    = "[38;2;74;222;128m";
     // Role colours enter ANSI too; without them the terminal output drifts from the
     // palette. Danger and DangerText take the value of the brand constant, the hex
     // is not copied.
-    public const string Danger     = Pink;
-    public const string DangerText = PinkText;
+    public const string Danger     = Renk2;
+    public const string DangerText = Renk2Text;
     // Warning: warning text only. A terminal has no fill anyway, so the constraint
     // holds by itself.
     public const string Warning    = "[38;2;251;191;36m";

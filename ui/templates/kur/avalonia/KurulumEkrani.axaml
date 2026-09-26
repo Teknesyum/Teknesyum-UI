@@ -35,11 +35,11 @@
       <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
     </Style>
     <Style Selector="Border.isaret.suren">
-      <Setter Property="Background" Value="{StaticResource NeonBlue20}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource NeonBlue}"/>
+      <Setter Property="Background" Value="{StaticResource Renk1x20}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource Renk1}"/>
     </Style>
     <Style Selector="Border.isaret.suren > TextBlock, TextBlock.adim.suren">
-      <Setter Property="Foreground" Value="{StaticResource NeonBlue}"/>
+      <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
     </Style>
     <Style Selector="TextBlock.adim.suren">
       <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
@@ -65,7 +65,7 @@
         <StackPanel Orientation="Horizontal" Spacing="{StaticResource Space2}">
           <Image Name="LogoResmi" Width="{StaticResource IconSize3}" Height="{StaticResource IconSize3}"
                  VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw"/>
-          <TextBlock Name="AdYazisi" Theme="{StaticResource H2}" VerticalAlignment="Center"><Run Foreground="{StaticResource NeonBlue}"/><Run Foreground="{StaticResource PinkText}"/></TextBlock>
+          <TextBlock Name="AdYazisi" Theme="{StaticResource H2}" VerticalAlignment="Center"><Run Foreground="{StaticResource Renk1}"/><Run Foreground="{StaticResource Renk2Text}"/></TextBlock>
         </StackPanel>
         <TextBlock Name="CumleYazisi" Theme="{StaticResource Body}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
       </StackPanel>
@@ -79,12 +79,12 @@
 
       <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="{StaticResource Space3}">
         <Border Name="Iz" Grid.Column="0" Height="{StaticResource Space2}" CornerRadius="{StaticResource Radius}"
-                Background="{StaticResource NeonBlue10}" VerticalAlignment="Center" ClipToBounds="True">
+                Background="{StaticResource Renk1x10}" VerticalAlignment="Center" ClipToBounds="True">
           <Border Name="Dolgu" CornerRadius="{StaticResource Radius}" RenderTransformOrigin="0%,50%">
             <Border.Background>
               <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
-                <GradientStop Offset="0" Color="{StaticResource NeonBlueColor}"/>
-                <GradientStop Offset="1" Color="{StaticResource NeonPinkColor}"/>
+                <GradientStop Offset="0" Color="{StaticResource Renk1Color}"/>
+                <GradientStop Offset="1" Color="{StaticResource Renk2Color}"/>
               </LinearGradientBrush>
             </Border.Background>
           </Border>

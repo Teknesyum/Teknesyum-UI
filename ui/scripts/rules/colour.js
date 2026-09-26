@@ -487,8 +487,8 @@ const monoValueColour = {
     if (isTokenFile(file)) return [];
     const s = state(ctx);
     if (!s) return [];
-    const fill = s.named.get('pink');
-    const cut = s.named.get('pink-text');
+    const fill = s.named.get('renk-2');
+    const cut = s.named.get('renk-2-text');
     if (!fill || !cut || fill.rgb === cut.rgb) return [];
     const out = [];
     if (STYLE.indexOf(extOf(file)) >= 0) {
@@ -496,7 +496,7 @@ const monoValueColour = {
         if (!/\.tk-mono\b/.test(block.selector)) continue;
         const c = colourOf(block, 'color', s, false);
         if (c && c.rgb === fill.rgb) {
-          out.push({ line: lineOf(block, 'color'), message: 'mono value colour is pink-text, not pink' });
+          out.push({ line: lineOf(block, 'color'), message: 'mono value colour is renk-2-text, not renk-2' });
         }
       }
     }
@@ -505,7 +505,7 @@ const monoValueColour = {
         if (!/mono/i.test(style.key)) continue;
         const c = resolve(setter(style.body, 'Foreground'), s.map, true, 0);
         if (c && c.rgb === fill.rgb) {
-          out.push({ line: setterLine(style, 'Foreground'), message: 'mono value colour is PinkText, not NeonPink' });
+          out.push({ line: setterLine(style, 'Foreground'), message: 'mono value colour is Renk2Text, not Renk2' });
         }
       }
     }
@@ -521,8 +521,8 @@ const ghostButtonText = {
     if (isTokenFile(file)) return [];
     const s = state(ctx);
     if (!s) return [];
-    const fill = s.named.get('purple');
-    const cut = s.named.get('purple-text');
+    const fill = s.named.get('renk-3');
+    const cut = s.named.get('renk-3-text');
     if (!fill || !cut || fill.rgb === cut.rgb) return [];
     const out = [];
     if (STYLE.indexOf(extOf(file)) >= 0) {
@@ -530,7 +530,7 @@ const ghostButtonText = {
         if (!/\.tk-btn-ghost\b/.test(block.selector)) continue;
         const c = colourOf(block, 'color', s, false);
         if (c && c.rgb === fill.rgb) {
-          out.push({ line: lineOf(block, 'color'), message: 'ghost button text is purple-text, not purple' });
+          out.push({ line: lineOf(block, 'color'), message: 'ghost button text is renk-3-text, not renk-3' });
         }
       }
     }
@@ -539,7 +539,7 @@ const ghostButtonText = {
         if (!/ghost/i.test(style.key)) continue;
         const c = resolve(setter(style.body, 'Foreground'), s.map, true, 0);
         if (c && c.rgb === fill.rgb) {
-          out.push({ line: setterLine(style, 'Foreground'), message: 'ghost button text is PurpleText, not NeonPurple' });
+          out.push({ line: setterLine(style, 'Foreground'), message: 'ghost button text is Renk3Text, not Renk3' });
         }
       }
     }

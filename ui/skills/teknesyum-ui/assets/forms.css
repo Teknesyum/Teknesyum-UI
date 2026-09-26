@@ -36,11 +36,11 @@
 
 .tk-input:active:not(:disabled):not([readonly]) {
   border-color: var(--tk-border-strong);
-  caret-color: var(--tk-pink-text);
+  caret-color: var(--tk-renk-2-text);
 }
 
 .tk-input {
-  caret-color: var(--tk-blue);
+  caret-color: var(--tk-renk-1);
 }
 .tk-input::selection {
   background: var(--tk-border-decorative);
@@ -239,7 +239,7 @@
   cursor: pointer;
   transition: color var(--tk-t-instant) var(--tk-e-out);
 }
-.tk-toast-close:hover { color: var(--tk-blue); }
+.tk-toast-close:hover { color: var(--tk-renk-1); }
 .tk-toast-close svg { width: 14px; height: 14px; }
 
 .tk-toast:hover,

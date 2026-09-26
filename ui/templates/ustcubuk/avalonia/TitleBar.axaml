@@ -12,7 +12,7 @@
       <StackPanel Orientation="Horizontal" Spacing="{StaticResource Space2}" VerticalAlignment="Center">
         <Image Name="LogoResmi" Width="{StaticResource IconSize3}" Height="{StaticResource IconSize3}"
                VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw"/>
-        <TextBlock Name="AdYazisi" Theme="{StaticResource H3}" VerticalAlignment="Center"><Run Foreground="{StaticResource NeonBlue}"/><Run Foreground="{StaticResource PinkText}"/></TextBlock>
+        <TextBlock Name="AdYazisi" Theme="{StaticResource H3}" VerticalAlignment="Center"><Run Foreground="{StaticResource Renk1}"/><Run Foreground="{StaticResource Renk2Text}"/></TextBlock>
       </StackPanel>
     </Border>
 

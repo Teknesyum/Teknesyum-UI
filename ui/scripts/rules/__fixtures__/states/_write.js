@@ -6,8 +6,8 @@ const path = require('path');
 const dir = __dirname;
 
 const F = {
-  'bare-focus.bad.css': `.tk-btn:focus {\n  outline: 2px solid var(--tk-blue);\n}\n`,
-  'bare-focus.good.css': `.tk-btn:focus-visible {\n  outline: 2px solid var(--tk-blue);\n}\n.tk-btn:focus:not(:focus-visible) {\n  outline: none;\n}\n`,
+  'bare-focus.bad.css': `.tk-btn:focus {\n  outline: 2px solid var(--tk-renk-1);\n}\n`,
+  'bare-focus.good.css': `.tk-btn:focus-visible {\n  outline: 2px solid var(--tk-renk-1);\n}\n.tk-btn:focus:not(:focus-visible) {\n  outline: none;\n}\n`,
 
   'disabled-opacity.bad.tsx': `export const A = () => <button className="disabled:opacity-30">Kaydet</button>;\n`,
   'disabled-opacity.good.tsx': `export const A = () => <button className="disabled:border-[var(--tk-disabled)]">Kaydet</button>;\n`,
@@ -38,7 +38,7 @@ const F = {
   cursor: not-allowed;
 }
 `,
-  'five-states.good.css': `[data-tk='cell'] {\n  color: var(--tk-text);\n}\n[data-tk='cell']:hover:not(:disabled),\n[data-tk='cell']:focus-visible:not(:disabled) {\n  border-color: var(--tk-border-strong);\n}\n[data-tk='cell']:active:not(:disabled) {\n  border-color: var(--tk-pink);\n  transform: scale(0.98);\n}\n[data-tk='cell']:disabled {\n  color: var(--tk-disabled);\n  cursor: not-allowed;\n}\n`,
+  'five-states.good.css': `[data-tk='cell'] {\n  color: var(--tk-text);\n}\n[data-tk='cell']:hover:not(:disabled),\n[data-tk='cell']:focus-visible:not(:disabled) {\n  border-color: var(--tk-border-strong);\n}\n[data-tk='cell']:active:not(:disabled) {\n  border-color: var(--tk-renk-2);\n  transform: scale(0.98);\n}\n[data-tk='cell']:disabled {\n  color: var(--tk-disabled);\n  cursor: not-allowed;\n}\n`,
 
   'state-layer-properties.bad.css': `[data-tk='toggle']:hover {\n  border-color: var(--tk-border-strong);\n  padding: 4px;\n}\n`,
   'state-layer-properties.good.css': `[data-tk='toggle']:hover {\n  border-color: var(--tk-border-strong);\n}\n`,
@@ -46,11 +46,11 @@ const F = {
   'state-layer-binding.bad.css': `.tk-toggle:hover {\n  border-color: var(--tk-border-strong);\n}\n`,
   'state-layer-binding.good.css': `[data-tk='toggle']:hover {\n  border-color: var(--tk-border-strong);\n}\n`,
 
-  'hover-without-focus.bad.css': `.tk-chip:hover {\n  border-color: var(--tk-pink);\n}\n`,
-  'hover-without-focus.good.css': `.tk-chip:hover,\n.tk-chip:focus-visible {\n  border-color: var(--tk-pink);\n}\n`,
+  'hover-without-focus.bad.css': `.tk-chip:hover {\n  border-color: var(--tk-renk-2);\n}\n`,
+  'hover-without-focus.good.css': `.tk-chip:hover,\n.tk-chip:focus-visible {\n  border-color: var(--tk-renk-2);\n}\n`,
 
   'pressed-without-carrier.bad.css': `.tk-btn:active {\n  transform: scale(0.98);\n}\n`,
-  'pressed-without-carrier.good.css': `.tk-btn:active {\n  transform: scale(0.98);\n  border-color: var(--tk-pink);\n}\n`,
+  'pressed-without-carrier.good.css': `.tk-btn:active {\n  transform: scale(0.98);\n  border-color: var(--tk-renk-2);\n}\n`,
 
   'state-opacity.bad.css': `.tk-btn:disabled {\n  opacity: 0.3;\n}\n`,
   'state-opacity.good.css': `.tk-btn:disabled {\n  color: var(--tk-disabled);\n  cursor: not-allowed;\n}\n`,
@@ -60,8 +60,8 @@ const F = {
   'disabled-affordance.bad.tsx': `export const A = () => <button disabled>Kaydet</button>;\n`,
   'disabled-affordance.good.tsx': `export const A = () => <button disabled title="Once bir kaynak sec">Kaydet</button>;\n`,
 
-  'focus-ring-layers.bad.css': `.tk-btn:focus-visible {\n  outline: 2px solid var(--tk-blue);\n  outline-offset: 2px;\n}\n`,
-  'focus-ring-layers.good.css': `.tk-btn:focus-visible {\n  outline: 2px solid var(--tk-blue);\n  outline-offset: 2px;\n  box-shadow: 0 0 0 2px #000000;\n}\n`,
+  'focus-ring-layers.bad.css': `.tk-btn:focus-visible {\n  outline: 2px solid var(--tk-renk-1);\n  outline-offset: 2px;\n}\n`,
+  'focus-ring-layers.good.css': `.tk-btn:focus-visible {\n  outline: 2px solid var(--tk-renk-1);\n  outline-offset: 2px;\n  box-shadow: 0 0 0 2px #000000;\n}\n`,
 
   'animated-property.bad.css': `@keyframes tk-grow {\n  from { width: 0; }\n  to { width: 100%; }\n}\n`,
   'animated-property.good.css': `@keyframes tk-grow {\n  from { transform: scaleX(0); }\n  to { transform: scaleX(1); }\n}\n`,
@@ -69,8 +69,8 @@ const F = {
   'infinite-loop-scope.bad.css': `.tk-badge {\n  animation: tk-pulse var(--tk-t-slow) var(--tk-e-out) infinite;\n}\n`,
   'infinite-loop-scope.good.css': `.tk-progress-track {\n  animation: tk-shimmer var(--tk-t-slow) var(--tk-e-out) infinite;\n}\n`,
 
-  'glow-on-repeated-item.bad.css': `.tk-list-row {\n  box-shadow: var(--tk-glow-blue);\n}\n`,
-  'glow-on-repeated-item.good.css': `.tk-list {\n  box-shadow: var(--tk-glow-blue);\n}\n`,
+  'glow-on-repeated-item.bad.css': `.tk-list-row {\n  box-shadow: var(--tk-glow-renk-1);\n}\n`,
+  'glow-on-repeated-item.good.css': `.tk-list {\n  box-shadow: var(--tk-glow-renk-1);\n}\n`,
 
   'wpf-shadow-in-item-template.bad.xaml': `<ItemsControl>\n  <ItemsControl.ItemTemplate>\n    <DataTemplate>\n      <Border>\n        <Border.Effect>\n          <DropShadowEffect BlurRadius="20" />\n        </Border.Effect>\n      </Border>\n    </DataTemplate>\n  </ItemsControl.ItemTemplate>\n</ItemsControl>\n`,
   'wpf-shadow-in-item-template.good.xaml': `<ItemsControl>\n  <ItemsControl.ItemTemplate>\n    <DataTemplate>\n      <Border BorderBrush="{StaticResource TkBorder}" />\n    </DataTemplate>\n  </ItemsControl.ItemTemplate>\n</ItemsControl>\n`,

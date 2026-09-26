@@ -7,6 +7,20 @@ const { spawn } = require('child_process');
 
 const YEREL = path.resolve(__dirname, '..', 'onizleme', 'ozel-ayar.json');
 const ALT = path.join('teknesyum-ui', 'onizleme', 'ayarlar.json');
+const ESKI_RENK = { blue: 'renk-1', pink: 'renk-2', purple: 'renk-3' };
+const ESKI_AD = /^(blue|pink|purple)(-text)?(-\d+)?$/;
+
+function yeniAd(ad) {
+  return ESKI_AD.test(ad) ? ad.replace(/^[a-z]+/, (b) => ESKI_RENK[b]) : ad;
+}
+
+const DEGERLI = new Set(['renk', 'kenar', 'ref']);
+
+function yeniAdlar(v, anahtar) {
+  if (Array.isArray(v)) return v.map((x) => yeniAdlar(x, anahtar));
+  if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [yeniAd(k), yeniAdlar(x, k)]));
+  return typeof v === 'string' && DEGERLI.has(anahtar) ? yeniAd(v) : v;
+}
 
 function raf() {
   const kok = process.env.TEKNESYUM_PRIVATE || path.join(process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude'), 'teknesyum-private');
@@ -30,6 +44,7 @@ function oku() {
   } catch {
     ayar = null;
   }
+  if (ayar && ayar.fark) ayar.fark = yeniAdlar(ayar.fark);
   return { var: !!ayar, tur: y.tur, yol: y.dosya, ayar };
 }
 
@@ -37,7 +52,7 @@ function dogrula(v) {
   if (!v || typeof v !== 'object' || Array.isArray(v)) throw new Error('Ayar bir nesne olmalı.');
   if (!v.fark || typeof v.fark !== 'object' || Array.isArray(v.fark)) throw new Error('fark alanı eksik.');
   const renk = v.fark.renk || {};
-  for (const [k, h] of Object.entries(renk)) if (!/^[a-z-]+$/.test(k) || !/^#[0-9a-f]{6}$/i.test(String(h))) throw new Error('Geçersiz renk: ' + k);
+  for (const [k, h] of Object.entries(renk)) if (!/^[a-z0-9-]+$/.test(k) || !/^#[0-9a-f]{6}$/i.test(String(h))) throw new Error('Geçersiz renk: ' + k);
 }
 
 function gonder(kok, dosya) {
@@ -73,4 +88,4 @@ function gonderim() {
   return son ? son.durum : null;
 }
 
-module.exports = { yer, oku, yaz, dogrula, gonderim, YEREL };
+module.exports = { yer, oku, yaz, dogrula, gonderim, yeniAdlar, YEREL };

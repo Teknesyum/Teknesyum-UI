@@ -1,4 +1,4 @@
 .tk-btn:focus-visible {
-  outline: 2px solid var(--tk-blue);
+  outline: 2px solid var(--tk-renk-1);
   outline-offset: 2px;
 }

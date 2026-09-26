@@ -39,7 +39,7 @@
 
 .tk-sync:focus-visible,
 .tk-update:focus-visible {
-  outline: var(--tk-focus-w) solid var(--tk-blue);
+  outline: var(--tk-focus-w) solid var(--tk-renk-1);
   outline-offset: var(--tk-focus-offset);
   box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg-from);
 }

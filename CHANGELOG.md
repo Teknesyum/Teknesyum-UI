@@ -6,6 +6,13 @@ All notable changes to this project are documented here. The format follows
 ## [Unreleased]
 
 ### Added
+
+- Teknik → Yük Testi marks the item-count slider: 1500 and up is a caution zone, 2000 and up a
+  warning zone, measured on the dev machine (64 fps at 1500, 42 fps at 2000). The count and a note
+  under the slider take the zone colour.
+- Hedef Okunurluk works on one colour too: every colour setting has a "5 Alternatif" button, and
+  the dialog has scope chips (Tüm Palet or any colour). The score is the readability of the items
+  that colour affects; colours that affect no scored item are disabled.
 - Clicking the Okunurluk number in the preview opens Hedef Okunurluk: pick a target (70–100)
   and get five fresh random palettes that score it, found by bisecting a contrast knob over
   random hues. Each click brings new ones; clicking a palette applies it. The Kötü–Mükemmel
@@ -34,9 +41,9 @@ All notable changes to this project are documented here. The format follows
   the easing curves, and Teknik measures FPS and frame time. New settings cover glow, UI
   easing, durations, density, border width, glass blur, shadow and scrollbar style.
 
-- Preview proposals: `ui/onizleme/oneri.json` loads a suggested colour set on start when the
-  token file still holds its base values. The first one is fable's balanced readability set
-  (blue #6ab2ff, disabled #9a9da6: score 85 → 87.4, consult 002).
+- Preview proposals: `ui/onizleme/oneri.json` keeps fable's balanced readability set on
+  record (blue #6ab2ff, disabled #9a9da6: score 85 → 87.4, consult 002). The preview does not
+  apply it on start.
 - The preview now edits text, disabled, success and warning too; the save accepts glass-base.
 - The desktop app keeps one window: a second launch reloads it, and the HTTP and code caches
   are cleared on start. The window title shows the version.

@@ -13,6 +13,16 @@
   let gozlem = null;
   let uzun = { sayi: 0, toplam: 0 };
   let dusen = 0;
+  const YUK_UYARI = 1500;
+  const YUK_TEHLIKE = 2000;
+  const yukYuzde = (n) => Math.round(((n - 50) / (3000 - 50)) * 1000) / 10;
+  const yukBolge = (n) => (n >= YUK_TEHLIKE ? 'tehlike' : n >= YUK_UYARI ? 'uyari' : 'rahat');
+  const yukNot = (n) =>
+    n >= YUK_TEHLIKE
+      ? 'Uyarı: ' + YUK_TEHLIKE + ' ve üstü bu makinede 60 fps altına iniyor; arayüz takılabilir.'
+      : n >= YUK_UYARI
+        ? 'Dikkat: ' + YUK_UYARI + ' ve üstü bu makinede 60 fps sınırında.'
+        : YUK_UYARI + ' altı rahat; ' + YUK_UYARI + ' dikkat, ' + YUK_TEHLIKE + ' üstü uyarı bölgesi.';
   let toplamKare = 0;
   let zamanlar = [];
   const halka = new Float64Array(BOY);
@@ -54,8 +64,10 @@
       '<section class="bolum"><h3>Yük Testi</h3>' +
       '<p>Seçilen sayıda öğe yalnız transform ve opacity ile sürekli canlanır; kare hızı yukarıda izlenir. Öğeler kompozitörde koşar, will-change yalnız test sürerken açıktır.</p>' +
       '<div class="yuk-arac">' +
-      '<label class="alan yuk-sayi"><span class="alan-ust">Öğe Sayısı <output data-yuk-cikti>' + yuk.sayi + '</output></span>' +
-      '<input type="range" min="50" max="3000" step="50" value="' + yuk.sayi + '" data-yuk-sayi aria-label="Öğe Sayısı"></label>' +
+      '<label class="alan yuk-sayi"><span class="alan-ust">Öğe Sayısı <output data-yuk-cikti data-yuk-bolge="' + yukBolge(yuk.sayi) + '">' + yuk.sayi + '</output></span>' +
+      '<input type="range" min="50" max="3000" step="50" value="' + yuk.sayi + '" data-yuk-sayi aria-label="Öğe Sayısı" aria-describedby="yuk-not">' +
+      '<span class="yuk-serit" aria-hidden="true"><span style="width:' + yukYuzde(YUK_UYARI) + '%"></span><span data-yuk-bolge="uyari" style="width:' + (yukYuzde(YUK_TEHLIKE) - yukYuzde(YUK_UYARI)) + '%"></span><span data-yuk-bolge="tehlike"></span></span>' +
+      '<span class="yuk-not" id="yuk-not" data-yuk-bolge="' + yukBolge(yuk.sayi) + '">' + yukNot(yuk.sayi) + '</span></label>' +
       '<button type="button" class="tk-btn tk-btn-primary" data-teknik="yuk">Testi Başlat</button>' +
       '</div>' +
       '<div class="yuk-sahne" data-yuk-sahne aria-hidden="true"></div>' +
@@ -284,7 +296,11 @@
   function girdi(e) {
     if (!e.target.matches('[data-yuk-sayi]')) return;
     yuk.sayi = Number(e.target.value);
-    $('[data-yuk-cikti]', kok).textContent = yuk.sayi;
+    const o = $('[data-yuk-cikti]', kok);
+    const n = $('#yuk-not', kok);
+    o.textContent = yuk.sayi;
+    o.dataset.yukBolge = n.dataset.yukBolge = yukBolge(yuk.sayi);
+    n.textContent = yukNot(yuk.sayi);
   }
 
   function degisim(e) {

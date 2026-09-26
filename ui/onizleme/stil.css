@@ -1039,6 +1039,18 @@ th { color: var(--tk-text-label); font-weight: var(--tk-fw-semi); }
 .kare-grafik-not { margin: var(--tk-sp-1) 0 0; font-size: var(--tk-fs-1); color: var(--tk-text-label); }
 .yuk-arac { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--tk-sp-3); margin-bottom: var(--tk-sp-3); }
 .yuk-sayi { min-width: calc(var(--tk-sp-5) * 10); }
+.yuk-serit { display: flex; }
+.yuk-serit > span { border-top: 4px solid transparent; }
+.yuk-serit > [data-yuk-bolge='uyari'] { border-top-color: var(--tk-warning); }
+.yuk-serit > [data-yuk-bolge='tehlike'] { flex: 1; border-top-color: var(--tk-danger-text); }
+.yuk-not { font-size: var(--tk-fs-1); color: var(--tk-text-label); }
+.yuk-not[data-yuk-bolge='uyari'],
+.alan-ust output[data-yuk-bolge='uyari'] { color: var(--tk-warning); }
+.yuk-not[data-yuk-bolge='tehlike'],
+.alan-ust output[data-yuk-bolge='tehlike'] { color: var(--tk-danger-text); }
+.alan-ust output[data-yuk-bolge='uyari'],
+.alan-ust output[data-yuk-bolge='tehlike'] { font-weight: var(--tk-fw-semi); text-decoration: underline; }
+.oneri-dugme .kombi-nokta { display: inline-block; margin-inline-end: var(--tk-sp-1); vertical-align: middle; }
 .yuk-sahne { position: relative; height: calc(var(--tk-sp-5) * 10); overflow: hidden; background: var(--tk-surface); border-radius: var(--tk-r); contain: strict; }
 .yuk-oge { position: absolute; width: var(--tk-sp-3); height: var(--tk-sp-3); border-radius: 50%; }
 .yuk-renk-0 { background: var(--tk-blue); }

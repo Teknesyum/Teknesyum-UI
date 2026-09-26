@@ -1,1 +1,0 @@
-- [ ] ajan: Palette dialog usability review — 2026-09-26 16:58 — sonucu aktarılacak

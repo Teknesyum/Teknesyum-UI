@@ -1,2 +1,2 @@
-- [ ] Core'da uc'yi raf.js ui-denetim okutacak şekilde düzelt — 2026-09-27 01:17 — sahibin onayını bekliyor
-- [ ] VidShrink renk kaynağı seçimi — 2026-09-27 01:17 — sahibin kararı
+- [x] Core'da uc'yi raf.js ui-denetim okutacak şekilde düzelt — 2026-09-27 01:17 — Core 223e387, UI 289519d
+- [x] VidShrink renk kaynağı seçimi — 2026-09-27 01:17 — sahip karar verdi: düzen token'ları geçerli, uc.js 289519d

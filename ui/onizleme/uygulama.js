@@ -1744,7 +1744,7 @@
       const i = sira(d.dataset.grup);
       d.style.order = String(i >= 0 ? 1 + i : 60);
       d.classList.toggle('grup-ilgili', i >= 0);
-      if (i >= 0 && !d.dataset.grup.startsWith('renk-')) d.open = true;
+      if (i >= 0 && !d.dataset.grup.startsWith('renk-') && !(d.dataset.grup in grupKayit)) d.open = true;
     }
     $('[data-ayrac="ilgili"]').style.order = '0';
     $('[data-ayrac="diger"]').style.order = '50';
@@ -1815,10 +1815,12 @@
     return Object.keys(su.egri).map((ad) => [ad, (A() ? A().adi(ad) : ad) + ' (' + ad + ')']);
   }
 
+  let grupKayit = {};
+
   function grupHatirla() {
-    let kayit = {};
+    const kayit = grupKayit;
     try {
-      kayit = JSON.parse(localStorage.getItem('tk-gruplar') || '{}') || {};
+      Object.assign(kayit, JSON.parse(localStorage.getItem('tk-gruplar') || '{}') || {});
     } catch {}
     for (const d of $$('#ayarlar details.grup[data-grup]')) if (d.dataset.grup in kayit) d.open = !!kayit[d.dataset.grup];
     let tiklanan = null;

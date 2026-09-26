@@ -5,6 +5,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-09-27
+
+### Fixed
+- A shelf book's hash no longer depends on line endings, so a CRLF checkout does not make it pending.
+
 ## [0.10.0] - 2026-09-27
 
 ### Added
@@ -397,6 +402,6 @@ First release after the split from Teknesyum Base on 2026-08-28.
 - Core contracts and leftovers moved out of this repository.
 - Scanner reports exactly what it scans and no longer scans itself.
 
-[Unreleased]: https://github.com/Teknesyum/Teknesyum-UI/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/Teknesyum/Teknesyum-UI/compare/v0.10.1...HEAD
 [0.3.0]: https://github.com/Teknesyum/Teknesyum-UI/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Teknesyum/Teknesyum-UI/releases/tag/v0.2.0

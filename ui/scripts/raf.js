@@ -90,9 +90,7 @@ function meta(metin) {
 }
 
 function ozet(metin) {
-  return crypto.createHash('sha256').update(String(metin || '').replace(/
-/g, '
-')).digest('hex').slice(0, 12);
+  return crypto.createHash('sha256').update(String(metin || '').replace(/\r\n/g, '\n')).digest('hex').slice(0, 12);
 }
 
 function dosyaOku(f) {

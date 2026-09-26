@@ -2853,20 +2853,30 @@
     const a = ADIMLAR[sihirbazAdim];
     const el = $('.sihirbaz-etkin [data-sihirbaz-fark]');
     if (!el) return;
-    const n = a.yol.filter((y) => JSON.stringify(yolAl(su, y)) !== JSON.stringify(yolAl(ilk, y))).length;
+    const n = a.tema
+      ? Number(!!$('#tema-sec').value) + Number(su.koyu !== ilk.koyu)
+      : a.yol.filter((y) => JSON.stringify(yolAl(su, y)) !== JSON.stringify(yolAl(ilk, y))).length;
     el.textContent = n ? 'Bu adımda ' + n + ' ayar önerilenden farklı.' : 'Bu adımdaki ayarlar önerilen değerde.';
   }
 
   function sihirbazOneri() {
     const a = ADIMLAR[sihirbazAdim];
     if (a.tema) {
+      const t = temalar.find((x) => x.ad === $('#tema-sec').value);
+      for (const k of DUZENLENEN) {
+        const temadan = t && t.renk[k] ? t.renk[k] : ilk.renk[k];
+        if (t && su.renk[k] === temadan) {
+          su.renk[k] = ilk.renk[k];
+          delete hslBellek[k];
+        }
+      }
+      su.koyu = ilk.koyu;
       $('#tema-sec').value = '';
       $('[data-sihirbaz-tema]').value = '';
-      temaSec('');
-      return;
+    } else {
+      for (const y of a.yol) yolKoy(su, y, kopya(yolAl(ilk, y)));
+      for (const y of a.yol) if (y.startsWith('renk.')) delete hslBellek[y.slice(5)];
     }
-    for (const y of a.yol) yolKoy(su, y, kopya(yolAl(ilk, y)));
-    for (const k of Object.keys(hslBellek)) delete hslBellek[k];
     formDoldur();
     planla();
     sihirbazFark();

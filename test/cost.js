@@ -13,7 +13,12 @@ function hooksWriteNoContext() {
   const dir = path.join(L.UI, 'hooks');
   const files = fs.readdirSync(dir).filter((n) => n.endsWith('.js'));
   L.ok('there is at least one hook to check', files.length > 0);
+  const hooks = JSON.parse(fs.readFileSync(path.join(dir, 'hooks.json'), 'utf8')).hooks;
+  const once = new Set();
+  for (const g of hooks.SessionStart || []) for (const h of g.hooks) once.add(path.basename(h.command.replace(/"/g, ' ').trim().split(/\s+/).pop()));
+  L.ok('context is injected at most once per session', Object.keys(hooks).every((k) => ['SessionStart', 'PreToolUse', 'Stop'].includes(k)));
   for (const name of files) {
+    if (once.has(name)) continue;
     const body = fs.readFileSync(path.join(dir, name), 'utf8');
     L.ok('no additionalContext in hooks/' + name, !body.includes('additionalContext'));
     L.ok('no systemMessage in hooks/' + name, !body.includes('systemMessage'));

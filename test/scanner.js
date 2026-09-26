@@ -421,7 +421,70 @@ function filesSeeProjectStyles() {
   L.ok('--files reports only findings on the named files', one.every((f) => f.file === 'panel.css' || f.file === 'Views/Overview.axaml'), JSON.stringify(one.map((f) => f.file)));
 }
 
+function denetimKaydi() {
+  const env = L.cleanEnv();
+  const root = L.tmp('tkui-denetim-');
+  L.write(path.join(root, '.claude', 'teknesyum-ui.json'), JSON.stringify(CONFIG, null, 2));
+  const css = '.a{color:var(--tk-text)}\n.a:focus-visible{outline:2px solid var(--tk-text);box-shadow:inset 0 0 0 1px var(--tk-bg)}\n.n{font-variant-numeric:tabular-nums}\n';
+  L.write(path.join(root, 'temiz.css'), css);
+
+  const configPath = path.join(root, '.claude', 'teknesyum-ui.json');
+  const before = L.readJson(configPath) || {};
+  L.ok('the config carries no denetim entry before the first scan', before.denetim === undefined, JSON.stringify(before.denetim));
+
+  const fix = L.node(L.SCAN, [root, '--fix'], { env });
+  L.ok('a --fix pass on the clean css exits 0 or fixes what it can', fix.status === 0 || fix.status === 1, fix.stdout + fix.stderr);
+
+  const clean = L.node(L.SCAN, [root], { env });
+  L.ok('the second pass is clean', clean.status === 0, clean.stdout + clean.stderr);
+
+  const after = L.readJson(configPath) || {};
+  L.ok('a 0-open scan records a denetim entry in the project config', !!after.denetim && typeof after.denetim.tarih === 'string', JSON.stringify(after.denetim));
+  L.ok('the recorded tarih is a real ISO date', !Number.isNaN(Date.parse(after.denetim.tarih)), after.denetim && after.denetim.tarih);
+  L.ok('denetim.duzen is null when the project has no benim layout', after.denetim.duzen === null, JSON.stringify(after.denetim));
+
+  L.write(configPath, JSON.stringify(Object.assign({}, CONFIG, { duzen: 'abcdef0123456789' }), null, 2));
+  const withDuzen = L.node(L.SCAN, [root], { env });
+  L.ok('a clean pass with a configured duzen exits 0', withDuzen.status === 0, withDuzen.stdout + withDuzen.stderr);
+  const afterDuzen = L.readJson(configPath) || {};
+  L.ok('denetim.duzen is copied from the project config', afterDuzen.denetim && afterDuzen.denetim.duzen === 'abcdef0123456789', JSON.stringify(afterDuzen.denetim));
+
+  const dirty = cleanProject();
+  L.write(path.join(dirty, 'kirli.css'), '.k { color: #ff00ea; }\n');
+  const dirtyRun = L.node(L.SCAN, [dirty], { env });
+  L.ok('a project with open findings is not denetim-recorded', dirtyRun.status === 1, dirtyRun.stdout);
+  const dirtyCfg = L.readJson(path.join(dirty, '.claude', 'teknesyum-ui.json')) || {};
+  L.ok('the dirty project config carries no denetim entry', dirtyCfg.denetim === undefined, JSON.stringify(dirtyCfg.denetim));
+
+  const pickedRoot = cleanProject();
+  const pickedRun = L.node(L.SCAN, [pickedRoot, '--files', 'panel.css'], { env });
+  L.ok('a scan narrowed with --files never writes denetim', pickedRun.status === 0, pickedRun.stdout + pickedRun.stderr);
+  const pickedCfg = L.readJson(path.join(pickedRoot, '.claude', 'teknesyum-ui.json')) || {};
+  L.ok('a --files scan does not record denetim even when clean', pickedCfg.denetim === undefined, JSON.stringify(pickedCfg.denetim));
+}
+
+function ownOutputSkipped() {
+  const env = L.cleanEnv();
+  const root = cleanProject();
+  L.write(path.join(root, 'teknesyum-ui', 'css', 'theme.css'), '.own { color: #ff00ea; }\n');
+  const r = L.node(L.SCAN, [root], { env });
+  L.ok('the scan is clean even though the own output dir carries a raw colour', r.status === 0, r.stdout + r.stderr);
+  L.ok('the own output dir is never named in the findings', !/teknesyum-ui[\\/]css/.test(r.stdout), r.stdout);
+}
+
+function tokenizeColour() {
+  const C = require(require('path').join(L.UI, 'scripts', 'rules', 'colour.js'));
+  const ctx = { theme: { '--tk-renk-1': '#abcdef', '--tk-focus': '#abcdef', '--tk-text': '#123' } };
+  const y = C.fixes.tokenizeColour.line;
+  L.ok('tokenizeColour binds a palette hex to its first token', y('.a { border-color: #ABCDEF; }', ctx) === '.a { border-color: var(--tk-renk-1); }');
+  L.ok('tokenizeColour expands short hex', y('.a { color: #112233; }', ctx) === '.a { color: var(--tk-text); }');
+  L.ok('tokenizeColour leaves unknown colours', y('.a { color: #ff00ea; }', ctx) === '.a { color: #ff00ea; }');
+  L.ok('tokenizeColour leaves alpha hex', y('.a { color: #abcdef80; }', ctx) === '.a { color: #abcdef80; }');
+  L.ok('tokenizeColour leaves custom property definitions', y('  --x: #abcdef;', ctx) === '  --x: #abcdef;');
+}
+
 module.exports = function scanner() {
+  tokenizeColour();
   listRules();
   shape();
   fixtures();
@@ -432,5 +495,7 @@ module.exports = function scanner() {
   ignorePath();
   onlyFiles();
   filesSeeProjectStyles();
+  denetimKaydi();
+  ownOutputSkipped();
   dogfood();
 };

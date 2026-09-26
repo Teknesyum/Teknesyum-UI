@@ -5,7 +5,15 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-09-27
+
 ### Added
+- `scan.js --fix` binds an in-palette hex in a `.css` file to its token (`var(--tk-renk-1)`), and
+  `colour/raw-colour` names the token to use in every message.
+- An icon for the preview app, its window and its desktop shortcut (`ui/onizleme/masaustu/ikon/`).
+- A README banner in English and Turkish, six panel screenshots in six themes, and
+  `docs/diagram.md` with every flow diagram.
+- A cost test: only a SessionStart hook may write context; PreToolUse and Stop may not.
 - The preview app has a separate Yayımla step: Kaydet writes the record to this machine only, Yayımla commits and pushes it to the private repository. Both dialogs show the old print on the left and the new one on the right, above the list of differences.
 - Curve cards mark curves that overshoot their target and come back (Hedefi Aşar, Geri Döner).
 - The preview app remembers which setting groups are open and the window position, size and maximized state.
@@ -23,8 +31,32 @@ All notable changes to this project are documented here. The format follows
 - Preview scrollbar styles Solan (fades in while hovered or scrolled, fades out after) and
   İncelen (thin at rest, full width while hovered or scrolled, without shifting the layout).
 - Preview: private themes in `teknesyum-private/teknesyum-ui/temalar/` appear under Özel Temalar.
+- Preview: Kaydet also writes the full record to the private shelf as a standalone token file,
+  `teknesyum-ui/benim.tokens.json`, with notes in `benim.notlar.json` beside it (Benim Token
+  Dosyam); Yayımla pushes both files together with the settings record.
+- `setup.js --template benim` reads that file and is the default the moment it exists,
+  falling back to `neon` otherwise. The config records a `duzen` field (a 16-hex hash of the
+  file) and `notlar`; a changed hash makes `setup.js` re-copy the generated theme.
+- `scan.js` measures colour and duration rules against the project's own
+  `teknesyum-ui/theme.tokens.json` and `theme.css` when both exist, and no longer walks its
+  own `teknesyum-ui/` output directory as a source of files to check. A whole-project run
+  that ends at zero open findings writes `denetim: {tarih, duzen}` into the project's
+  `teknesyum-ui.json`.
+- SessionStart hook `baslangic.js`: silent in a clean project; on the first UI file with no
+  config it leaves a short note; with UI files and no setup, no audit, or a stale `duzen` it
+  tells the agent to set up, scan, fix to zero open findings and report two lines before
+  continuing the user's request; otherwise it scans in the background and only speaks up if
+  open findings remain.
+- PreToolUse hook `once.js`: denies writing a UI file (`.css`, `.tsx`, `.jsx`, `.vue`,
+  `.svelte`, `.xaml`, `.axaml`) in a project with no `teknesyum-ui.json` at all, until setup
+  has run.
+- `raf.js` reads the private shelf's `teknesyum-ui/kurallar/` first, then falls back to
+  `tercihler/`; a name present in both is read from `kurallar/`.
 
 ### Changed
+- `kaydet.js` writes the new version into every package file even when one had drifted.
+- README and README.tr rewritten for the current plugin: numbers, cost table, hooks, private
+  shelf, screenshots.
 - Geri Al in the preview returns to the value in the selected token file (Benim Token Dosyam included), not to the standard.
 
 - **Breaking:** the brand colour tokens are named by order, not by hue: `blue`, `pink`,

@@ -16,6 +16,12 @@ The project file overrides the machine file field by field.
 | `off: true` | Same, and do not offer. |
 | A file, not off | In force. Its `note:` field beats everything below. |
 
+A SessionStart hook already checks this on its own: it says nothing when the project is
+untouched or clean, and tells the agent to run setup and scan first when UI files exist
+with no config, no audit yet, or a layout hash that changed since the last audit. A
+PreToolUse hook blocks writing a UI file outright when there is no project config at all.
+Follow what either one says before continuing the user's request.
+
 ## Where the rules are
 
 The written standard is not in this file. It lives on the owner's private shelf and is

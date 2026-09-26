@@ -6,6 +6,7 @@ const os = require('os');
 const path = require('path');
 
 const DIR = 'tercihler';
+const KURAL = path.join('teknesyum-ui', 'kurallar');
 
 function configRoot() {
   return process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude');
@@ -19,34 +20,39 @@ function dir() {
   return path.join(root(), 'private', DIR);
 }
 
+function dizinler() {
+  return [path.join(root(), KURAL), dir()].filter((d) => {
+    try {
+      return fs.statSync(d).isDirectory();
+    } catch {
+      return false;
+    }
+  });
+}
+
 function var_() {
-  try {
-    return fs.statSync(dir()).isDirectory();
-  } catch {
-    return false;
-  }
+  return dizinler().length > 0;
 }
 
 function liste() {
   if (!var_()) return [];
-  try {
-    return fs
-      .readdirSync(dir())
-      .filter((f) => f.toLowerCase().endsWith('.md'))
-      .map((f) => f.replace(/\.md$/i, ''))
-      .sort();
-  } catch {
-    return [];
+  const adlar = new Set();
+  for (const d of dizinler()) {
+    try {
+      for (const f of fs.readdirSync(d)) if (f.toLowerCase().endsWith('.md') && !/^(agents|claude)\.md$/i.test(f)) adlar.add(f.replace(/\.md$/i, ''));
+    } catch {}
   }
+  return [...adlar].sort();
 }
 
 function oku(name) {
   if (!name || !/^[a-z0-9-]+$/i.test(String(name))) return null;
-  try {
-    return fs.readFileSync(path.join(dir(), String(name) + '.md'), 'utf8');
-  } catch {
-    return null;
+  for (const d of dizinler()) {
+    try {
+      return fs.readFileSync(path.join(d, String(name) + '.md'), 'utf8');
+    } catch {}
   }
+  return null;
 }
 
 function main(argv) {
@@ -54,6 +60,8 @@ function main(argv) {
   if (args.includes('--help') || args.includes('-h')) {
     process.stdout.write(
       'Usage: node raf.js [name]\n\nReads the private shelf under ' +
+        path.join(root(), KURAL) +
+        ' first, then ' +
         dir() +
         '\nNo name lists the books. Exit: 0 fine · 1 no shelf · 2 no such book\n'
     );

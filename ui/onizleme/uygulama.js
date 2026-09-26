@@ -2955,7 +2955,7 @@
   }
 
   async function ozelKaydet(sihirbazla) {
-    const veri = { surum: 1, tarih: new Date().toISOString(), sihirbaz: sihirbazla || !!(ozelBilgi.ayar && ozelBilgi.ayar.sihirbaz), tema: $('#tema-sec').value === 'ozel' ? (ozelBilgi.ayar && ozelBilgi.ayar.tema) || null : $('#tema-sec').value || null, fark: fark(su, ilk) };
+    const veri = { surum: 1, tarih: new Date().toISOString(), sihirbaz: sihirbazla || !!(ozelBilgi.ayar && ozelBilgi.ayar.sihirbaz), tema: $('#tema-sec').value === 'ozel' ? (ozelBilgi.ayar && ozelBilgi.ayar.tema) || null : $('#tema-sec').value || null, fark: fark(su, ilk), tokenlar: disaAktar() };
     let r;
     try {
       r = await fetch('/ozel-ayar', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-onizleme': '1' }, body: JSON.stringify(veri) });
@@ -2971,6 +2971,7 @@
       durum('Özel ayar kaydedilemedi: ' + (j.hata || 'HTTP ' + r.status));
       return false;
     }
+    delete veri.tokenlar;
     ozelBilgi = { var: true, tur: j.tur, ayar: veri };
     benimKur();
     planla();

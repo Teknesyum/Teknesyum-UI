@@ -67,6 +67,7 @@ function pencere() {
     minWidth: 1024,
     minHeight: 640,
     title: 'TeknesyumUI ' + surum(),
+    icon: path.join(__dirname, 'ikon', 'ikon.png'),
     backgroundColor: yuzey(),
     frame: false,
     thickFrame: true,

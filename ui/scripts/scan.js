@@ -31,6 +31,7 @@ const SKIP_DIR = new Set([
   '.next',
   '.claude',
   'graphify-out',
+  'trash',
 ]);
 const PRINT_CAP = 40;
 
@@ -180,6 +181,7 @@ function collect(root) {
   const ui = [];
   const modules = [];
   const stack = [root];
+  const OWN = path.resolve(root, 'teknesyum-ui');
   while (stack.length) {
     const dir = stack.pop();
     let entries;
@@ -192,7 +194,7 @@ function collect(root) {
       if (e.name.startsWith('.')) continue;
       const full = path.join(dir, e.name);
       if (e.isDirectory()) {
-        if (!SKIP_DIR.has(e.name) && path.resolve(full) !== SELF_DIR) stack.push(full);
+        if (!SKIP_DIR.has(e.name) && path.resolve(full) !== SELF_DIR && path.resolve(full) !== OWN) stack.push(full);
         continue;
       }
       if (GENERATED_FILE.has(e.name)) continue;
@@ -218,9 +220,28 @@ function chosen(root, list) {
   return out.size ? out : null;
 }
 
+function themeSource(root) {
+  const own = path.join(root, 'teknesyum-ui');
+  const tokens = path.join(own, 'theme.tokens.json');
+  const css = ['css', 'react'].map((t) => path.join(own, t, 'theme.css')).find((f) => fs.existsSync(f));
+  if (fs.existsSync(tokens) && css) return { css, tokens };
+  return { css: path.join(ASSETS, 'theme.css'), tokens: path.join(ASSETS, 'theme.tokens.json') };
+}
+
+function recordCheck(root, config) {
+  const file = path.join(root, '.claude', 'teknesyum-ui.json');
+  const cfg = readJson(file);
+  if (!cfg) return;
+  cfg.denetim = { tarih: new Date().toISOString(), duzen: config.duzen || null };
+  try {
+    fs.writeFileSync(file, JSON.stringify(cfg, null, 2) + '\n');
+  } catch {}
+}
+
 function buildContext(root, config, notes, pick) {
-  const theme = customProperties(read(path.join(ASSETS, 'theme.css')) || '');
-  const tokens = readJson(path.join(ASSETS, 'theme.tokens.json'));
+  const source = themeSource(root);
+  const theme = customProperties(read(source.css) || '');
+  const tokens = readJson(source.tokens);
   if (!Object.keys(theme).length && !tokens)
     notes.push('theme assets unreadable at ' + ASSETS + ' — colour and duration rules skipped');
 
@@ -563,6 +584,7 @@ function main(argv) {
     process.stderr.write('rule skipped: ' + id + ' — ' + message + '\n');
 
   const open = live.filter((f) => !f.fixed);
+  if (!pickSet && !open.length && config.layer === 'project') recordCheck(root, config.merged);
 
   if (asJson) {
     process.stdout.write(

@@ -7,6 +7,8 @@ const { spawn, execFileSync } = require('child_process');
 
 const YEREL = path.resolve(__dirname, '..', 'onizleme', 'ozel-ayar.json');
 const ALT = path.join('teknesyum-ui', 'onizleme', 'ayarlar.json');
+const TOKEN_ALT = path.join('teknesyum-ui', 'benim.tokens.json');
+const NOT_ALT = path.join('teknesyum-ui', 'benim.notlar.json');
 const ESKI_RENK = { blue: 'renk-1', pink: 'renk-2', purple: 'renk-3' };
 const ESKI_AD = /^(blue|pink|purple)(-text)?(-\d+)?$/;
 
@@ -55,8 +57,8 @@ function dogrula(v) {
   for (const [k, h] of Object.entries(renk)) if (!/^[a-z0-9-]+$/.test(k) || !/^#[0-9a-f]{6}$/i.test(String(h))) throw new Error('Geçersiz renk: ' + k);
 }
 
-function gonder(kok, dosya) {
-  const bagil = path.relative(kok, dosya).split(path.sep).join('/');
+function gonder(kok, dosyalar) {
+  const bagil = [].concat(dosyalar).filter((d) => fs.existsSync(d)).map((d) => path.relative(kok, d).split(path.sep).join('/'));
   const git = (args) => new Promise((r) => {
     const c = spawn('git', args, { cwd: kok, windowsHide: true, stdio: 'ignore' });
     c.on('error', () => r(1));
@@ -65,9 +67,9 @@ function gonder(kok, dosya) {
   const is = { durum: 'gonderiliyor' };
   (async () => {
     if (!fs.existsSync(path.join(kok, '.git'))) return (is.durum = 'git-yok');
-    if ((await git(['add', '--sparse', '--', bagil])) !== 0 && (await git(['add', '--', bagil])) !== 0) return (is.durum = 'add-durdu');
-    const degisti = (await git(['diff', '--cached', '--quiet', '--', bagil])) !== 0;
-    if (degisti && (await git(['commit', '-q', '-m', 'teknesyum-ui: önizleme ayarı', '--', bagil])) !== 0) return (is.durum = 'commit-durdu');
+    if ((await git(['add', '--sparse', '--', ...bagil])) !== 0 && (await git(['add', '--', ...bagil])) !== 0) return (is.durum = 'add-durdu');
+    const degisti = (await git(['diff', '--cached', '--quiet', '--', ...bagil])) !== 0;
+    if (degisti && (await git(['commit', '-q', '-m', 'teknesyum-ui: önizleme ayarı', '--', ...bagil])) !== 0) return (is.durum = 'commit-durdu');
     is.durum = (await git(['push', '-q'])) === 0 ? 'gonderildi' : 'push-durdu';
   })();
   return is;
@@ -75,19 +77,41 @@ function gonder(kok, dosya) {
 
 let son = null;
 
+function tokenYollari() {
+  const y = yer();
+  return y.kok ? { tokenlar: path.join(y.kok, TOKEN_ALT), notlar: path.join(y.kok, NOT_ALT) } : null;
+}
+
+function tokenYaz(degisen) {
+  const yol = tokenYollari();
+  if (!yol || !degisen || typeof degisen !== 'object' || Array.isArray(degisen)) return null;
+  const K = require('./kaydet');
+  const d = Object.assign({}, degisen);
+  const notlar = Array.isArray(d._) ? d._.map(String) : [];
+  delete d._;
+  const metin = K.tokenMetni(fs.readFileSync(K.TOKENS, 'utf8'), d).metin;
+  fs.mkdirSync(path.dirname(yol.tokenlar), { recursive: true });
+  fs.writeFileSync(yol.tokenlar, metin);
+  fs.writeFileSync(yol.notlar, JSON.stringify({ notlar }, null, 2) + '\n');
+  return yol.tokenlar;
+}
+
 function yaz(v) {
   dogrula(v);
   const y = yer();
+  const degisen = v.tokenlar;
+  delete v.tokenlar;
   fs.mkdirSync(path.dirname(y.dosya), { recursive: true });
   fs.writeFileSync(y.dosya, JSON.stringify(v, null, 2) + '\n');
-  return { tur: y.tur, yol: y.dosya };
+  return { tur: y.tur, yol: y.dosya, tokenlar: tokenYaz(degisen) };
 }
 
 function yayimla() {
   const y = yer();
   if (y.tur !== 'raf') throw new Error('Özel raf yok; yerel kayıt yayımlanmaz.');
   if (!fs.existsSync(y.dosya)) throw new Error('Önce kaydet.');
-  son = process.env.TEKNESYUM_OZEL_GITSIZ ? { durum: 'gitsiz' } : gonder(y.kok, y.dosya);
+  const yol = tokenYollari();
+  son = process.env.TEKNESYUM_OZEL_GITSIZ ? { durum: 'gitsiz' } : gonder(y.kok, [y.dosya, yol.tokenlar, yol.notlar]);
   return { tur: y.tur, gonderim: son.durum };
 }
 
@@ -109,4 +133,4 @@ function gonderim() {
   return son ? son.durum : null;
 }
 
-module.exports = { yer, oku, yaz, yayimla, yayinli, dogrula, gonderim, yeniAdlar, YEREL };
+module.exports = { yer, oku, yaz, yayimla, yayinli, dogrula, gonderim, yeniAdlar, tokenYollari, tokenYaz, YEREL };

@@ -17,6 +17,7 @@ const SUITES = [
   ['ozel', require('./ozel')],
   ['skor', require('./skor')],
   ['tema', require('./tema')],
+  ['hooks', require('./hooks')],
 ];
 
 function main() {

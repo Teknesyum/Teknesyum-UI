@@ -1,6 +1,6 @@
 {
   "name": "teknesyum-onizleme",
-  "version": "0.7.0",
+  "version": "0.9.0",
   "private": true,
   "description": "Electron shell for the colour preview.",
   "license": "AGPL-3.0-or-later",

@@ -2,56 +2,69 @@
 
 [<img src="assets/badge-lang.svg" alt="English selected, switch to Türkçe" width="124" height="44">](README.tr.md)
 
+<img src="assets/banner.svg" alt="Teknesyum UI banner: the icon, an easing curve over three palette dots, beside the name and the line One Token File, Every Interface." width="100%">
+
 # Teknesyum UI
 
-An interface standard for Claude Code, shipped as data plus a scanner rather than as a
-document the model has to read.
+Tokens, scanner, hooks.
 
-Split out of Teknesyum Base so that [Teknesyum Core](https://github.com/Teknesyum/Teknesyum-Core) stays a work relay
-and nothing more. Core has no opinion about how anything looks; this project has all of it.
-
-**Off until you ask for it.** The standard applies only where a `teknesyum-ui.json` exists.
-Installing the plugin changes nothing on its own.
-
----
-
-## The idea
-
-Most of what a "standard" document contains is either something the model already does, or
-a number. Neither belongs in its context window.
-
-| Kind of rule | Where it lives | What it costs |
-|---|---|---|
-| A value — colour, radius, duration, scale step | generated token files in your project | nothing; read one when you need one |
-| A mechanically checkable rule | `scan.js` | nothing; it runs, it does not get read |
-| The written standard, in prose | the private shelf, one book per subject | nothing; a book is read once, when its work starts |
-| How to reach the shelf and what to run | `SKILL.md`, 80 lines | paid once, when UI work starts |
-
-Base spent about 27,000 tokens on `SKILL.md` and 55,000 more on eight reference files
-every time an interface came up. This ships 100 scanner rules, one 80-line skill and two
-reference files.
-
-## Where the rules live
-
-The prose half of the standard is not in this repository. It sits on the private shelf that
-[Teknesyum Core](https://github.com/Teknesyum/Teknesyum-Core) keeps — `TEKNESYUM_PRIVATE`, or
-`<config>/teknesyum-private/private/tercihler/` — one book per subject. You describe a rule
-once, there, and both the skill and the scaffolder follow it.
-
-```bash
-node <plugin>/scripts/raf.js                     # list the books
-node <plugin>/scripts/raf.js guncelleme-paneli   # read one
-```
-
-| Work | Book |
+| | |
 |---|---|
-| Any interface change | `ui-duzeni` |
-| An update, installer or sync surface | `guncelleme-paneli` |
-| A README or repository document | `readme-protokolu` |
+| Scanner rules | 101, in 8 modules (`scan.js --list-rules`) |
+| Themes | 9 — 5 light, 4 dark; every one passes 7:1 and scores 85 or more (`tema.js denetle`) |
+| Tests | 404 assertions, no dependencies (`npm test`) |
+| Cost of an ordinary turn | 0 tokens — no hook writes context on a turn |
+| Cost of a session start | 0 tokens on a clean project; one note of about 150–250 tokens when there is UI work to do |
+| Cost of the skill | `SKILL.md`, 93 lines, about 1,000 tokens, loaded only when UI work starts |
 
-A book is read once per session. The skill says so, and the Stop hook keeps its own memory:
-it names a finding once per file and stays quiet on a repeat until the conversation is
-compacted.
+## What It Is
+
+A Claude Code plugin that holds one interface layout — colours, type, radius, motion, glow,
+title bar — in a token file, and makes every project build from it. Setup writes the theme
+into the project, the scanner checks the code against it, and three hooks make sure the
+check runs: once when a session opens, before the first UI file is written, and when a turn
+ends. The layout is edited in a desktop preview app, not in prose.
+
+## Doesn't Claude Code Already Do This?
+
+Claude writes decent interfaces on its own, and it follows a design document if you hand it
+one. What it does not do is keep ten projects on the same layout for months. This adds:
+
+- **A value is data, not advice.** Colours and durations live in generated files the code
+  references; the model reads one when it needs one instead of carrying a style guide.
+- **A rule is a program.** 101 checks run in `scan.js`, many with a safe `--fix`. Nothing
+  about contrast or motion is left to the model's memory.
+- **The check is not optional.** A project that was never checked, or whose layout changed
+  since, is checked before the user's request is picked up.
+- **One change reaches every project.** Edit the layout once in the preview app; each project
+  notices the new layout hash on its next session and regenerates.
+
+## Features
+
+- **Preview app.** An Electron window with 15 panels: colours, buttons, forms, title bar,
+  progress, scrollbar, background, badges, toasts, installer, modal, type, motion,
+  readability and a frame-time monitor. Every setting is live.
+- **Your own token file.** Kaydet writes the layout you built to a private token file;
+  `setup.js` uses it as the default template from then on.
+- **Scanner with fixes.** Contrast pairs, hard-coded colours and durations, focus rings,
+  layout animation, reduced motion, title bar and installer signatures, WPF and Avalonia
+  specifics. `--fix` binds a palette colour to its `var(--tk-*)` and a literal duration to
+  its token.
+- **Readability score.** Every text/fill pair the standard uses, scored 0–100 and weighted by
+  how often it appears, so a colour change shows what it costs before it ships.
+- **Generators for five targets.** `css`, `react`, `wpf`, `avalonia`, `winforms` — one token
+  source, five theme files.
+- **Templates.** A USB installer, a title bar, an update surface and a headless contrast test,
+  each carrying a signature line the scanner looks for.
+
+## What It Does Not Do
+
+- It does not design for you. It holds a layout you chose and enforces it.
+- It does not see colours computed at run time; `denetim.js` audits a running page for that.
+- It does not touch a project without a `teknesyum-ui.json`, machine-wide or per project.
+- It does not rewrite TSX, XAML or C# colours automatically; it reports them with the token
+  to use. Only CSS is fixed in place.
+- It ships no personal layout. Your own values stay in a private repository you control.
 
 ## Install
 
@@ -59,226 +72,194 @@ compacted.
 /plugin marketplace add Teknesyum/Teknesyum-Core
 ```
 
-One marketplace carries both plugins: the Core marketplace lists this plugin as a `git-subdir` source pointing at the `ui/` folder of this repository, and the `.claude-plugin/marketplace.json` here only lets the repository be added as a standalone marketplace for local development. Then `/plugin install teknesyum-ui@teknesyum`.
-
-Then, in the project you want it in:
-
 ```bash
-node <plugin>/scripts/setup.js
+/plugin install teknesyum-ui@teknesyum
 ```
 
-Run in your own terminal it asks its own questions and costs nothing. Run inside Claude
-Code it prints what it needs, the model asks once, and calls `--apply` with the answers.
+**Restart Claude Code.** The hooks load at start.
 
-It writes `<project>/.claude/teknesyum-ui.json` and generates the theme into
-`<project>/teknesyum-ui/` for the targets you pick: `css`, `react`, `wpf`, `avalonia`,
-`winforms`. The Avalonia signature comes as `Signature.axaml.example`: it needs a
-localisation extension and a `Click` handler, so copy it into a view of your own.
+Node 18 or newer is required. Electron for the preview app installs itself on the first
+`onizleme.js` run and is optional; without it, `--tarayici` serves the same page in a browser.
 
-For `avalonia` and `wpf` it also embeds the sans face: Atkinson Hyperlegible Next and its
-OFL go into the app project's `Assets/Fonts`, `FontSans` points at the `avares://` (or
-assembly component) URI, and the project gets the resource item. `--app <csproj>` picks the
-project when there are several. The generated theme sets every window to FontSans at fs-2
-(Avalonia `:is(Window)`, WPF `TkWindow`), and `typography.scale` is read from the token file.
+A machine-wide `~/.claude/teknesyum-ui.json` turns the standard on for every project;
+`setup.js --apply` in a project turns it on there. Nothing happens anywhere before that, and
+`setup.js --off` turns it off again.
 
-The generated Avalonia theme animates its background layer's `RenderTransform`
-(`Window.anim Panel.appbg`), and Avalonia has no built-in animator for that: without one the
-app crashes on launch. `setup.js` writes a `TransformAnimator.cs` beside the app's
-`App.axaml.cs` and adds `Animation.RegisterCustomAnimator<ITransform, TransformAnimator>()` as
-the first line of `Initialize()`, skipping it if it is already there. When `App.axaml.cs` or
-its `Initialize()` method is not where expected, it prints a warning instead of failing the
-run — `scan.js`'s `core/avalonia-animator-missing` then catches the gap.
+## How It Works
 
-The standard is deliberately plain — black, white and grey, no glow — so an app starts from a
-neutral base and brings its own colours. Neon is the ready answer, not the only one — `--template custom` takes three brand colours
-and a surface, and derives the rest on the same formulas.
+### One Source, Like A Locales File
 
-## Check your work
+A program that keeps its strings in `locales/` can change language without touching a
+screen. This does the same for looks: code refers to `var(--tk-renk-1)`, `{DynamicResource
+Renk1}`, `--tk-t-fast` — never to a hex or a millisecond. Change the token, regenerate, and
+every screen follows. `colour/raw-colour` and `core/hardcoded-duration` fail any literal, so
+the rule holds after the first check.
 
-```bash
-node <plugin>/scripts/scan.js <project-root>
+```mermaid
+flowchart LR
+  A[Preview App] -->|Kaydet| B[Your Token File]
+  B -->|setup.js| C[Project Theme Files]
+  C --> D[Code Uses var --tk-*]
+  D -->|scan.js| E{Open Findings?}
+  E -->|Yes| F[Fix Or --fix]
+  F --> D
+  E -->|No| G[Check Recorded With Layout Hash]
 ```
 
-`0` clean, `1` findings, `2` not configured or off. `--json` for machine output, `--fix`
-for the repairs that are safe to automate, `--list-rules` for what it enforces, `--files
-a.css,b.tsx` to report only on the files that were touched while project-wide rules still read
-the whole tree. `--fix` leaves the period of an
-infinite animation alone and only reports it: a loop is fixed by its repeat, not its duration.
+*Figure 1: the preview app saves your token file, setup turns it into the project's theme
+files, the code references only tokens, the scanner checks it, and a clean scan records which
+layout it was checked against.*
 
-A Stop hook runs the same scan when interface files changed and blocks on a violation. It
-exits before doing any work when no config exists or `off: true` is set, and it stands down
-after two blocks on the same file, so a real disagreement stops the gate rather than the work.
-It scans only the files the turn changed, counts only open findings (never `ignored` or
-`fixed`), and it does not repeat a finding it has already
-made in the same conversation.
+### When The Hooks Speak
 
-### Contrast
-
-Every fill in the tokens carries an `on` pair, the text colour that goes on it. `generate.js`
-measures each pair, a translucent fill composited over the surface first, and stops at the
-first one under 7:1 with the pair and its ratio. It writes them out as `--tk-on-*` in CSS and
-`On*` brushes in XAML.
-
-The `okunurluk/pair-contrast` rule looks for a fill and a text colour on the same element and
-measures them. It reads hex, `var(--tk-*)`, Tailwind classes (arbitrary values too), XAML
-`Background`/`Foreground` with Static and Dynamic resources from any file, style setters and
-triggers, and C# painting: `FillPath`/`FillRectangle` and `TextRenderer.DrawText` in a paint
-method, plus WinForms `BackColor`/`ForeColor` pairs. A finding reads
-`bg X on fg Y — 2.1:1, below 7:1`. `core/contrast` now measures fill colours used as text;
-only the approved text cuts are exempt.
-
-The scanner cannot see a colour computed at run time. For that, audit the running page:
-
-```bash
-node <plugin>/scripts/denetim.js http://localhost:5173 [--esik 7] [--hedef 24] [--snippet out.js]
+```mermaid
+flowchart TD
+  S[Session Starts] --> Q1{Project Has UI Files?}
+  Q1 -->|No, Not Set Up| N1[Short Note: Set Up Before The First UI File]
+  Q1 -->|No, Set Up| Z[Silent]
+  Q1 -->|Yes| Q2{Set Up, Checked, Same Layout?}
+  Q2 -->|No| N2[Check First: Setup, Scan, Fix, Two-Line Report]
+  Q2 -->|Yes| Q3{Open Findings?}
+  Q3 -->|Yes| N3[Fix First, Then The Request]
+  Q3 -->|No| Z
+  W[Write A UI File] --> Q4{Project Set Up?}
+  Q4 -->|No| D1[Write Denied Until Setup Runs]
+  Q4 -->|Yes| OK[Write Goes Through]
+  T[Turn Ends] --> G1[Stop Hook Scans Changed Files]
 ```
 
-It prints a standalone script. The agent hands that script to the browser's
-`javascript_tool` (Claude in Chrome or the preview pane) on the open page. The script checks
-each visible text against its real ground, composited up the parent chain, and returns JSON
-with the pairs under the threshold and the clickable targets under 24 px. No axe-core, no
-install.
+*Figure 2: at session start the hook stays silent on a clean project, leaves a note on a
+project with no interface yet, and asks for a check first when a project was never set up,
+never checked or its layout changed; writing a UI file is refused until setup has run; the
+Stop hook scans what the turn changed.*
 
-For a desktop app, `scaffold.js denetim <Namespace>` writes a headless xUnit test that opens
-the window and measures every text the same way (see Templates).
+### What It Costs
 
-## Templates
-
-```bash
-node <plugin>/scripts/scaffold.js kur <AppName> [--simge app/simge.ico] [--anahtar usb-01]
-node <plugin>/scripts/scaffold.js kur <AppName> --avalonia [--ns <Namespace>]
-node <plugin>/scripts/scaffold.js ustcubuk [<Namespace>] [--avalonia|--react]
-node <plugin>/scripts/scaffold.js durum [<Namespace>] [--avalonia|--electron]
-node <plugin>/scripts/scaffold.js denetim <Namespace> [--wpf|--avalonia] [--pencere MainWindow] [--esik 7]
-```
-
-| Target | Writes | What it is |
+| Moment | Tokens | Why |
 |---|---|---|
-| `kur` | `Kur.bat`, `kur-<name>.ps1` | A USB installer window: creeping progress bar, live log, finish and error screens, `-Prova` dry run. Updates in place; `-Onar` or the finish screen's Onar button rebuilds. Each stick carries its own deploy key under `.kurulum/anahtar/`. |
-| `kur --avalonia` | `teknesyum-ui/kur/KurulumEkrani.axaml` | The same install flow as an Avalonia screen, beside the PowerShell panel. |
-| `ustcubuk` | `teknesyum-ui/ustcubuk/` | The title bar: title, Teknesyum button, update badge, window buttons. React (logo, two-part name, language slot, drag region for Electron and Tauri) or, when the project has `.axaml`, Avalonia `TitleBar` + `KabukStilleri`. |
-| `durum` | `teknesyum-ui/durum/` | The update surface: an Electron git sync with a title-bar badge, or the Avalonia `GuncellemePaneli`. |
-| `denetim` | `teknesyum-ui/denetim/KontrastTests.cs`, `KabukTests.cs` | A headless contrast test: Avalonia.Headless.XUnit when the project has `.axaml` (the test project needs xunit v3), otherwise WPF on an STA thread with `VisualTreeHelper`. It measures every text run and icon, every button at rest, hover, pressed, focus and disabled, and the worst stop of a gradient ground; it writes `tmp/uc/kontrast-*.txt` plus window captures at 100/125/150 % and fails with every pair under the threshold. |
+| An ordinary turn | 0 | No hook writes `additionalContext` on a turn; a test fails if one starts to |
+| Session start, clean project | 0 | The hook runs the scan and prints nothing |
+| Session start, work to do | about 150–250, once | One instruction, measured at 420–690 characters |
+| First UI write in a project never set up | about 100, once | The denial reason, 321 characters |
+| A turn that broke a rule | the finding lines | The Stop hook blocks with the findings, and stands down after two blocks on the same file |
+| UI work starts | about 1,000, once | `SKILL.md` |
 
-Every template file starts with a `teknesyum-ui template <path>` line. Hover and press stay
-inside the button (nothing grows past its bounds: hover changes colour and border), and each Avalonia folder carries
-`ekran/` captures of rest, hover, pressed, focus and disabled at 848×640. `KabukTests.cs`
-checks that the sans face really loads, that no text sits below fs-2, and that every button
-state fits its own clip. The scanner flags a window with no root font size, a `FontSans`
-that is not embedded, and a title bar, update panel or install screen without the
-signature line (`kabuk/*`).
+Character counts are measured from the hooks' real output; token counts are that divided by
+three, rounded.
 
-Each target ends by naming the shelf book that governs what it just wrote, and says so
-plainly when the shelf or the book is missing. An existing file is never overwritten. Project-specific install steps go in with
-`--adimlar <file>`; the default installs npm packages and a desktop shortcut. Keep
-`.kurulum/` and `.araclar/` out of the project's git.
+### The Private Shelf
 
-## Preview
+Prose rules and your own layout live outside this repository, in a private repository you
+keep. The plugin reads it only when it is reachable: `TEKNESYUM_PRIVATE`, or
+`<config>/teknesyum-private/`. Detailed rules sit in `teknesyum-ui/kurallar/`, your token file
+in `teknesyum-ui/benim.tokens.json`. Without the shelf the plugin uses the public standard —
+plain black, white and grey — and nothing else changes. Point it at a shelf of your own, or
+leave it.
+
+## The Program Shows What It Does
+
+Six panels, six of the nine themes.
+
+![Akıcılık panel in the Gece Mavisi theme: two easing curves drawn on one graph, each driving four live demos.](docs/img/1-akicilik.png)
+**Akıcılık, Gece Mavisi.** Two easing curves on one graph, each driving slide, scale, panel
+and staggered-list demos side by side.
+
+![Okunurluk panel in the Kar Beyazı theme: readability score now, the token file's score and the difference, above the most affected parts.](docs/img/2-okunurluk.png)
+**Okunurluk, Kar Beyazı.** The readability score now against the token file, and which parts a
+colour change moved most.
+
+![Teknik panel in the Kor theme: frame rate, frame times, dropped frames and a 300-frame graph.](docs/img/3-teknik.png)
+**Teknik, Kor.** Frame rate, average, P95 and worst frame, dropped frames, and the last 300
+frames on a graph.
+
+![Renkler Ve Tonlar panel in the Kadife theme: tone steps of each brand colour with hex and contrast.](docs/img/4-renkler.png)
+**Renkler Ve Tonlar, Kadife.** Every tone step with its hex and contrast; steps under 7:1 are
+crossed out.
+
+![Düğmeler panel in the Sıcak Kâğıt theme: primary, ghost and danger buttons in five states.](docs/img/5-dugmeler.png)
+**Düğmeler, Sıcak Kâğıt.** Primary, ghost and danger buttons at rest, hover, pressed, focus and
+disabled, with their ratios.
+
+![Tipografi panel in the Grafit theme: the type scale from hero to hint with sizes, weights and ratios.](docs/img/6-tipografi.png)
+**Tipografi, Grafit.** The type scale from hero to hint, with size, weight and contrast.
+
+## For Developers
+
+### Commands
 
 ```bash
-node ui/scripts/onizleme.js [--tarayici [--port 4317] [--no-open]]
+node <plugin>/scripts/setup.js --apply --project <dir> [--template benim|neon|custom] [--targets css,react]
 ```
 
-Opens in its own Electron window (`ui/onizleme/masaustu/`, Electron is installed there on
-the first run); `--tarayici` serves the same page on `127.0.0.1` instead.
+```bash
+node <plugin>/scripts/scan.js <project-root> [--fix] [--json] [--files a.css,b.tsx] [--list-rules]
+```
 
-The window has no system title bar. It draws the standard `tk-titlebar`: brand, Tek Görünüm and Önce / Sonra as tabs, theme picker, Sıfırla, Kopyala, İndir, Kaydet as the one outlined chip, and window controls with a restore glyph when maximised. Dragging, double-click to maximise, Aero Snap, edge resize and `Alt+F4` still work. A 1 px edge frames the window unless it is maximised. The whole app takes the settings live, and the Pencere Ve Üst Çubuk group sets the edge colour and the bar height.
+```bash
+node <plugin>/scripts/raf.js [book]
+```
 
-The layout has three columns. The left one lists 15 components: colours, buttons, forms, title bar,
-progress, scrollbar, background, badges, toasts, installer, modal, type, Akıcılık, Okunurluk and
-Teknik. The middle one draws the chosen component with every example and state (normal, hover,
-pressed, focus, disabled). The right one shows that component's settings first. The settings
-include glow (none, thin, token, neon, custom), UI easing, duration scale, density, border
-width, glass blur, shadow strength and scrollbar style. Akıcılık plays the easing curves side by
-side, and Teknik measures FPS and frame time. `ui/templates/temalar/` holds nine themes
-(`node ui/scripts/tema.js liste`, `denetle [ad]`), five light and four dark. Each passes 7:1 and
-scores at least 85.
+```bash
+node <plugin>/scripts/scaffold.js kur|ustcubuk|durum|denetim <args>
+```
 
-A page for trying new brand colours before touching the tokens. It
-starts from `ui/templates/neon.tokens.json` and measures with the same `kontrast.js` the
-scanner uses, served to the browser as is. The left panel sets renk-1, renk-2, their text cuts,
-renk-3, surface and the background (flat, token gradient, glass, grid, glow; stops and
-angle), font family, size scale, weights, radius, scrollbar width and colour, scroll
-behaviour and reduced motion. The right side shows every tone-scale step, text-scale cut
-and `on` pair with its hex and ratio on surface (under 7:1 is marked), renk-1 and renk-2 side by
-side, buttons in all five states, badge, chip, input, selected row, title bar, progress,
-a long scrolling list, the type scale and panel, card and glass. The "Uygulama Parçaları" tab draws the shipped
-components from the standard's own CSS: title bar, sync and update badges, the installer panel
-in three states, progress bars, buttons, toasts, a dialog and form fields. The "Okunurluk" tab turns contrast into one readability score from 0 to
-100, higher is better (`ui/scripts/skor.js`, also `node ui/scripts/skor.js`): every text/fill
-pair the standard CSS uses is scored on a log scale (3:1 → 30, 4.5:1 → 50, 7:1 → 70, 12:1 → 90,
-18:1 → 100; large headings count 7/4.5 more) and weighted by how often it appears (×1–×10), so
-body text, tabs and the primary button weigh most. It shows the score now against the token
-file, per panel, the parts a colour change moved most and the parts under 70; the toolbar tab
-carries the live score. Before / After puts the
-token values next to the current ones. Export copies or downloads only the changed fields
-in `neon.tokens.json` shape. **Kaydet** saves your settings privately: only the difference from
-the token values goes to `teknesyum-private/teknesyum-ui/onizleme/ayarlar.json` (committed and
-pushed to the private repo) or, without the private shelf, to the gitignored
-`ui/onizleme/ozel-ayar.json`; the preview loads it on start. **Sihirbaz** walks every setting in
-order (theme, surface and text, main colour, accents, states, background, type, shape, title
-bar, glow, scrollbar, motion, readability) and ends with that private save; a fresh install
-opens it only from the **Sihirbaz** button; each step names the control to use and lifts its
-settings group to the top of the panel. **Herkese Açık Yayınla…** in the
-save dialog releases the values publicly: after a warning listing the
-changes and the next version, `ui/scripts/kaydet.js` writes the token source and its copy,
-re-measures every `on` pair and ratio rationale, swaps the old hex in the installer and
-fixtures, runs `generate.js` and the tests (scanner included), bumps the minor version,
-writes the CHANGELOG, then commits, tags, pushes and runs `gh release create`. Progress is
-shown in the installer panel; any failure before the commit restores every file. Screenshots: `docs/onizleme/`.
+```bash
+node <plugin>/scripts/denetim.js http://localhost:5173 [--esik 7]
+```
 
-## Tests
+```bash
+node ui/scripts/onizleme.js [--tarayici]
+```
+
+```bash
+node ui/scripts/tema.js liste
+```
+
+`scan.js` exits `0` clean, `1` with findings, `2` when not configured or off. A whole-project
+scan at zero open findings writes `denetim: {tarih, duzen}` into the project's
+`.claude/teknesyum-ui.json`; the session hook compares `duzen` with the current layout hash.
+
+### Layout
+
+```
+ui/scripts/setup.js       install and generate
+ui/scripts/generate.js    tokens -> theme.css, Theme.xaml, Theme.axaml, Palette.cs
+ui/scripts/scan.js        the scanner
+ui/scripts/rules/*.js     the rules, one module per domain
+ui/scripts/raf.js         reads the private shelf
+ui/scripts/ozel.js        private record and token file
+ui/scripts/kaydet.js      public release of new token values
+ui/hooks/baslangic.js     SessionStart: check first when needed
+ui/hooks/once.js          PreToolUse: no UI write before setup
+ui/hooks/guard.js         Stop: scan what the turn changed
+ui/onizleme/              the preview app (page + Electron shell)
+ui/templates/             installer, title bar, update surface, themes
+ui/skills/teknesyum-ui/   SKILL.md, references, assets
+docs/diagram.md           every flow diagram in this README
+docs/RULE-API.md          how to write a rule
+docs/DECISIONS.md         why it is shaped this way
+```
+
+### Tests
 
 ```bash
 npm test
 ```
 
-225 assertions, no dependencies. Seven of them are cost assertions: they fail if a hook
-starts writing to `additionalContext` or `systemMessage`, if `SKILL.md` grows past 150
-lines, or if a slash command reappears.
-
-## Layout
-
-```
-ui/skills/teknesyum-ui/   SKILL.md, references/, assets/
-ui/scripts/setup.js       install and generate
-ui/scripts/generate.js    tokens -> theme.css, Theme.xaml, Theme.axaml, Palette.cs
-ui/scripts/raf.js         reads the private shelf
-ui/scripts/scan.js        the scanner
-ui/scripts/rules/*.js     the rules, one module per domain
-ui/scripts/scaffold.js    copies a template into a project
-ui/templates/             installer, title bar, sync badge, progress bar
-ui/hooks/guard.js         the Stop hook
-ui/roles/ui-builder.md    the role an agent reads to build UI
-docs/DECISIONS.md         why it is shaped this way
-docs/RULE-API.md          how to write a rule
-docs/EXTRACT.md           every rule of the old standard, and where it went
-docs/coverage/            what the scanner enforces, and what it does not
-```
-
-## Turning it off
-
-```bash
-node <plugin>/scripts/setup.js --off
-```
+404 assertions. Cost assertions fail if a hook other than the session hook writes context, if
+`SKILL.md` grows past its budget, or if a slash command reappears. The standard also has to
+pass its own scanner.
 
 ## Contributing
 
-Open an issue before writing code, so nobody spends an evening on something already in
-progress. Keep the pull request to one concern — a fix and a feature do not belong in the
-same branch — and match the surrounding code.
-
-The repository language is English: code, commit messages, README and issues. Run
-`npm test` before opening the pull request; nothing merges red.
-
-Contributions are accepted under the project's own licence, AGPL-3.0-or-later. Every commit
-must be signed off under the Developer Certificate of Origin 1.1, reproduced in
-[`DCO`](DCO) — add it with `git commit -s`. The longer version of all this is in
-[`CONTRIBUTING.md`](CONTRIBUTING.md).
+Open an issue before writing code. Keep a pull request to one concern and match the code
+around it. The repository language is English. Run `npm test` first; nothing merges red.
+Contributions are accepted under AGPL-3.0-or-later. If this saves you time, sponsoring keeps
+it going.
 
 ## License
 
-AGPL-3.0-or-later. See [LICENSE](LICENSE).
+AGPL-3.0-or-later — [LICENSE](LICENSE).
 
 <div align="center">
 

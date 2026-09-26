@@ -254,6 +254,48 @@ function check(root) {
   L.ok('--check reports that the project is configured', parsed.configured === true);
 }
 
+function benimTemplate() {
+  const eski = process.env.TEKNESYUM_PRIVATE;
+  const raf = L.tmp('tkui-benim-raf-');
+  process.env.TEKNESYUM_PRIVATE = raf;
+  try {
+    const O = require(path.join(L.UI, 'scripts', 'ozel.js'));
+    const setup = () => {
+      delete require.cache[require.resolve(L.SETUP)];
+      return require(L.SETUP);
+    };
+
+    L.ok('benim() is null before anything is saved to the shelf', setup().benim() === null);
+
+    const yol = O.tokenYaz({ brand: { 'renk-1': { value: '#654321' } }, _: [] });
+    L.ok('the private token file lands where tokenYollari says', fs.existsSync(yol));
+
+    const S = setup();
+    const kayit = S.benim();
+    L.ok('benim() reports the token file once it exists', !!kayit && kayit.dosya === yol, JSON.stringify(kayit));
+    L.ok('benim() derives a 16 hex char duzen from the file', /^[0-9a-f]{16}$/.test(kayit.duzen), kayit.duzen);
+    L.ok('benim() carries the notes array', Array.isArray(kayit.notlar) && kayit.notlar.length === 0, JSON.stringify(kayit.notlar));
+
+    const root = L.tmp('tkui-benim-project-');
+    const r = L.node(L.SETUP, ['--apply', '--template', 'benim', '--project', root], { env: L.cleanEnv({ TEKNESYUM_PRIVATE: raf }) });
+    L.ok('--apply --template benim exits 0 when the shelf has a token file', r.status === 0, r.stderr || r.stdout);
+
+    const cfg = L.readJson(path.join(root, '.claude', 'teknesyum-ui.json')) || {};
+    L.ok('the config records the benim template and its duzen', cfg.template === 'benim' && cfg.duzen === kayit.duzen, JSON.stringify(cfg.template) + ' ' + cfg.duzen);
+
+    const copy = L.readJson(path.join(root, 'teknesyum-ui', 'theme.tokens.json'));
+    L.ok('the private tokens are copied into the project as theme.tokens.json', !!copy && copy.brand['renk-1'].value === '#654321', copy && copy.brand['renk-1'].value);
+
+    const noShelf = L.tmp('tkui-benim-noshelf-');
+    const noShelfProject = L.tmp('tkui-benim-noshelf-project-');
+    const bad = L.node(L.SETUP, ['--apply', '--template', 'benim', '--project', noShelfProject], { env: L.cleanEnv({ TEKNESYUM_PRIVATE: path.join(noShelf, 'yok') }) });
+    L.ok('--apply --template benim without a token file fails', bad.status !== 0 && /benim template needs/.test(bad.stderr), bad.stderr);
+  } finally {
+    if (eski === undefined) delete process.env.TEKNESYUM_PRIVATE;
+    else process.env.TEKNESYUM_PRIVATE = eski;
+  }
+}
+
 module.exports = function install() {
   const root = applyNeon();
   applyCustom();
@@ -262,4 +304,5 @@ module.exports = function install() {
   animatorSkipsOddStructure();
   switches(root);
   check(root);
+  benimTemplate();
 };

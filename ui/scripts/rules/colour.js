@@ -48,6 +48,7 @@ const DECORATIVE =
   /divider|separator|rule|decor|ornament|grid-line|gridline|::before|::after|\bhr\b|scrollbar|watermark/i;
 
 const cache = new WeakMap();
+const nameCache = new WeakMap();
 
 function base(file) {
   return String(file).replace(/\\/g, '/').split('/').pop();
@@ -414,13 +415,41 @@ const rawColour = {
       for (const hit of coloursIn(line, argb)) {
         if (extreme(hit.colour.rgb)) continue;
         if (!extreme(hit.colour.rgb) && achromatic(hit.colour.rgb) && !s.palette.has(hit.colour.rgb)) continue;
-        out.push({ line: i + 1, message: hit.text + ' — colour literal, bind to a token' });
+        const name = /^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/.test(hit.text) && tokenNames(ctx).get(hit.colour.rgb);
+        out.push({
+          line: i + 1,
+          message: hit.text + ' — colour literal, bind to a token' + (name ? ' (' + name + ')' : ''),
+          fix: name && extOf(file) === '.css' ? 'tokenizeColour' : null,
+        });
         return;
       }
     });
     return out;
   },
 };
+
+function tokenNames(ctx) {
+  if (nameCache.has(ctx)) return nameCache.get(ctx);
+  const out = new Map();
+  const theme = ctx && ctx.theme;
+  const entries = !theme ? [] : theme instanceof Map ? [...theme.entries()] : Object.entries(theme);
+  for (const [k, v] of entries) {
+    if (!/^--tk-/.test(k) || typeof v !== 'string') continue;
+    const c = /^#[0-9a-fA-F]{3}$|^#[0-9a-fA-F]{6}$/.test(v.trim()) && parseHex(v.trim(), false);
+    if (c && !out.has(c.rgb)) out.set(c.rgb, k);
+  }
+  nameCache.set(ctx, out);
+  return out;
+}
+
+function tokenizeColour(line, ctx) {
+  if (skipLine(line)) return line;
+  const names = tokenNames(ctx);
+  return line.replace(/#[0-9a-fA-F]{6}\b|#[0-9a-fA-F]{3}\b/g, (m) => {
+    const name = names.get(parseHex(m, false).rgb);
+    return name ? 'var(' + name + ')' : m;
+  });
+}
 
 const midGrey = {
   id: 'mid-grey',
@@ -1069,4 +1098,7 @@ module.exports = {
     tokenizedRadius,
   ].map(guard),
   projectRules: [unusedToken, tabularNumerals].map(guardProject),
+  fixes: {
+    tokenizeColour: { line: tokenizeColour },
+  },
 };

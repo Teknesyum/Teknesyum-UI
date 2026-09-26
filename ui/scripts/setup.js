@@ -88,6 +88,17 @@ function neonColour(name, fallback) {
   }
 }
 
+function benim() {
+  const yol = require('./ozel').tokenYollari();
+  if (!yol || !fs.existsSync(yol.tokenlar)) return null;
+  const metin = fs.readFileSync(yol.tokenlar, 'utf8');
+  let notlar = [];
+  try {
+    notlar = JSON.parse(fs.readFileSync(yol.notlar, 'utf8')).notlar || [];
+  } catch {}
+  return { dosya: yol.tokenlar, duzen: require('crypto').createHash('sha256').update(metin).digest('hex').slice(0, 16), notlar };
+}
+
 function templateFile(name) {
   const local = path.join(pluginDir(), 'templates', name + '.tokens.json');
   if (fs.existsSync(local)) return local;
@@ -138,7 +149,7 @@ const QUESTIONS = [
     ask: 'Which template? neon (the shipped standard) or custom (your own colours)',
     parse: (v) => {
       const s = String(v).trim().toLowerCase();
-      if (s !== 'neon' && s !== 'custom') throw new Error('template must be neon or custom');
+      if (s !== 'neon' && s !== 'custom' && s !== 'benim') throw new Error('template must be benim, neon or custom');
       return s;
     },
     fallback: 'neon',
@@ -643,7 +654,10 @@ function apply(answers) {
   const root = projectRoot();
   const force = has('force');
   const prev = read(configFile(root)) || {};
-  const template = answers.template || prev.template || 'neon';
+  const kayit = benim();
+  const template = answers.template || (kayit ? 'benim' : prev.template === 'benim' ? 'neon' : prev.template || 'neon');
+  if (template === 'benim' && !kayit) throw new Error('benim template needs teknesyum-ui/benim.tokens.json on the private shelf; press Kaydet in the preview app first');
+  const tazele = force || (template === 'benim' && prev.duzen !== kayit.duzen);
   const qs = questionsFor(template);
 
   const cfg = Object.assign({}, prev);
@@ -682,6 +696,23 @@ function apply(answers) {
       write(tokensFile, buildTokens(palette, 'custom'));
     }
     cfg.palette = palette;
+  } else if (template === 'benim') {
+    tokensFile = kayit.dosya;
+    const T = read(tokensFile);
+    cfg.palette = {
+      primary: T.brand['renk-1'].value,
+      secondary: T.brand['renk-2'].value,
+      tertiary: T.brand['renk-3'].value,
+      surface: T.brand.surface.value,
+      dark: T.meta.dark !== false,
+    };
+    cfg.duzen = kayit.duzen;
+    cfg.notlar = kayit.notlar;
+    const copy = path.join(out, 'theme.tokens.json');
+    if (!fs.existsSync(copy) || tazele) {
+      fs.mkdirSync(out, { recursive: true });
+      fs.copyFileSync(tokensFile, copy);
+    }
   } else {
     tokensFile = templateFile('neon');
     if (!tokensFile) throw new Error('neon template not found under ' + path.join(pluginDir(), 'templates'));
@@ -714,7 +745,7 @@ function apply(answers) {
       const names = ARTIFACTS[t];
       const generated = names.filter((n) => fs.existsSync(path.join(stage, n)));
       const staticOnes = names.filter((n) => !generated.includes(n));
-      const a = copyInto(stage, dir, generated, force);
+      const a = copyInto(stage, dir, generated, tazele);
       const b = copyInto(assets, dir, staticOnes, force);
       wrote += a.written.length + b.written.length;
       skipped += a.skipped.length + b.skipped.length;
@@ -747,7 +778,7 @@ function apply(answers) {
     'Teknesyum UI is set up.',
     '',
     '  config     ' + configFile(root),
-    '  template   ' + cfg.template,
+    '  template   ' + cfg.template + (cfg.duzen ? '  (layout ' + cfg.duzen + ')' : ''),
     '  tokens     ' + tokensFile,
     '  signature  ' + (cfg.signature.off ? 'off' : 'on'),
     '',
@@ -801,7 +832,7 @@ function help() {
     '<project>/teknesyum-ui/<target>/.',
     '',
     'Modes   --check  --apply  --status  --off  --on  --help',
-    'Flags   --project <dir>  --template neon|custom  --targets ' + TARGETS.join(',') ,
+    'Flags   --project <dir>  --template benim|neon|custom  --targets ' + TARGETS.join(',') ,
     '        --primary --secondary --tertiary --surface --dark   (custom only)',
     '        --sans --mono --signature yes|no --note <text>  --force',
     '        --app <csproj>   app project that receives Assets/Fonts (default: found under --project)',
@@ -845,7 +876,7 @@ function interactive() {
 }
 
 function collect() {
-  const template = flag('template') || 'neon';
+  const template = flag('template') || (benim() ? 'benim' : 'neon');
   const answers = {};
   for (const q of questionsFor(template)) {
     const v = flag(q.key);
@@ -898,4 +929,4 @@ function main() {
 }
 
 if (require.main === module) main();
-module.exports = { inspect, apply, status, QUESTIONS, TARGETS };
+module.exports = { inspect, apply, status, benim, QUESTIONS, TARGETS };

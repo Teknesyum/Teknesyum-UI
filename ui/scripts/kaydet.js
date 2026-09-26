@@ -286,7 +286,7 @@ function surumArtir(s) {
 function surumYaz(metin, eski, yeni, dosya) {
   if (/package-lock\.json$/.test(dosya))
     return metin.replace(/("name": "teknesyum-onizleme",\s*"version": ")([^"]+)(")/g, (m, a, v, b) => a + yeni + b);
-  return metin.replace('"version": "' + eski + '"', '"version": "' + yeni + '"');
+  return metin.replace(/"version": "[^"]+"/, '"version": "' + yeni + '"');
 }
 
 function changelogYaz(metin, satirlar, surum, tarih) {

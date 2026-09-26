@@ -49,6 +49,7 @@ All notable changes to this project are documented here. The format follows
   waiting and local states.
 
 ### Changed
+- The preview window's minimum size rises from 720x480 to 1024x640, because the title bar needs 989 px. In the standard `titlebar.css` the tools no longer shrink, so on a narrow bar the tabs clip instead of the buttons overlapping.
 - Progress bars no longer jump. `ProgressBar.tsx` gains `useSmoothPercent`: the shown value chases the target frame by frame on an exponential ease-out with a time constant of half `--tk-t-slow`. Bigger gaps move faster, the value slows near the target, and the percent shows one decimal. `aria-valuenow` stays on the rounded target, and reduced motion jumps straight to it. The fill's CSS transition is gone because the hook drives it. In the preview, every bar and the Kaydet installer flow the same way, and the live demo jumps by uneven steps to show the speed-up.
 - The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - The scrollbar thumb has no glow any more; only its fill colour transitions.
@@ -89,6 +90,7 @@ All notable changes to this project are documented here. The format follows
   Tested in `test/onizleme.js`.
 
 ### Changed
+- The preview window's minimum size rises from 720x480 to 1024x640, because the title bar needs 989 px. In the standard `titlebar.css` the tools no longer shrink, so on a narrow bar the tabs clip instead of the buttons overlapping.
 - Progress bars no longer jump. `ProgressBar.tsx` gains `useSmoothPercent`: the shown value chases the target frame by frame on an exponential ease-out with a time constant of half `--tk-t-slow`. Bigger gaps move faster, the value slows near the target, and the percent shows one decimal. `aria-valuenow` stays on the rounded target, and reduced motion jumps straight to it. The fill's CSS transition is gone because the hook drives it. In the preview, every bar and the Kaydet installer flow the same way, and the live demo jumps by uneven steps to show the speed-up.
 - The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - `setup.js` writes the Avalonia signature as `teknesyum-ui/avalonia/Signature.axaml.example`.
@@ -106,6 +108,7 @@ All notable changes to this project are documented here. The format follows
 ## [0.6.0] - 2026-09-24
 
 ### Changed
+- The preview window's minimum size rises from 720x480 to 1024x640, because the title bar needs 989 px. In the standard `titlebar.css` the tools no longer shrink, so on a narrow bar the tabs clip instead of the buttons overlapping.
 - Progress bars no longer jump. `ProgressBar.tsx` gains `useSmoothPercent`: the shown value chases the target frame by frame on an exponential ease-out with a time constant of half `--tk-t-slow`. Bigger gaps move faster, the value slows near the target, and the percent shows one decimal. `aria-valuenow` stays on the rounded target, and reduced motion jumps straight to it. The fill's CSS transition is gone because the hook drives it. In the preview, every bar and the Kaydet installer flow the same way, and the live demo jumps by uneven steps to show the speed-up.
 - The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - Scaffold target `denetim`: the Avalonia and WPF contrast tests now measure every button at
@@ -136,6 +139,7 @@ All notable changes to this project are documented here. The format follows
   scaffold target `denetim` writes a headless Avalonia or WPF contrast test.
 
 ### Changed
+- The preview window's minimum size rises from 720x480 to 1024x640, because the title bar needs 989 px. In the standard `titlebar.css` the tools no longer shrink, so on a narrow bar the tabs clip instead of the buttons overlapping.
 - Progress bars no longer jump. `ProgressBar.tsx` gains `useSmoothPercent`: the shown value chases the target frame by frame on an exponential ease-out with a time constant of half `--tk-t-slow`. Bigger gaps move faster, the value slows near the target, and the percent shows one decimal. `aria-valuenow` stays on the rounded target, and reduced motion jumps straight to it. The fill's CSS transition is gone because the hook drives it. In the preview, every bar and the Kaydet installer flow the same way, and the live demo jumps by uneven steps to show the speed-up.
 - The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - `core/contrast` exempts only the approved text colours; fill cuts used as text are measured.
@@ -176,6 +180,7 @@ All notable changes to this project are documented here. The format follows
 - Test suite `raf` and cases for `--files` and the scaffolder's shelf note.
 
 ### Changed
+- The preview window's minimum size rises from 720x480 to 1024x640, because the title bar needs 989 px. In the standard `titlebar.css` the tools no longer shrink, so on a narrow bar the tabs clip instead of the buttons overlapping.
 - Progress bars no longer jump. `ProgressBar.tsx` gains `useSmoothPercent`: the shown value chases the target frame by frame on an exponential ease-out with a time constant of half `--tk-t-slow`. Bigger gaps move faster, the value slows near the target, and the percent shows one decimal. `aria-valuenow` stays on the rounded target, and reduced motion jumps straight to it. The fill's CSS transition is gone because the hook drives it. In the preview, every bar and the Kaydet installer flow the same way, and the live demo jumps by uneven steps to show the speed-up.
 - The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - `SKILL.md` no longer carries the prose standard. It says where the shelf is, which book
@@ -203,6 +208,7 @@ All notable changes to this project are documented here. The format follows
 - Skill section "The Best Program Shows It Is Working".
 
 ### Changed
+- The preview window's minimum size rises from 720x480 to 1024x640, because the title bar needs 989 px. In the standard `titlebar.css` the tools no longer shrink, so on a narrow bar the tabs clip instead of the buttons overlapping.
 - Progress bars no longer jump. `ProgressBar.tsx` gains `useSmoothPercent`: the shown value chases the target frame by frame on an exponential ease-out with a time constant of half `--tk-t-slow`. Bigger gaps move faster, the value slows near the target, and the percent shows one decimal. `aria-valuenow` stays on the rounded target, and reduced motion jumps straight to it. The fill's CSS transition is gone because the hook drives it. In the preview, every bar and the Kaydet installer flow the same way, and the live demo jumps by uneven steps to show the speed-up.
 - The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - README links Teknesyum Core by full URL and explains the marketplace layout.
@@ -234,6 +240,7 @@ First release after the split from Teknesyum Base on 2026-08-28.
 - Test suite with cost assertions (`npm test`).
 
 ### Changed
+- The preview window's minimum size rises from 720x480 to 1024x640, because the title bar needs 989 px. In the standard `titlebar.css` the tools no longer shrink, so on a narrow bar the tabs clip instead of the buttons overlapping.
 - Progress bars no longer jump. `ProgressBar.tsx` gains `useSmoothPercent`: the shown value chases the target frame by frame on an exponential ease-out with a time constant of half `--tk-t-slow`. Bigger gaps move faster, the value slows near the target, and the percent shows one decimal. `aria-valuenow` stays on the rounded target, and reduced motion jumps straight to it. The fill's CSS transition is gone because the hook drives it. In the preview, every bar and the Kaydet installer flow the same way, and the live demo jumps by uneven steps to show the speed-up.
 - The preview window drops the system title bar and draws the standard one. The view modes are tabs; Sıfırla, Kopyala and İndir are chips; Kaydet is the outlined chip. The window controls go through a preload bridge. A window edge shows when the window is not maximised. The settings apply to the whole app live, and a Pencere Ve Üst Çubuk group sets the edge colour and bar height. `titlebar.css` gains `.tk-titlebar__restore`, `.tk-window-edge` and a disabled chip state.
 - Core contracts and leftovers moved out of this repository.

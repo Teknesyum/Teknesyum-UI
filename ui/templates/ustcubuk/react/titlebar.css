@@ -38,6 +38,11 @@
   overflow: hidden;
 }
 
+.tk-titlebar__tools,
+.tk-titlebar__tools > * {
+  flex-shrink: 0;
+}
+
 .tk-titlebar__logo {
   width: var(--tk-icon-3);
   height: var(--tk-icon-3);

@@ -37,8 +37,8 @@ function pencere() {
   const w = new BrowserWindow({
     width: 1440,
     height: 920,
-    minWidth: 720,
-    minHeight: 480,
+    minWidth: 1024,
+    minHeight: 640,
     title: 'Teknesyum Renk Önizleme ' + surum(),
     backgroundColor: yuzey(),
     frame: false,

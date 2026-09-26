@@ -1,0 +1,2 @@
+- [x] ajan: Küçük pencere görüntü denetimi — 2026-09-26 16:12 — sonucu aktarıldı
+- [x] ajan: Düzeltme sonrası görüntü denetimi — 2026-09-26 16:14 — sonucu aktarıldı

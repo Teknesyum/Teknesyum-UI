@@ -754,7 +754,20 @@ th { color: var(--tk-text-label); font-weight: var(--tk-fw-semi); }
 .okunur-not { margin: 0; color: var(--tk-text-label); font-size: var(--tk-fs-1); }
 .okunur-dip { margin-top: var(--tk-sp-4); font-size: var(--tk-fs-1); }
 .okunur-olcek { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--tk-sp-1); font-size: var(--tk-fs-1); }
-.okunur-olcek span { padding-top: var(--tk-sp-1); border-top: 4px solid currentColor; }
+.okunur-olcek button {
+  padding: var(--tk-sp-1) 0 0;
+  font: inherit;
+  text-align: start;
+  background: transparent;
+  border: 0;
+  border-top: 4px solid currentColor;
+  cursor: pointer;
+  transition: background-color var(--tk-t-instant) var(--tk-e-out);
+}
+.okunur-olcek button:hover,
+.okunur-olcek button:focus-visible { background: var(--tk-purple-10); text-decoration: underline; }
+.okunur-olcek button:active { background: var(--tk-purple-30); text-decoration: none; }
+.okunur-olcek button:disabled { color: var(--tk-disabled); cursor: not-allowed; }
 .okunur-paneller { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: var(--tk-sp-4); align-items: start; }
 .okunur-panel { min-width: 0; padding: var(--tk-sp-4); border: var(--tk-border-w) solid var(--tk-border); border-radius: var(--tk-r); background: var(--tk-surface); }
 .okunur-panel-ust { display: flex; align-items: baseline; gap: var(--tk-sp-3); }

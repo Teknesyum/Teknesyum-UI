@@ -1011,7 +1011,8 @@
   function kombiRenk(t, k, koyu) {
     const L = (a, b) => {
       const v = a + (b - a) * k;
-      return Math.round((koyu ? v : 100 - v) * 10) / 10;
+      const w = Math.max(0, Math.min(100, v));
+      return Math.round((koyu ? w : 100 - w) * 10) / 10;
     };
     const z = t.zemin;
     const r = {
@@ -1033,7 +1034,7 @@
     let en = null;
     for (let deneme = 0; deneme < 12; deneme++) {
       const t = kombiTohum();
-      let a = 0;
+      let a = -1.5;
       let b = 1;
       let r = kombiRenk(t, 1, koyu);
       let p = puani(r);
@@ -1089,7 +1090,10 @@
       '<div class="tk-panel tk-modal kaydet-kutu kombi-kutu">' +
       '<h2 class="tk-h3" id="kombi-baslik">Hedef Okunurluk</h2>' +
       '<div class="oneri" role="group" aria-label="Hedef puan">' +
-      KOMBI_HEDEF.map((h) => '<button type="button" class="oneri-dugme" data-kombi-hedef="' + h + '" aria-pressed="' + (h === kombiHedef) + '">' + h + '</button>').join('') +
+      [...new Set(KOMBI_HEDEF.concat(kombiHedef))]
+        .sort((x, y) => x - y)
+        .map((h) => '<button type="button" class="oneri-dugme" data-kombi-hedef="' + h + '" aria-pressed="' + (h === kombiHedef) + '">' + h + '</button>')
+        .join('') +
       '</div>' +
       '<p class="kaydet-not">Her tıklamada ' + kombiHedef + ' puanı veren 5 yeni rastgele palet. Bir palete basınca renkler uygulanır.' +
       (ulasilmadi ? ' Bazı paletler hedefe ulaşamadı; en yakın puan gösterildi.' : '') + '</p>' +
@@ -1142,7 +1146,9 @@
     const kutu = (etiket, ic, alt) => '<div class="okunur-kutu"><span class="bilesen-ad">' + etiket + '</span>' + ic + '<span class="okunur-not">' + alt + '</span></div>';
     const olcek =
       '<div class="okunur-olcek">' +
-      [['kotu', '0–49 · Kötü'], ['zayif', '50–69 · Zayıf'], ['iyi', '70–89 · İyi'], ['mukemmel', '90–100 · Mükemmel']].map(([k, t]) => '<span data-not="' + k + '">' + t + '</span>').join('') +
+      [['kotu', 0, 49, '0–49 · Kötü'], ['zayif', 50, 69, '50–69 · Zayıf'], ['iyi', 70, 89, '70–89 · İyi'], ['mukemmel', 90, 100, '90–100 · Mükemmel']]
+        .map(([k, a, b, t]) => '<button type="button" data-not="' + k + '" data-olcek="' + a + ',' + b + '" title="Tıkla: bu noktadaki puanı veren 5 palet">' + t + '</button>')
+        .join('') +
       '</div>';
     const genel =
       '<section class="bolum" id="o-genel"><h2>Genel Okunurluk</h2>' +
@@ -1953,6 +1959,14 @@
     });
     const kok = $('#onizleme');
     kok.addEventListener('click', (e) => {
+      const olcek = e.target.closest('[data-olcek]');
+      if (olcek && window.Skor) {
+        const [a, b] = olcek.dataset.olcek.split(',').map(Number);
+        const k = olcek.getBoundingClientRect();
+        const oran = k.width ? Math.max(0, Math.min(1, (e.clientX - k.left) / k.width)) : 0.5;
+        kombiAc(Math.round(a + (b - a) * oran));
+        return;
+      }
       ayarAc(tikGruplari(e.target));
       const k = e.target.closest('[data-kaydir]');
       if (k) {

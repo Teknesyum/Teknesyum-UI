@@ -42,7 +42,8 @@ All notable changes to this project are documented here. The format follows
   of the step's settings differ from the recommended ones, and a Nerede, Nasıl line naming the
   control to use; Önerileni Kullan resets only that step (on the theme step, only the theme
   and the colours it set). The step's settings group moves to the top of the settings panel. It opens only
-  from the Sihirbaz button.
+  from the Sihirbaz button. A saved private record appears as Benim Token Dosyam in the Token
+  Dosyası menu and is selected on start.
 - The Arka Plan group sets both gradient ends (top Siyah, bottom Yüzey) directly.
 - Private settings: Kaydet now writes only the difference from the token values to
   `teknesyum-private/teknesyum-ui/onizleme/ayarlar.json` and pushes the private repo, or to the

@@ -2632,7 +2632,26 @@
     if (temalar.length) $('#tema-sec').insertAdjacentHTML('beforeend', grup('koyu', 'Koyu Temalar') + grup('acik', 'Açık Temalar'));
   }
 
+  function ozelSecenek() {
+    if (!ozelBilgi.ayar) return;
+    for (const s of $$('#tema-sec, [data-sihirbaz-tema]')) {
+      if (s.querySelector('option[value="ozel"]')) continue;
+      s.options[0].insertAdjacentHTML('afterend', '<option value="ozel">Benim Token Dosyam</option>');
+    }
+  }
+
   function temaSec(ad) {
+    if (ad === 'ozel' && ozelBilgi.ayar) {
+      const az = su.hareketAz;
+      su = kopya(ilk);
+      su.hareketAz = az;
+      birlestir(su, ozelBilgi.ayar.fark, ilk);
+      for (const k of Object.keys(hslBellek)) delete hslBellek[k];
+      formDoldur();
+      planla();
+      durum('Benim Token Dosyam yüklendi.');
+      return;
+    }
     const t = temalar.find((x) => x.ad === ad);
     su.renk = kopya(ilk.renk);
     su.koyu = ilk.koyu;
@@ -2702,11 +2721,12 @@
     const a = ozelBilgi.ayar;
     if (!a || !duzNesne(a.fark)) return;
     birlestir(su, a.fark, ilk);
-    if (a.tema && temalar.some((t) => t.ad === a.tema)) $('#tema-sec').value = a.tema;
+    ozelSecenek();
+    $('#tema-sec').value = 'ozel';
   }
 
   async function ozelKaydet(sihirbazla) {
-    const veri = { surum: 1, tarih: new Date().toISOString(), sihirbaz: sihirbazla || !!(ozelBilgi.ayar && ozelBilgi.ayar.sihirbaz), tema: $('#tema-sec').value || null, fark: fark(su, ilk) };
+    const veri = { surum: 1, tarih: new Date().toISOString(), sihirbaz: sihirbazla || !!(ozelBilgi.ayar && ozelBilgi.ayar.sihirbaz), tema: $('#tema-sec').value === 'ozel' ? (ozelBilgi.ayar && ozelBilgi.ayar.tema) || null : $('#tema-sec').value || null, fark: fark(su, ilk) };
     let r;
     try {
       r = await fetch('/ozel-ayar', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-onizleme': '1' }, body: JSON.stringify(veri) });
@@ -2723,6 +2743,8 @@
       return false;
     }
     ozelBilgi = { var: true, tur: j.tur, ayar: veri };
+    ozelSecenek();
+    for (const s of $$('#tema-sec, [data-sihirbaz-tema]')) s.value = 'ozel';
     if (j.tur !== 'raf' || !j.gonderim) {
       durum(j.tur === 'raf' ? 'Özel ayar özel rafa kaydedildi; git gönderimi kapalı.' : 'Özel ayar yerel dosyaya kaydedildi (.gitignore içinde).');
       return true;

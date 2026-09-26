@@ -5,9 +5,11 @@ config read, UI-file test, shelf commands) — read it before touching any hook 
 
 - `baslangic.js` — SessionStart. Silent by default; tells the agent to set up/scan the
   interface first when UI files exist with no config, no audit, or a stale layout hash, or
-  leaves a short note on the first UI file with no config yet.
+  leaves a short note on the first UI file with no config yet. Also names shelf books that
+  fit the project and are not recorded at their current hash (`raf.js --uyan`).
 - `once.js` — PreToolUse (Write/Edit/MultiEdit). Denies writing a UI file when the project
-  has no `teknesyum-ui.json` at all.
+  has no `teknesyum-ui.json` at all, and denies the first write per session to a file a
+  pending shelf book names.
 - `guard.js` — Stop. Runs the scanner on files the turn touched and blocks on a violation;
   stands down after two blocks on the same file.
 

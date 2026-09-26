@@ -77,6 +77,10 @@ function duzen() {
   }
 }
 
+function raf() {
+  return require(path.join(PLUGIN, 'scripts', 'raf.js'));
+}
+
 function komut(ad, ek) {
   return 'node "' + path.join(PLUGIN, 'scripts', ad) + '"' + (ek ? ' ' + ek : '');
 }
@@ -94,4 +98,4 @@ function girdi(fn) {
   });
 }
 
-module.exports = { PLUGIN, UI_FILE, read, gitRoot, kendisi, ayar, uiVar, duzen, komut, girdi };
+module.exports = { PLUGIN, UI_FILE, read, gitRoot, kendisi, ayar, uiVar, duzen, raf, komut, girdi };

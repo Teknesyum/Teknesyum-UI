@@ -5,6 +5,15 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-09-27
+
+### Added
+- The private shelf is enforced like a built-in rule set. A book in `private/tercihler/` with a
+  frontmatter block (`tetik`, `icerik`, `her`, `ister`) applies to the projects it matches: the
+  session hook names a pending book, the first write to its subject is refused once per
+  session, and the new `raf/ister` rule runs its checks. `raf.js --uydu <book>` records a book
+  in `.claude/teknesyum-raf.json` once its checks pass; `raf.js --uyan` lists the state.
+
 ## [0.9.0] - 2026-09-27
 
 ### Added
@@ -388,6 +397,6 @@ First release after the split from Teknesyum Base on 2026-08-28.
 - Core contracts and leftovers moved out of this repository.
 - Scanner reports exactly what it scans and no longer scans itself.
 
-[Unreleased]: https://github.com/Teknesyum/Teknesyum-UI/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/Teknesyum/Teknesyum-UI/compare/v0.10.0...HEAD
 [0.3.0]: https://github.com/Teknesyum/Teknesyum-UI/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Teknesyum/Teknesyum-UI/releases/tag/v0.2.0

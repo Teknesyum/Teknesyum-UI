@@ -45,6 +45,11 @@ the single source: never restate its rules here, in a project file, or in a comm
 If `raf.js` exits 1 there is no shelf on this machine. Then only the scanner's mechanical
 rules apply — say so once, and do not invent a rule the scanner does not hold.
 
+Shelf books are enforced like the plugin's own rules, for any work, not only UI. When a hook
+names a pending book: read it, bring the project in line, then record it with
+`raf.js --uydu <book> --project <root>`, which refuses while its checks fail. `raf.js --uyan`
+lists the books that fit this project and their state.
+
 ## Values
 
 Never type a colour, radius, duration, size or spacing step. Setup generated them into

@@ -106,3 +106,35 @@ summary line ends with how many were ignored:
 
 Under `--json` the finding is still present, carrying `"ignored": true` and its
 `"reason"`, so a reviewer can see what was waived.
+
+## Shelf books as rules
+
+A book in the private shelf's `private/tercihler/` becomes enforceable when it opens with a
+frontmatter block. Books without one are read on demand and never enforced; the technical
+books in `teknesyum-ui/kurallar/` are never enforced on their own.
+
+```
+---
+tetik: (^|/)[^/]*update[^/]*\.(tsx|axaml)$
+icerik: electron-updater|autoUpdater
+her: evet
+ister: {"dosya":"^LICENSE$","var":true,"mesaj":"LICENSE is missing"}
+ister: {"dosya":"(^|/)Update[^/]*\.tsx$","icermez":"Process\.Start","mesaj":"no silent restart","seviye":"warn"}
+---
+```
+
+| Key | Meaning |
+|---|---|
+| `tetik` | The book applies when a project path (relative, `/`-separated) matches this regex |
+| `icerik` | The book applies when a text file's content matches this regex |
+| `her` | `evet` applies the book to every project |
+| `ister` | One JSON check per line, run by the `raf/ister` project rule |
+
+An `ister` check picks files with `dosya`, then: `var: true` needs at least one match, `var:
+false` forbids any, `icerir` needs the content to match, `icermez` reports each matching line.
+`seviye: "warn"` lowers it from an error. All regexes are case-insensitive.
+
+A book that fits the project is pending until `raf.js --uydu <book> --project <root>` records
+it in `.claude/teknesyum-raf.json`; the record holds a hash of the book and its technical twin
+in `kurallar/`, so editing either makes it pending again. `--uydu` refuses while an error-level
+check fails. `raf.js --uyan [root]` lists each fitting book and its state.

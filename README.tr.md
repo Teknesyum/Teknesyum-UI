@@ -10,9 +10,9 @@ Tokenlar, tarayıcı, kancalar.
 
 | | |
 |---|---|
-| Tarayıcı kuralları | 8 modülde 101 (`scan.js --list-rules`) |
+| Tarayıcı kuralları | 9 modülde 102 (`scan.js --list-rules`) |
 | Temalar | 9 — 5 açık, 4 koyu; hepsi 7:1'i geçer ve 85 veya üzeri puan alır (`tema.js denetle`) |
-| Testler | 404 doğrulama, bağımlılık yok (`npm test`) |
+| Testler | 433 doğrulama, bağımlılık yok (`npm test`) |
 | Sıradan bir turun maliyeti | 0 token — hiçbir kanca bir turda bağlam yazmaz |
 | Oturum başlangıcının maliyeti | Temiz bir projede 0 token; yapılacak arayüz işi varsa 150–250 token civarı bir not |
 | Skill'in maliyeti | `SKILL.md`, 93 satır, yaklaşık 1.000 token, yalnızca arayüz işi başladığında yüklenir |
@@ -32,7 +32,7 @@ izler. Yapmadığı şey, on projeyi aylarca aynı düzende tutmaktır. Bu eklen
 
 - **Bir değer veridir, öneri değil.** Renkler ve süreler, kodun referans verdiği üretilmiş
   dosyalarda yaşar; model bir stil kılavuzu taşımak yerine ihtiyaç duyduğunda birini okur.
-- **Bir kural bir programdır.** `scan.js` içinde 101 kontrol çalışır, çoğunun güvenli bir
+- **Bir kural bir programdır.** `scan.js` içinde 102 kontrol çalışır, çoğunun güvenli bir
   `--fix`'i vardır. Kontrast veya hareketle ilgili hiçbir şey modelin hafızasına bırakılmaz.
 - **Denetim isteğe bağlı değildir.** Hiç denetlenmemiş ya da düzeni o zamandan beri değişmiş
   bir proje, kullanıcının isteği ele alınmadan önce denetlenir.
@@ -130,13 +130,19 @@ flowchart TD
   W[Bir Arayüz Dosyası Yaz] --> Q4{Proje Kurulmuş Mu?}
   Q4 -->|Hayır| D1[Kurulum Çalışana Kadar Yazma Reddedilir]
   Q4 -->|Evet| OK[Yazma Geçer]
+  S --> R1{Projeye Uyan, Uygulanmamış Raf Kitabı Var Mı?}
+  R1 -->|Evet| N4[Kitabı Oku, Projeyi Uydur, Kaydet]
+  W --> R2{Dosya Bekleyen Bir Kitabın Konusu Mu?}
+  R2 -->|Evet, İlk Kez| D2[Yazma Bir Kez Reddedilir: Önce Kitabı Oku]
   T[Tur Biter] --> G1[Stop Kancası Değişen Dosyaları Tarar]
 ```
 
 *Şekil 2: oturum başlangıcında kanca temiz bir projede sessiz kalır, henüz arayüzü olmayan bir
 projede bir not bırakır ve bir proje hiç kurulmamışsa, hiç denetlenmemişse ya da düzeni
 değiştiyse önce bir denetim ister; bir arayüz dosyası yazmak kurulum çalışana kadar
-reddedilir; Stop kancası turun değiştirdiklerini tarar.*
+reddedilir; Stop kancası turun değiştirdiklerini tarar. Projeye uyan ve hiç uygulanmamış ya da o
+zamandan beri değişmiş bir özel raf kitabı, başlangıçta bir not ve bir kez reddedilen bir
+yazma alır.*
 
 ### Maliyeti Nedir
 
@@ -144,8 +150,9 @@ reddedilir; Stop kancası turun değiştirdiklerini tarar.*
 |---|---|---|
 | Sıradan bir tur | 0 | Hiçbir kanca bir turda `additionalContext` yazmaz; biri yazmaya başlarsa bir test başarısız olur |
 | Oturum başlangıcı, temiz proje | 0 | Kanca taramayı çalıştırır ve hiçbir şey yazdırmaz |
-| Oturum başlangıcı, yapılacak iş | Bir kez, 150–250 civarı | Tek bir talimat, 420–690 karakter olarak ölçüldü |
+| Oturum başlangıcı, yapılacak iş | Bir kez, 150–350 civarı | Tek bir talimat, 420–1.090 karakter olarak ölçüldü |
 | Hiç kurulmamış bir projede ilk arayüz yazımı | Bir kez, 100 civarı | Ret gerekçesi, 321 karakter |
+| Bekleyen bir raf kitabının dosyasına ilk yazma | Kitap ve oturum başına bir kez, 150 civarı | Ret gerekçesi, 437 karakter olarak ölçüldü |
 | Bir kuralı bozan bir tur | bulgu satırları | Stop kancası bulgularla engeller ve aynı dosyada iki engelden sonra durur |
 | Arayüz işi başlar | Bir kez, 1.000 civarı | `SKILL.md` |
 
@@ -160,6 +167,16 @@ yaşar. Eklenti onu yalnızca erişilebilir olduğunda okur: `TEKNESYUM_PRIVATE`
 dosyanız `teknesyum-ui/benim.tokens.json` içinde oturur. Raf olmadan eklenti kamuya açık
 standardı kullanır — sade siyah, beyaz ve gri — ve başka hiçbir şey değişmez. Onu kendi
 rafınıza yönlendirin, ya da öyle bırakın.
+
+Raf, yerleşik bir kural takımı gibi uygulanır. `private/tercihler/` içinde bir ön bilgi
+bloğuyla açılan bir kitap ne zaman geçerli olduğunu söyler — `tetik` (yol regex'i), `icerik`
+(içerik regex'i) ya da `her: evet` (her proje) — ve ne istediğini, tarayıcının `raf/ister`
+olarak çalıştırdığı `ister` satırlarıyla. Projeye uyan ve proje tarafından güncel özetiyle
+kaydedilmemiş bir kitap bekler: oturum kancası adını verir, konusuna ilk yazma bir kez
+reddedilir ve `raf.js --uydu <kitap>` onu yalnızca kontrolleri geçtiğinde kaydeder. Özet
+kitabı ve `kurallar/` içindeki teknik eşini kapsar, ikisinden biri düzenlenirse kitap yeniden
+bekler. `raf.js --uyan` uyan her kitabı ve durumunu listeler. Biçim
+[docs/RULE-API.md](docs/RULE-API.md) içindedir.
 
 ## Program Ne Yaptığını Gösterir
 
@@ -252,7 +269,7 @@ docs/DECISIONS.md         neden bu şekilde tasarlandı
 npm test
 ```
 
-404 doğrulama. Maliyet doğrulamaları; oturum kancası dışında bir kanca bağlam yazarsa,
+433 doğrulama. Maliyet doğrulamaları; oturum kancası dışında bir kanca bağlam yazarsa,
 `SKILL.md` bütçesinin ötesine geçerse ya da bir slash komutu yeniden ortaya çıkarsa
 başarısız olur. Standart da kendi tarayıcısından geçmek zorundadır.
 

@@ -2,7 +2,11 @@
 
 'use strict';
 
+const path = require('path');
+const os = require('os');
 const L = require('./lib');
+
+process.env.TEKNESYUM_PRIVATE = path.join(os.tmpdir(), 'tkui-test-raf-yok');
 
 const SUITES = [
   ['cost', require('./cost')],
@@ -18,6 +22,7 @@ const SUITES = [
   ['skor', require('./skor')],
   ['tema', require('./tema')],
   ['hooks', require('./hooks')],
+  ['rafkitap', require('./rafkitap')],
 ];
 
 function main() {

@@ -81,7 +81,13 @@ function assets() {
   return { tokens, theme };
 }
 
+const SHELF = process.env.TEKNESYUM_PRIVATE;
+
 function contextFor(root) {
+  const shelf = path.join(root, '_raf');
+  if (fs.existsSync(shelf)) process.env.TEKNESYUM_PRIVATE = shelf;
+  else if (SHELF === undefined) process.env.TEKNESYUM_PRIVATE = path.join(root, '_raf-yok');
+  else process.env.TEKNESYUM_PRIVATE = SHELF;
   const { tokens, theme } = assets();
   const files = [];
   const modules = [];

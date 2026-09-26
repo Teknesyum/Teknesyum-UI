@@ -10,9 +10,9 @@ Tokens, scanner, hooks.
 
 | | |
 |---|---|
-| Scanner rules | 101, in 8 modules (`scan.js --list-rules`) |
+| Scanner rules | 102, in 9 modules (`scan.js --list-rules`) |
 | Themes | 9 — 5 light, 4 dark; every one passes 7:1 and scores 85 or more (`tema.js denetle`) |
-| Tests | 404 assertions, no dependencies (`npm test`) |
+| Tests | 433 assertions, no dependencies (`npm test`) |
 | Cost of an ordinary turn | 0 tokens — no hook writes context on a turn |
 | Cost of a session start | 0 tokens on a clean project; one note of about 150–250 tokens when there is UI work to do |
 | Cost of the skill | `SKILL.md`, 93 lines, about 1,000 tokens, loaded only when UI work starts |
@@ -32,7 +32,7 @@ one. What it does not do is keep ten projects on the same layout for months. Thi
 
 - **A value is data, not advice.** Colours and durations live in generated files the code
   references; the model reads one when it needs one instead of carrying a style guide.
-- **A rule is a program.** 101 checks run in `scan.js`, many with a safe `--fix`. Nothing
+- **A rule is a program.** 102 checks run in `scan.js`, many with a safe `--fix`. Nothing
   about contrast or motion is left to the model's memory.
 - **The check is not optional.** A project that was never checked, or whose layout changed
   since, is checked before the user's request is picked up.
@@ -125,13 +125,18 @@ flowchart TD
   W[Write A UI File] --> Q4{Project Set Up?}
   Q4 -->|No| D1[Write Denied Until Setup Runs]
   Q4 -->|Yes| OK[Write Goes Through]
+  S --> R1{A Shelf Book Fits And Is Not Applied?}
+  R1 -->|Yes| N4[Read The Book, Fit The Project, Record It]
+  W --> R2{The File Is A Pending Book's Subject?}
+  R2 -->|Yes, First Time| D2[Write Denied Once: Read The Book First]
   T[Turn Ends] --> G1[Stop Hook Scans Changed Files]
 ```
 
 *Figure 2: at session start the hook stays silent on a clean project, leaves a note on a
 project with no interface yet, and asks for a check first when a project was never set up,
 never checked or its layout changed; writing a UI file is refused until setup has run; the
-Stop hook scans what the turn changed.*
+Stop hook scans what the turn changed. A private shelf book that fits the project and was
+never applied, or changed since, gets a note at start and one refused write.*
 
 ### What It Costs
 
@@ -139,8 +144,9 @@ Stop hook scans what the turn changed.*
 |---|---|---|
 | An ordinary turn | 0 | No hook writes `additionalContext` on a turn; a test fails if one starts to |
 | Session start, clean project | 0 | The hook runs the scan and prints nothing |
-| Session start, work to do | about 150–250, once | One instruction, measured at 420–690 characters |
+| Session start, work to do | about 150–350, once | One instruction, measured at 420–1,090 characters |
 | First UI write in a project never set up | about 100, once | The denial reason, 321 characters |
+| First write to a pending shelf book's file | about 150, once per book per session | The denial reason, measured at 437 characters |
 | A turn that broke a rule | the finding lines | The Stop hook blocks with the findings, and stands down after two blocks on the same file |
 | UI work starts | about 1,000, once | `SKILL.md` |
 
@@ -155,6 +161,15 @@ keep. The plugin reads it only when it is reachable: `TEKNESYUM_PRIVATE`, or
 in `teknesyum-ui/benim.tokens.json`. Without the shelf the plugin uses the public standard —
 plain black, white and grey — and nothing else changes. Point it at a shelf of your own, or
 leave it.
+
+The shelf is enforced like a built-in rule set. A book in `private/tercihler/` that opens with
+a frontmatter block names when it applies — `tetik` (a path regex), `icerik` (a content
+regex) or `her: evet` (every project) — and what it requires, as `ister` lines that the
+scanner runs as `raf/ister`. A matching book that the project has not recorded at its current
+hash is pending: the session hook names it, the first write to its subject is refused once,
+and `raf.js --uydu <book>` records it only when its checks pass. The hash covers the book and
+its technical twin in `kurallar/`, so editing either makes it pending again. `raf.js --uyan`
+lists each fitting book and its state. The format is in [docs/RULE-API.md](docs/RULE-API.md).
 
 ## The Program Shows What It Does
 
@@ -246,7 +261,7 @@ docs/DECISIONS.md         why it is shaped this way
 npm test
 ```
 
-404 assertions. Cost assertions fail if a hook other than the session hook writes context, if
+433 assertions. Cost assertions fail if a hook other than the session hook writes context, if
 `SKILL.md` grows past its budget, or if a slash command reappears. The standard also has to
 pass its own scanner.
 

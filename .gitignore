@@ -7,3 +7,4 @@ Teknesyum-Base/
 ui/onizleme/ozel-ayar.json
 test/ekran/**/bin/
 test/ekran/**/obj/
+tmp/

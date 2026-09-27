@@ -212,7 +212,7 @@ function Alanlar {
     $alt[$i].alan = New-Object System.Drawing.Rectangle($x, $L.alt, $gen, $O.dugmeY)
     $x -= $O.b2
   }
-  if ($S.durum -eq "hazir" -or $S.durum -eq "hata") {
+  if (($S.durum -eq "hazir" -or $S.durum -eq "hata") -and $yerSecVar -ne $false) {
     $gen = $olc::MeasureText("Değiştir", $YZ.bag).Width
     $x = $x + $O.b2 - $O.b3 - $gen
     $liste += Alan "degistir" "bag" "Değiştir" $false $true (New-Object System.Drawing.Rectangle($x, $L.alt, $gen, $O.dugmeY))

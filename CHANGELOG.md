@@ -5,6 +5,9 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+- `scaffold kur --kaynak yerel --adimlar <file>` builds a first-run panel that sets up the program in the folder it was unpacked to (for apps a store such as Teknesyum Base installs): no download, no Değiştir, the step names read from the project fragment.
+
 ### Fixed
 - `setup.js` keeps the font in the project that already holds `Assets/Fonts`, so a shared UI library is no longer passed over for the app head and a colour refresh stays one command.
 

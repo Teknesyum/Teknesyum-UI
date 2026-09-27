@@ -47,6 +47,29 @@ function kur() {
   L.ok('a second kur overwrites nothing', /\b0 file\(s\) written/.test(again.stdout) && fs.readFileSync(bat, 'utf8') === 'kept\r\n', again.stdout);
 }
 
+function kurYerel() {
+  const root = L.tmp('tkui-kur-yerel-');
+  const parca = path.join(root, 'adimlar.ps1');
+  fs.writeFileSync(parca, '    Adim 10 40 "Gereksinimler hazırlanıyor"\n    Yaz "g"\n    Adim 40 90 "Kısayol yazılıyor"\n    Yaz "k"\n', 'utf8');
+  fs.writeFileSync(path.join(root, 'Deneme.cmd'), '@echo off\r\n', 'utf8');
+  const r = scaffold(root, ['kur', 'Deneme', '--kaynak', 'yerel', '--adimlar', parca, '--exe', 'Deneme.cmd']);
+  L.ok('kur --kaynak yerel exits 0', r.status === 0, r.stderr || r.stdout);
+  const ps1 = path.join(root, 'kur-deneme.ps1');
+  if (!fs.existsSync(ps1)) return;
+  const text = fs.readFileSync(ps1, 'utf8');
+  L.ok('yerel: no placeholder survives', !/\{\{[A-Z0-9_]+\}\}/.test(text), (/\{\{[A-Z0-9_]+\}\}/.exec(text) || [''])[0]);
+  L.ok('yerel: step names come from the fragment', text.includes('@(@("Dosyalar denetleniyor", 0), @("Gereksinimler hazırlanıyor", 10), @("Kısayol yazılıyor", 40))'));
+  L.ok('yerel: installs in place, no Değiştir, no download', text.includes('$hedef = $S.kaynak') && text.includes('$yerSecVar = $false') && !text.includes('/releases/latest'));
+  L.ok('yerel: the generated script parses in Windows PowerShell', parsesInPowerShell(ps1));
+  if (process.platform === 'win32') {
+    const sonuc = path.join(root, 'sonuc.json');
+    const run = L.run('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', ps1], { env: Object.assign({}, process.env, { KUR_OTOMATIK: '1', KUR_KOK: path.join(root, 'kok'), KUR_SONUC: sonuc }) });
+    const out = fs.existsSync(sonuc) ? JSON.parse(fs.readFileSync(sonuc, 'utf8').replace(/^﻿/, '')) : {};
+    L.ok('yerel: a silent run finishes in the script folder', run.status === 0 && out.durum === 'bitti' && out.hedef && fs.realpathSync.native(out.hedef).toLocaleLowerCase('tr') === fs.realpathSync.native(root).toLocaleLowerCase('tr'), String(run.stdout) + String(run.stderr));
+  }
+  L.ok('yerel without --adimlar exits 2', scaffold(L.tmp('tkui-kur-yv-'), ['kur', 'Deneme', '--kaynak', 'yerel']).status === 2);
+}
+
 function kurReleases() {
   const root = L.tmp('tkui-kur-rel-');
   const tokens = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ui', 'skills', 'teknesyum-ui', 'assets', 'theme.tokens.json'), 'utf8'));
@@ -212,6 +235,7 @@ function etiketler() {
 module.exports = function scaffoldSuite() {
   etiketler();
   kur();
+  kurYerel();
   kurReleases();
   copies();
   avalonia();

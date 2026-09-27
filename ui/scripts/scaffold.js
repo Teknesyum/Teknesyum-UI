@@ -16,7 +16,7 @@ const HELP = [
   '',
   '  kur <AppName>   Kur.bat + kur-<name>.ps1 into the project root; colours and sizes',
   '                  come from teknesyum-ui/theme.tokens.json (plugin default when absent)',
-  '      --kaynak releases|ssh  source (default ssh; ssh is the private-repo exception)',
+  '      --kaynak releases|ssh|yerel  source (default ssh; ssh is the private-repo exception)',
   '      releases: latest GitHub release, <asset> + <asset>.sha256, no admin',
   '        --depo <owner/repo>  repository (default: origin)',
   '        --varlik <asset.zip> release asset to install (required)',
@@ -26,6 +26,9 @@ const HELP = [
   '        --anahtar <name>     deploy key file under .kurulum\\anahtar (default usb-01)',
   '      --simge <path>      icon, relative to the script (default simge.ico)',
   '      --altbaslik <text>  subtitle under the title',
+  '      yerel: files already unpacked beside the script (e.g. by Teknesyum Base); target is',
+  '        that folder, no Değiştir; --adimlar required, step names read from its Adim calls',
+  '        --exe <file>         file that must be present (optional)',
   '      --adimlar <file>    project steps fragment (default templates/kur/adimlar[-releases].ps1)',
   '      run: KUR_PROVA=1 temp target, no shortcut · KUR_OTOMATIK=1 no window, exit code',
   '           KUR_KOK=<dir> fake root for target, shortcuts, log · KUR_SONUC=<file> result JSON',
@@ -183,8 +186,9 @@ function kur(root, args, name) {
   const file = slug(name);
   if (!file) throw new Error('application name has no usable letters: ' + name);
   const kaynak = flag(args, 'kaynak') || 'ssh';
-  if (kaynak !== 'releases' && kaynak !== 'ssh') throw new Error('--kaynak is releases or ssh, not ' + kaynak);
+  if (kaynak !== 'releases' && kaynak !== 'ssh' && kaynak !== 'yerel') throw new Error('--kaynak is releases, ssh or yerel, not ' + kaynak);
   const releases = kaynak === 'releases';
+  const yerel = kaynak === 'yerel';
   const values = {
     AD: name,
     ALTBASLIK: flag(args, 'altbaslik') || '',
@@ -198,6 +202,11 @@ function kur(root, args, name) {
     if (!/^[^\\/]+\.zip$/i.test(values.VARLIK)) throw new Error('--kaynak releases needs --varlik <asset.zip>');
     values.EXE = flag(args, 'exe') || name.replace(/\s+/g, '') + '.exe';
     values.ANAHTAR = '';
+  } else if (yerel) {
+    values.DEPO = '';
+    values.VARLIK = '';
+    values.EXE = flag(args, 'exe') || '';
+    values.ANAHTAR = '';
   } else {
     values.DEPO = flag(args, 'depo') || sshRemote(root) || 'git@github.com:Teknesyum/' + name + '.git';
     values.ANAHTAR = flag(args, 'anahtar') || 'usb-01';
@@ -208,11 +217,18 @@ function kur(root, args, name) {
     if (!SAFE.test(value)) throw new Error(key.toLowerCase() + ' may not contain " ` $ or a newline');
   Object.assign(values, kurTokens(root));
   const custom = flag(args, 'adimlar');
+  if (yerel && !custom) throw new Error('--kaynak yerel needs --adimlar <file> with the project steps');
   const steps = (custom
     ? fs.readFileSync(path.resolve(custom), 'utf8').replace(/^﻿/, '')
     : template(releases ? 'kur/adimlar-releases.ps1' : 'kur/adimlar.ps1')
   ).replace(/\s+$/, '');
-  const [ayar, is] = template('kur/kaynak-' + kaynak + '.ps1').split(/^#-- is\r?\n/m);
+  let [ayar, is] = template('kur/kaynak-' + kaynak + '.ps1').split(/^#-- is\r?\n/m);
+  if (yerel) {
+    const names = [['Dosyalar denetleniyor', 0]];
+    for (const m of steps.matchAll(/^[ \t]*Adim[ \t]+(\d+)[ \t]+\d+[ \t]+"([^"$`]+)"/gm)) names.push([m[2], Number(m[1])]);
+    if (names.length < 2) throw new Error('--adimlar has no Adim <from> <to> "name" step');
+    ayar = ayar.replace('{{YEREL_ADIMLAR}}', names.map(([n, y]) => '@("' + n + '", ' + y + ')').join(', '));
+  }
   const script = template('kur/kur.ps1')
     .replace(/^\{\{KAYNAK_AYAR\}\}[ \t]*$/m, () => ayar.replace(/\s+$/, ''))
     .replace(/^\{\{KAYNAK_IS\}\}[ \t]*$/m, () => is.replace(/\s+$/, ''))

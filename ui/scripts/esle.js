@@ -280,7 +280,7 @@ function denetle(secenek) {
     if (!cfg) farklar.push('proje bağlı değil: .claude/teknesyum-ui.json yok');
     else if (cfg.template !== 'benim') farklar.push('proje benim şablonunda değil: ' + cfg.template);
     else {
-      const duz = (m) => (m == null ? null : m.replace(/\r\n/g, '\n'));
+      const duz = (m) => (m == null ? null : m.replace(/\r\n/g, '\n').replace(/(<FontFamily x:Key="FontSans">)[^<]*(<\/FontFamily>)/, '$1$2'));
       const out = path.join(kok, 'teknesyum-ui');
       if (duz(oku(path.join(out, 'theme.tokens.json'))) !== duz(benimMetin)) farklar.push('teknesyum-ui/theme.tokens.json benim.tokens.json ile aynı değil');
       const sahne = fs.mkdtempSync(path.join(os.tmpdir(), 'teknesyum-esle-'));

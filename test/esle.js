@@ -77,10 +77,21 @@ function kapi() {
   r = L.node(L.SETUP, ['--apply', '--template', 'benim', '--targets', 'css,avalonia', '--project', root], { env });
   L.ok('setup --apply ends on a zero layout match', r.status === 0 && /düzen eşleşmesi 0 fark/.test(r.stdout), r.stdout + r.stderr);
   L.ok('setup writes the label files', fs.existsSync(path.join(root, 'teknesyum-ui', 'css', 'labels.tr.json')) && fs.existsSync(path.join(root, 'teknesyum-ui', 'avalonia', 'labels.en.json')));
+  const UC = path.join(L.UI, 'scripts', 'uc.js');
+  r = L.node(UC, ['--bitti', '--project', root], { env });
+  const kayit = (L.readJson(path.join(root, '.claude', 'teknesyum-ui.json')) || {}).uc || {};
+  L.ok('uc --bitti records the version once the gate passes', r.status === 0 && /^\d+\.\d+\.\d+$/.test(kayit.surum || ''), r.stdout + r.stderr);
+  r = L.node(UC, ['--project', root], { env });
+  L.ok('the next uc does not rescan from scratch', /Son uc \d+\.\d+\.\d+ sürümünde tamamlandı/.test(r.stdout) && /Baştan tarama yapma/.test(r.stdout), r.stdout);
+  const U = require(UC);
+  const arada = U.degisiklikler('0.11.0', '0.13.0');
+  L.ok('the changes between two versions come from the changelog', arada.some((l) => /^## \[0\.13\.0\]/.test(l)) && arada.some((l) => /^## \[0\.12\.0\]/.test(l)) && !arada.some((l) => /^## \[0\.11\.0\]/.test(l)), arada.join('\n'));
   const css = path.join(root, 'teknesyum-ui', 'css', 'theme.css');
   fs.writeFileSync(css, fs.readFileSync(css, 'utf8').replace(/--tk-btn-h: \d+px/, '--tk-btn-h: 1px'));
   r = L.node(ESLE, ['--denetle', '--project', root], { env });
   L.ok('the gate catches a generated file that drifted', r.status === 1 && /css\/theme\.css tokenlardan üretilenle aynı değil/.test(r.stdout), r.stdout);
+  r = L.node(UC, ['--bitti', '--project', root], { env });
+  L.ok('uc --bitti refuses while the gate fails', r.status === 1 && /kayıt yazılmadı/.test(r.stderr), r.stdout + r.stderr);
 }
 
 module.exports = function esle() {

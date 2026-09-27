@@ -5,6 +5,15 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-09-27
+
+### Added
+- `uc.js --bitti [--project <dir>]` records a finished `uc` (plugin version, layout, project commit) once the layout gate shows 0 differences. The next `uc` does not rescan from scratch: it lists the changelog entries between the recorded and the current version and the interface files changed in the project since, and says there is nothing to convert when neither moved.
+- The `uc` instruction asks for a program icon that matches the theme (recolouring is enough) and for the desktop and Start menu shortcuts to point at it.
+
+### Fixed
+- The layout gate no longer reports the Avalonia/WPF theme as different after `setup` points `FontSans` at the embedded font URI.
+
 ## [0.13.0] - 2026-09-27
 
 ### Added

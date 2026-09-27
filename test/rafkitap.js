@@ -182,6 +182,8 @@ function ucText(e) {
   L.ok('uc is an order to convert and asks first when it will not', /dönüştürme emridir/.test(r.stdout) && /işe başlamadan ilk mesajında/.test(r.stdout), r.stdout);
   L.ok('uc finishes on a zero layout match and side-by-side evidence', /düzen eşleşmesi 0 fark/.test(r.stdout) && /esle\.js" --denetle/.test(r.stdout) && /yan yana/.test(r.stdout), r.stdout);
   L.ok('uc sends chrome text to the label files', /labels\.tr\.json/.test(r.stdout), r.stdout);
+  L.ok('uc records the finish with --bitti', /uc\.js" --bitti/.test(r.stdout), r.stdout);
+  L.ok('uc asks for a themed icon and refreshed shortcuts', /Simge:/.test(r.stdout) && /kısayol/.test(r.stdout), r.stdout);
   r = run(UC, ['--project', p], { ...e, TEKNESYUM_PRIVATE: path.join(p, 'yok') });
   L.ok('without a shelf uc says only the scanner applies', /özel raf yok/.test(r.stdout) && !/raf\.js" ui-denetim/.test(r.stdout), r.stdout);
 }

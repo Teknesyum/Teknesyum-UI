@@ -21,6 +21,90 @@ function gitKok(from) {
   }
 }
 
+function oku(p) {
+  try {
+    return fs.readFileSync(p, 'utf8');
+  } catch {
+    return null;
+  }
+}
+
+function ayar(kok) {
+  try {
+    return JSON.parse(oku(path.join(kok, '.claude', 'teknesyum-ui.json')));
+  } catch {
+    return null;
+  }
+}
+
+function surum() {
+  try {
+    return JSON.parse(oku(path.join(SCRIPTS, '..', '.claude-plugin', 'plugin.json'))).version || null;
+  } catch {
+    return null;
+  }
+}
+
+function kiyas(a, b) {
+  const x = String(a).split('.').map(Number);
+  const y = String(b).split('.').map(Number);
+  for (let i = 0; i < 3; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) - (y[i] || 0);
+  return 0;
+}
+
+function degisiklikler(eski, yeni) {
+  const metin = [path.join(SCRIPTS, '..', 'CHANGELOG.md'), path.join(SCRIPTS, '..', '..', 'CHANGELOG.md')].map(oku).find((m) => m != null);
+  if (!metin) return [];
+  const out = [];
+  let al = false;
+  for (const satir of metin.replace(/\r\n/g, '\n').split('\n')) {
+    const m = /^## \[(\d+\.\d+\.\d+)\]/.exec(satir);
+    if (m) al = kiyas(m[1], eski) > 0 && kiyas(m[1], yeni) <= 0;
+    else if (/^## /.test(satir)) al = false;
+    if (al) out.push(satir);
+  }
+  return out.filter((l) => l.trim());
+}
+
+function git(kok, args) {
+  const r = require('child_process').spawnSync('git', ['-C', kok].concat(args), { encoding: 'utf8', windowsHide: true });
+  return r.status === 0 ? r.stdout.trim() : null;
+}
+
+const ARAYUZ = /\.(axaml|xaml|cs|tsx|jsx|ts|js|css|html|vue|svelte)$/i;
+
+function artim(kok, cfg) {
+  const u = cfg && cfg.uc;
+  if (!u || !u.surum) return null;
+  const simdi = surum();
+  const satir = [];
+  const surumDegisti = !!simdi && kiyas(simdi, u.surum) > 0;
+  const duzenDegisti = !!(u.duzen && cfg.duzen && u.duzen !== cfg.duzen);
+  if (surumDegisti) {
+    satir.push('Son uc ' + u.surum + ' sürümünde tamamlandı, eklenti şimdi ' + simdi + '. Baştan tarama yapma: yalnız bu iki sürüm arasındaki değişiklikleri uygula ve yalnız onlardan etkilenen ekranları denetle:');
+    satir.push(...degisiklikler(u.surum, simdi));
+  } else satir.push('Son uc ' + u.surum + ' sürümünde tamamlandı ve eklenti değişmedi. Baştan tarama yapma.');
+  if (duzenDegisti) satir.push('Sahibin düzeni o günden beri değişti: tazeleme üretilmiş kaynakları yeniler; elle yazılmış değer kalmadıysa ekranlar kendiliğinden uyar, yalnız yan yana görüntüyle doğrula.');
+  const liste = [u.commit ? git(kok, ['diff', '--name-only', u.commit]) : null, git(kok, ['ls-files', '--others', '--exclude-standard'])]
+    .filter(Boolean)
+    .join('\n')
+    .split('\n')
+    .filter((d) => d && ARAYUZ.test(d) && !d.startsWith('teknesyum-ui/'));
+  if (u.commit) satir.push(liste.length ? "Projede son uc'dan beri değişen arayüz dosyaları (yalnız bunları dönüştür ve denetle): " + liste.join(', ') : "Projede son uc'dan beri arayüz dosyası değişmedi.");
+  if (!surumDegisti && !duzenDegisti && u.commit && !liste.length) satir.push('Yapılacak dönüşüm yok: tazeleme ve kapıyı koş, 0 farkı göster, bitir.');
+  return satir.join('\n');
+}
+
+function bitti(kok) {
+  const cfg = ayar(kok);
+  if (!cfg) return { hata: 'proje bağlı değil: .claude/teknesyum-ui.json yok' };
+  const farklar = require('./esle').denetle({ proje: kok });
+  if (farklar.length) return { hata: 'düzen eşleşmesi ' + farklar.length + ' fark; kayıt yazılmadı\n' + farklar.map((f) => '  - ' + f).join('\n') };
+  cfg.uc = { surum: surum(), duzen: cfg.duzen || null, commit: git(kok, ['rev-parse', 'HEAD']), tarih: new Date().toISOString().slice(0, 10) };
+  fs.writeFileSync(path.join(kok, '.claude', 'teknesyum-ui.json'), JSON.stringify(cfg, null, 2) + '\n', 'utf8');
+  return { uc: cfg.uc };
+}
+
 function metin(secenek) {
   const s = secenek || {};
   const kok = gitKok(s.cwd) || path.resolve(s.cwd || process.cwd());
@@ -44,10 +128,15 @@ function metin(secenek) {
   satirlar.push(
     'Tarama: `' + js('scan.js') + ' "' + kok + '"`. Web kontrastı: `' + js('denetim.js') + ' --snippet` çıktısını sayfada koş. Avalonia/WPF: `' + js('scaffold.js') + ' denetim <Ad>`. Her yazıyı her durumda gerçek zeminine karşı ölç.'
   );
+  const onceki = artim(kok, ayar(kok));
+  if (onceki) satirlar.push(onceki);
   const bekleyen = raf.bekleyen(kok);
   if (bekleyen.length) satirlar.push('Bekleyen raf kitapları: ' + bekleyen.map((b) => b.ad).join(', ') + '. Denetimle birlikte uydur, `' + js('raf.js') + ' --uydu <ad> --project "' + kok + '"` ile kaydet.');
   satirlar.push(
-    'Rapor: `docs/ui-denetim/YYYY-MM-DD.md`. Bitiş: düzen eşleşmesi 0 fark (`' + js('esle.js') + ' --denetle --project "' + kok + '"`), sıfır kontrast hatası, sıfır tarayıcı hatası; "çalışıyor" başsız testle, "kullanılabilir" önizleme ile uygulamanın yan yana ekran görüntüsüyle, ayrı kanıt.'
+    'Rapor: `docs/ui-denetim/YYYY-MM-DD.md`. Bitiş: düzen eşleşmesi 0 fark (`' + js('esle.js') + ' --denetle --project "' + kok + '"`), sıfır kontrast hatası, sıfır tarayıcı hatası; "çalışıyor" başsız testle, "kullanılabilir" önizleme ile uygulamanın yan yana ekran görüntüsüyle, ayrı kanıt. Bitince kaydet: `' + js('uc.js') + ' --bitti --project "' + kok + '"`; sonraki uc yalnız bu sürümden sonraki değişikliklere bakar.'
+  );
+  satirlar.push(
+    "Simge: programın simgesi (exe, pencere, görev çubuğu, yükleyici) temayla uyumlu değilse değiştir; yalnız rengini token'lara çekmek de yeter. Sonra masaüstündeki ve Başlat menüsündeki kısayolları yeni simgeye güncelle: kısayolun IconLocation'ını yeniden yaz, Windows simge önbelleği eskisini gösterebilir."
   );
   const kapsam = String(s.kapsam || '').trim();
   if (kapsam) satirlar.push('Kapsam: ' + kapsam);
@@ -57,16 +146,25 @@ function metin(secenek) {
 function main(argv) {
   const args = argv.slice(2);
   if (args.includes('--help') || args.includes('-h')) {
-    process.stdout.write('Usage: node uc.js [--project root] [scope...]\n\nPrints the UI check instruction that the `uc` mark puts into the turn.\n');
+    process.stdout.write('Usage: node uc.js [--project root] [scope...]\n       node uc.js --bitti [--project root]\n\nPrints the UI check instruction that the `uc` mark puts into the turn.\n\n--bitti records the finished uc (plugin version, layout, commit) once the\nlayout gate shows 0 differences; the next uc covers only what changed since.\n');
     return 0;
   }
   const i = args.indexOf('--project');
   const cwd = i >= 0 ? args[i + 1] : process.cwd();
+  if (args.includes('--bitti')) {
+    const r = bitti(gitKok(cwd) || path.resolve(cwd));
+    if (r.hata) {
+      process.stderr.write(r.hata + '\n');
+      return 1;
+    }
+    process.stdout.write('uc kaydedildi: ' + r.uc.surum + (r.uc.commit ? ' @ ' + r.uc.commit.slice(0, 7) : '') + '\n');
+    return 0;
+  }
   const kapsam = args.filter((a, n) => i < 0 || (n !== i && n !== i + 1)).join(' ');
   process.stdout.write(metin({ cwd, kapsam }) + '\n');
   return 0;
 }
 
-module.exports = { metin };
+module.exports = { metin, bitti, degisiklikler };
 
 if (require.main === module) process.exitCode = main(process.argv);

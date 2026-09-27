@@ -166,7 +166,7 @@ function metin(secenek) {
   satirlar.push(
     'Tarama: `' + js('scan.js') + ' "' + kok + '"`. Web kontrastı: `' + js('denetim.js') + ' --snippet` çıktısını sayfada koş. Avalonia/WPF: `' + js('scaffold.js') + ' denetim <Ad>`. Her yazıyı her durumda gerçek zeminine karşı ölç.'
   );
-  satirlar.push('Artık: proje gereksiz yer tutmaz. `' + js('artik.js') + ' "' + kok + '"` derleme çıktısı, önbellek, log ve geçici dosyaları ölçer; `--sil` yalnız git\'in yok saydığı ve izlemediği, yeniden üretilebilen kalemleri siler. Ölçümü rapora yaz; izlenen büyük dosya ya da `.gitignore`\'da eksik kalem varsa düzelt; `node_modules` ve `trash/` yalnız raporlanır.');
+  satirlar.push('Artık: proje gereksiz yer tutmaz. `' + js('artik.js') + ' "' + kok + '"` derleme çıktısı, önbellek, log ve geçici dosyaları ölçer. Ölçtükten sonra aynı komutu `--sil` ile çalıştır: yalnız git\'in yok saydığı ve izlemediği, yeniden üretilebilen kalemleri siler, izlenen hiçbir şeye dokunmaz. Bu turun kanıtı bir kalemin içindeyse önce `docs/ui-denetim/` altına taşı, sonra sil; silmediğin her kalemi tek satır gerekçeyle rapora yaz. Silmeden önceki ve sonraki ölçümü rapora yaz; izlenen büyük dosya ya da `.gitignore`\'da eksik kalem varsa düzelt; `node_modules` ve `trash/` yalnız raporlanır.');
   const onceki = artim(kok, ayar(kok));
   if (onceki) satirlar.push(onceki);
   const bekleyen = raf.bekleyen(kok);
@@ -175,7 +175,7 @@ function metin(secenek) {
     'Rapor: `docs/ui-denetim/YYYY-MM-DD.md`. Bitiş: düzen eşleşmesi 0 fark (`' + js('esle.js') + ' --denetle --project "' + kok + '"`), sıfır kontrast hatası, sıfır tarayıcı hatası; "çalışıyor" başsız testle, "kullanılabilir" önizleme ile uygulamanın yan yana ekran görüntüsüyle, ayrı kanıt. Bitince kaydet: `' + js('uc.js') + ' --bitti --project "' + kok + '"`; sonraki uc yalnız bu sürümden sonraki değişikliklere bakar.'
   );
   satirlar.push(
-    "Simge: programın simgesi (exe, pencere, görev çubuğu, yükleyici) temayla uyumlu değilse değiştir; yalnız rengini token'lara çekmek de yeter. Sonra masaüstündeki ve Başlat menüsündeki kısayolları yeni simgeye güncelle: kısayolun IconLocation'ını yeniden yaz, Windows simge önbelleği eskisini gösterebilir."
+    "Simge: programın simgesi (exe, pencere, görev çubuğu, yükleyici) temayla uyumlu değilse yeni bir tasarım hazırla; yalnız rengini token'lara çekmek de yeter. Simgeyi değiştirme kararı sahibindir: yeni simgeyi uygulamadan önce önizlemesini (pencere, görev çubuğu ve masaüstü boyutunda, eskisinin yanında) göster ve açıkça onay iste. Onay gelene kadar simgeyi exe'ye, pencereye, yükleyiciye ya da kısayollara koyma, yayınlama; geri bildirime göre tasarımı yenileyip yeniden göster. Onay bekleyen simge işini `.claude/acik.md`'de açık tut; uc'nin diğer adımları beklemez. Onaydan sonra masaüstündeki ve Başlat menüsündeki kısayolları yeni simgeye güncelle: kısayolun IconLocation'ını yeniden yaz, Windows simge önbelleği eskisini gösterebilir."
   );
   const kapsam = String(s.kapsam || '').trim();
   if (kapsam) satirlar.push('Kapsam: ' + kapsam);

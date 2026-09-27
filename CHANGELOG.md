@@ -5,6 +5,12 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-09-27
+
+### Changed
+- The `uc` instruction runs `artik.js --sil` after measuring, moves this round's evidence out first, and asks a one-line reason for every item left behind. The previous wording only described `--sil`, so most projects measured and stopped.
+- The `uc` instruction holds a new program icon until the owner approves it: show a preview beside the old one, keep designing on feedback, and apply it to the exe, window, installer or shortcuts only after a clear yes.
+
 ## [0.22.0] - 2026-09-27
 
 ### Fixed

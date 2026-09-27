@@ -113,6 +113,8 @@ function kapi() {
   A.temizle(art, kalem);
   L.ok('artik --sil removes only the deletable items', !fs.existsSync(path.join(art, 'bin')) && fs.existsSync(path.join(art, 'dist', 'app.js')) && fs.existsSync(path.join(art, 'node_modules')));
   L.ok('the uc instruction carries the leftover step', /artik\.js/.test(U.metin({ cwd: root })));
+  L.ok('the uc instruction runs artik --sil and asks a reason for what stays', /--sil` ile çalıştır/.test(U.metin({ cwd: root })) && /gerekçe/.test(U.metin({ cwd: root })));
+  L.ok('the uc instruction holds a new icon until the owner approves', /Onay gelene kadar simgeyi/.test(U.metin({ cwd: root })));
   const arada = U.degisiklikler('0.11.0', '0.13.0');
   L.ok('the changes between two versions come from the changelog', arada.some((l) => /^## \[0\.13\.0\]/.test(l)) && arada.some((l) => /^## \[0\.12\.0\]/.test(l)) && !arada.some((l) => /^## \[0\.11\.0\]/.test(l)), arada.join('\n'));
   const css = path.join(root, 'teknesyum-ui', 'css', 'theme.css');

@@ -425,6 +425,14 @@ function filesSeeProjectStyles() {
   L.ok('the full scan sees the focus styles in other files', ring(full).length === 0, JSON.stringify(ring(full)));
   L.ok('--files still sees project-wide focus styles', ring(one).length === 0, JSON.stringify(ring(one)));
   L.ok('--files reports only findings on the named files', one.every((f) => f.file === 'panel.css' || f.file === 'Views/Overview.axaml'), JSON.stringify(one.map((f) => f.file)));
+
+  const av = cleanProject();
+  L.write(path.join(av, 'Views', 'Main.axaml'), '<UserControl xmlns="https://github.com/avaloniaui"><Grid/></UserControl>' + eol);
+  const bare = ring(parse(L.node(L.SCAN, [av, '--json', '--rules', 'core'], { env })));
+  L.ok('an Avalonia project with no focus adorner is reported', bare.some((f) => /FocusAdorner/.test(f.message)), JSON.stringify(bare));
+  L.write(path.join(av, 'teknesyum-ui', 'avalonia', 'Theme.axaml'), '<Styles xmlns="https://github.com/avaloniaui"><Style Selector="Control"><Setter Property="FocusAdorner"/></Style></Styles>' + eol);
+  const bound = ring(parse(L.node(L.SCAN, [av, '--json', '--rules', 'core'], { env })));
+  L.ok('the generated Avalonia theme counts as the focus adorner', bound.length === 0, JSON.stringify(bound));
 }
 
 function denetimKaydi() {

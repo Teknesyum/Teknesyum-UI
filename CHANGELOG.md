@@ -5,6 +5,12 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-09-27
+
+### Fixed
+- `core/focus-ring-missing` no longer warns "no FocusVisualStyle" on Avalonia projects: `.axaml` accepts `FocusAdorner`, and a project bound to the generated `teknesyum-ui/avalonia/Theme.axaml` counts as having one. WPF `.xaml` still needs `FocusVisualStyle`.
+- The `avalonia-animator-missing` message no longer says `setup.js` registers the animator; it stopped doing so in 0.13.0.
+
 ## [0.15.0] - 2026-09-27
 
 ### Fixed

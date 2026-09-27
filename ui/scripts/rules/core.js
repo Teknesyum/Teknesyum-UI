@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 
 const MOTION_PACKAGE = ['motion', 'framer-motion', 'gsap', 'animejs', '@formkit/auto-animate'];
@@ -772,7 +773,7 @@ module.exports = {
             message:
               'Window.anim animates RenderTransform but no ITransform animator is registered ' +
               '(Animation.RegisterCustomAnimator<ITransform, ...>() in Initialize()) — the app ' +
-              'crashes on launch. `setup.js --apply --targets avalonia` adds it automatically.',
+              'crashes on launch.',
           },
         ];
       },
@@ -785,11 +786,14 @@ module.exports = {
         const out = [];
         if (ctx.files.some((f) => WEB_UI.has(f.ext)) && !/:focus-visible/.test(all))
           out.push({ file: '', line: 0, message: 'no :focus-visible rule' });
-        if (
-          ctx.files.some((f) => f.ext === '.xaml' || f.ext === '.axaml') &&
-          !/FocusVisualStyle/.test(all)
-        )
+        if (ctx.files.some((f) => f.ext === '.xaml') && !/FocusVisualStyle/.test(all))
           out.push({ file: '', line: 0, message: 'no FocusVisualStyle' });
+        if (
+          ctx.files.some((f) => f.ext === '.axaml') &&
+          !/FocusAdorner|FocusVisualStyle/.test(all) &&
+          !fs.existsSync(path.join(ctx.root, 'teknesyum-ui', 'avalonia', 'Theme.axaml'))
+        )
+          out.push({ file: '', line: 0, message: 'no FocusAdorner' });
         return out;
       },
     },

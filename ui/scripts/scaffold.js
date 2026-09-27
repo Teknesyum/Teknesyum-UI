@@ -14,12 +14,22 @@ const ASCII = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u' };
 const HELP = [
   'Usage: node scaffold.js <target> [options] [--project <dir>]',
   '',
-  '  kur <AppName>   Kur.bat + kur-<name>.ps1 into the project root',
-  '      --simge <path>      icon, relative to the USB root (default simge.ico)',
+  '  kur <AppName>   Kur.bat + kur-<name>.ps1 into the project root; colours and sizes',
+  '                  come from teknesyum-ui/theme.tokens.json (plugin default when absent)',
+  '      --kaynak releases|ssh  source (default ssh; ssh is the private-repo exception)',
+  '      releases: latest GitHub release, <asset> + <asset>.sha256, no admin',
+  '        --depo <owner/repo>  repository (default: origin)',
+  '        --varlik <asset.zip> release asset to install (required)',
+  '        --exe <file.exe>     program inside the zip (default <AppName>.exe)',
+  '      ssh: clone over a USB deploy key',
+  '        --depo <url>         git remote (default: origin, as ssh)',
+  '        --anahtar <name>     deploy key file under .kurulum\\anahtar (default usb-01)',
+  '      --simge <path>      icon, relative to the script (default simge.ico)',
   '      --altbaslik <text>  subtitle under the title',
-  '      --depo <url>        git remote (default: origin, as ssh)',
-  '      --anahtar <name>    deploy key file under .kurulum\\anahtar (default usb-01)',
-  '      --adimlar <file>    project steps fragment (default templates/kur/adimlar.ps1)',
+  '      --adimlar <file>    project steps fragment (default templates/kur/adimlar[-releases].ps1)',
+  '      run: KUR_PROVA=1 temp target, no shortcut · KUR_OTOMATIK=1 no window, exit code',
+  '           KUR_KOK=<dir> fake root for target, shortcuts, log · KUR_SONUC=<file> result JSON',
+  '           KUR_API=<url> releases API base for tests (default https://api.github.com)',
   '      --avalonia          also the KurulumEkrani install screen into teknesyum-ui/kur',
   '      --ns <Namespace>    its C# namespace (default: the app name)',
   '  ustcubuk [<Namespace>]  title bar into teknesyum-ui/ustcubuk',
@@ -80,26 +90,123 @@ function sshRemote(root) {
 }
 
 function fill(text, values) {
-  return text.replace(/\{\{([A-Z]+)\}\}/g, (all, key) => (key in values ? values[key] : all));
+  return text.replace(/\{\{([A-Z0-9_]+)\}\}/g, (all, key) => (key in values ? values[key] : all));
+}
+
+function originRepo(root) {
+  const r = spawnSync('git', ['-C', root, 'remote', 'get-url', 'origin'], { encoding: 'utf8', windowsHide: true, timeout: 10000 });
+  const url = r.status === 0 ? String(r.stdout).trim() : '';
+  const m = /github\.com[:/]([^/]+)\/([^/]+?)(?:\.git)?\/?$/.exec(url);
+  return m ? m[1] + '/' + m[2] : null;
+}
+
+function kurTokens(root) {
+  const own = path.join(root, 'teknesyum-ui', 'theme.tokens.json');
+  const file = fs.existsSync(own) ? own : path.join(__dirname, '..', 'skills', 'teknesyum-ui', 'assets', 'theme.tokens.json');
+  const T = JSON.parse(fs.readFileSync(file, 'utf8').replace(/^﻿/, ''));
+  const find = (n) => {
+    for (const g of ['brand', 'role', 'derived']) if (T[g] && T[g][n]) return T[g][n];
+    throw new Error('unknown token in ' + file + ': ' + n);
+  };
+  const res = (n, trail = []) => {
+    if (trail.includes(n)) throw new Error('ref cycle: ' + trail.concat(n).join(' -> '));
+    const t = find(n);
+    if (t.value !== undefined) return { hex: t.value.toLowerCase(), a: t.alpha !== undefined ? t.alpha : 1 };
+    const b = res(t.ref, trail.concat(n));
+    return { hex: b.hex, a: t.alpha !== undefined ? t.alpha : b.a };
+  };
+  const hex = (n) => res(n).hex;
+  const num = (g, k) => {
+    const t = T[g] && T[g][k];
+    if (!t) throw new Error('unknown token in ' + file + ': ' + g + '.' + k);
+    if (t.ref) return num(...t.ref.split('.'));
+    return t.value;
+  };
+  const tone = (v) => {
+    if (!T.derived['tone-scale'].steps.includes(v)) throw new Error('tone-scale has no ' + v + ' step');
+    return v / 100;
+  };
+  const edge = T.shape['window-edge'] && T.shape['window-edge'].ref;
+  const bare = !edge || edge === 'none';
+  return {
+    RENK_ZEMIN: hex('surface'),
+    RENK_METIN: hex('text'),
+    RENK_ETIKET: hex('text-label'),
+    RENK_1: hex('renk-1'),
+    RENK_2: hex('renk-2'),
+    RENK_VURGU: hex('renk-2-text'),
+    RENK_BASARI: hex('success'),
+    RENK_TEHLIKE: hex('danger-text'),
+    RENK_EDILGEN: hex('disabled'),
+    RENK_USTU_1: hex(T.on['renk-1'].on),
+    RENK_KENAR: hex('border'),
+    KENAR_ALFA: String(res('border').a),
+    RENK_IZ: hex('border-decorative'),
+    IZ_ALFA: String(res('border-decorative').a),
+    SUREN_ALFA: String(tone(20)),
+    SOLAN_1: String(tone(30)),
+    SOLAN_2: String(tone(60)),
+    PENCERE_KENARI: bare ? '' : hex(edge),
+    PENCERE_ALFA: bare ? '1' : String(res(edge).a),
+    FS_1: String(num('size', 'fs-1')),
+    FS_2: String(num('size', 'fs-2')),
+    FS_4: String(num('size', 'fs-4')),
+    SATIR_MONO: String(Math.round(num('size', 'fs-2') * num('size', 'lh-mono'))),
+    SATIR_BASLIK: String(num('size', 'lh-heading')),
+    BOSLUK_2: String(num('space', '2')),
+    BOSLUK_3: String(num('space', '3')),
+    BOSLUK_4: String(num('space', '4')),
+    BOSLUK_5: String(num('space', '5')),
+    IKON: String(num('metric', 'icon-4')),
+    HEDEF_MIN: String(num('metric', 'target-min')),
+    DUGME_Y: String(num('metric', 'btn-h')),
+    DUGME_PX: String(num('metric', 'btn-px')),
+    KENAR_W: String(num('shape', 'border-w')),
+    PENCERE_W: String(num('metric', 'modal-w')),
+    YAZI_SANS: T.font.sans.chain.join(','),
+    YAZI_MONO: T.font.mono.chain.join(','),
+  };
 }
 
 function kur(root, args, name) {
   if (!name) throw new Error('kur needs an application name');
   const file = slug(name);
   if (!file) throw new Error('application name has no usable letters: ' + name);
+  const kaynak = flag(args, 'kaynak') || 'ssh';
+  if (kaynak !== 'releases' && kaynak !== 'ssh') throw new Error('--kaynak is releases or ssh, not ' + kaynak);
+  const releases = kaynak === 'releases';
   const values = {
     AD: name,
     ALTBASLIK: flag(args, 'altbaslik') || '',
-    DEPO: flag(args, 'depo') || sshRemote(root) || 'git@github.com:Teknesyum/' + name + '.git',
-    ANAHTAR: flag(args, 'anahtar') || 'usb-01',
     SIMGE: (flag(args, 'simge') || 'simge.ico').replace(/\//g, '\\'),
     BETIK: 'kur-' + file + '.ps1',
   };
+  if (releases) {
+    values.DEPO = flag(args, 'depo') || originRepo(root) || '';
+    if (!/^[\w.-]+\/[\w.-]+$/.test(values.DEPO)) throw new Error('--kaynak releases needs --depo owner/repo');
+    values.VARLIK = flag(args, 'varlik') || '';
+    if (!/^[^\\/]+\.zip$/i.test(values.VARLIK)) throw new Error('--kaynak releases needs --varlik <asset.zip>');
+    values.EXE = flag(args, 'exe') || name.replace(/\s+/g, '') + '.exe';
+    values.ANAHTAR = '';
+  } else {
+    values.DEPO = flag(args, 'depo') || sshRemote(root) || 'git@github.com:Teknesyum/' + name + '.git';
+    values.ANAHTAR = flag(args, 'anahtar') || 'usb-01';
+    values.VARLIK = '';
+    values.EXE = '';
+  }
   for (const [key, value] of Object.entries(values))
     if (!SAFE.test(value)) throw new Error(key.toLowerCase() + ' may not contain " ` $ or a newline');
+  Object.assign(values, kurTokens(root));
   const custom = flag(args, 'adimlar');
-  const steps = (custom ? fs.readFileSync(path.resolve(custom), 'utf8').replace(/^﻿/, '') : template('kur/adimlar.ps1')).replace(/\s+$/, '');
-  const script = template('kur/kur.ps1').replace(/^[ \t]*\{\{ADIMLAR\}\}[ \t]*$/m, () => steps);
+  const steps = (custom
+    ? fs.readFileSync(path.resolve(custom), 'utf8').replace(/^﻿/, '')
+    : template(releases ? 'kur/adimlar-releases.ps1' : 'kur/adimlar.ps1')
+  ).replace(/\s+$/, '');
+  const [ayar, is] = template('kur/kaynak-' + kaynak + '.ps1').split(/^#-- is\r?\n/m);
+  const script = template('kur/kur.ps1')
+    .replace(/^\{\{KAYNAK_AYAR\}\}[ \t]*$/m, () => ayar.replace(/\s+$/, ''))
+    .replace(/^\{\{KAYNAK_IS\}\}[ \t]*$/m, () => is.replace(/\s+$/, ''))
+    .replace(/^[ \t]*\{\{ADIMLAR\}\}[ \t]*$/m, () => steps);
   return [
     { to: path.join(root, 'Kur.bat'), text: fill(template('kur/Kur.bat'), values), crlf: true },
     { to: path.join(root, values.BETIK), text: fill(script, values), crlf: true, bom: true },

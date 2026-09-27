@@ -10,7 +10,8 @@
     } else { Yaz "package.json yok, motor adımı atlandı" }
 
     Adim 92 97 "Masaüstü kısayolu yazılıyor"
-    $kisayol = Join-Path ([Environment]::GetFolderPath("Desktop")) ($S.ad + ".lnk")
+    New-Item -ItemType Directory -Force $S.masaustu | Out-Null
+    $kisayol = Join-Path $S.masaustu ($S.ad + ".lnk")
     $calistir = Join-Path $hedef "node_modules\electron\dist\electron.exe"
     if ($S.prova) { Yaz "Prova: kısayol yazılmadı" }
     elseif (Test-Path $calistir) {
@@ -22,5 +23,6 @@
       if (Test-Path $ikonYol) { $lnk.IconLocation = $ikonYol }
       $lnk.Save()
       $S.baslat = $kisayol
+      $S.kisayol = $kisayol
       Yaz "Kısayol: $kisayol"
     } else { Yaz "Çalıştırılacak dosya bulunamadı, kısayol yazılmadı" }

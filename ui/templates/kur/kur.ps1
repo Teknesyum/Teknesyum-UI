@@ -1,28 +1,49 @@
-﻿# teknesyum-ui template kur/kur.ps1
-param([string]$AnahtarAdi = "{{ANAHTAR}}", [switch]$Onar, [switch]$Prova)
-
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName System.Drawing
-[System.Windows.Forms.Application]::EnableVisualStyles()
+# teknesyum-ui template kur/kur.ps1
+param([string]$AnahtarAdi = "{{ANAHTAR}}", [switch]$Onar, [switch]$Prova, [switch]$Otomatik, [string]$Hedef = "")
 
 $kaynak = Split-Path -Parent $MyInvocation.MyCommand.Path
-$betik = $MyInvocation.MyCommand.Path
+$kok = $env:KUR_KOK
+
+{{KAYNAK_AYAR}}
+
+if ($kok) {
+  $hedefVarsayilan = Join-Path $kok ("Programlar\" + "{{AD}}")
+  $masaustu = Join-Path $kok "Masaustu"
+  $menu = Join-Path $kok "BaslatMenusu"
+  $gunluk = Join-Path $kok "Gunluk\kurulum.log"
+} else {
+  $masaustu = [Environment]::GetFolderPath("Desktop")
+  $menu = [Environment]::GetFolderPath("Programs")
+  $gunluk = Join-Path $env:LOCALAPPDATA "{{AD}}\kurulum.log"
+}
+if ($Hedef) { $hedefVarsayilan = $Hedef }
+
 $S = [hashtable]::Synchronized(@{
   ad = "{{AD}}"
   altbaslik = "{{ALTBASLIK}}"
   depo = "{{DEPO}}"
+  varlik = "{{VARLIK}}"
+  exe = "{{EXE}}"
   anahtarAdi = $AnahtarAdi
   onar = [bool]$Onar
   kaynak = $kaynak
-  hedef = Join-Path ([Environment]::GetFolderPath("MyDocuments")) "{{AD}}"
-  gunluk = Join-Path $env:LOCALAPPDATA "{{AD}}\kurulum.log"
+  hedef = $hedefVarsayilan
+  masaustu = $masaustu
+  menu = $menu
+  gunluk = $gunluk
+  sonuc = $env:KUR_SONUC
+  adimlar = $adimAdlari
   yuzde = 0
-  tavan = 2
-  adim = "Hazırlanıyor"
+  tavan = 0
+  adim = "Kurulum yerini seç ve Kur düğmesine bas."
   log = [System.Collections.ArrayList]::Synchronized((New-Object System.Collections.ArrayList))
-  durum = "calisiyor"
+  durum = "hazir"
+  hata = $null
+  surum = ""
+  kisayol = $null
   cevrimdisi = $false
   prova = ([bool]$Prova -or [bool]$env:KUR_PROVA)
+  otomatik = ([bool]$Otomatik -or [bool]$env:KUR_OTOMATIK)
   baslat = $null
 })
 
@@ -34,13 +55,9 @@ $is = {
     $satir = (Get-Date -Format "HH:mm:ss") + "  " + $m
     [void]$S.log.Add($satir)
     Add-Content -Path $S.gunluk -Value $satir -Encoding UTF8
+    if ($S.otomatik) { [Console]::Out.WriteLine($satir) }
   }
   function Adim([int]$y, [int]$t, [string]$m) { $S.yuzde = $y; $S.tavan = $t; $S.adim = $m; Yaz $m }
-  function Kilitle([string]$yol) { icacls $yol /inheritance:r /grant:r "$($env:USERNAME):(R)" | Out-Null }
-  function Coz([string]$yol) { if (Test-Path $yol) { icacls $yol /grant:r "$($env:USERNAME):(F)" | Out-Null } }
-  function SshKomut([string]$ssh, [string]$anahtar, [string]$bilinen) {
-    '"{0}" -i "{1}" -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile="{2}"' -f ($ssh -replace '\\', '/'), ($anahtar -replace '\\', '/'), ($bilinen -replace '\\', '/')
-  }
   function Durdur([string]$kok) {
     Get-CimInstance Win32_Process | Where-Object { $_.ExecutablePath -and $_.ExecutablePath.StartsWith($kok, [StringComparison]::OrdinalIgnoreCase) } | ForEach-Object {
       Yaz ("Kapatılıyor: " + $_.Name)
@@ -50,154 +67,86 @@ $is = {
   }
 
   try {
-    $kaynak = $S.kaynak
     $hedef = $S.hedef
-    $kur = Join-Path $kaynak ".kurulum"
-    $depo = $S.depo
-    $veriAdi = "veri"
-    $gecici = Join-Path $env:TEMP ("kur-" + [guid]::NewGuid().ToString("N").Substring(0, 8))
-    New-Item -ItemType Directory -Force $gecici | Out-Null
-    Yaz "Kaynak: $kaynak"
-    Yaz "Hedef : $hedef"
     if ($S.onar) { Yaz "Onarım: kurulum baştan yapılacak" }
 
-    Adim 2 6 "Git hazırlanıyor"
-    $sistemGit = Get-Command git.exe -ErrorAction SilentlyContinue
-    $usbGit = Join-Path $kur "git\cmd\git.exe"
-    if ($sistemGit) { $git = $sistemGit.Source; $ssh = "ssh"; Yaz "Bilgisayarda Git var" }
-    elseif (Test-Path $usbGit) { $git = $usbGit; $ssh = Join-Path $kur "git\usr\bin\ssh.exe"; Yaz "Bilgisayarda Git yok, taşınabilir Git kullanılacak" }
-    else { throw "Git bulunamadı: ne bilgisayarda ne USB'de (.kurulum\git)" }
-
-    $anahtarUsb = Join-Path $kur ("anahtar\" + $S.anahtarAdi)
-    if (-not (Test-Path $anahtarUsb)) { throw "Erişim anahtarı yok: $anahtarUsb" }
-    if ($S.prova) { $sshKlasor = $gecici } else { $sshKlasor = Join-Path $env:USERPROFILE ".ssh" }
-    New-Item -ItemType Directory -Force $sshKlasor | Out-Null
-    $anahtar = Join-Path $sshKlasor $S.anahtarAdi
-    $bilinen = Join-Path $sshKlasor "known_hosts"
-    Coz $anahtar
-    Copy-Item $anahtarUsb $anahtar -Force
-    Kilitle $anahtar
-    Yaz "Erişim anahtarı: $anahtar"
-    $env:GIT_SSH_COMMAND = SshKomut $ssh $anahtar $bilinen
-    $env:GIT_TERMINAL_PROMPT = "0"
-
-    Adim 6 12 "GitHub bağlantısı sınanıyor"
-    $uzak = & $git ls-remote $depo HEAD 2>&1
-    if ($LASTEXITCODE -eq 0) { Yaz "GitHub erişimi tamam" }
-    else { $S.cevrimdisi = $true; Yaz ("GitHub'a ulaşılamadı: " + ($uzak | Select-Object -Last 1)) }
-
-    Adim 12 16 "Eski kurulum aranıyor"
-    $mevcut = Test-Path $hedef
-    $gitli = Test-Path (Join-Path $hedef ".git")
-    if (-not $mevcut) { Yaz "Eski kurulum yok" }
-    elseif ($S.onar) {
-      Adim 16 24 "Eski kurulum kaldırılıyor"
-      if ($S.prova) { Yaz "Prova: silinmedi" }
-      else {
-        Durdur $hedef
-        $yedekKok = Join-Path $env:LOCALAPPDATA ($S.ad + "\yedek\" + (Get-Date -Format "yyyyMMdd-HHmmss"))
-        foreach ($d in @($hedef) + @(Get-ChildItem -LiteralPath $hedef -Directory -ErrorAction SilentlyContinue | ForEach-Object FullName)) {
-          $v = Join-Path $d $veriAdi
-          if (Test-Path $v) {
-            $yv = Join-Path $yedekKok (Split-Path $d -Leaf)
-            robocopy $v $yv /E /R:1 /W:1 /NFL /NDL /NJH /NJS /NP | Out-Null
-            Yaz "Veri yedeklendi: $yv"
-          }
-        }
-        if ($gitli -and -not $S.cevrimdisi) {
-          & $git -C $hedef add -A -- ":(glob)**/$veriAdi/**" 2>&1 | Out-Null
-          & $git -C $hedef -c user.name=$env:USERNAME -c "user.email=$env:USERNAME@$env:COMPUTERNAME" commit -m "veri (onarım öncesi, $env:COMPUTERNAME)" 2>&1 | Out-Null
-          & $git -C $hedef -c user.name=$env:USERNAME -c "user.email=$env:USERNAME@$env:COMPUTERNAME" pull --no-rebase --no-edit -X ours $depo main 2>&1 | Out-Null
-          & $git -C $hedef push $depo HEAD:main 2>&1 | Out-Null
-          if ($LASTEXITCODE -eq 0) { Yaz "Eski kurulumdaki veri GitHub'a gönderildi" } else { Yaz "Eski veri gönderilemedi, yedekte duruyor" }
-        }
-        Remove-Item -LiteralPath $hedef -Recurse -Force -ErrorAction SilentlyContinue
-        if (Test-Path $hedef) { throw "Eski kurulum silinemedi (açık bir dosya olabilir): $hedef" }
-        Yaz "Silindi: $hedef"
-      }
-    }
-    elseif (-not $gitli) { throw "Kurulum klasörü bozuk görünüyor ($hedef). Onar düğmesiyle baştan kurun." }
-    else {
-      Yaz "Kurulum var, yerinde güncellenecek"
-      if (-not $S.prova) { Durdur $hedef }
-    }
-
-    $yerinde = $mevcut -and $gitli -and -not $S.onar -and -not $S.prova
-    if ($S.prova) { $hedef = Join-Path $gecici $S.ad; $S.hedef = $hedef; Yaz "Prova hedefi: $hedef" }
-
-    if ($yerinde) {
-      Adim 24 52 "Güncel sürüm çekiliyor"
-      if ($S.cevrimdisi) { Yaz "Çevrimdışı: güncelleme ilk bağlantıya kaldı" }
-      else {
-        & $git -C $hedef pull --no-rebase --no-edit 2>&1 | ForEach-Object { Yaz "$_" }
-        if ($LASTEXITCODE -ne 0) { Yaz "Güncelleme çekilemedi; kurulu sürümle devam ediliyor" }
-      }
-    } else {
-      if (-not $S.cevrimdisi) {
-        Adim 24 52 "Güncel sürüm GitHub'dan indiriliyor"
-        & $git clone --quiet $depo $hedef 2>&1 | ForEach-Object { Yaz "$_" }
-        if ($LASTEXITCODE -ne 0) { $S.cevrimdisi = $true; Remove-Item -LiteralPath $hedef -Recurse -Force -ErrorAction SilentlyContinue }
-      }
-      if ($S.cevrimdisi) {
-        Adim 24 52 "USB'deki sürüm kopyalanıyor"
-        robocopy $kaynak $hedef /E /R:1 /W:1 /NFL /NDL /NJH /NJS /NP /MT:16 /XD .kurulum .araclar trash node_modules /XF Kur.bat | Out-Null
-        if ($LASTEXITCODE -ge 8) { throw "Kopyalama başarısız (robocopy $LASTEXITCODE)" }
-        Yaz "Çevrimdışı kuruldu; program ilk bağlantıda kendini günceller"
-      }
-    }
-    if (-not (Test-Path (Join-Path $hedef ".git"))) { throw "Kurulum klasörü eksik: $hedef" }
-
-    Adim 52 56 "Git ayarları yazılıyor"
-    $arac = Join-Path $hedef ".araclar"
-    New-Item -ItemType Directory -Force $arac | Out-Null
-    $kaliciSsh = $ssh
-    if (-not $sistemGit) {
-      Adim 56 76 "Taşınabilir Git kuruluyor"
-      robocopy (Join-Path $kur "git") (Join-Path $arac "git") /E /R:1 /W:1 /NFL /NDL /NJH /NJS /NP /MT:16 | Out-Null
-      if ($LASTEXITCODE -ge 8) { throw "Git kopyalanamadı (robocopy $LASTEXITCODE)" }
-      $git = Join-Path $arac "git\cmd\git.exe"
-      $kaliciSsh = Join-Path $arac "git\usr\bin\ssh.exe"
-    }
-    & $git -C $hedef config core.sshCommand ((SshKomut $kaliciSsh $anahtar $bilinen) -replace '"', '\"')
-    & $git -C $hedef config remote.origin.url $depo
-    & $git -C $hedef config user.name $env:USERNAME
-    & $git -C $hedef config user.email "$env:USERNAME@$env:COMPUTERNAME"
-    & $git -C $hedef config core.quotepath false
-    if ($LASTEXITCODE -ne 0) { throw "Git ayarları yazılamadı (çıkış $LASTEXITCODE)" }
-    Yaz "Git ayarları yazıldı"
+{{KAYNAK_IS}}
 
     {{ADIMLAR}}
 
-    $surum = (& $git -C $hedef rev-parse --short HEAD) | Select-Object -First 1
-    @{ tarih = (Get-Date).ToString("s"); surum = "$surum"; bilgisayar = $env:COMPUTERNAME; cevrimdisi = [bool]$S.cevrimdisi; anahtar = $S.anahtarAdi } | ConvertTo-Json | Set-Content (Join-Path $arac "kurulum.json") -Encoding UTF8
-    if (-not $S.prova) { Remove-Item $gecici -Recurse -Force -ErrorAction SilentlyContinue }
-    Adim 100 100 "Kurulum tamamlandı · sürüm $surum"
+    if ($S.surum) { $son = "Kurulum tamamlandı · sürüm " + $S.surum } else { $son = "Kurulum tamamlandı" }
+    Adim 100 100 $son
     $S.durum = "bitti"
   } catch {
     Yaz ("HATA: " + $_)
+    $S.hata = [string]$_
     $S.adim = "Kurulum yarıda kaldı: " + $_
     $S.durum = "hata"
   }
+  if ($S.gecici -and -not $S.prova) { Remove-Item -LiteralPath $S.gecici -Recurse -Force -ErrorAction SilentlyContinue }
+  if ($S.sonuc) {
+    @{ durum = $S.durum; hedef = $S.hedef; surum = $S.surum; kisayol = $S.kisayol; hata = $S.hata; prova = [bool]$S.prova } | ConvertTo-Json | Set-Content -LiteralPath $S.sonuc -Encoding UTF8
+  }
 }
 
-function Renk([string]$h, [int]$a = 255) { [System.Drawing.Color]::FromArgb($a, [System.Drawing.ColorTranslator]::FromHtml($h)) }
-function Yazi([int]$px, [string]$stil = "Regular", [string]$aile = "Segoe UI") { New-Object System.Drawing.Font($aile, $px, [System.Drawing.FontStyle]$stil, [System.Drawing.GraphicsUnit]::Pixel) }
+if ($S.otomatik) {
+  $S.durum = "calisiyor"
+  & $is $S
+  if ($S.durum -eq "bitti") { exit 0 } else { exit 1 }
+}
+
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+[System.Windows.Forms.Application]::EnableVisualStyles()
+
+function Renk([string]$h, [double]$a = 1) { [System.Drawing.Color]::FromArgb([int][math]::Round(255 * $a), [System.Drawing.ColorTranslator]::FromHtml($h)) }
+function Aile([string]$zincir) {
+  $kurulu = @((New-Object System.Drawing.Text.InstalledFontCollection).Families | ForEach-Object { $_.Name })
+  $parca = $zincir.Split(",") | ForEach-Object { $_.Trim() }
+  foreach ($a in $parca) { if ($kurulu -contains $a) { return $a } }
+  $parca[-1]
+}
+function Yazi([double]$px, [string]$stil, [string]$aile) { New-Object System.Drawing.Font($aile, [single]$px, [System.Drawing.FontStyle]$stil, [System.Drawing.GraphicsUnit]::Pixel) }
 
 $R = @{
-  zemin = Renk "#101115"; metin = Renk "#f2f3f6"; renk1 = Renk "#5aa8ff"; renk3 = Renk "#9455ea"
-  basari = Renk "#4ade80"; tehlike = Renk "#f0abfc"; vurgu = Renk "#f0abfc"; sonuk = Renk "#7c7f88"
-  kenar = Renk "#5aa8ff" 140; iz = Renk "#5aa8ff" 51
+  zemin = Renk "{{RENK_ZEMIN}}"; metin = Renk "{{RENK_METIN}}"; etiket = Renk "{{RENK_ETIKET}}"
+  renk1 = Renk "{{RENK_1}}"; renk2 = Renk "{{RENK_2}}"; vurgu = Renk "{{RENK_VURGU}}"
+  basari = Renk "{{RENK_BASARI}}"; tehlike = Renk "{{RENK_TEHLIKE}}"; edilgen = Renk "{{RENK_EDILGEN}}"
+  ustu1 = Renk "{{RENK_USTU_1}}"; kenar = Renk "{{RENK_KENAR}}" {{KENAR_ALFA}}; iz = Renk "{{RENK_IZ}}" {{IZ_ALFA}}
+  suren = Renk "{{RENK_1}}" {{SUREN_ALFA}}
 }
-$YZ = @{ baslik = Yazi 24 "Bold"; adim = Yazi 16; kucuk = Yazi 14; log = Yazi 14 "Regular" "Consolas"; dugme = Yazi 14 "Bold" }
+$pencereKenari = "{{PENCERE_KENARI}}"
+$O = @{
+  fs1 = {{FS_1}}; fs2 = {{FS_2}}; fs4 = {{FS_4}}; satir = {{SATIR_MONO}}; baslikSatir = {{SATIR_BASLIK}}
+  b2 = {{BOSLUK_2}}; b3 = {{BOSLUK_3}}; b4 = {{BOSLUK_4}}; b5 = {{BOSLUK_5}}
+  ikon = {{IKON}}; isaret = {{HEDEF_MIN}}; dugmeY = {{DUGME_Y}}; dugmePx = {{DUGME_PX}}
+  cizgi = {{KENAR_W}}; genislik = {{PENCERE_W}}
+}
+$sans = Aile "{{YAZI_SANS}}"
+$mono = Aile "{{YAZI_MONO}}"
+$YZ = @{
+  baslik = Yazi $O.fs4 "Bold" $sans; govde = Yazi $O.fs2 "Regular" $sans; guclu = Yazi $O.fs2 "Bold" $sans
+  log = Yazi $O.fs2 "Regular" $mono; isaret = Yazi $O.fs2 "Bold" $mono; dugme = Yazi $O.fs2 "Bold" $sans
+}
 $B = @{}
 foreach ($k in $R.Keys) { $B[$k] = New-Object System.Drawing.SolidBrush $R[$k] }
-$G = @{ goster = 0.0; faz = 0.0; surukle = $null; sonlandi = $false; ikon = $null }
+$G = @{ goster = 0.0; surukle = $null; ikon = $null; dugmeler = @(); ps = $null; rs = $null }
+$LOG_SATIRI = 5
+
+$y = $O.b5
+$L = @{ baslik = $y }
+$y += $O.ikon + $O.b4; $L.adimlar = $y
+$y += $S.adimlar.Count * ($O.isaret + $O.b2) - $O.b2 + $O.b4; $L.cubuk = $y
+$y += [int]($O.fs2 * $O.baslikSatir) + $O.b3; $L.log = $y
+$y += $LOG_SATIRI * $O.satir + $O.b4; $L.yer = $y
+$y += $O.dugmeY + $O.b5; $L.dugme = $y
+$y += $O.dugmeY + $O.b5; $L.yukseklik = $y
 
 $f = New-Object System.Windows.Forms.Form
 $f.Text = $S.ad + " Kurulum"
 $f.FormBorderStyle = "None"
 $f.StartPosition = "CenterScreen"
-$f.ClientSize = New-Object System.Drawing.Size(560, 424)
+$f.ClientSize = New-Object System.Drawing.Size($O.genislik, $L.yukseklik)
 $f.BackColor = $R.zemin
 $f.ForeColor = $R.metin
 $f.KeyPreview = $true
@@ -205,12 +154,45 @@ $f.GetType().GetProperty("DoubleBuffered", [Reflection.BindingFlags]"Instance,No
 $simgeYol = Join-Path $kaynak "{{SIMGE}}"
 if (Test-Path $simgeYol) {
   $f.Icon = New-Object System.Drawing.Icon($simgeYol)
-  $G.ikon = (New-Object System.Drawing.Icon($simgeYol, 64, 64)).ToBitmap()
+  $G.ikon = (New-Object System.Drawing.Icon($simgeYol, 256, 256)).ToBitmap()
 }
 
-$f.Add_MouseDown({ if ($_.Button -eq "Left") { $G.surukle = $_.Location } })
-$f.Add_MouseMove({ if ($G.surukle) { $f.Location = New-Object System.Drawing.Point(($f.Location.X + $_.X - $G.surukle.X), ($f.Location.Y + $_.Y - $G.surukle.Y)) } })
-$f.Add_MouseUp({ $G.surukle = $null })
+function SuAnkiAdim {
+  $i = 0
+  for ($k = 0; $k -lt $S.adimlar.Count; $k++) { if ($S.yuzde -ge $S.adimlar[$k][1]) { $i = $k } }
+  $i
+}
+
+function Dugme([string]$eylem, [string]$metin, [bool]$birincil, [bool]$etkin) { @{ eylem = $eylem; metin = $metin; birincil = $birincil; etkin = $etkin; alan = $null } }
+
+function Dugmeler {
+  $w = $f.ClientSize.Width
+  $calisiyor = $S.durum -eq "calisiyor"
+  $alt = @(switch ($S.durum) {
+    "hazir" { @((Dugme "kapat" "Kapat" $false $true), (Dugme "kur" "Kur" $true $true)) }
+    "calisiyor" { @((Dugme "kapat" "Kapat" $false $false), (Dugme "yok" "Kuruluyor" $true $false)) }
+    "bitti" {
+      $d = @()
+      if ($onarVar) { $d += Dugme "onar" "Onar" $false $true }
+      $d += Dugme "kapat" "Kapat" $false $true
+      if (-not $S.prova -and $S.baslat) { $d += Dugme "ac" "Programı aç" $true $true }
+      $d
+    }
+    default { @((Dugme "gunluk" "Günlüğü aç" $false $true), (Dugme "kapat" "Kapat" $false $true), (Dugme "yeniden" "Yeniden dene" $true $true)) }
+  })
+  $olc = [System.Windows.Forms.TextRenderer]
+  $x = $w - $O.b5
+  for ($i = $alt.Count - 1; $i -ge 0; $i--) {
+    $gen = $olc::MeasureText($alt[$i].metin, $YZ.dugme).Width + 2 * $O.dugmePx
+    $x -= $gen
+    $alt[$i].alan = New-Object System.Drawing.Rectangle($x, $L.dugme, $gen, $O.dugmeY)
+    $x -= $O.b3
+  }
+  $degistir = Dugme "degistir" "Değiştir" $false ($S.durum -eq "hazir" -or $S.durum -eq "hata")
+  $gen = $olc::MeasureText($degistir.metin, $YZ.dugme).Width + 2 * $O.dugmePx
+  $degistir.alan = New-Object System.Drawing.Rectangle(($w - $O.b5 - $gen), $L.yer, $gen, $O.dugmeY)
+  @($degistir) + $alt
+}
 
 $f.Add_Paint({
   $cz = $_.Graphics
@@ -218,88 +200,178 @@ $f.Add_Paint({
   $cz.TextRenderingHint = "ClearTypeGridFit"
   $w = $f.ClientSize.Width
   $h = $f.ClientSize.Height
+  $P = $O.b5
   $bicim = New-Object System.Drawing.StringFormat
   $bicim.Trimming = "EllipsisCharacter"
   $bicim.FormatFlags = "NoWrap"
-  $cz.DrawRectangle((New-Object System.Drawing.Pen($R.kenar, 1)), 0, 0, $w - 1, $h - 1)
-  if ($G.ikon) { $cz.DrawImage($G.ikon, 24, 24, 48, 48) }
-  $cz.DrawString($S.ad, $YZ.baslik, $B.metin, 84, 20)
-  $gen = $cz.MeasureString($S.ad, $YZ.baslik).Width
-  $cz.DrawString("Kurulum", $YZ.baslik, $B.vurgu, 84 + $gen - 4, 20)
-  if ($S.durum -eq "hata") { $alt = "Günlük  ·  " + $S.gunluk }
-  elseif ($S.altbaslik) { $alt = $S.altbaslik + "  ·  " + $S.hedef }
-  else { $alt = $S.hedef }
-  $cz.DrawString($alt, $YZ.kucuk, $B.sonuk, (New-Object System.Drawing.RectangleF(86, 52, ($w - 110), 20)), $bicim)
+  $bicim.LineAlignment = "Center"
+  $sarBicim = New-Object System.Drawing.StringFormat
+  $sarBicim.Trimming = "EllipsisWord"
+  $orta = New-Object System.Drawing.StringFormat
+  $orta.Alignment = "Center"
+  $orta.LineAlignment = "Center"
+  if ($pencereKenari) { $cz.DrawRectangle((New-Object System.Drawing.Pen((Renk $pencereKenari {{PENCERE_ALFA}}), $O.cizgi)), 0, 0, $w - 1, $h - 1) }
 
-  $renk = switch ($S.durum) { "bitti" { $R.basari } "hata" { $R.tehlike } default { $R.metin } }
+  $metinX = $P
+  if ($G.ikon) { $cz.DrawImage($G.ikon, $P, $L.baslik, $O.ikon, $O.ikon); $metinX = $P + $O.ikon + $O.b3 }
+  $baslikY = [int]($O.fs4 * $O.baslikSatir)
+  $cz.DrawString($S.ad, $YZ.baslik, $B.renk1, (New-Object System.Drawing.RectangleF($metinX, $L.baslik, ($w - $metinX - $P), $baslikY)), $bicim)
+  $gen = [System.Windows.Forms.TextRenderer]::MeasureText($S.ad, $YZ.baslik).Width
+  $cz.DrawString("Kurulum", $YZ.baslik, $B.vurgu, (New-Object System.Drawing.RectangleF(($metinX + $gen), $L.baslik, ($w - $metinX - $gen - $P), $baslikY)), $bicim)
+  if ($S.durum -eq "hata") { $alt = "Günlük  ·  " + $S.gunluk; $altFirca = $B.tehlike }
+  elseif ($S.surum) { $alt = "Sürüm " + $S.surum; $altFirca = $B.metin }
+  elseif ($S.altbaslik) { $alt = $S.altbaslik; $altFirca = $B.metin }
+  else { $alt = "github.com/" + $S.depo; $altFirca = $B.metin }
+  $cz.DrawString($alt, $YZ.govde, $altFirca, (New-Object System.Drawing.RectangleF($metinX, ($L.baslik + $baslikY + $O.b2), ($w - $metinX - $P), [int]($O.fs2 * $O.baslikSatir))), $bicim)
+
+  $suan = SuAnkiAdim
+  $ay = $L.adimlar
+  for ($i = 0; $i -lt $S.adimlar.Count; $i++) {
+    if ($S.durum -eq "bitti" -or ($S.durum -ne "hazir" -and $i -lt $suan)) { $tur = "bitti" }
+    elseif ($S.durum -eq "hata" -and $i -eq $suan) { $tur = "hata" }
+    elseif ($S.durum -eq "calisiyor" -and $i -eq $suan) { $tur = "suren" }
+    else { $tur = "" }
+    $kutu = New-Object System.Drawing.Rectangle($P, $ay, $O.isaret, $O.isaret)
+    switch ($tur) {
+      "bitti" { $kalem = $R.basari; $yazi = $B.basari; $isaret = [string][char]0x2713 }
+      "hata" { $kalem = $R.tehlike; $yazi = $B.tehlike; $isaret = "!" }
+      "suren" { $kalem = $R.renk1; $yazi = $B.renk1; $isaret = [string]($i + 1); $cz.FillRectangle((New-Object System.Drawing.SolidBrush $R.suren), $kutu) }
+      default { $kalem = $R.kenar; $yazi = $B.metin; $isaret = [string]($i + 1) }
+    }
+    $cz.DrawRectangle((New-Object System.Drawing.Pen($kalem, $O.cizgi)), $kutu.X, $kutu.Y, $kutu.Width - 1, $kutu.Height - 1)
+    $cz.DrawString($isaret, $YZ.isaret, $yazi, (New-Object System.Drawing.RectangleF($kutu.X, $kutu.Y, $kutu.Width, $kutu.Height)), $orta)
+    if ($tur -eq "suren") { $adYazi = $YZ.guclu } else { $adYazi = $YZ.govde }
+    $cz.DrawString($S.adimlar[$i][0], $adYazi, $yazi, (New-Object System.Drawing.RectangleF(($P + $O.isaret + $O.b3), $ay, ($w - 2 * $P - $O.isaret - $O.b3), $O.isaret)), $bicim)
+    $ay += $O.isaret + $O.b2
+  }
+
+  $renk = switch ($S.durum) { "bitti" { $R.basari } "hata" { $R.tehlike } default { $R.renk1 } }
   $yuzdeMetin = [string][math]::Floor($G.goster) + "%"
-  $yg = $cz.MeasureString($yuzdeMetin, $YZ.adim).Width
-  $alan = New-Object System.Drawing.RectangleF(24, 100, ($w - 60 - $yg), 22)
-  $cz.DrawString($S.adim, $YZ.adim, (New-Object System.Drawing.SolidBrush $renk), $alan, $bicim)
-  $cz.DrawString($yuzdeMetin, $YZ.adim, $B.renk1, ($w - 24 - $yg), 100)
-
-  $bx = 24; $by = 132; $bw = $w - 48; $bh = 8
-  $cz.FillRectangle((New-Object System.Drawing.SolidBrush $R.iz), $bx, $by, $bw, $bh)
+  $yg = [System.Windows.Forms.TextRenderer]::MeasureText("100%", $YZ.isaret).Width
+  $satirY = [int]($O.fs2 * $O.baslikSatir)
+  $sag = New-Object System.Drawing.StringFormat
+  $sag.Alignment = "Far"
+  $sag.LineAlignment = "Center"
+  $cz.DrawString($yuzdeMetin, $YZ.isaret, (New-Object System.Drawing.SolidBrush $renk), (New-Object System.Drawing.RectangleF(($w - $P - $yg), $L.cubuk, $yg, $satirY)), $sag)
+  $bx = $P; $bw = $w - 2 * $P - $yg - $O.b3; $bh = $O.b2; $by = $L.cubuk + [int](($satirY - $bh) / 2)
+  $cz.FillRectangle($B.iz, $bx, $by, $bw, $bh)
   $dolu = [int]($bw * [math]::Min(100, $G.goster) / 100)
   if ($dolu -gt 1) {
     $dik = New-Object System.Drawing.Rectangle($bx, $by, $dolu, $bh)
-    if ($S.durum -eq "calisiyor") { $fr = New-Object System.Drawing.Drawing2D.LinearGradientBrush($dik, $R.renk1, $R.renk3, 0.0) }
+    if ($S.durum -eq "calisiyor") { $fr = New-Object System.Drawing.Drawing2D.LinearGradientBrush((New-Object System.Drawing.Rectangle($bx, $by, $bw, $bh)), $R.renk1, $R.renk2, 0.0) }
     else { $fr = New-Object System.Drawing.SolidBrush $renk }
     $cz.FillRectangle($fr, $dik)
-    for ($i = 1; $i -le 3; $i++) { $cz.FillRectangle((New-Object System.Drawing.SolidBrush ([System.Drawing.Color]::FromArgb([int](40 / $i), $renk))), $bx, $by - $i, $dolu, $bh + 2 * $i) }
-    if ($S.durum -eq "calisiyor") {
-      $px = $bx + (($G.faz % 1.0) * ($dolu + 120)) - 120
-      $pr = New-Object System.Drawing.Rectangle([int]$px, $by, 120, $bh)
-      $pg = New-Object System.Drawing.Drawing2D.LinearGradientBrush($pr, (Renk "#ffffff" 0), (Renk "#ffffff" 0), 0.0)
-      $bl = New-Object System.Drawing.Drawing2D.ColorBlend(3)
-      $bl.Colors = @((Renk "#ffffff" 0), (Renk "#ffffff" 150), (Renk "#ffffff" 0))
-      $bl.Positions = @(0.0, 0.5, 1.0)
-      $pg.InterpolationColors = $bl
-      $cz.SetClip($dik)
-      $cz.FillRectangle($pg, $pr)
-      $cz.ResetClip()
-    }
   }
 
-  $satirlar = $S.log.ToArray()
+  $satirlar = @($S.log.ToArray())
+  if (-not $satirlar.Count) { $satirlar = @($S.adim) }
   $n = $satirlar.Count
-  $bas = [math]::Max(0, $n - 9)
-  $y = 160
+  $hataVar = $S.durum -eq "hata"
+  $sigan = $LOG_SATIRI
+  if ($hataVar) { $sigan = $LOG_SATIRI - 2 }
+  $bas = [math]::Max(0, $n - $sigan)
+  $ly = $L.log
   for ($i = $bas; $i -lt $n; $i++) {
-    $fircaLog = if ($i -eq $n - 1) { $B.renk1 } else { $B.sonuk }
-    $cz.DrawString($satirlar[$i], $YZ.log, $fircaLog, (New-Object System.Drawing.RectangleF(24, $y, ($w - 48), 20)), $bicim)
-    $y += 20
+    $sira = $i - $bas
+    $gorunen = $n - $bas
+    $yuk = $O.satir
+    $bc = $bicim
+    if ($i -eq $n - 1) {
+      if ($hataVar) { $lr = $R.tehlike; $yuk = $O.satir * 3; $bc = $sarBicim } else { $lr = $R.metin }
+    } else { $lr = $R.etiket }
+    if (-not $hataVar -and $gorunen -eq $LOG_SATIRI -and $sira -eq 0) { $lr = [System.Drawing.Color]::FromArgb([int](255 * {{SOLAN_1}}), $lr) }
+    elseif (-not $hataVar -and $gorunen -eq $LOG_SATIRI -and $sira -eq 1) { $lr = [System.Drawing.Color]::FromArgb([int](255 * {{SOLAN_2}}), $lr) }
+    $cz.DrawString($satirlar[$i], $YZ.log, (New-Object System.Drawing.SolidBrush $lr), (New-Object System.Drawing.RectangleF($P, $ly, ($w - 2 * $P), $yuk)), $bc)
+    $ly += $yuk
+  }
+
+  $G.dugmeler = Dugmeler
+  $degistir = $G.dugmeler[0]
+  $etiketMetin = "Kurulum yeri"
+  $eg = [System.Windows.Forms.TextRenderer]::MeasureText($etiketMetin, $YZ.guclu).Width
+  $cz.DrawString($etiketMetin, $YZ.guclu, $B.etiket, (New-Object System.Drawing.RectangleF($P, $L.yer, $eg, $O.dugmeY)), $bicim)
+  $yolX = $P + $eg + $O.b3
+  $yolBicim = New-Object System.Drawing.StringFormat
+  $yolBicim.Trimming = "EllipsisPath"
+  $yolBicim.FormatFlags = "NoWrap"
+  $yolBicim.LineAlignment = "Center"
+  $cz.DrawString($S.hedef, $YZ.log, $B.metin, (New-Object System.Drawing.RectangleF($yolX, $L.yer, ($degistir.alan.X - $yolX - $O.b3), $O.dugmeY)), $yolBicim)
+
+  foreach ($d in $G.dugmeler) {
+    $a = $d.alan
+    if ($d.birincil -and $d.etkin) {
+      $cz.FillRectangle($B.renk1, $a)
+      $df = $B.ustu1
+    } else {
+      if ($d.etkin) { $kr = $R.renk1; $df = $B.metin } else { $kr = $R.edilgen; $df = $B.edilgen }
+      $cz.DrawRectangle((New-Object System.Drawing.Pen($kr, $O.cizgi)), $a.X, $a.Y, $a.Width - 1, $a.Height - 1)
+    }
+    $cz.DrawString($d.metin, $YZ.dugme, $df, (New-Object System.Drawing.RectangleF($a.X, $a.Y, $a.Width, $a.Height)), $orta)
   }
 })
 
-function Dugme([string]$metin, [bool]$birincil, [int]$x) {
-  $dg = New-Object System.Windows.Forms.Button
-  $dg.Text = $metin
-  $dg.FlatStyle = "Flat"
-  $dg.Font = $YZ.dugme
-  $dg.Size = New-Object System.Drawing.Size(160, 36)
-  $dg.Location = New-Object System.Drawing.Point($x, 364)
-  $dg.Cursor = "Hand"
-  if ($birincil) { $dg.BackColor = $R.renk1; $dg.ForeColor = $R.zemin; $dg.FlatAppearance.BorderSize = 0 }
-  else { $dg.BackColor = $R.zemin; $dg.ForeColor = $R.metin; $dg.FlatAppearance.BorderColor = $R.renk1 }
-  $dg.Visible = $false
-  $f.Controls.Add($dg)
-  $dg
+function Baslat {
+  $S.log.Clear()
+  $S.yuzde = 0
+  $S.tavan = 2
+  $S.hata = $null
+  $S.durum = "calisiyor"
+  $G.goster = 0.0
+  if ($G.ps) { $G.ps.Dispose() }
+  $G.ps = [powershell]::Create()
+  $G.ps.Runspace = $G.rs
+  [void]$G.ps.AddScript($is).AddArgument($S)
+  [void]$G.ps.BeginInvoke()
 }
-$programAc = Dugme "Programı Aç" $true 24
-$gunlukAc = Dugme "Günlüğü Aç" $true 24
-$onarDugme = Dugme "Onar" $false 200
-$kapat = Dugme "Kapat" $false 376
-$programAc.Add_Click({ Start-Process $S.baslat; $f.Close() })
-$gunlukAc.Add_Click({ Start-Process notepad.exe $S.gunluk })
-$onarDugme.Add_Click({
-  $argumanlar = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-STA", "-WindowStyle", "Hidden", "-File", ('"' + $betik + '"'), "-Onar", "-AnahtarAdi", $S.anahtarAdi)
-  if ($S.prova) { $argumanlar += "-Prova" }
-  Start-Process powershell.exe -ArgumentList $argumanlar
-  $f.Close()
+
+function YerSec {
+  $sec = New-Object System.Windows.Forms.FolderBrowserDialog
+  $sec.Description = "Kurulum yeri: " + $S.ad + " bu klasörün içine kurulur."
+  $sec.SelectedPath = Split-Path -Parent $S.hedef
+  if ($sec.ShowDialog($f) -eq "OK") {
+    if ((Split-Path -Leaf $sec.SelectedPath) -eq $S.ad) { $S.hedef = $sec.SelectedPath } else { $S.hedef = Join-Path $sec.SelectedPath $S.ad }
+    if ($S.durum -eq "hata") { $S.durum = "hazir"; $S.log.Clear(); $S.yuzde = 0; $G.goster = 0.0; $S.adim = "Kurulum yeri değişti. Kur düğmesine bas." }
+  }
+}
+
+function Eylem([string]$e) {
+  switch ($e) {
+    "kur" { Baslat }
+    "yeniden" { Baslat }
+    "onar" { $S.onar = $true; Baslat }
+    "degistir" { YerSec }
+    "kapat" { $f.Close() }
+    "ac" { Start-Process $S.baslat; $f.Close() }
+    "gunluk" { Start-Process notepad.exe $S.gunluk }
+  }
+}
+
+function Vurulan($nokta) {
+  foreach ($d in $G.dugmeler) { if ($d.alan -and $d.alan.Contains($nokta)) { return $d } }
+  $null
+}
+
+$f.Add_MouseDown({
+  if ($_.Button -ne "Left") { return }
+  if (-not (Vurulan $_.Location)) { $G.surukle = $_.Location }
 })
-$kapat.Add_Click({ $f.Close() })
-$f.Add_KeyDown({ if ($_.KeyCode -eq "Escape" -and $S.durum -ne "calisiyor") { $f.Close() } })
+$f.Add_MouseMove({
+  if ($G.surukle) { $f.Location = New-Object System.Drawing.Point(($f.Location.X + $_.X - $G.surukle.X), ($f.Location.Y + $_.Y - $G.surukle.Y)); return }
+  $d = Vurulan $_.Location
+  if ($d -and $d.etkin) { $f.Cursor = "Hand" } else { $f.Cursor = "Default" }
+})
+$f.Add_MouseUp({
+  if ($G.surukle) { $G.surukle = $null; return }
+  $d = Vurulan $_.Location
+  if ($d -and $d.etkin) { Eylem $d.eylem }
+})
+$f.Add_KeyDown({
+  if ($_.KeyCode -eq "Escape" -and $S.durum -ne "calisiyor") { $f.Close() }
+  if ($_.KeyCode -eq "Return") {
+    $d = $G.dugmeler | Where-Object { $_.birincil -and $_.etkin } | Select-Object -First 1
+    if ($d) { Eylem $d.eylem }
+  }
+})
 $f.Add_FormClosing({ if ($S.durum -eq "calisiyor") { $_.Cancel = $true } })
 
 $zaman = New-Object System.Windows.Forms.Timer
@@ -308,25 +380,13 @@ $zaman.Add_Tick({
   $hy = [double]$S.yuzde
   if ($G.goster -lt $hy) { $G.goster = [math]::Min($hy, $G.goster + [math]::Max(0.2, ($hy - $G.goster) * 0.08)) }
   elseif ($S.durum -eq "calisiyor" -and $G.goster -lt ($S.tavan - 0.5)) { $G.goster += ($S.tavan - $G.goster) * 0.006 }
-  $G.faz += 0.012
-  if ($S.durum -ne "calisiyor" -and -not $G.sonlandi) {
-    $G.sonlandi = $true
-    $kapat.Visible = $true
-    $onarDugme.Visible = $true
-    if ($S.durum -eq "bitti") {
-      if (-not $S.prova -and $S.baslat) { $programAc.Visible = $true; [void]$programAc.Focus() } else { [void]$kapat.Focus() }
-    } else { $gunlukAc.Visible = $true; [void]$gunlukAc.Focus() }
-  }
   $f.Invalidate()
 })
 
-$rs = [runspacefactory]::CreateRunspace()
-$rs.ApartmentState = "STA"
-$rs.Open()
-$ps = [powershell]::Create()
-$ps.Runspace = $rs
-[void]$ps.AddScript($is).AddArgument($S)
-$f.Add_Shown({ [void]$ps.BeginInvoke(); $zaman.Start() })
+$G.rs = [runspacefactory]::CreateRunspace()
+$G.rs.ApartmentState = "STA"
+$G.rs.Open()
+$f.Add_Shown({ $zaman.Start(); if ($env:KUR_BASLA) { Baslat } })
 [System.Windows.Forms.Application]::Run($f)
 $zaman.Stop()
-$rs.Close()
+$G.rs.Close()

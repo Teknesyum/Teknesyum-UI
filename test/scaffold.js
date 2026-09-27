@@ -33,16 +33,43 @@ function kur() {
   L.ok('the installer script is saved with a UTF-8 BOM', bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf);
   const text = bytes.toString('utf8');
   const batText = fs.readFileSync(bat, 'utf8');
-  L.ok('no placeholder survives', !/\{\{[A-Z]+\}\}/.test(text + batText), (/\{\{[A-Z]+\}\}/.exec(text + batText) || [''])[0]);
+  L.ok('no placeholder survives', !/\{\{[A-Z0-9_]+\}\}/.test(text + batText), (/\{\{[A-Z0-9_]+\}\}/.exec(text + batText) || [''])[0]);
   L.ok('Kur.bat launches the generated script', batText.includes('kur-gorev-takip.ps1'));
   L.ok('the name, key and icon reach the script', text.includes('ad = "Görev Takip"') && text.includes('"usb-02"') && text.includes('app\\simge.ico'));
   L.ok('the project steps replace the steps block', text.includes('Program motoru hazırlanıyor'));
   L.ok('rebuild sits behind -Onar', /\[switch\]\$Onar/.test(text) && text.includes('elseif ($S.onar)'));
   L.ok('the generated script parses in Windows PowerShell', parsesInPowerShell(ps1));
+  const renk1 = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ui', 'skills', 'teknesyum-ui', 'assets', 'theme.tokens.json'), 'utf8')).brand['renk-1'].value.toLowerCase();
+  L.ok('the ssh source stays the default and takes its colours from the tokens', text.includes('ls-remote') && text.includes('renk1 = Renk "' + renk1 + '"'), (/renk1 = Renk "[^"]*"/.exec(text) || [''])[0]);
 
   fs.writeFileSync(bat, 'kept\r\n', 'utf8');
   const again = scaffold(root, ['kur', 'Görev Takip']);
   L.ok('a second kur overwrites nothing', /\b0 file\(s\) written/.test(again.stdout) && fs.readFileSync(bat, 'utf8') === 'kept\r\n', again.stdout);
+}
+
+function kurReleases() {
+  const root = L.tmp('tkui-kur-rel-');
+  const tokens = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ui', 'skills', 'teknesyum-ui', 'assets', 'theme.tokens.json'), 'utf8'));
+  tokens.brand['renk-1'].value = '#123abc';
+  fs.mkdirSync(path.join(root, 'teknesyum-ui'), { recursive: true });
+  fs.writeFileSync(path.join(root, 'teknesyum-ui', 'theme.tokens.json'), JSON.stringify(tokens), 'utf8');
+  const r = scaffold(root, ['kur', 'Deneme', '--kaynak', 'releases', '--depo', 'Teknesyum/Deneme', '--varlik', 'Deneme-win-x64.zip']);
+  L.ok('kur --kaynak releases exits 0', r.status === 0, r.stderr || r.stdout);
+  const ps1 = path.join(root, 'kur-deneme.ps1');
+  if (!fs.existsSync(ps1)) return;
+  const text = fs.readFileSync(ps1, 'utf8');
+  L.ok('releases: no placeholder survives', !/\{\{[A-Z0-9_]+\}\}/.test(text), (/\{\{[A-Z0-9_]+\}\}/.exec(text) || [''])[0]);
+  L.ok('releases: asks the latest release and verifies sha256', text.includes('/releases/latest') && text.includes('.sha256') && text.includes('SHA256]::Create()') && !text.includes('Get-FileHash'));
+  L.ok('releases: extracts to temp, then moves into place', text.includes('ZipFile]::ExtractToDirectory') && text.includes('Move-Item'));
+  L.ok('releases: tests write permission first and never asks for admin', text.includes('Yazma izni denetleniyor') && !/RunAs|requireAdministrator/i.test(text));
+  L.ok('releases: repo, asset and exe reach the script', text.includes('depo = "Teknesyum/Deneme"') && text.includes('varlik = "Deneme-win-x64.zip"') && text.includes('exe = "Deneme.exe"'));
+  L.ok('releases: colours come from the project tokens', text.includes('renk1 = Renk "#123abc"'), (/renk1 = Renk "[^"]*"/.exec(text) || [''])[0]);
+  L.ok('releases: keeps the step contract, ceiling and 16 ms timer', /function Adim\(\[int\]\$y, \[int\]\$t,/.test(text) && text.includes('$S.tavan') && text.includes('Interval = 16'));
+  L.ok('releases: rehearsal, silent and test roots are wired', ['KUR_PROVA', 'KUR_OTOMATIK', 'KUR_KOK', 'KUR_SONUC', 'KUR_API'].every((k) => text.includes(k)));
+  L.ok('releases: five steps, location row, Kur, Yeniden dene', ['Kurulum yeri', '"Değiştir"', '"Kuruluyor"', '"Yeniden dene"', '"Programı aç"'].every((k) => text.includes(k)));
+  L.ok('releases: the generated script parses in Windows PowerShell', parsesInPowerShell(ps1));
+  L.ok('releases without --varlik exits 2', scaffold(L.tmp('tkui-kur-rv-'), ['kur', 'Deneme', '--kaynak', 'releases', '--depo', 'a/b']).status === 2);
+  L.ok('an unknown --kaynak exits 2', scaffold(L.tmp('tkui-kur-rk-'), ['kur', 'Deneme', '--kaynak', 'ftp']).status === 2);
 }
 
 function copies() {
@@ -174,6 +201,7 @@ function etiketler() {
 module.exports = function scaffoldSuite() {
   etiketler();
   kur();
+  kurReleases();
   copies();
   avalonia();
   usage();

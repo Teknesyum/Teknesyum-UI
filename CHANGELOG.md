@@ -5,6 +5,14 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.24.0] - 2026-09-27
+
+### Added
+- `uc renk`: the short path for a palette change. It refreshes the generated sources, runs the layout gate, moves a saved theme choice onto the layout, builds, releases and records the round, with no full audit. If it takes more than a few minutes, the project is built wrong: fix the cause so the next palette change needs one command.
+
+### Fixed
+- `uc` compares the last round's layout with the shelf's current one, not with the project's stale config, so a palette change is noticed before `setup.js --apply` runs.
+
 ## [0.23.0] - 2026-09-27
 
 ### Changed

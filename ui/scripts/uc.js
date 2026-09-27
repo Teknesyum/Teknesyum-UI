@@ -71,6 +71,27 @@ function git(kok, args) {
   return r.status === 0 ? r.stdout.trim() : null;
 }
 
+function rafDuzen() {
+  const yol = require('./ozel').tokenYollari();
+  const metin = yol ? oku(yol.tokenlar) : null;
+  return metin ? require('crypto').createHash('sha256').update(metin).digest('hex').slice(0, 16) : null;
+}
+
+function renk(kok, cfg) {
+  const u = (cfg && cfg.uc) || {};
+  const simdi = rafDuzen();
+  return [
+    'uc renk: sahibin paleti değişti. Bu bir tazelemedir, dönüşüm değil; birkaç dakikada biter. Dakikalarca sürüyorsa proje yanlış kurulmuştur: nedeni düzelt ki bir sonraki renk değişikliğine tek komut yetsin, ve nedeni rapora tek satır yaz.',
+    simdi && u.duzen === simdi ? 'Son uc bu düzenle kaydedilmiş; yapılacak tazeleme yok. Aşağıdaki 2. adımı koş, 0 farkı göster, bitir.' : 'Son uc başka bir düzenle kaydedilmiş; tazeleme gerekiyor.',
+    '1. Tazele: `' + js('setup.js') + ' --apply --project "' + kok + '"`. `teknesyum-ui/` altındaki üretilmiş kaynaklar yenilenir; elle dokunma.',
+    '2. Kapı: `' + js('esle.js') + ' --denetle --project "' + kok + '"` 0 fark vermeli. Fark varsa bir renk ya da değer projeye elle yazılmıştır: onu `teknesyum-ui/` kaynağına bağla, kopyasını sil. Rengi yeni değerle elle değiştirmek yasak; bir dahaki sefere yine elle değiştirmek gerekir.',
+    '3. Kayıtlı seçim: program tema ya da palet seçimini ayar dosyasında saklıyorsa, sahibin kurulu profili düzenin temasıyla açılmalı. Eski ya da kaldırılmış bir palet kayıtlıysa açılışta düzene göç et. Sahibin gerçek profiliyle aç ve bak; boş profil yetmez.',
+    '4. Derle ve gör: renkler derlemede üretilmiş kaynaktan okunmalı. Derle, çalıştır, bir ekran görüntüsü al; önizlemedeki paletle aynı olmalı.',
+    '5. Yayınla: projenin sürüm rutiniyle minör sürümü artır, commit, etiket, yayın. Sonra `' + js('uc.js') + ' --bitti --project "' + kok + '"`.',
+    "Bu turda yapma: ekran envanteri, artık temizliği, simge, tam denetim. Bunlar tam uc'nin işi; gerekiyorsa tek satırla `.claude/acik.md`'ye yaz.",
+  ].join('\n');
+}
+
 const ARAYUZ = /\.(axaml|xaml|cs|tsx|jsx|ts|js|css|html|vue|svelte)$/i;
 
 function artim(kok, cfg) {
@@ -79,7 +100,8 @@ function artim(kok, cfg) {
   const simdi = surum();
   const satir = [];
   const surumDegisti = !!simdi && kiyas(simdi, u.surum) > 0;
-  const duzenDegisti = !!(u.duzen && cfg.duzen && u.duzen !== cfg.duzen);
+  const guncel = rafDuzen() || cfg.duzen;
+  const duzenDegisti = !!(u.duzen && guncel && u.duzen !== guncel);
   if (surumDegisti) {
     satir.push('Son uc ' + u.surum + ' sürümünde tamamlandı, eklenti şimdi ' + simdi + '. Baştan tarama yapma: yalnız bu iki sürüm arasındaki değişiklikleri uygula ve yalnız onlardan etkilenen ekranları denetle:');
     satir.push(...degisiklikler(u.surum, simdi));
@@ -146,6 +168,7 @@ function toplu(kok, yaz) {
 function metin(secenek) {
   const s = secenek || {};
   const kok = gitKok(s.cwd) || path.resolve(s.cwd || process.cwd());
+  if (/^renk$/i.test(String(s.kapsam || '').trim())) return renk(kok, ayar(kok));
   const satirlar = [];
   if (raf.var()) {
     satirlar.push(
@@ -185,7 +208,7 @@ function metin(secenek) {
 function main(argv) {
   const args = argv.slice(2);
   if (args.includes('--help') || args.includes('-h')) {
-    process.stdout.write('Usage: node uc.js [--project root] [scope...]\n       node uc.js --bitti [--project root]\n       node uc.js --toplu [root] [--yaz]\n\nPrints the UI check instruction that the `uc` mark puts into the turn.\n\n--bitti records the finished uc (plugin version, layout, commit) once the\nlayout gate shows 0 differences; the next uc covers only what changed since.\n\n--toplu lists the projects under root (default: the parent folder) whose last\nuc is older than this plugin; --yaz adds one uc line to each project\'s\n.claude/acik.md, once.\n');
+    process.stdout.write('Usage: node uc.js [--project root] [scope...]\n       node uc.js renk [--project root]\n       node uc.js --bitti [--project root]\n       node uc.js --toplu [root] [--yaz]\n\nPrints the UI check instruction that the `uc` mark puts into the turn.\n\n`renk` prints the short refresh path for a palette change: apply, gate,\nsaved theme choice, build, release; no full audit.\n\n--bitti records the finished uc (plugin version, layout, commit) once the\nlayout gate shows 0 differences; the next uc covers only what changed since.\n\n--toplu lists the projects under root (default: the parent folder) whose last\nuc is older than this plugin; --yaz adds one uc line to each project\'s\n.claude/acik.md, once.\n');
     return 0;
   }
   const i = args.indexOf('--project');
@@ -212,6 +235,6 @@ function main(argv) {
   return 0;
 }
 
-module.exports = { metin, bitti, degisiklikler, toplu, surum };
+module.exports = { metin, renk, bitti, degisiklikler, toplu, surum };
 
 if (require.main === module) process.exitCode = main(process.argv);

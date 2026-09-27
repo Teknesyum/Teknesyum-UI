@@ -19,7 +19,7 @@ public static class Sahne
         });
 
     public static TitleBar UstCubuk() =>
-        new() { Ad1 = "Dusty", Ad2 = "Bytes", Logo = Logo(), RozetDurumu = RozetDurumu.Var, VerticalAlignment = VerticalAlignment.Top };
+        new() { Ad1 = "Dusty", Ad2 = "Bytes", RozetDurumu = RozetDurumu.Var, VerticalAlignment = VerticalAlignment.Top };
 
     public static GuncellemePaneli Guncelleme() =>
         new() { Logo = Logo(), Surum = "1.4.0", Durum = GuncellemeDurumu.Var, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };

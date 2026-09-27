@@ -44,11 +44,6 @@
   flex-shrink: 0;
 }
 
-.tk-titlebar__logo {
-  width: min(var(--tk-icon-3), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
-  height: min(var(--tk-icon-3), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
-  object-fit: contain;
-}
 
 .tk-titlebar__name {
   color: var(--tk-label-title-color, var(--tk-text));

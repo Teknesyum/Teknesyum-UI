@@ -19,7 +19,6 @@ export type TitleBarLabels = {
 type Props = {
   first: string;
   second: string;
-  logo?: string;
   links: TitleBarLinks;
   labels: TitleBarLabels;
   language?: ReactNode;
@@ -51,7 +50,7 @@ function CoffeeIcon() {
   );
 }
 
-export function TitleBar({ first, second, logo, links, labels, language, tabs, current, maximized, onTab, onMinimize, onMaximize, onClose }: Props) {
+export function TitleBar({ first, second, links, labels, language, tabs, current, maximized, onTab, onMinimize, onMaximize, onClose }: Props) {
   const toggle = maximized ? labels.restore ?? labels.maximize : labels.maximize;
   const open = (tabs ?? []).filter((t) => !t.disabled);
   const onKey = (e: KeyboardEvent<HTMLElement>) => {
@@ -67,7 +66,6 @@ export function TitleBar({ first, second, logo, links, labels, language, tabs, c
   return (
     <header className="tk-titlebar" data-window={maximized ? 'maximized' : 'normal'} data-tauri-drag-region>
       <div className="tk-titlebar__brand" data-tauri-drag-region>
-        {logo ? <img className="tk-titlebar__logo" src={logo} alt="" /> : null}
         <span className="tk-titlebar__name" data-tauri-drag-region>
           {first}
           <span className="tk-titlebar__accent">{second}</span>

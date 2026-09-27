@@ -14,17 +14,13 @@ function rafNotu(root) {
   if (!bekleyen.length) return null;
   const adlar = bekleyen.map((b) => b.ad + ' (' + b.neden + ')').join(', ');
   return {
-    baglam:
-      'teknesyum-ui raf: Özel rafta bu projeye uyan kitap var: ' + adlar + '. Raf eklentinin kendi kuralıdır, uymak zorunlu. Kullanıcının isteğine geçmeden ÖNCE her kitap için: `' +
-      O.komut('raf.js', '<ad>') + '` ile oku, projeyi kitaba uydur, sonra `' + O.komut('raf.js', '--uydu <ad> --project "' + root + '"') +
-      '` ile kaydet; kitabın şartları geçmezse kayıt reddedilir, düzeltip yinele. Sonra iki satır rapor ver ve isteğe dön.',
-    mesaj: 'teknesyum-ui: raf kitabı uygulanacak — ' + bekleyen.map((b) => b.ad).join(', '),
+    baglam: 'teknesyum-ui raf: bekleyen kitap: ' + adlar + '. Kendiliğinden başlama; kullanıcı `uc` yazınca ya da kitabın konusu olan dosyaya yazarken uygulanır.',
+    mesaj: 'teknesyum-ui: raf kitabı bekliyor — ' + bekleyen.map((b) => b.ad).join(', '),
   };
 }
 
 function uiNotu(root, a) {
   const kur = O.komut('setup.js', '--apply --project "' + root + '"');
-  const tara = O.komut('scan.js', '"' + root + '" --fix');
 
   if (!O.uiVar(root)) {
     if (a.project) return null;
@@ -39,8 +35,8 @@ function uiNotu(root, a) {
   const neden = !a.project ? 'UI düzenine göre hiç kurulmadı' : !denetim ? 'UI düzenine göre hiç denetlenmedi' : d && denetim.duzen !== d ? 'kayıtlı UI düzeni değiştiği için yeniden denetlenmeli' : null;
   if (neden)
     return {
-      baglam: 'teknesyum-ui: Bu projenin arayüzü ' + neden + '. Kullanıcının isteğine geçmeden ÖNCE bunu yap: 1) ' + SKILL + '. 2) `' + kur + '`. 3) `' + tara + '`. 4) Kalan bulguları skill\'in önceliğiyle düzelt ve taramayı 0 açık olana dek yinele; 0 açıkta denetim kendiliğinden kaydedilir. 5) Kullanıcıya iki satırlık rapor ver, sonra onun isteğine dön.',
-      mesaj: 'teknesyum-ui: arayüz ' + neden + ' — önce UI denetimi yapılacak.',
+      baglam: 'teknesyum-ui: bu projenin arayüzü ' + neden + '. Kendiliğinden başlama; kullanıcı `uc` yazınca ele alınır.',
+      mesaj: 'teknesyum-ui: arayüz ' + neden + ' — `uc` yazınca ele alınır.',
     };
 
   const r = spawnSync(process.execPath, [path.join(O.PLUGIN, 'scripts', 'scan.js'), root, '--json'], { encoding: 'utf8', timeout: 60000, windowsHide: true });
@@ -54,8 +50,8 @@ function uiNotu(root, a) {
   if (!acik.length) return null;
   const kurallar = [...new Set(acik.map((f) => f.rule))].slice(0, 4).join(', ');
   return {
-    baglam: 'teknesyum-ui: Arayüzde ' + acik.length + ' açık bulgu var (' + kurallar + '). Kullanıcının isteğine geçmeden ÖNCE ' + SKILL + ', `' + tara + '` çalıştır, kalanları düzelt ve 0 açığa indir; sonra iki satır rapor ver ve isteğe dön.',
-    mesaj: 'teknesyum-ui: ' + acik.length + ' açık arayüz bulgusu — önce düzeltilecek.',
+    baglam: 'teknesyum-ui: arayüzde ' + acik.length + ' açık bulgu var (' + kurallar + '). Kendiliğinden başlama; kullanıcı `uc` yazınca ele alınır.',
+    mesaj: 'teknesyum-ui: ' + acik.length + ' açık arayüz bulgusu — `uc` yazınca ele alınır.',
   };
 }
 

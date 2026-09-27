@@ -84,6 +84,16 @@ function kapi() {
   r = L.node(UC, ['--project', root], { env });
   L.ok('the next uc does not rescan from scratch', /Son uc \d+\.\d+\.\d+ sürümünde tamamlandı/.test(r.stdout) && /Baştan tarama yapma/.test(r.stdout), r.stdout);
   const U = require(UC);
+  const toplu = L.tmp('tkui-toplu-');
+  const eskiProje = path.join(toplu, 'Eski');
+  L.write(path.join(eskiProje, '.claude', 'teknesyum-ui.json'), JSON.stringify({ uc: { surum: '0.1.0' } }));
+  L.write(path.join(toplu, 'Guncel', '.claude', 'teknesyum-ui.json'), JSON.stringify((L.readJson(path.join(root, '.claude', 'teknesyum-ui.json')) || {})));
+  L.write(path.join(toplu, 'Bagsiz', 'x.txt'), '1');
+  r = L.node(UC, ['--toplu', toplu, '--yaz'], { env });
+  L.ok('uc --toplu lists only the projects behind this version', /^Eski: 0\.1\.0 → /m.test(r.stdout) && !/Guncel|Bagsiz/.test(r.stdout), r.stdout + r.stderr);
+  L.node(UC, ['--toplu', toplu, '--yaz'], { env });
+  const defter = fs.readFileSync(path.join(eskiProje, '.claude', 'acik.md'), 'utf8');
+  L.ok('uc --toplu --yaz writes one uc line to the ledger, once', (defter.match(/^- \[ \] uc çalıştır: UI 0\.1\.0 → /gm) || []).length === 1, defter);
   const arada = U.degisiklikler('0.11.0', '0.13.0');
   L.ok('the changes between two versions come from the changelog', arada.some((l) => /^## \[0\.13\.0\]/.test(l)) && arada.some((l) => /^## \[0\.12\.0\]/.test(l)) && !arada.some((l) => /^## \[0\.11\.0\]/.test(l)), arada.join('\n'));
   const css = path.join(root, 'teknesyum-ui', 'css', 'theme.css');

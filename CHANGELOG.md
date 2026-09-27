@@ -5,6 +5,17 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-09-27
+
+### Added
+- `uc.js --toplu [root] [--yaz]` lists the projects under `root` (default: the parent folder) whose last recorded `uc` is older than the plugin. `--yaz` adds one `- [ ] uc çalıştır: UI <old> → <new>` line to each project's `.claude/acik.md`, only once, so the next session in that project picks it up without typing `uc`.
+
+### Changed
+- The session start note no longer orders an audit before the user's request. For an unset, unaudited or failing project, and for a pending shelf book, it says one line and leaves the work to `uc`. An ordinary turn costs no extra tokens.
+
+### Removed
+- The title bar no longer shows the program icon at the top left: only the name. `Logo` is gone from the Avalonia `TitleBar` and `logo` from the React one.
+
 ## [0.17.0] - 2026-09-27
 
 ### Fixed

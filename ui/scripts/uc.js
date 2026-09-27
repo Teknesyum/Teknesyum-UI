@@ -105,6 +105,39 @@ function bitti(kok) {
   return { uc: cfg.uc };
 }
 
+function toplu(kok, yaz) {
+  const simdi = surum();
+  const out = [];
+  let adlar = [];
+  try {
+    adlar = fs.readdirSync(kok, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
+  } catch {
+    return out;
+  }
+  for (const ad of adlar) {
+    const proje = path.join(kok, ad);
+    const cfg = ayar(proje);
+    if (!cfg || cfg.off) continue;
+    const eski = (cfg.uc && cfg.uc.surum) || null;
+    if (eski && simdi && kiyas(eski, simdi) >= 0) continue;
+    const satir = { ad, proje, eski, yeni: simdi, yazildi: false };
+    if (yaz) {
+      const defter = path.join(proje, '.claude', 'acik.md');
+      const onceki = oku(defter) || '';
+      if (!/^- \[ \] uc çalıştır:/m.test(onceki)) {
+        const t = new Date();
+        const zaman = t.toISOString().slice(0, 10) + ' ' + String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
+        const is = '- [ ] uc çalıştır: UI ' + (eski || 'hiç') + ' → ' + simdi + ' (`' + js('uc.js') + '` çıktısını izle, bitince `--bitti`) — ' + zaman + ' — teknesyum-ui';
+        fs.mkdirSync(path.dirname(defter), { recursive: true });
+        fs.writeFileSync(defter, (onceki && !onceki.endsWith('\n') ? onceki + '\n' : onceki) + is + '\n', 'utf8');
+        satir.yazildi = true;
+      }
+    }
+    out.push(satir);
+  }
+  return out;
+}
+
 function metin(secenek) {
   const s = secenek || {};
   const kok = gitKok(s.cwd) || path.resolve(s.cwd || process.cwd());
@@ -146,11 +179,19 @@ function metin(secenek) {
 function main(argv) {
   const args = argv.slice(2);
   if (args.includes('--help') || args.includes('-h')) {
-    process.stdout.write('Usage: node uc.js [--project root] [scope...]\n       node uc.js --bitti [--project root]\n\nPrints the UI check instruction that the `uc` mark puts into the turn.\n\n--bitti records the finished uc (plugin version, layout, commit) once the\nlayout gate shows 0 differences; the next uc covers only what changed since.\n');
+    process.stdout.write('Usage: node uc.js [--project root] [scope...]\n       node uc.js --bitti [--project root]\n       node uc.js --toplu [root] [--yaz]\n\nPrints the UI check instruction that the `uc` mark puts into the turn.\n\n--bitti records the finished uc (plugin version, layout, commit) once the\nlayout gate shows 0 differences; the next uc covers only what changed since.\n\n--toplu lists the projects under root (default: the parent folder) whose last\nuc is older than this plugin; --yaz adds one uc line to each project\'s\n.claude/acik.md, once.\n');
     return 0;
   }
   const i = args.indexOf('--project');
   const cwd = i >= 0 ? args[i + 1] : process.cwd();
+  const t = args.indexOf('--toplu');
+  if (t >= 0) {
+    const kok = path.resolve(args[t + 1] && !args[t + 1].startsWith('--') ? args[t + 1] : path.join(process.cwd(), '..'));
+    const liste = toplu(kok, args.includes('--yaz'));
+    if (!liste.length) process.stdout.write('Güncel olmayan proje yok (' + surum() + ').\n');
+    for (const l of liste) process.stdout.write(l.ad + ': ' + (l.eski || 'hiç') + ' → ' + l.yeni + (l.yazildi ? ' · deftere yazıldı' : '') + '\n');
+    return 0;
+  }
   if (args.includes('--bitti')) {
     const r = bitti(gitKok(cwd) || path.resolve(cwd));
     if (r.hata) {
@@ -165,6 +206,6 @@ function main(argv) {
   return 0;
 }
 
-module.exports = { metin, bitti, degisiklikler };
+module.exports = { metin, bitti, degisiklikler, toplu };
 
 if (require.main === module) process.exitCode = main(process.argv);

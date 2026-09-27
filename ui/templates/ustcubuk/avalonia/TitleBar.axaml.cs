@@ -26,8 +26,6 @@ namespace {{AD}}.Kabuk
             AvaloniaProperty.Register<TitleBar, string>(nameof(Ad1), "Yeni");
         public static readonly StyledProperty<string> Ad2Property =
             AvaloniaProperty.Register<TitleBar, string>(nameof(Ad2), "Program");
-        public static readonly StyledProperty<IImage?> LogoProperty =
-            AvaloniaProperty.Register<TitleBar, IImage?>(nameof(Logo));
         public static readonly StyledProperty<string> RozetMetniProperty =
             AvaloniaProperty.Register<TitleBar, string>(nameof(RozetMetni), "Güncelleme");
         public static readonly StyledProperty<string> RozetIpucuProperty =
@@ -63,7 +61,6 @@ namespace {{AD}}.Kabuk
 
         public string Ad1 { get => GetValue(Ad1Property); set => SetValue(Ad1Property, value); }
         public string Ad2 { get => GetValue(Ad2Property); set => SetValue(Ad2Property, value); }
-        public IImage? Logo { get => GetValue(LogoProperty); set => SetValue(LogoProperty, value); }
         public string RozetMetni { get => GetValue(RozetMetniProperty); set => SetValue(RozetMetniProperty, value); }
         public string RozetIpucu { get => GetValue(RozetIpucuProperty); set => SetValue(RozetIpucuProperty, value); }
         public RozetDurumu RozetDurumu { get => GetValue(RozetDurumuProperty); set => SetValue(RozetDurumuProperty, value); }
@@ -182,8 +179,6 @@ namespace {{AD}}.Kabuk
             OrtaAlani.Content = Orta;
             EkAlani.Content = Ek;
             EkAlani.IsVisible = Ek is not null;
-            LogoResmi.Source = Logo;
-            LogoResmi.IsVisible = Logo is not null;
 
             RozetYazisi.Text = RozetMetni;
             Rozet.IsVisible = RozetDurumu != RozetDurumu.Yok && !string.IsNullOrWhiteSpace(RozetMetni);

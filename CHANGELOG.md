@@ -5,6 +5,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.22.0] - 2026-09-27
+
+### Fixed
+- `kur.ps1` measures and draws the title with typographic spacing, so the gap between the app name and "Kurulum" is one space wide.
+
 ## [0.21.0] - 2026-09-27
 
 ### Added

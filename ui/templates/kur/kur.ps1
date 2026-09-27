@@ -239,10 +239,12 @@ $f.Add_Paint({
   if ($pencereKenari -and -not $G.yuvarlak) { $cz.DrawRectangle((New-Object System.Drawing.Pen((Renk $pencereKenari {{PENCERE_ALFA}}), $O.cizgi)), 0, 0, $w - 1, $h - 1) }
 
   $G.alanlar = Alanlar
-  $ad = $S.ad + " "
-  $ag = [System.Windows.Forms.TextRenderer]::MeasureText($ad, $YZ.baslik, [System.Drawing.Size]::Empty, [System.Windows.Forms.TextFormatFlags]::NoPadding).Width
-  $cz.DrawString($ad, $YZ.baslik, (& $firca $R.metin), (New-Object System.Drawing.RectangleF($O.b4, 0, $ag, $O.cubuk)), $bicim)
-  $cz.DrawString("Kurulum", $YZ.baslik, (& $firca $R.vurgu), (New-Object System.Drawing.RectangleF(($O.b4 + $ag), 0, ($w / 2), $O.cubuk)), $bicim)
+  $tip = [System.Drawing.StringFormat]::GenericTypographic.Clone()
+  $tip.FormatFlags = "NoWrap, MeasureTrailingSpaces"
+  $tip.LineAlignment = "Center"
+  $ag = $cz.MeasureString($S.ad + " ", $YZ.baslik, [System.Drawing.PointF]::Empty, $tip).Width
+  $cz.DrawString($S.ad, $YZ.baslik, (& $firca $R.metin), (New-Object System.Drawing.RectangleF($O.b4, 0, $ag, $O.cubuk)), $tip)
+  $cz.DrawString("Kurulum", $YZ.baslik, (& $firca $R.vurgu), (New-Object System.Drawing.RectangleF(($O.b4 + $ag), 0, ($w / 2), $O.cubuk)), $tip)
 
   foreach ($a in $G.alanlar) {
     $ka = $a.alan

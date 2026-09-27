@@ -1,0 +1,197 @@
+/* teknesyum-ui template durum/react/update.css */
+.tk-update {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tk-sp-2);
+  min-height: var(--tk-target-min);
+  padding: 0 var(--tk-sp-2);
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-chip);
+  background: transparent;
+  color: var(--tk-label-update-color, var(--tk-text));
+  font: inherit;
+  font-size: var(--tk-label-update-fs, var(--tk-fs-1));
+  font-weight: var(--tk-label-update-fw, var(--tk-fw-semi));
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition:
+    color var(--tk-t-fast) var(--tk-e-out),
+    border-color var(--tk-t-fast) var(--tk-e-out),
+    transform var(--tk-t-instant) var(--tk-e-out);
+}
+
+.tk-update::before {
+  content: '';
+  flex: none;
+  width: var(--tk-sp-2);
+  height: var(--tk-sp-2);
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.tk-update:hover {
+  border-color: var(--tk-border-strong);
+  transform: scale(var(--tk-scale-hover));
+}
+
+.tk-update:focus-visible {
+  outline: var(--tk-focus-w) solid var(--tk-renk-1);
+  outline-offset: var(--tk-focus-offset);
+  box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg-from);
+}
+
+.tk-update:active {
+  border-color: var(--tk-border-strong);
+  transform: scale(var(--tk-scale-press));
+}
+
+.tk-update:disabled {
+  color: var(--tk-disabled);
+  cursor: not-allowed;
+}
+
+.tk-update[data-step='download'] {
+  color: var(--tk-warning);
+  border-color: var(--tk-warning-border);
+}
+
+.tk-update[data-step='install'] {
+  color: var(--tk-success);
+  border-color: var(--tk-success);
+}
+
+.update-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tk-sp-4);
+  width: var(--tk-modal-w);
+}
+
+.update-panel__head {
+  display: flex;
+  align-items: center;
+  gap: var(--tk-sp-2);
+  min-width: 0;
+}
+
+.update-panel__title {
+  margin: 0;
+}
+
+.update-panel__dry {
+  margin-left: auto;
+  color: var(--tk-warning);
+  font-size: var(--tk-fs-1);
+}
+
+.update-panel__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tk-sp-1);
+}
+
+.update-panel__status {
+  margin: 0;
+  color: var(--tk-text);
+  line-height: var(--tk-lh-body);
+}
+
+.update-panel__status[data-tone='danger'] {
+  color: var(--tk-danger-text);
+}
+
+.update-panel__version {
+  display: flex;
+  align-items: center;
+  gap: var(--tk-sp-2);
+}
+
+.update-panel__notes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tk-sp-1);
+  margin-top: var(--tk-sp-2);
+}
+
+.update-panel__notes-text {
+  margin: 0;
+  color: var(--tk-text);
+  font-size: var(--tk-fs-1);
+  line-height: var(--tk-lh-body);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.update-panel__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--tk-sp-3);
+}
+
+.update-panel__progress-track {
+  position: relative;
+  flex: 1;
+  height: var(--tk-sp-2);
+  overflow: hidden;
+  border-radius: var(--tk-r-chip);
+  background: var(--tk-border-decorative);
+}
+
+.update-panel__progress-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0% 50%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--tk-renk-1), var(--tk-renk-2));
+}
+
+.update-panel__progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 50%;
+  background: linear-gradient(90deg, transparent, var(--tk-text) 50%, transparent);
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+.update-panel__progress[data-status='running'] .update-panel__progress-fill::after {
+  opacity: 1;
+  animation: tk-update-scan var(--tk-loading-loop-min) var(--tk-e-in) infinite;
+}
+
+.update-panel__progress[data-status='done'] .update-panel__progress-fill {
+  background: var(--tk-success);
+}
+
+.update-panel__progress-percent {
+  color: var(--tk-renk-1);
+  font-size: var(--tk-fs-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.update-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tk-sp-3);
+}
+
+.update-panel__actions:empty {
+  display: none;
+}
+
+@keyframes tk-update-scan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .update-panel__progress[data-status='running'] .update-panel__progress-fill::after {
+    animation: none;
+  }
+}

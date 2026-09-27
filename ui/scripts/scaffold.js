@@ -36,7 +36,7 @@ const HELP = [
   '      --avalonia | --react  flavour (default: avalonia when the project has .axaml);',
   '                            Avalonia: TitleBar + KabukStilleri, needs the namespace',
   '  durum [<Namespace>]     update badge and panel into teknesyum-ui/durum',
-  '      --avalonia | --electron  flavour (default as above); Avalonia: GuncellemePaneli',
+  '      --avalonia | --electron | --react  flavour (default as above); Avalonia: GuncellemePaneli',
   '  denetim <Namespace>  headless contrast and shell tests into teknesyum-ui/denetim',
   '      --wpf | --avalonia  test flavour (default: avalonia when the project has .axaml)',
   '      --pencere <Class>   window to open (default MainWindow)',
@@ -128,41 +128,51 @@ function kurTokens(root) {
   };
   const edge = T.shape['window-edge'] && T.shape['window-edge'].ref;
   const bare = !edge || edge === 'none';
+  const label = (T.label && T.label.brand) || {};
+  const links = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'skills', 'teknesyum-ui', 'assets', 'links.json'), 'utf8'));
   return {
     RENK_ZEMIN: hex('surface'),
     RENK_METIN: hex('text'),
     RENK_ETIKET: hex('text-label'),
     RENK_1: hex('renk-1'),
     RENK_2: hex('renk-2'),
+    RENK_3: hex('renk-3'),
     RENK_VURGU: hex('renk-2-text'),
     RENK_BASARI: hex('success'),
     RENK_TEHLIKE: hex('danger-text'),
     RENK_EDILGEN: hex('disabled'),
-    RENK_USTU_1: hex(T.on['renk-1'].on),
-    RENK_KENAR: hex('border'),
-    KENAR_ALFA: String(res('border').a),
+    RENK_USTU_TEHLIKE: hex(T.on['danger-text'].on),
+    RENK_MARKA: hex(label.ref || 'renk-1'),
     RENK_IZ: hex('border-decorative'),
     IZ_ALFA: String(res('border-decorative').a),
-    SUREN_ALFA: String(tone(20)),
-    SOLAN_1: String(tone(30)),
-    SOLAN_2: String(tone(60)),
+    TON_10: String(tone(10)),
+    TON_20: String(tone(20)),
+    TON_30: String(tone(30)),
+    TON_50: String(tone(50)),
+    TON_60: String(tone(60)),
     PENCERE_KENARI: bare ? '' : hex(edge),
     PENCERE_ALFA: bare ? '1' : String(res(edge).a),
     FS_1: String(num('size', 'fs-1')),
-    FS_2: String(num('size', 'fs-2')),
-    FS_4: String(num('size', 'fs-4')),
-    SATIR_MONO: String(Math.round(num('size', 'fs-2') * num('size', 'lh-mono'))),
-    SATIR_BASLIK: String(num('size', 'lh-heading')),
+    FS_3: String(num('size', 'fs-3')),
+    SATIR_GOVDE: String(Math.round(num('size', 'fs-1') * num('size', 'lh-body'))),
+    SATIR_MONO: String(Math.round(num('size', 'fs-1') * num('size', 'lh-mono'))),
+    BOSLUK_1: String(num('space', '1')),
     BOSLUK_2: String(num('space', '2')),
     BOSLUK_3: String(num('space', '3')),
     BOSLUK_4: String(num('space', '4')),
     BOSLUK_5: String(num('space', '5')),
-    IKON: String(num('metric', 'icon-4')),
+    CUBUK_H: String(num('metric', 'titlebar-h-min')),
+    KONTROL_W: String(num('metric', 'titlebar-h-max')),
+    IKON_1: String(num('metric', 'icon-1')),
+    IKON_3: String(num('metric', 'icon-3')),
     HEDEF_MIN: String(num('metric', 'target-min')),
-    DUGME_Y: String(num('metric', 'btn-h')),
     DUGME_PX: String(num('metric', 'btn-px')),
+    KOSE: String(num('shape', 'r')),
     KENAR_W: String(num('shape', 'border-w')),
-    PENCERE_W: String(num('metric', 'modal-w')),
+    PENCERE_W: String(num('metric', 'installer-w')),
+    PENCERE_H: String(num('metric', 'installer-h')),
+    MARKA: label.tr || '',
+    MARKA_ADRES: links.github || '',
     YAZI_SANS: T.font.sans.chain.join(','),
     YAZI_MONO: T.font.mono.chain.join(','),
   };
@@ -326,12 +336,15 @@ const TARGETS = {
           to: f.to.replace(path.sep + 'react' + path.sep, path.sep),
         })),
   denetim: (root, args, name) => denetim(root, args, name),
-  durum: (root, args, name) =>
-    isAvalonia(root, args, 'electron')
-      ? avaloniaShell(root, 'durum', name)
-      : copies(root, 'durum', ['electron/sync.js', 'electron/preload.js', 'electron/badge.js', 'electron/badge.css']).map(
-          (f) => ({ ...f, to: f.to.replace(path.sep + 'electron' + path.sep, path.sep) })
-        ),
+  durum: (root, args, name) => {
+    const kind = args.includes('--avalonia') ? 'avalonia' : args.includes('--react') ? 'react' : args.includes('--electron') ? 'electron' : hasAxaml(root, 0) ? 'avalonia' : 'electron';
+    if (kind === 'avalonia') return avaloniaShell(root, 'durum', name);
+    const names =
+      kind === 'react'
+        ? ['react/UpdateBadge.tsx', 'react/UpdatePanel.tsx', 'react/update.css']
+        : ['electron/sync.js', 'electron/preload.js', 'electron/badge.js', 'electron/badge.css'];
+    return copies(root, 'durum', names).map((f) => ({ ...f, to: f.to.replace(path.sep + kind + path.sep, path.sep) }));
+  },
 };
 
 function emit(root, plan) {

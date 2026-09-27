@@ -5,6 +5,9 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+- `scaffold.js durum --react` writes a React/Tauri update-panel flavour (`UpdateBadge.tsx`, `UpdatePanel.tsx`, `update.css`), matching the Avalonia template's texts, 16 ms timer and creeping-ceiling contract.
+
 ## [0.20.0] - 2026-09-27
 
 ### Fixed

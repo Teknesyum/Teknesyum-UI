@@ -84,6 +84,15 @@ function copies() {
   const syncDir = path.join(root, 'teknesyum-ui', 'durum');
   const names = ['sync.js', 'preload.js', 'badge.js', 'badge.css'];
   L.ok('durum writes the main, preload and badge files', names.every((n) => fs.existsSync(path.join(syncDir, n))));
+
+  const reactRoot = L.tmp('tkui-copy-react-');
+  const reactDurum = scaffold(reactRoot, ['durum', '--react']);
+  L.ok('scaffold durum --react exits 0', reactDurum.status === 0, reactDurum.stderr);
+  const reactDir = path.join(reactRoot, 'teknesyum-ui', 'durum');
+  const reactNames = ['UpdateBadge.tsx', 'UpdatePanel.tsx', 'update.css'];
+  L.ok('durum --react writes the badge, panel and stylesheet', reactNames.every((n) => fs.existsSync(path.join(reactDir, n))), fs.existsSync(reactDir) ? fs.readdirSync(reactDir).join(' ') : '');
+  const panelText = fs.readFileSync(path.join(reactDir, 'UpdatePanel.tsx'), 'utf8');
+  L.ok('durum --react keeps the 16 ms timer and the creeping ceiling', panelText.includes('}, 16)') && panelText.includes('(c - next) * 0.006'));
 }
 
 function avalonia() {

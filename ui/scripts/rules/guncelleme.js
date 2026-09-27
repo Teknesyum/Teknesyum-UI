@@ -10,7 +10,7 @@ const SOZLESME = /function\s+Adim\s*\(\s*\[int\]\s*\$y\s*,\s*\[int\]\s*\$t\s*,/;
 const TAVAN = /\$S\.tavan/;
 const ZAMAN = /\$zaman\.Interval\s*=\s*16\b/;
 const RENK_SABIT = /#[0-9a-f]{3,8}\b/i;
-const ROZET = /\.(?:tk-sync|basbar-senk)\b/;
+const ROZET = /\.(?:tk-sync|tk-update|basbar-senk)\b/;
 const UZUN_CAGRI =
   /\binvoke\s*\(|ipcRenderer\.invoke\s*\(|\.spawn\s*\(|\bspawn\s*\(|new\s+Command\s*\(/;
 const ILERLEME_GOSTERGESI = /progress|loading|busy|pending|aria-busy|role\s*=\s*["']?progressbar/i;
@@ -150,7 +150,7 @@ module.exports = {
             out.push({
               file: f.rel,
               line: i + 1,
-              message: 'the sync badge takes a fixed colour: use a --tk-* token.',
+              message: 'the badge takes a fixed colour: use a --tk-* token.',
             });
           }
         }

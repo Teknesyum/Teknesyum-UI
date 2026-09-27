@@ -94,6 +94,10 @@ function kapi() {
   L.node(UC, ['--toplu', toplu, '--yaz'], { env });
   const defter = fs.readFileSync(path.join(eskiProje, '.claude', 'acik.md'), 'utf8');
   L.ok('uc --toplu --yaz writes one uc line to the ledger, once', (defter.match(/^- \[ \] uc çalıştır: UI 0\.1\.0 → /gm) || []).length === 1, defter);
+  fs.writeFileSync(path.join(eskiProje, '.claude', 'acik.md'), '- [ ] başka iş\n- [ ] uc çalıştır: UI hiç → 0.0.1 (`node "eski/uc.js"` çıktısını izle) — 2026-01-01 00:00 — teknesyum-ui\n');
+  r = L.node(UC, ['--toplu', toplu, '--yaz'], { env });
+  const tazelenen = fs.readFileSync(path.join(eskiProje, '.claude', 'acik.md'), 'utf8');
+  L.ok('an open uc line from an older version moves to this version', /tazelendi/.test(r.stdout) && !/eski\/uc\.js/.test(tazelenen) && (tazelenen.match(/uc çalıştır/g) || []).length === 1 && /başka iş/.test(tazelenen), tazelenen);
   const A = require(path.join(L.UI, 'scripts', 'artik.js'));
   const art = L.tmp('tkui-artik-');
   require('child_process').spawnSync('git', ['init', '-q', art], { windowsHide: true });

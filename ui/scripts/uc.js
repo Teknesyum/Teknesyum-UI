@@ -124,13 +124,18 @@ function toplu(kok, yaz) {
     if (yaz) {
       const defter = path.join(proje, '.claude', 'acik.md');
       const onceki = oku(defter) || '';
-      if (!/^- \[ \] uc çalıştır:/m.test(onceki)) {
-        const t = new Date();
-        const zaman = t.toISOString().slice(0, 10) + ' ' + String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
-        const is = '- [ ] uc çalıştır: UI ' + (eski || 'hiç') + ' → ' + simdi + ' (`' + js('uc.js') + '` çıktısını izle, bitince `--bitti`) — ' + zaman + ' — teknesyum-ui';
+      const t = new Date();
+      const zaman = t.toISOString().slice(0, 10) + ' ' + String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
+      const is = '- [ ] uc çalıştır: UI ' + (eski || 'hiç') + ' → ' + simdi + ' (`' + js('uc.js') + '` çıktısını izle, bitince `--bitti`) — ' + zaman + ' — teknesyum-ui';
+      const acik = /^- \[ \] uc çalıştır: UI \S+ → (\S+) .*$/m.exec(onceki);
+      if (!acik) {
         fs.mkdirSync(path.dirname(defter), { recursive: true });
         fs.writeFileSync(defter, (onceki && !onceki.endsWith('\n') ? onceki + '\n' : onceki) + is + '\n', 'utf8');
         satir.yazildi = true;
+      } else if (simdi && kiyas(acik[1], simdi) < 0) {
+        fs.writeFileSync(defter, onceki.replace(acik[0], () => is), 'utf8');
+        satir.yazildi = true;
+        satir.tazelendi = true;
       }
     }
     out.push(satir);
@@ -190,7 +195,7 @@ function main(argv) {
     const kok = path.resolve(args[t + 1] && !args[t + 1].startsWith('--') ? args[t + 1] : path.join(process.cwd(), '..'));
     const liste = toplu(kok, args.includes('--yaz'));
     if (!liste.length) process.stdout.write('Güncel olmayan proje yok (' + surum() + ').\n');
-    for (const l of liste) process.stdout.write(l.ad + ': ' + (l.eski || 'hiç') + ' → ' + l.yeni + (l.yazildi ? ' · deftere yazıldı' : '') + '\n');
+    for (const l of liste) process.stdout.write(l.ad + ': ' + (l.eski || 'hiç') + ' → ' + l.yeni + (l.tazelendi ? ' · defterdeki satır tazelendi' : l.yazildi ? ' · deftere yazıldı' : '') + '\n');
     return 0;
   }
   if (args.includes('--bitti')) {

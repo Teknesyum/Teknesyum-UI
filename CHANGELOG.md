@@ -5,6 +5,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-09-27
+
+### Fixed
+- `uc.js --toplu --yaz` moves an open uc line written by an older plugin to this version, so the ledger no longer points at an old `uc.js` whose instruction lacks the newer steps.
+
 ## [0.19.0] - 2026-09-27
 
 ### Added

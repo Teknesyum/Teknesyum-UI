@@ -16,8 +16,12 @@
       </StackPanel>
     </Border>
 
+    <ContentControl Name="OrtaAlani" Grid.Column="1" VerticalAlignment="Center"
+                    HorizontalContentAlignment="Stretch" Margin="{StaticResource InputPadding}"/>
+
     <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{StaticResource Space2}"
                 VerticalAlignment="Center" ClipToBounds="False">
+      <ContentControl Name="EkAlani" VerticalAlignment="Center"/>
       <Button Name="Rozet" Theme="{StaticResource BadgeButton}" IsVisible="False" AutomationProperties.Name="{Binding #RozetYazisi.Text}">
         <StackPanel Orientation="Horizontal" Spacing="{StaticResource Space2}">
           <Ellipse Width="{StaticResource Space2}" Height="{StaticResource Space2}" VerticalAlignment="Center"

@@ -54,6 +54,10 @@ namespace {{AD}}.Kabuk
             AvaloniaProperty.Register<TitleBar, string>(nameof(BuyutMetni), "Ekranı kapla");
         public static readonly StyledProperty<string> KapatMetniProperty =
             AvaloniaProperty.Register<TitleBar, string>(nameof(KapatMetni), "Kapat");
+        public static readonly StyledProperty<object?> OrtaProperty =
+            AvaloniaProperty.Register<TitleBar, object?>(nameof(Orta));
+        public static readonly StyledProperty<object?> EkProperty =
+            AvaloniaProperty.Register<TitleBar, object?>(nameof(Ek));
 
         public string Ad1 { get => GetValue(Ad1Property); set => SetValue(Ad1Property, value); }
         public string Ad2 { get => GetValue(Ad2Property); set => SetValue(Ad2Property, value); }
@@ -71,6 +75,8 @@ namespace {{AD}}.Kabuk
         public string KucultMetni { get => GetValue(KucultMetniProperty); set => SetValue(KucultMetniProperty, value); }
         public string BuyutMetni { get => GetValue(BuyutMetniProperty); set => SetValue(BuyutMetniProperty, value); }
         public string KapatMetni { get => GetValue(KapatMetniProperty); set => SetValue(KapatMetniProperty, value); }
+        public object? Orta { get => GetValue(OrtaProperty); set => SetValue(OrtaProperty, value); }
+        public object? Ek { get => GetValue(EkProperty); set => SetValue(EkProperty, value); }
 
         public event EventHandler? RozetTiklandi;
 
@@ -113,6 +119,9 @@ namespace {{AD}}.Kabuk
                 ((Run)satir[0]).Text = Ad1;
                 ((Run)satir[1]).Text = Ad2;
             }
+            OrtaAlani.Content = Orta;
+            EkAlani.Content = Ek;
+            EkAlani.IsVisible = Ek is not null;
             LogoResmi.Source = Logo;
             LogoResmi.IsVisible = Logo is not null;
 

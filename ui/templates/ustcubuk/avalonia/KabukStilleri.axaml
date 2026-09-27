@@ -178,11 +178,11 @@
       </Style>
       <Style Selector="^.destek:pointerover">
         <Setter Property="Background" Value="{StaticResource Renk2x20}"/>
-        <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk2x20}"/>
       </Style>
       <Style Selector="^.destek:focus-visible">
         <Setter Property="Background" Value="{StaticResource Renk2x10}"/>
-        <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk2x10}"/>
       </Style>
       <Style Selector="^:disabled">
         <Setter Property="Foreground" Value="{StaticResource Disabled}"/>

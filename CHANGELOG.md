@@ -5,6 +5,14 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-09-27
+
+### Added
+- The Avalonia title bar (`ustcubuk`) has two slots for app content: `Orta` fills the free centre column (a disclaimer notice, a search box) and `Ek` sits first in the right-hand group before the update badge (a data-version badge, a language switcher; hidden while null). Projects that patched these in locally, such as AbxPilot, re-scaffold with `node scripts/scaffold.js ustcubuk AbxPilot.UI --avalonia` after moving their old `teknesyum-ui/ustcubuk` files aside (scaffold never overwrites), then drop the patch.
+
+### Fixed
+- The support chip takes its measured on pairs: `OnRenk2x20` on hover and `OnRenk2x10` on keyboard focus. Focus used `Renk2Text`, which held only 7.93:1 in the Kar palette and would fall to 6.80:1 on the hover fill; the on pairs are the gated text for each fill and clear 7:1 in every shipped palette (lowest 11.22:1 hover, 12.93:1 focus, both Kağıt).
+
 ## [0.11.0] - 2026-09-27
 
 ### Added
@@ -407,6 +415,6 @@ First release after the split from Teknesyum Base on 2026-08-28.
 - Core contracts and leftovers moved out of this repository.
 - Scanner reports exactly what it scans and no longer scans itself.
 
-[Unreleased]: https://github.com/Teknesyum/Teknesyum-UI/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/Teknesyum/Teknesyum-UI/compare/v0.12.0...HEAD
 [0.3.0]: https://github.com/Teknesyum/Teknesyum-UI/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Teknesyum/Teknesyum-UI/releases/tag/v0.2.0

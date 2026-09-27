@@ -86,6 +86,14 @@ A determinate progress bar takes `templates/ilerleme/react/ProgressBar.tsx` +
 call with no feedback checks `guncelleme/uzun-cagri-ilerlemesiz`, and a silent background
 loop checks `guncelleme/sessiz-dongu`.
 
+### Ana pencere
+
+Unless the project's config sets `"pencere": "normal"`, the main window opens maximized
+(Avalonia/WPF `WindowState="Maximized"`, Electron `win.maximize()`, Tauri
+`"maximized": true`). A saved layout restores only the normal size and position; the
+opening state is always maximized. Installers and small fixed-size tool windows are
+exempt. `scan.js` checks this as `kabuk/pencere-maximize`.
+
 ## Precedence
 
 1. The config's `note:` field.

@@ -584,6 +584,7 @@ function apply(answers) {
   if (answers.signature !== undefined) cfg.signature.off = answers.signature === false;
   if (answers.note !== undefined && answers.note !== '') cfg.note = answers.note;
   if (cfg.note === undefined) cfg.note = '';
+  cfg.pencere = prev.pencere === 'normal' ? 'normal' : 'maximize';
 
   const palette = Object.assign({}, prev.palette || {});
   for (const q of qs) {
@@ -712,6 +713,7 @@ function status() {
     '  signature  ' + (config.signature && config.signature.off ? 'off' : 'on'),
     '  targets    ' + (config.targets || []).map((t) => t + ' (' + state[t].length + ')').join('  '),
     '  note       ' + (config.note ? config.note : '-'),
+    '  pencere    ' + (config.pencere === 'normal' ? 'normal' : 'maximize'),
   ].join('\n');
 }
 

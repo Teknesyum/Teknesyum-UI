@@ -24,6 +24,112 @@ const OUTLINE_TITLEBAR_BUTTON = /\.[\w-]*titlebar[\w-]*(?:control|button)[\w-]*/
 const OUTLINE_EXCEPTION = /outlined/i;
 const OUTLINE_XAML_NAME = /tab|chip|header|windowcontrol|caption/i;
 
+const MAIN_WINDOW_XAML = /^(?:.*\/)?MainWindow\.(?:axaml|xaml)$/i;
+const SKIP_WINDOW_NAME = /kurulum|installer|setup|dialog/i;
+const FIXED_XAML = /\bCanResize\s*=\s*"False"|\bResizeMode\s*=\s*"NoResize"/i;
+const MAXIMIZED_XAML = /\bWindowState\s*=\s*"Maximized"/i;
+const MAXIMIZED_CODE_BEHIND = /WindowState\s*=\s*WindowState\.Maximized\b/;
+const ELECTRON_CODE_EXT = ['.js', '.ts', '.mjs', '.cjs'];
+const BROWSER_WINDOW = /new\s+BrowserWindow\s*\(/;
+const BROWSER_WINDOW_RESIZABLE_FALSE = /\bresizable\s*:\s*false\b/;
+const BROWSER_WINDOW_MAXIMIZE = /\.maximize\s*\(\s*\)/;
+const TAURI_CONF_PATH = ['src-tauri/tauri.conf.json', 'tauri.conf.json'];
+
+function pencereKapali(ctx) {
+  return !!(ctx.config && ctx.config.pencere === 'normal');
+}
+
+function tauriConfigFile(ctx) {
+  for (const file of TAURI_CONF_PATH) {
+    const text = typeof ctx.read === 'function' ? ctx.read(file) : null;
+    if (text === null || text === undefined) continue;
+    let json = null;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      return null;
+    }
+    return { file, json };
+  }
+  return null;
+}
+
+function tauriWindowsOf(json) {
+  if (!json) return [];
+  const app = json.app && Array.isArray(json.app.windows) ? json.app.windows : null;
+  const legacy = json.tauri && Array.isArray(json.tauri.windows) ? json.tauri.windows : null;
+  return app || legacy || [];
+}
+
+function codeBehindText(ctx, rel) {
+  const withCs = rel + '.cs';
+  const direct = ctx.files.find((f) => f.rel === withCs);
+  if (direct) return direct.text;
+  return typeof ctx.read === 'function' ? ctx.read(withCs) : null;
+}
+
+function mainWindowFindings(ctx) {
+  const out = [];
+  for (const f of ctx.files) {
+    if (!XAML.includes(f.ext)) continue;
+    if (!MAIN_WINDOW_XAML.test(f.rel)) continue;
+    if (SKIP_WINDOW_NAME.test(f.rel)) continue;
+    if (FIXED_XAML.test(f.text)) continue;
+    if (MAXIMIZED_XAML.test(f.text)) continue;
+    const behind = codeBehindText(ctx, f.rel);
+    if (behind && MAXIMIZED_CODE_BEHIND.test(behind)) continue;
+    out.push({
+      file: f.rel,
+      line: 1,
+      message:
+        'the main window does not open maximized: set WindowState="Maximized" on the ' +
+        'root Window, or WindowState = WindowState.Maximized in its code-behind. ' +
+        'Fixed-size tool windows are exempt (CanResize="False" / ResizeMode="NoResize"), ' +
+        'as is config "pencere": "normal".',
+    });
+  }
+  return out;
+}
+
+function electronWindowFindings(ctx) {
+  const out = [];
+  for (const f of ctx.files) {
+    if (!ELECTRON_CODE_EXT.includes(f.ext)) continue;
+    if (SKIP_WINDOW_NAME.test(f.rel)) continue;
+    if (!BROWSER_WINDOW.test(f.text)) continue;
+    if (BROWSER_WINDOW_RESIZABLE_FALSE.test(f.text)) continue;
+    if (BROWSER_WINDOW_MAXIMIZE.test(f.text)) continue;
+    out.push({
+      file: f.rel,
+      line: 1,
+      message:
+        'this BrowserWindow never calls .maximize(): the main window should open maximized ' +
+        '(call win.maximize() before or in place of show()). Fixed-size tool windows are ' +
+        'exempt (resizable: false), as is config "pencere": "normal".',
+    });
+  }
+  return out;
+}
+
+function tauriWindowFindings(ctx) {
+  const found = tauriConfigFile(ctx);
+  if (!found) return [];
+  const out = [];
+  tauriWindowsOf(found.json).forEach((w, i) => {
+    if (!w) return;
+    const label = String(w.label || i);
+    if (SKIP_WINDOW_NAME.test(label)) return;
+    if (w.resizable === false) return;
+    if (w.maximized === true) return;
+    out.push({
+      file: found.file,
+      line: 0,
+      message: 'window ' + label + ' does not set "maximized": true — the main window should open maximized.',
+    });
+  });
+  return out;
+}
+
 function outlineStripComments(text) {
   return String(text)
     .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
@@ -249,6 +355,17 @@ module.exports = {
           });
         }
         return out;
+      },
+    },
+  ],
+
+  projectRules: [
+    {
+      id: 'pencere-maximize',
+      severity: 'warn',
+      check(ctx) {
+        if (pencereKapali(ctx)) return [];
+        return [].concat(mainWindowFindings(ctx), electronWindowFindings(ctx), tauriWindowFindings(ctx));
       },
     },
   ],

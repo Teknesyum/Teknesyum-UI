@@ -1,0 +1,7 @@
+{
+  "app": {
+    "windows": [
+      { "label": "main", "width": 1200, "height": 780, "maximized": true }
+    ]
+  }
+}

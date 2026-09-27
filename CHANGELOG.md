@@ -5,6 +5,17 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.28.0] - 2026-09-28
+
+### Added
+- The config field `pencere`, set to `"maximize"` (the default) or `"normal"`. `setup.js --apply` keeps the existing value, and `--status` shows it.
+- Rule `kabuk/pencere-maximize` (warn): the main window must open maximized.
+  - Avalonia and WPF: `MainWindow` or its code-behind.
+  - Electron: `BrowserWindow`.
+  - Tauri: `tauri.conf.json`.
+  - Exempt: `pencere: "normal"`, installer and dialog windows, and fixed-size windows.
+- SKILL.md gains an "Ana pencere" rule: a saved layout restores only the normal size and position, and the window still opens maximized.
+
 ## [0.27.0] - 2026-09-28
 
 ### Added

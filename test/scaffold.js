@@ -66,7 +66,9 @@ function kurReleases() {
   L.ok('releases: colours come from the project tokens', text.includes('renk1 = Renk "#123abc"'), (/renk1 = Renk "[^"]*"/.exec(text) || [''])[0]);
   L.ok('releases: keeps the step contract, ceiling and 16 ms timer', /function Adim\(\[int\]\$y, \[int\]\$t,/.test(text) && text.includes('$S.tavan') && text.includes('Interval = 16'));
   L.ok('releases: rehearsal, silent and test roots are wired', ['KUR_PROVA', 'KUR_OTOMATIK', 'KUR_KOK', 'KUR_SONUC', 'KUR_API'].every((k) => text.includes(k)));
-  L.ok('releases: five steps, location row, Kur, Yeniden dene', ['Kurulum yeri', '"Değiştir"', '"Kuruluyor"', '"Yeniden dene"', '"Programı aç"'].every((k) => text.includes(k)));
+  L.ok('releases: the address stands alone, no location label', !/Kurulum yeri[:"]/.test(text));
+  L.ok('releases: layout 2 window at 720x540', text.includes('· düzen 2') && text.includes('genislik = 720; yukseklik = 540'));
+  L.ok('releases: five steps, Değiştir, Kur, Yeniden dene', ['"Değiştir"', '"Kuruluyor"', '"Yeniden dene"', '"Programı aç"'].every((k) => text.includes(k)));
   L.ok('releases: the generated script parses in Windows PowerShell', parsesInPowerShell(ps1));
   L.ok('releases without --varlik exits 2', scaffold(L.tmp('tkui-kur-rv-'), ['kur', 'Deneme', '--kaynak', 'releases', '--depo', 'a/b']).status === 2);
   L.ok('an unknown --kaynak exits 2', scaffold(L.tmp('tkui-kur-rk-'), ['kur', 'Deneme', '--kaynak', 'ftp']).status === 2);

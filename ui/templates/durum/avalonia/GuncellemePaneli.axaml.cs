@@ -1,4 +1,4 @@
-// teknesyum-ui template durum/avalonia/GuncellemePaneli.axaml.cs
+// teknesyum-ui template durum/avalonia/GuncellemePaneli.axaml.cs · düzen 2
 #nullable enable
 using System;
 using System.Globalization;
@@ -85,6 +85,8 @@ namespace {{AD}}.Kabuk
 
         public GuncellemePaneli()
         {
+            Resources["KurParlama"] = Parlama("Renk1x20");
+            Resources["KurParlamaGuclu"] = Parlama("Renk1x50");
             InitializeComponent();
             if (Application.Current?.TryFindResource("ToastInset", out var bosluk) == true && bosluk is double b)
                 Margin = new Thickness(b);
@@ -155,6 +157,13 @@ namespace {{AD}}.Kabuk
             Dolgu.RenderTransform = new ScaleTransform(yuzde / 100, 1);
             YuzdeYazisi.Text = "%" + Math.Floor(yuzde).ToString(CultureInfo.InvariantCulture);
         }
+
+        static BoxShadows Parlama(string ad) => new(new BoxShadow
+        {
+            IsInset = true,
+            Blur = Application.Current?.TryFindResource("Space2", out var b) == true && b is double v ? v : 0,
+            Color = Application.Current?.TryFindResource(ad, out var f) == true && f is ISolidColorBrush s ? s.Color : default
+        });
 
     }
 }

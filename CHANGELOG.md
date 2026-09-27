@@ -5,8 +5,16 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-09-27
+
 ### Added
+- Tokens `metric.installer-w` (720) and `metric.installer-h` (540): every installer takes the same window. Emitted as `--tk-installer-w/h`, `InstallerWidth`/`InstallerHeight`.
+- Rule `guncelleme/eski-duzen` (warn): a generated installer or update panel whose `düzen` marker is older than the template's. Delete the generated files and run the scaffold again.
 - `scaffold.js durum --react` writes a React/Tauri update-panel flavour (`UpdateBadge.tsx`, `UpdatePanel.tsx`, `update.css`), matching the Avalonia template's texts, 16 ms timer and creeping-ceiling contract.
+
+### Changed
+- `kur.ps1` redrawn on one standard (layout 2): 720×540, system-rounded corners, drawn title bar with the brand chip, fs-1 body, pill progress bar with a mono percent, mono log that fades at the top. The footer shows the install address alone on one line; the "Kurulum yeri" label is gone.
+- Avalonia `KurulumEkrani` follows the same layout; `GuncellemePaneli` and the React update panel take the same title size, progress bar and buttons.
 
 ## [0.20.0] - 2026-09-27
 

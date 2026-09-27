@@ -19,6 +19,29 @@ const DURUM_GOSTERGESI = /role\s*=\s*["']?status|aria-live|badge|rozet|\bstate\b
 const WEB_KOD = ['.ts', '.tsx', '.js', '.jsx'];
 const KOPRU_DOSYASI = /contextBridge\.exposeInMainWorld/;
 
+const SABLON = /teknesyum-ui template ([\w./-]+)(?:\s*·\s*düzen (\d+))?/;
+const DUZENLI = new Set(['kur/kur.ps1', 'kur/avalonia/KurulumEkrani.axaml', 'kur/avalonia/KurulumEkrani.axaml.cs', 'durum/avalonia/GuncellemePaneli.axaml', 'durum/avalonia/GuncellemePaneli.axaml.cs']);
+const SABLONLAR = path.join(__dirname, '..', '..', 'templates');
+const guncelDuzen = {};
+
+function duzenOku(text) {
+  const m = SABLON.exec(String(text).slice(0, 300));
+  if (!m || !DUZENLI.has(m[1])) return null;
+  return { sablon: m[1], duzen: Number(m[2] || 1) };
+}
+
+function standart(sablon) {
+  if (!(sablon in guncelDuzen)) {
+    let d = null;
+    try {
+      const o = duzenOku(fs.readFileSync(path.join(SABLONLAR, sablon), 'utf8'));
+      d = o ? o.duzen : null;
+    } catch {}
+    guncelDuzen[sablon] = d;
+  }
+  return guncelDuzen[sablon];
+}
+
 function kok(ctx) {
   return ctx.root;
 }
@@ -135,6 +158,37 @@ module.exports = {
               ': take it from scaffold.js kur, do not hand-write it.',
           },
         ];
+      },
+    },
+    {
+      id: 'eski-duzen',
+      severity: 'warn',
+      check(ctx) {
+        if (path.resolve(kok(ctx)) === path.resolve(SABLONLAR, '..', '..')) return [];
+        const adaylar = [];
+        for (const f of ctx.files) if (f.ext === '.axaml' || f.ext === '.cs') adaylar.push({ rel: f.rel, text: f.text });
+        for (const ad of dosyalar(ctx)) {
+          if (!KURULUM.test(ad)) continue;
+          try {
+            adaylar.push({ rel: ad, text: fs.readFileSync(path.join(kok(ctx), ad), 'utf8') });
+          } catch {}
+        }
+        const out = [];
+        for (const a of adaylar) {
+          const o = duzenOku(a.text);
+          if (!o) continue;
+          const std = standart(o.sablon);
+          if (!std || o.duzen >= std) continue;
+          const komut = o.sablon.startsWith('kur/') ? 'scaffold.js kur <Ad> (same --kaynak/--depo/--varlik)' : 'scaffold.js durum';
+          out.push({
+            file: a.rel,
+            line: 1,
+            message:
+              'generated from ' + o.sablon + ' layout ' + o.duzen + ', the standard is layout ' + std +
+              ': delete the generated files and run ' + komut + ' again.',
+          });
+        }
+        return out;
       },
     },
     {

@@ -1,2 +1,2 @@
 bilesen: durum  pencere: 848x640  dugme: 3  denetim: 15  tasma: 0
-dugmeler: KapatDugmesi, IndirVeYukleDugmesi, IndirDugmesi
+dugmeler: KapatDugmesi, IndirDugmesi, IndirVeYukleDugmesi

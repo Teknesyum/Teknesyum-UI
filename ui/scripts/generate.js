@@ -561,6 +561,8 @@ function metricXaml(indent, timeTag) {
     d('SidebarCollapsedWidth', 'metric.sidebar-collapsed-w'),
     d('InputHeight', 'metric.input-h'),
     d('ModalWidth', 'metric.modal-w'),
+    d('InstallerWidth', 'metric.installer-w'),
+    d('InstallerHeight', 'metric.installer-h'),
     d('ModalMaxRatio', 'metric.modal-max-ratio'),
     d('ToastWidth', 'metric.toast-w'),
     d('ToastMax', 'metric.toast-max'),
@@ -770,6 +772,8 @@ ${onCss()}
   --tk-thumb-hover: ${rgba(tk('derived', 'scrollbar-thumb', 'hover-ref', 'renk-2'))};
   --tk-track: ${T.derived['scrollbar-track'] ? rgba('scrollbar-track') : rgba('black', 0.3)};
   --tk-modal-w: ${mcss('metric.modal-w')};
+  --tk-installer-w: ${mcss('metric.installer-w')};
+  --tk-installer-h: ${mcss('metric.installer-h')};
   --tk-modal-max-ratio: ${mcss('metric.modal-max-ratio')};
   --tk-toast-w: ${mcss('metric.toast-w')};
   --tk-toast-max: ${mcss('metric.toast-max')};
@@ -1939,6 +1943,8 @@ public static class Palette
     public const int    SidebarCollapsedWidth = ${m('metric.sidebar-collapsed-w')};
     public const int    InputHeight           = ${m('metric.input-h')};
     public const int    ModalWidth            = ${m('metric.modal-w')};
+    public const int    InstallerWidth        = ${m('metric.installer-w')};
+    public const int    InstallerHeight       = ${m('metric.installer-h')};
     public const double ModalMaxRatio         = ${m('metric.modal-max-ratio')};
     public const int    ToastWidth            = ${m('metric.toast-w')};
     public const int    ToastMax              = ${m('metric.toast-max')};

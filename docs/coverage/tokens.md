@@ -33,6 +33,7 @@ the same shape as the colour `ref` + `alpha` pattern and emits `var(--tk-sp-5)` 
 | Sidebar 240 / 48 | `metric.sidebar-w`, `sidebar-collapsed-w` | `--tk-sidebar-w`, `--tk-sidebar-collapsed-w` | `SidebarWidth`, `SidebarCollapsedWidth` | same |
 | Text input min-height 40 | `metric.input-h` | `--tk-input-h` | `InputHeight` | `InputHeight` |
 | Modal width `min(560px, 90vw)` | `metric.modal-w` (`vw-max`) | `--tk-modal-w` | `ModalWidth` (560) | `ModalWidth` |
+| Installer window 720×540 | `metric.installer-w`, `installer-h` | `--tk-installer-w`, `--tk-installer-h` | `InstallerWidth`, `InstallerHeight` | same |
 | Modal max height ratio 0.85 | `metric.modal-max-ratio` | `--tk-modal-max-ratio` | `ModalMaxRatio` | `ModalMaxRatio` |
 | Toast width `min(360px, 100vw − 48px)` | `metric.toast-w` (`gutter-ref` → `space.5`) | `--tk-toast-w` | `ToastWidth` (360) | `ToastWidth` |
 | Toast max 3, life 6000 ms | `metric.toast-max`, `toast-life` | `--tk-toast-max`, `--tk-toast-life` | `ToastMax`, `ToastLife` (`Duration`/`TimeSpan`) | `ToastMax`, `ToastLifeMs` |

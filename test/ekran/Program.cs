@@ -14,11 +14,13 @@ AppBuilder.Configure<App>()
     .SetupWithoutStarting();
 
 var kok = args.Length > 0 ? Path.GetFullPath(args[0]) : Kok();
-var bilesenler = new (string klasor, Func<Control> yap, int genislik)[]
+var kurG = (int)(double)Sahne.Kaynak("InstallerWidth")!;
+var kurY = (int)(double)Sahne.Kaynak("InstallerHeight")!;
+var bilesenler = new (string klasor, Func<Control> yap, int genislik, int yukseklik)[]
 {
-    ("ustcubuk", () => Sahne.UstCubuk(), 1024),
-    ("durum", () => Sahne.Guncelleme(), 848),
-    ("kur", () => Sahne.Kurulum(), 848),
+    ("ustcubuk", () => Sahne.UstCubuk(), 1024, 640),
+    ("durum", () => Sahne.Guncelleme(), 848, 640),
+    ("kur", () => Sahne.Kurulum(), kurG, kurY),
 };
 var durumlar = new (string ad, string[] sozde)[]
 {
@@ -29,11 +31,11 @@ var durumlar = new (string ad, string[] sozde)[]
     ("edilgen", Array.Empty<string>()),
 };
 var toplam = 0;
-foreach (var (klasor, yap, genislik) in bilesenler)
+foreach (var (klasor, yap, genislik, yukseklik) in bilesenler)
 {
     var cikti = Path.Combine(kok, "ui", "templates", klasor, "avalonia", "ekran");
     Directory.CreateDirectory(cikti);
-    var pencere = Sahne.Pencere(yap(), genislik, 640);
+    var pencere = Sahne.Pencere(yap(), genislik, yukseklik);
     pencere.Show();
     Oturt();
     var dugmeler = pencere.GetVisualDescendants().OfType<Button>()
@@ -72,7 +74,7 @@ foreach (var (klasor, yap, genislik) in bilesenler)
     }
     pencere.Close();
     var sb = new StringBuilder();
-    sb.AppendLine($"bilesen: {klasor}  pencere: {genislik}x640  dugme: {dugmeler.Count}  denetim: {denetim}  tasma: {satirlar.Count}");
+    sb.AppendLine($"bilesen: {klasor}  pencere: {genislik}x{yukseklik}  dugme: {dugmeler.Count}  denetim: {denetim}  tasma: {satirlar.Count}");
     sb.AppendLine("dugmeler: " + string.Join(", ", dugmeler.Select(b => string.IsNullOrEmpty(b.Name) ? b.Content?.ToString() : b.Name)));
     foreach (var s in satirlar.Distinct()) sb.AppendLine(s);
     File.WriteAllText(Path.Combine(cikti, "kirpma.txt"), sb.ToString(), new UTF8Encoding(false));

@@ -1,13 +1,147 @@
-<!-- teknesyum-ui template kur/avalonia/KurulumEkrani.axaml -->
+<!-- teknesyum-ui template kur/avalonia/KurulumEkrani.axaml · düzen 2 -->
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="{{AD}}.Kabuk.KurulumEkrani"
+             Classes="kurulum"
              ClipToBounds="False">
+
+  <UserControl.Resources>
+    <ControlTheme x:Key="KurIkincil" TargetType="Button">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+      <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightBody}"/>
+      <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
+      <Setter Property="MinHeight" Value="{StaticResource TargetMin}"/>
+      <Setter Property="MinWidth" Value="{StaticResource TargetMin}"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="ClipToBounds" Value="False"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Template">
+        <ControlTemplate TargetType="Button">
+          <Border Name="bd"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}"
+                  RenderTransformOrigin="50%,50%">
+            <Border.Transitions>
+              <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="{StaticResource TInstant}" Easing="{StaticResource EOut}"/>
+              </Transitions>
+            </Border.Transitions>
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:pointerover">
+        <Setter Property="Background" Value="{StaticResource Renk1x10}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk1x10}"/>
+      </Style>
+      <Style Selector="^:focus-visible">
+        <Setter Property="Background" Value="{StaticResource Renk1x10}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk1x10}"/>
+      </Style>
+      <Style Selector="^:pressed">
+        <Setter Property="Background" Value="{StaticResource Renk1x10}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk1x10}"/>
+      </Style>
+      <Style Selector="^:pressed /template/ Border#bd">
+        <Setter Property="RenderTransform" Value="scale(0.98)"/>
+      </Style>
+      <Style Selector="^:disabled">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
+        <Setter Property="Cursor" Value="No"/>
+      </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="KurBirincil" TargetType="Button" BasedOn="{StaticResource KurIkincil}">
+      <Setter Property="Template">
+        <ControlTemplate TargetType="Button">
+          <Border Name="bd"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}"
+                  BoxShadow="{DynamicResource KurParlama}"
+                  RenderTransformOrigin="50%,50%">
+            <Border.Transitions>
+              <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="{StaticResource TInstant}" Easing="{StaticResource EOut}"/>
+              </Transitions>
+            </Border.Transitions>
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:pointerover /template/ Border#bd">
+        <Setter Property="BoxShadow" Value="{DynamicResource KurParlamaGuclu}"/>
+      </Style>
+      <Style Selector="^:focus-visible /template/ Border#bd">
+        <Setter Property="BoxShadow" Value="{DynamicResource KurParlamaGuclu}"/>
+      </Style>
+      <Style Selector="^:disabled /template/ Border#bd">
+        <Setter Property="BoxShadow" Value="{DynamicResource KurParlama}"/>
+      </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="KurBag" TargetType="Button">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
+      <Setter Property="MinHeight" Value="{StaticResource TargetMin}"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="ClipToBounds" Value="False"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Template">
+        <ControlTemplate TargetType="Button">
+          <Border Background="{TemplateBinding Background}">
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:pointerover">
+        <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
+      </Style>
+      <Style Selector="^:focus-visible">
+        <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
+      </Style>
+      <Style Selector="^:pressed">
+        <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
+      </Style>
+      <Style Selector="^:disabled">
+        <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
+        <Setter Property="Cursor" Value="No"/>
+      </Style>
+    </ControlTheme>
+  </UserControl.Resources>
 
   <UserControl.Styles>
     <Style Selector="TextBlock.gunluk">
       <Setter Property="FontFamily" Value="{StaticResource FontMono}"/>
-      <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
       <Setter Property="TextWrapping" Value="NoWrap"/>
       <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
       <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
@@ -15,98 +149,135 @@
     <Style Selector="TextBlock.gunluk.son">
       <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
     </Style>
-    <Style Selector="Border.isaret">
-      <Setter Property="Width" Value="{StaticResource TargetMin}"/>
-      <Setter Property="Height" Value="{StaticResource TargetMin}"/>
-      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
-      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
+    <Style Selector="Ellipse.isaret">
+      <Setter Property="Stroke" Value="{StaticResource TextLabel}"/>
+    </Style>
+    <Style Selector="TextBlock.isaret, TextBlock.adim">
+      <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightBody}"/>
+      <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
-    <Style Selector="Border.isaret > TextBlock">
+    <Style Selector="TextBlock.isaret">
       <Setter Property="FontFamily" Value="{StaticResource FontMono}"/>
-      <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
-      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
       <Setter Property="HorizontalAlignment" Value="Center"/>
-      <Setter Property="VerticalAlignment" Value="Center"/>
-      <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
     </Style>
-    <Style Selector="TextBlock.adim">
-      <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
+    <Style Selector="TextBlock.adim.suren, TextBlock.adim.bitti, TextBlock.adim.hata">
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
     </Style>
-    <Style Selector="Border.isaret.suren">
-      <Setter Property="Background" Value="{StaticResource Renk1x20}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource Renk1}"/>
+    <Style Selector="Ellipse.isaret.suren">
+      <Setter Property="Stroke" Value="{StaticResource Renk1}"/>
+      <Setter Property="Effect" Value="{StaticResource HeroGlow}"/>
     </Style>
-    <Style Selector="Border.isaret.suren > TextBlock, TextBlock.adim.suren">
+    <Style Selector="TextBlock.isaret.suren, TextBlock.adim.suren">
       <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
     </Style>
-    <Style Selector="TextBlock.adim.suren">
-      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+    <Style Selector="Ellipse.isaret.bitti">
+      <Setter Property="Stroke" Value="{StaticResource Success}"/>
     </Style>
-    <Style Selector="Border.isaret.bitti">
-      <Setter Property="BorderBrush" Value="{StaticResource Success}"/>
-    </Style>
-    <Style Selector="Border.isaret.bitti > TextBlock, TextBlock.adim.bitti">
+    <Style Selector="TextBlock.isaret.bitti">
       <Setter Property="Foreground" Value="{StaticResource Success}"/>
     </Style>
-    <Style Selector="Border.isaret.hata">
-      <Setter Property="BorderBrush" Value="{StaticResource DangerText}"/>
+    <Style Selector="TextBlock.adim.bitti">
+      <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
     </Style>
-    <Style Selector="Border.isaret.hata > TextBlock, TextBlock.adim.hata">
+    <Style Selector="Ellipse.isaret.hata">
+      <Setter Property="Stroke" Value="{StaticResource DangerText}"/>
+    </Style>
+    <Style Selector="TextBlock.isaret.hata, TextBlock.adim.hata">
       <Setter Property="Foreground" Value="{StaticResource DangerText}"/>
     </Style>
   </UserControl.Styles>
 
-  <Border Padding="{StaticResource PanelPadding}" ClipToBounds="False">
-    <Grid RowDefinitions="Auto,*,Auto,Auto,Auto" RowSpacing="{StaticResource Space4}" ClipToBounds="False">
+  <Border Name="Cerceve" ClipToBounds="False">
+    <DockPanel ClipToBounds="False">
 
-      <StackPanel Grid.Row="0" Spacing="{StaticResource Space1}">
-        <StackPanel Orientation="Horizontal" Spacing="{StaticResource Space2}">
-          <Image Name="LogoResmi" Width="{StaticResource IconSize3}" Height="{StaticResource IconSize3}"
-                 VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw"/>
-          <TextBlock Name="AdYazisi" Theme="{StaticResource H2}" VerticalAlignment="Center"><Run Foreground="{StaticResource Renk1}"/><Run Foreground="{StaticResource Renk2Text}"/></TextBlock>
+      <Grid Name="Cubuk" DockPanel.Dock="Top" Height="{StaticResource TitleBarHeightMin}" Background="Transparent"
+            ColumnDefinitions="Auto,*,Auto,Auto,Auto" ClipToBounds="False">
+        <Border Grid.Column="0" Width="{StaticResource Space4}" IsHitTestVisible="False"/>
+        <TextBlock Name="AdYazisi" Grid.Column="1" VerticalAlignment="Center" IsHitTestVisible="False"
+                   FontFamily="{StaticResource FontSans}" FontSize="{StaticResource LabelTitleSize}"
+                   FontWeight="{StaticResource LabelTitleWeight}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"><Run Foreground="{StaticResource LabelTitleBrush}"/><Run Foreground="{StaticResource LabelTitleAccentBrush}"/></TextBlock>
+        <Button Name="ImzaDugmesi" Grid.Column="2" Theme="{StaticResource SigChip}" Classes="sigchip marka"
+                FontSize="{StaticResource LabelBrandSize}" FontWeight="{StaticResource LabelBrandWeight}"
+                AutomationProperties.Name="{Binding $self.Content}"/>
+        <Border Grid.Column="3" Width="{StaticResource Space3}" IsHitTestVisible="False"/>
+        <StackPanel Grid.Column="4" Orientation="Horizontal" ClipToBounds="False">
+          <Button Name="KucultDugmesi" Theme="{StaticResource WindowButton}"
+                  MinHeight="{StaticResource TitleBarHeightMin}" Height="{StaticResource TitleBarHeightMin}"
+                  AutomationProperties.Name="{Binding $self.(ToolTip.Tip)}">
+            <Path Data="M0 7H14" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"
+                  Width="{StaticResource IconSize1}" Height="{StaticResource IconSize1}" VerticalAlignment="Center"/>
+          </Button>
+          <Button Name="CarpiDugmesi" Theme="{StaticResource WindowButton}" Classes="close"
+                  MinHeight="{StaticResource TitleBarHeightMin}" Height="{StaticResource TitleBarHeightMin}"
+                  AutomationProperties.Name="{Binding $self.(ToolTip.Tip)}">
+            <Path Data="M0 0L14 14M14 0L0 14" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"
+                  Width="{StaticResource IconSize1}" Height="{StaticResource IconSize1}"/>
+          </Button>
         </StackPanel>
-        <TextBlock Name="CumleYazisi" Theme="{StaticResource Body}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
-      </StackPanel>
-
-      <Grid Grid.Row="1" ColumnDefinitions="Auto,*" ColumnSpacing="{StaticResource Space5}">
-        <StackPanel Name="Adimlar" Grid.Column="0" Spacing="{StaticResource Space3}"/>
-        <Border Grid.Column="1" Theme="{StaticResource Panel}" Padding="{StaticResource InputPadding}" ClipToBounds="True">
-          <StackPanel Name="Gunluk" VerticalAlignment="Bottom"/>
-        </Border>
       </Grid>
 
-      <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="{StaticResource Space3}">
-        <Border Name="Iz" Grid.Column="0" Height="{StaticResource Space2}" CornerRadius="{StaticResource Radius}"
-                Background="{StaticResource Renk1x10}" VerticalAlignment="Center" ClipToBounds="True">
-          <Border Name="Dolgu" CornerRadius="{StaticResource Radius}" RenderTransformOrigin="0%,50%">
-            <Border.Background>
-              <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
-                <GradientStop Offset="0" Color="{StaticResource Renk1Color}"/>
-                <GradientStop Offset="1" Color="{StaticResource Renk2Color}"/>
-              </LinearGradientBrush>
-            </Border.Background>
-          </Border>
-        </Border>
-        <TextBlock Name="YuzdeYazisi" Grid.Column="1" Theme="{StaticResource MonoValue}" VerticalAlignment="Center"/>
-      </Grid>
+      <Border Name="Govde" ClipToBounds="False">
+        <DockPanel VerticalSpacing="{StaticResource Space3}" ClipToBounds="False">
 
-      <Grid Grid.Row="3" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{StaticResource Space3}">
-        <TextBlock Name="YerEtiketiYazisi" Grid.Column="0" Theme="{StaticResource Label}" VerticalAlignment="Center"/>
-        <TextBlock Name="YerYazisi" Grid.Column="1" Theme="{StaticResource Body}" VerticalAlignment="Center"
-                   TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
-        <Button Name="DegistirDugmesi" Grid.Column="2" Theme="{StaticResource GhostButton}" AutomationProperties.Name="{Binding $self.Content}"/>
-      </Grid>
+          <TextBlock Name="CumleYazisi" DockPanel.Dock="Top" FontFamily="{StaticResource FontSans}"
+                     FontSize="{StaticResource FontSize1}" Foreground="{StaticResource TextLabel}"
+                     TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
 
-      <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="{StaticResource Space3}"
-                  HorizontalAlignment="Right" ClipToBounds="False">
-        <Button Name="KapatDugmesi" Theme="{StaticResource GhostButton}" AutomationProperties.Name="{Binding $self.Content}"/>
-        <Button Name="KurDugmesi" Theme="{StaticResource PrimaryButton}" AutomationProperties.Name="{Binding $self.Content}"/>
-        <Button Name="YenidenDugmesi" Theme="{StaticResource PrimaryButton}" AutomationProperties.Name="{Binding $self.Content}"/>
-        <Button Name="AcDugmesi" Theme="{StaticResource PrimaryButton}" AutomationProperties.Name="{Binding $self.Content}"/>
-      </StackPanel>
+          <StackPanel Name="Adimlar" DockPanel.Dock="Top" Spacing="{StaticResource Space1}"/>
 
-    </Grid>
+          <Grid Name="Ilerleme" DockPanel.Dock="Top" ColumnDefinitions="*,Auto" ColumnSpacing="{StaticResource Space3}">
+            <Border Name="Iz" Grid.Column="0" Height="{StaticResource Space1}" CornerRadius="{StaticResource Radius}"
+                    Background="{StaticResource Renk1x10}" VerticalAlignment="Center" ClipToBounds="True">
+              <Border Name="Dolgu" CornerRadius="{StaticResource Radius}" RenderTransformOrigin="0%,50%">
+                <Border.Background>
+                  <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                    <GradientStop Offset="0" Color="{StaticResource Renk1Color}"/>
+                    <GradientStop Offset="0.5" Color="{StaticResource Renk3Color}"/>
+                    <GradientStop Offset="1" Color="{StaticResource Renk2Color}"/>
+                  </LinearGradientBrush>
+                </Border.Background>
+              </Border>
+            </Border>
+            <TextBlock Name="YuzdeYazisi" Grid.Column="1" VerticalAlignment="Center" TextAlignment="Right"
+                       FontFamily="{StaticResource FontMono}" FontSize="{StaticResource FontSize1}"
+                       Foreground="{StaticResource TextBody}"/>
+          </Grid>
+
+          <Grid Name="AltCubuk" DockPanel.Dock="Bottom" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{StaticResource Space3}"
+                ClipToBounds="False">
+            <TextBlock Name="YerYazisi" Grid.Column="0" VerticalAlignment="Center" TextWrapping="NoWrap"
+                       FontFamily="{StaticResource FontSans}" FontSize="{StaticResource FontSize1}"
+                       Foreground="{StaticResource TextBody}"/>
+            <Button Name="DegistirDugmesi" Grid.Column="1" Theme="{StaticResource KurBag}"
+                    AutomationProperties.Name="{Binding #DegistirYazisi.Text}">
+              <TextBlock Name="DegistirYazisi" TextDecorations="Underline"/>
+            </Button>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{StaticResource Space2}" ClipToBounds="False">
+              <Button Name="KuruluyorDugmesi" AutomationProperties.Name="{Binding $self.Content}" Theme="{StaticResource KurIkincil}" IsEnabled="False"
+                      ToolTip.ShowOnDisabled="True"
+                      ToolTip.Tip="{Binding $parent[UserControl].KuruluyorIpucu}"/>
+              <Button Name="GunlukDugmesi" AutomationProperties.Name="{Binding $self.Content}" Theme="{StaticResource KurIkincil}"/>
+              <Button Name="KapatDugmesi" AutomationProperties.Name="{Binding $self.Content}" Theme="{StaticResource KurIkincil}"/>
+              <Button Name="KurDugmesi" AutomationProperties.Name="{Binding $self.Content}" Theme="{StaticResource KurBirincil}"/>
+              <Button Name="YenidenDugmesi" AutomationProperties.Name="{Binding $self.Content}" Theme="{StaticResource KurBirincil}"/>
+              <Button Name="AcDugmesi" AutomationProperties.Name="{Binding $self.Content}" Theme="{StaticResource KurBirincil}"/>
+            </StackPanel>
+          </Grid>
+
+          <TextBlock Name="HataYazisi" DockPanel.Dock="Bottom" TextWrapping="Wrap"
+                     FontFamily="{StaticResource FontSans}" FontSize="{StaticResource FontSize1}"
+                     Foreground="{StaticResource DangerText}"/>
+
+          <Panel Name="GunlukKutusu" ClipToBounds="True">
+            <StackPanel Name="Gunluk" VerticalAlignment="Bottom"/>
+          </Panel>
+
+        </DockPanel>
+      </Border>
+
+    </DockPanel>
   </Border>
 </UserControl>

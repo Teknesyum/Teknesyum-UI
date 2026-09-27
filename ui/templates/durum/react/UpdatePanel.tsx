@@ -183,7 +183,7 @@ function Bar({ percent, running, label }: { percent: number; running: boolean; l
       <div className="update-panel__progress-track" role="progressbar" aria-valuenow={Math.round(value)} aria-valuemin={0} aria-valuemax={100} aria-label={label}>
         <div className="update-panel__progress-fill" style={{ transform: 'scaleX(' + value / 100 + ')' }} />
       </div>
-      <span className="update-panel__progress-percent">%{Math.floor(value)}</span>
+      <span className="update-panel__progress-percent tk-mono">%{Math.floor(value)}</span>
     </div>
   );
 }

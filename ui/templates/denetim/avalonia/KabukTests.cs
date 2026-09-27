@@ -52,7 +52,7 @@ namespace {{AD}}.Kontrast
             {
                 var fs2 = Assert.IsType<double>(Kaynak(pencere, "FontSize2"));
                 var muafTemalar = new[] { Kaynak(pencere, "Label"), Kaynak(pencere, "Hint") }.OfType<ControlTheme>().ToList();
-                foreach (var dugum in pencere.GetVisualDescendants().Where(v => v.IsEffectivelyVisible))
+                foreach (var dugum in pencere.GetVisualDescendants().Where(v => v.IsEffectivelyVisible && !KurulumYuzeyi(v)))
                 {
                     switch (dugum)
                     {
@@ -141,6 +141,9 @@ namespace {{AD}}.Kontrast
                 sonuc = sonuc.Union(dikdortgen.Translate(new Vector(golge.OffsetX, golge.OffsetY)).Inflate(golge.Blur + golge.Spread));
             return sonuc;
         }
+
+        static bool KurulumYuzeyi(Visual dugum) =>
+            dugum.GetSelfAndVisualAncestors().OfType<StyledElement>().Any(v => v.Classes.Contains("kurulum"));
 
         static bool Muaf(TextBlock tb, List<ControlTheme> muafTemalar)
         {

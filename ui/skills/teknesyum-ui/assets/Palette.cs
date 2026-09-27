@@ -133,6 +133,8 @@ public static class Palette
     public const int    SidebarCollapsedWidth = 48;
     public const int    InputHeight           = 40;
     public const int    ModalWidth            = 560;
+    public const int    InstallerWidth        = 720;
+    public const int    InstallerHeight       = 540;
     public const double ModalMaxRatio         = 0.85;
     public const int    ToastWidth            = 360;
     public const int    ToastMax              = 3;

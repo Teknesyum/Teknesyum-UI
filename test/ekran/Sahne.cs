@@ -26,7 +26,7 @@ public static class Sahne
 
     public static KurulumEkrani Kurulum()
     {
-        var k = new KurulumEkrani { Ad1 = "Dusty", Ad2 = "Bytes", Logo = Logo(), KurulumYeri = @"C:\Users\ornek\AppData\Local\Programs\DustyBytes" };
+        var k = new KurulumEkrani { Ad = "DustyBytes", KurulumYeri = @"C:\Users\ornek\AppData\Local\Programs\DustyBytes" };
         k.Adim(2, 18, "Yazma izni denetleniyor.");
         k.Adim(20, 38, "Sürüm GitHub Releases üzerinden indiriliyor.");
         k.Adim(30, 38, "İndirme sürüyor, 18 MB / 42 MB.");

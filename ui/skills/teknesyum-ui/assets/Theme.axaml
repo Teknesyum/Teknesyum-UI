@@ -203,6 +203,8 @@
     <sys:Double x:Key="SidebarCollapsedWidth">48</sys:Double>
     <sys:Double x:Key="InputHeight">40</sys:Double>
     <sys:Double x:Key="ModalWidth">560</sys:Double>
+    <sys:Double x:Key="InstallerWidth">720</sys:Double>
+    <sys:Double x:Key="InstallerHeight">540</sys:Double>
     <sys:Double x:Key="ModalMaxRatio">0.85</sys:Double>
     <sys:Double x:Key="ToastWidth">360</sys:Double>
     <sys:Double x:Key="ToastMax">3</sys:Double>

@@ -218,6 +218,8 @@
   --tk-thumb-hover: rgba(200, 46, 224, 1);
   --tk-track: rgba(10, 11, 14, 0.3);
   --tk-modal-w: min(560px, 90vw);
+  --tk-installer-w: 720px;
+  --tk-installer-h: 540px;
   --tk-modal-max-ratio: 0.85;
   --tk-toast-w: min(360px, calc(100vw - var(--tk-sp-5) * 2));
   --tk-toast-max: 3;

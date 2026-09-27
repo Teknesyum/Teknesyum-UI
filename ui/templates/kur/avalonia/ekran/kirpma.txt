@@ -1,2 +1,2 @@
-bilesen: kur  pencere: 848x640  dugme: 3  denetim: 15  tasma: 0
-dugmeler: DegistirDugmesi, KapatDugmesi, AcDugmesi
+bilesen: kur  pencere: 720x540  dugme: 5  denetim: 25  tasma: 0
+dugmeler: ImzaDugmesi, KucultDugmesi, CarpiDugmesi, KapatDugmesi, AcDugmesi

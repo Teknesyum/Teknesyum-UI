@@ -18,6 +18,86 @@ const HAND_TITLEBAR = [
   /data-tauri-drag-region|-webkit-app-region:\s*drag/,
 ];
 
+const OUTLINE_EXTS = ['.css', '.xaml', '.axaml'];
+const OUTLINE_CSS_KEYWORD = /\.[\w-]*(?:chip|tab|tk-sync|tk-update)[\w-]*/i;
+const OUTLINE_TITLEBAR_BUTTON = /\.[\w-]*titlebar[\w-]*(?:control|button)[\w-]*/i;
+const OUTLINE_EXCEPTION = /outlined/i;
+const OUTLINE_XAML_NAME = /tab|chip|header|windowcontrol|caption/i;
+
+function outlineStripComments(text) {
+  return String(text)
+    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
+    .replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, ' '));
+}
+
+function outlineCssBlocks(text) {
+  const out = [];
+  const stack = [];
+  let start = 0;
+  let line = 1;
+  let startLine = 1;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (c === '{') {
+      const raw = text.slice(start, i);
+      const blank = (/^\s*/.exec(raw)[0].match(/\n/g) || []).length;
+      stack.push({ selector: raw.trim(), line: startLine + blank, at: i + 1 });
+      start = i + 1;
+      startLine = line;
+    } else if (c === '}') {
+      const rule = stack.pop();
+      if (rule) {
+        rule.body = text.slice(rule.at, i);
+        if (!rule.body.includes('{')) out.push(rule);
+      }
+      start = i + 1;
+      startLine = line;
+    } else if (c === '\n') {
+      line++;
+    }
+  }
+  return out;
+}
+
+function outlineTarget(selector) {
+  return selector
+    .split(',')
+    .map((s) => s.trim())
+    .some((s) => !OUTLINE_EXCEPTION.test(s) && (OUTLINE_CSS_KEYWORD.test(s) || OUTLINE_TITLEBAR_BUTTON.test(s)));
+}
+
+function outlineBorderDeclaration(body) {
+  for (const prop of ['border', 'border-top', 'border-bottom', 'border-left', 'border-right']) {
+    const re = new RegExp('(?:^|[;{\\s])' + prop + '\\s*:\\s*([^;}]+)', 'i');
+    const m = re.exec(body);
+    if (!m) continue;
+    const v = m[1].trim();
+    if (/^(?:0(?:px)?|none)\s*$/i.test(v)) continue;
+    if (/\bsolid\b/i.test(v) && /^[\d.]/.test(v)) {
+      return (body.slice(0, m.index).match(/\n/g) || []).length;
+    }
+  }
+  const styleSolid = /(?:^|[;{\s])border-style\s*:\s*solid\b/i.test(body);
+  const widthMatch = /(?:^|[;{\s])border-width\s*:\s*([\d.]+)/i.exec(body);
+  if (styleSolid && widthMatch && parseFloat(widthMatch[1]) > 0) return 0;
+  return -1;
+}
+
+function outlineXamlHosts(text) {
+  const out = [];
+  const re = /<(Style|ControlTheme)\b([^>]*)>([\s\S]*?)<\/(?:Style|ControlTheme)>/g;
+  let m;
+  while ((m = re.exec(text))) {
+    const attrs = m[2];
+    const key = (/x:Key\s*=\s*"([^"]*)"/.exec(attrs) || [])[1] || '';
+    const sel = (/Selector\s*=\s*"([^"]*)"/.exec(attrs) || [])[1] || '';
+    const target = (/TargetType\s*=\s*"([^"]*)"/.exec(attrs) || [])[1] || '';
+    const bodyStart = m.index + m[0].indexOf(m[3]);
+    out.push({ name: (key + ' ' + sel + ' ' + target).trim(), body: m[3], bodyStart });
+  }
+  return out;
+}
+
 function lineOf(text, index) {
   return text.slice(0, index).split(/\r?\n/).length;
 }
@@ -128,6 +208,47 @@ module.exports = {
               ', do not write it by hand.',
           },
         ];
+      },
+    },
+    {
+      id: 'anahatsiz-dugme',
+      severity: 'warn',
+      exts: OUTLINE_EXTS,
+      check(file, rawText) {
+        const text = outlineStripComments(rawText);
+        const ext = '.' + file.split('.').pop().toLowerCase();
+        const out = [];
+        if (ext === '.css') {
+          for (const block of outlineCssBlocks(text)) {
+            if (!outlineTarget(block.selector)) continue;
+            const offset = outlineBorderDeclaration(block.body);
+            if (offset < 0) continue;
+            out.push({
+              line: block.line + offset,
+              message:
+                block.selector.split(',')[0].trim() +
+                ' is a chip/tab/window-button target — teknesyum-ui keeps these outline-free (border: 0); ' +
+                'hover moves the text to Renk 2 text and opens an underline instead.',
+            });
+          }
+          return out;
+        }
+        for (const host of outlineXamlHosts(text)) {
+          if (!OUTLINE_XAML_NAME.test(host.name.replace(/[^a-z]/gi, ''))) continue;
+          const m = /<Setter\s+Property="BorderThickness"\s+Value="([^"]*)"/i.exec(host.body);
+          if (!m) continue;
+          const nums = m[1].split(/[,\s]+/).map(Number).filter((n) => !Number.isNaN(n));
+          if (nums.length && nums.every((n) => n === 0)) continue;
+          out.push({
+            line: (text.slice(0, host.bodyStart + host.body.indexOf(m[0])).match(/\n/g) || []).length + 1,
+            message:
+              (host.name || 'this style') +
+              ' sets BorderThickness ' +
+              m[1] +
+              ' on a tab/chip/header/window-control style — teknesyum-ui keeps these outline-free.',
+          });
+        }
+        return out;
       },
     },
   ],

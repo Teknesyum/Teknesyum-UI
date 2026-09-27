@@ -975,11 +975,6 @@ body[data-sihirbaz] .bilesen-liste { padding-bottom: calc(var(--tk-sp-4) * 2 + v
   font-size: min(var(--tk-label-support-fs, var(--tk-fs-1)), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
   font-weight: var(--tk-label-support-fw, var(--tk-fw-semi));
 }
-.tk-titlebar__chip:where(.onizleme [data-etiket='site']) {
-  color: var(--tk-label-site-color, var(--tk-renk-1));
-  font-size: min(var(--tk-label-site-fs, var(--tk-fs-1)), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
-  font-weight: var(--tk-label-site-fw, var(--tk-fw-semi));
-}
 .tk-update:where(.onizleme [data-etiket='update']) { color: var(--tk-label-update-color, var(--tk-text)); font-size: var(--tk-label-update-fs, var(--tk-fs-1)); font-weight: var(--tk-label-update-fw, var(--tk-fw-semi)); }
 .tk-sync:where(.onizleme [data-etiket='sync']) { color: var(--tk-label-sync-color, var(--tk-text)); font-size: var(--tk-label-sync-fs, var(--tk-fs-1)); font-weight: var(--tk-label-sync-fw, var(--tk-fw-semi)); }
 .onizleme .tk-btn.s-uzerinde { transform: scale(var(--tk-scale-hover)); }

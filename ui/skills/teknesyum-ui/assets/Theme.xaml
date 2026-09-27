@@ -237,9 +237,6 @@
   <SolidColorBrush x:Key="LabelSupportBrush" Color="#FFD4B3FF"/>
   <sys:Double x:Key="LabelSupportSize">14</sys:Double>
   <FontWeight x:Key="LabelSupportWeight">SemiBold</FontWeight>
-  <SolidColorBrush x:Key="LabelSiteBrush" Color="#FF5AA8FF"/>
-  <sys:Double x:Key="LabelSiteSize">14</sys:Double>
-  <FontWeight x:Key="LabelSiteWeight">SemiBold</FontWeight>
   <SolidColorBrush x:Key="LabelUpdateBrush" Color="#FFF2F3F6"/>
   <sys:Double x:Key="LabelUpdateSize">14</sys:Double>
   <FontWeight x:Key="LabelUpdateWeight">SemiBold</FontWeight>

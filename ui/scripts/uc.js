@@ -182,7 +182,7 @@ function metin(secenek) {
     'uc bir denetim değil, dönüştürme emridir: kullanıcı programın bütün arayüzünü sahibin düzeninde (`ui-duzeni` ve benim.tokens.json) görmek istiyor. Her pencere, panel, sekme, iletişim kutusu ve boş, hata, yükleme hâli düzene geçirilir. Bütün arayüzü dönüştürmeyeceksen, nedeni ne olursa olsun, işe başlamadan ilk mesajında tek cümleyle sor; uzun çalışıp dönüşümsüz rapor getirme.'
   );
   satirlar.push(
-    'Bütün uygulamalar aynı düzenden gelir: renk, ölçü, köşe, süre, eğri ve yazı değeri projeye elle yazılmaz, `teknesyum-ui/` altındaki üretilmiş kaynaklara bağlanır; sahip düzeni değiştirince `setup.js --apply` her projeyi günceller. Projenin kendi tema sistemi varsa o da bu token\'lara bağlanır. Marka, destek, site, güncelleme ve eşitleme yazıları ile pencere başlığı `labels.tr.json`/`labels.en.json` içinden okunur; uygulamada elle yazılmış kopyası kalmaz. Önce ekran envanterini çıkar ve rapora yaz; düzene geçmemiş tek ekran kalırsa iş bitmez.'
+    'Bütün uygulamalar aynı düzenden gelir: renk, ölçü, köşe, süre, eğri ve yazı değeri projeye elle yazılmaz, `teknesyum-ui/` altındaki üretilmiş kaynaklara bağlanır; sahip düzeni değiştirince `setup.js --apply` her projeyi günceller. Projenin kendi tema sistemi varsa o da bu token\'lara bağlanır. Marka, destek, güncelleme ve eşitleme yazıları ile pencere başlığı `labels.tr.json`/`labels.en.json` içinden okunur; uygulamada elle yazılmış kopyası kalmaz. Önce ekran envanterini çıkar ve rapora yaz; düzene geçmemiş tek ekran kalırsa iş bitmez.'
   );
   if (!fs.existsSync(path.join(kok, '.claude', 'teknesyum-ui.json')))
     satirlar.push('Proje standarda bağlı değil: önce `' + js('setup.js') + ' --check --project "' + kok + '"`, sonra `--apply --template benim`.');

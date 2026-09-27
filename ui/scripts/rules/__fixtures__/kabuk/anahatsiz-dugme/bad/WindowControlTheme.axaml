@@ -1,0 +1,5 @@
+<Styles xmlns="https://github.com/avaloniaui">
+  <ControlTheme x:Key="WindowControlButton" TargetType="Button">
+    <Setter Property="BorderThickness" Value="1"/>
+  </ControlTheme>
+</Styles>

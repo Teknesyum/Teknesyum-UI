@@ -1,12 +1,13 @@
 /* teknesyum-ui template durum/electron/badge.css */
 .tk-sync,
 .tk-update {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--tk-sp-2);
   min-height: var(--tk-target-min);
   padding: 0 var(--tk-sp-2);
-  border: var(--tk-border-w) solid var(--tk-border);
+  border: 0;
   border-radius: var(--tk-r-chip);
   background: transparent;
   color: var(--tk-text);
@@ -17,7 +18,6 @@
   -webkit-app-region: no-drag;
   transition:
     color var(--tk-t-fast) var(--tk-e-out),
-    border-color var(--tk-t-fast) var(--tk-e-out),
     transform var(--tk-t-instant) var(--tk-e-out);
 }
 
@@ -31,9 +31,37 @@
   background: currentColor;
 }
 
+.tk-sync::after,
+.tk-update::after {
+  content: '';
+  position: absolute;
+  left: var(--tk-sp-2);
+  right: var(--tk-sp-2);
+  bottom: calc(50% - 0.5em - var(--tk-sp-1) - var(--tk-focus-w));
+  height: var(--tk-focus-w);
+  border-radius: var(--tk-focus-w);
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform var(--tk-t-base) var(--tk-e-emphasized);
+}
+
+.tk-sync:hover,
+.tk-update:hover,
+.tk-sync:focus-visible,
+.tk-update:focus-visible {
+  color: var(--tk-renk-2-text);
+}
+
+.tk-sync:hover::after,
+.tk-update:hover::after,
+.tk-sync:focus-visible::after,
+.tk-update:focus-visible::after {
+  transform: scaleX(1);
+}
+
 .tk-sync:hover,
 .tk-update:hover {
-  border-color: var(--tk-border-strong);
   transform: scale(var(--tk-scale-hover));
 }
 
@@ -46,14 +74,26 @@
 
 .tk-sync:active,
 .tk-update:active {
-  border-color: var(--tk-border-strong);
+  color: var(--tk-renk-2-text);
   transform: scale(var(--tk-scale-press));
+}
+
+.tk-sync:active::after,
+.tk-update:active::after {
+  background: var(--tk-renk-2);
+  transform: scaleX(1);
 }
 
 .tk-sync:disabled,
 .tk-update:disabled {
   color: var(--tk-disabled);
   cursor: not-allowed;
+}
+
+.tk-sync:disabled::after,
+.tk-update:disabled::after {
+  cursor: not-allowed;
+  transform: scaleX(0);
 }
 
 .tk-sync[data-state='syncing'] {
@@ -70,7 +110,6 @@
 
 .tk-sync[data-state='offline'] {
   color: var(--tk-warning);
-  border-color: var(--tk-warning-border);
 }
 
 .tk-sync[data-state='local'] {
@@ -79,12 +118,10 @@
 
 .tk-update[data-step='download'] {
   color: var(--tk-warning);
-  border-color: var(--tk-warning-border);
 }
 
 .tk-update[data-step='install'] {
   color: var(--tk-success);
-  border-color: var(--tk-success);
 }
 
 @keyframes tk-sync-progress {

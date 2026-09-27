@@ -1,0 +1,7 @@
+.tk-sync {
+  border: 0;
+}
+
+.tk-sync:hover {
+  color: var(--tk-renk-2-text);
+}

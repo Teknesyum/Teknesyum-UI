@@ -146,7 +146,6 @@
   const ETIKETLER = [
     ['brand', 'Marka Yazısı'],
     ['support', 'Destek Yazısı'],
-    ['site', 'Site Yazısı'],
     ['update', 'Güncelleme Rozeti'],
     ['sync', 'Eşitleme Rozeti'],
     ['title', 'Pencere Başlığı'],
@@ -700,11 +699,10 @@
     return '<button type="button" class="tk-update" data-step="' + adim + '" data-etiket="update" title="' + et(st, 'update', adim) + '">' + et(st, 'update') + '</button>';
   }
 
-  function cipler(st, cerceve) {
+  function cipler(st) {
     return (
       '<a class="tk-titlebar__chip" href="#" data-bos data-etiket="brand" title="' + et(st, 'brand', 'hint') + '">' + et(st, 'brand') + '</a>' +
-      '<a class="tk-titlebar__chip tk-titlebar__chip--support" href="#" data-bos data-etiket="support" title="' + et(st, 'support', 'hint') + '">' + KAHVE + et(st, 'support') + '</a>' +
-      '<a class="tk-titlebar__chip' + (cerceve ? ' tk-titlebar__chip--outlined' : '') + '" href="#" data-bos data-etiket="site" title="' + et(st, 'site', 'hint') + '">' + et(st, 'site') + '</a>'
+      '<a class="tk-titlebar__chip tk-titlebar__chip--support" href="#" data-bos data-etiket="support" title="' + et(st, 'support', 'hint') + '">' + KAHVE + et(st, 'support') + '</a>'
     );
   }
 
@@ -724,8 +722,7 @@
       sekmeler(secili) +
       '<div class="tk-titlebar__tools">' + rozetler + cipler + pencere + '</div></header>' +
       '<div class="parca-pencere-ic">İçerik alanı</div></div>';
-    const duzCip = cipler(st, false);
-    const cerCip = cipler(st, true);
+    const duzCip = cipler(st);
     const sekmeli =
       ustcubuk(0, senkron(st, 'synced', et(st, 'sync') + ' · 14:32') + guncelleme(st, 'download'), duzCip) +
       ustcubuk(1, senkron(st, 'offline', et(st, 'sync', 'offline') + ' · 14:05') + guncelleme(st, 'install'), duzCip);
@@ -734,15 +731,10 @@
     const anahatsiz = durumIzgara([
       ['Sekme', (s, p) => kucuk('<a class="tk-titlebar__tab' + zorla(s) + '" href="#" data-bos' + bagEk(s, p, 'Bu sekme yetki ister') + '>Kayıtlar</a>')],
       ['Seçili Sekme', (s, p) => kucuk('<a class="tk-titlebar__tab' + zorla(s) + '" href="#" data-bos aria-current="page"' + bagEk(s, p, 'Bu sekme yetki ister') + '>Ana Sayfa</a>')],
-      ['Çip', (s, p) => kucuk('<a class="tk-titlebar__chip' + zorla(s) + '" href="#" data-bos' + bagEk(s, p, 'Bağlantı yok') + ' data-etiket="site">' + et(st, 'site') + '</a>')],
+      ['Çip', (s, p) => kucuk('<a class="tk-titlebar__chip tk-titlebar__chip--support' + zorla(s) + '" href="#" data-bos' + bagEk(s, p, 'Bağlantı yok') + ' data-etiket="support">' + et(st, 'support') + '</a>')],
       ['Küçült', (s, p) => kucuk(denetim(zorla(s), 'Küçült', 'minimize', durumAttr(s, p, 'Pencere küçültülemez')))],
       ['Kapat', (s, p) => kucuk(denetim(' tk-titlebar__control--close' + zorla(s), 'Kapat', 'close', durumAttr(s, p, 'Kayıt sürerken kapatılamaz')))],
     ]);
-    const cerceveli =
-      ustcubuk(2, senkron(st, 'synced', et(st, 'sync') + ' · 14:32'), cerCip) +
-      durumIzgara([
-        ['Çerçeveli Çip', (s, p) => kucuk('<a class="tk-titlebar__chip tk-titlebar__chip--outlined' + zorla(s) + '" href="#" data-bos' + bagEk(s, p, 'Bağlantı yok') + ' data-etiket="site">' + et(st, 'site') + '</a>')],
-      ]);
     const sade =
       oranEtiket(K.pair(K.withAlpha(P(R('glass-base')), T.derived.glass.alpha), P(R('text')), zemin(st)).ratio) +
       '<div><div class="baslik-cubugu"><strong><span data-etiket="brand">' + et(st, 'brand') + '</span> · <span data-etiket="title">' + baslikHtml(st, 'tk-titlebar__accent') + '</span></strong><div class="pencere-dugmeler">' +
@@ -753,7 +745,6 @@
     return (
       blok(on, 'sekmeli', 'Sekmeli Gezinme', 'Seçili sekme aria-current ile işaretlenir: yazı gövde rengine döner, altında gösterge çizgisi sabit durur. Üzerine gelin, basın, Tab ile gezin.', sekmeli) +
       blok(on, 'anahatsiz', 'Anahatsız Düğmeler · Durumlar', 'Sekme, çip ve pencere düğmelerinde anahat yoktur. Üzerine gelince yazı Renk 2 yazı kesimine döner, metnin altında ortadan açılan bir çizgi belirir. Normal sütunu canlıdır.', anahatsiz) +
-      blok(on, 'cerceveli', 'Çerçeveli İstisna', 'Tek istisna çerçeveli çiptir: kenarı yazı rengindedir, çubukta dikey ortalı durur ve alt çizgi göstermez.', cerceveli) +
       blok(on, 'sade', 'Sade Başlık Çubuğu · Karşıtlık', 'Cam yüzey üstünde gövde yazısı ölçülür.', sade)
     );
   }

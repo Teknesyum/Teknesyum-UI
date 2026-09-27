@@ -2,7 +2,7 @@
 import type { KeyboardEvent, ReactNode } from 'react';
 import './titlebar.css';
 
-export type TitleBarLinks = { sponsor?: string; brand: string; site?: string };
+export type TitleBarLinks = { sponsor?: string; brand: string };
 
 export type TitleBarTab = { id: string; label: string; disabled?: boolean };
 
@@ -18,8 +18,6 @@ export type TitleBarLabels = {
   sponsorTitle?: string;
   brand: string;
   brandTitle?: string;
-  site?: string;
-  siteTitle?: string;
   minimize: string;
   maximize: string;
   restore?: string;
@@ -135,11 +133,6 @@ export function TitleBar({ first, second, links, labels, language, sync, tabs, c
           >
             <CoffeeIcon />
             {labels.sponsor}
-          </a>
-        ) : null}
-        {links.site && labels.site ? (
-          <a className="tk-titlebar__chip" href={links.site} title={labels.siteTitle} target="_blank" rel="noopener noreferrer">
-            {labels.site}
           </a>
         ) : null}
         <div className="tk-titlebar__window">

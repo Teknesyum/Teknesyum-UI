@@ -5,8 +5,6 @@ const ANAHTARLAR = [
   ['sig.brandTitle', 'brand', 'hint-'],
   ['sig.support', 'support', ''],
   ['sig.supportTitle', 'support', 'hint-'],
-  ['sig.site', 'site', ''],
-  ['sig.siteTitle', 'site', 'hint-'],
   ['update.label', 'update', ''],
   ['update.download', 'update', 'download-'],
   ['update.install', 'update', 'install-'],

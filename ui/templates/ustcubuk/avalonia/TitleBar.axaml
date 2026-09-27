@@ -35,7 +35,6 @@
       </Button>
       <Button Name="ImzaDugmesi" Theme="{StaticResource SigChip}" Classes="sigchip marka" AutomationProperties.Name="{Binding $self.Content}"/>
       <Button Name="DestekDugmesi" Theme="{StaticResource SigChip}" Classes="sigchip destek" AutomationProperties.Name="{Binding $self.Content}"/>
-      <Button Name="SiteDugmesi" Theme="{StaticResource SigChip}" Classes="sigchip site" AutomationProperties.Name="{Binding $self.Content}"/>
     </StackPanel>
 
     <Border Grid.Column="3" Width="{StaticResource Space3}" IsHitTestVisible="False"/>

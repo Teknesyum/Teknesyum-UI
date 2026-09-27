@@ -1,11 +1,12 @@
 /* teknesyum-ui template durum/react/update.css */
 .tk-update {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--tk-sp-2);
   min-height: var(--tk-target-min);
   padding: 0 var(--tk-sp-2);
-  border: var(--tk-border-w) solid var(--tk-border);
+  border: 0;
   border-radius: var(--tk-r-chip);
   background: transparent;
   color: var(--tk-label-update-color, var(--tk-text));
@@ -17,7 +18,6 @@
   cursor: pointer;
   transition:
     color var(--tk-t-fast) var(--tk-e-out),
-    border-color var(--tk-t-fast) var(--tk-e-out),
     transform var(--tk-t-instant) var(--tk-e-out);
 }
 
@@ -30,8 +30,31 @@
   background: currentColor;
 }
 
+.tk-update::after {
+  content: '';
+  position: absolute;
+  left: var(--tk-sp-2);
+  right: var(--tk-sp-2);
+  bottom: calc(50% - 0.5em - var(--tk-sp-1) - var(--tk-focus-w));
+  height: var(--tk-focus-w);
+  border-radius: var(--tk-focus-w);
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform var(--tk-t-base) var(--tk-e-emphasized);
+}
+
+.tk-update:hover,
+.tk-update:focus-visible {
+  color: var(--tk-renk-2-text);
+}
+
+.tk-update:hover::after,
+.tk-update:focus-visible::after {
+  transform: scaleX(1);
+}
+
 .tk-update:hover {
-  border-color: var(--tk-border-strong);
   transform: scale(var(--tk-scale-hover));
 }
 
@@ -42,8 +65,13 @@
 }
 
 .tk-update:active {
-  border-color: var(--tk-border-strong);
+  color: var(--tk-renk-2-text);
   transform: scale(var(--tk-scale-press));
+}
+
+.tk-update:active::after {
+  background: var(--tk-renk-2);
+  transform: scaleX(1);
 }
 
 .tk-update:disabled {
@@ -51,14 +79,17 @@
   cursor: not-allowed;
 }
 
+.tk-update:disabled::after {
+  cursor: not-allowed;
+  transform: scaleX(0);
+}
+
 .tk-update[data-step='download'] {
   color: var(--tk-warning);
-  border-color: var(--tk-warning-border);
 }
 
 .tk-update[data-step='install'] {
   color: var(--tk-success);
-  border-color: var(--tk-success);
 }
 
 .update-panel {

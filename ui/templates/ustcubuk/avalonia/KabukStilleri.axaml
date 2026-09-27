@@ -52,7 +52,7 @@
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="Foreground" Value="{StaticResource Warning}"/>
       <Setter Property="BorderBrush" Value="{StaticResource Warning50}"/>
-      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+      <Setter Property="BorderThickness" Value="0"/>
       <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
       <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
@@ -92,13 +92,12 @@
       </Setter>
       <Style Selector="^.senkron">
         <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
       </Style>
       <Style Selector="^.senkron:pointerover">
-        <Setter Property="BorderBrush" Value="{StaticResource BorderStrong}"/>
+        <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
       </Style>
       <Style Selector="^.senkron:pressed">
-        <Setter Property="BorderBrush" Value="{StaticResource BorderStrong}"/>
+        <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
       </Style>
       <Style Selector="^.esitleniyor">
         <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
@@ -108,11 +107,9 @@
       </Style>
       <Style Selector="^.cevrimdisi">
         <Setter Property="Foreground" Value="{StaticResource Warning}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource Warning50}"/>
       </Style>
       <Style Selector="^.hazir">
         <Setter Property="Foreground" Value="{StaticResource Success}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource Success}"/>
       </Style>
       <Style Selector="^:pointerover /template/ Border#bd">
         <Setter Property="RenderTransform" Value="scale(1.02)"/>
@@ -122,7 +119,6 @@
       </Style>
       <Style Selector="^:disabled">
         <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
         <Setter Property="Cursor" Value="No"/>
       </Style>
       <Style Selector="^:disabled /template/ Border#bd">
@@ -132,8 +128,8 @@
 
     <ControlTheme x:Key="SigChip" TargetType="Button">
       <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="Foreground" Value="{StaticResource LabelSiteBrush}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource LabelSiteBrush}"/>
+      <Setter Property="Foreground" Value="{StaticResource LabelBrandBrush}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource LabelBrandBrush}"/>
       <Setter Property="BorderThickness" Value="0"/>
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
       <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>

@@ -22,7 +22,7 @@ function labels(ctx) {
   if (!group) return null;
   const every = new Map();
   const loose = new Map();
-  for (const [name, key] of [['brand', 'sig.brand'], ['support', 'sig.support'], ['site', 'sig.site']]) {
+  for (const [name, key] of [['brand', 'sig.brand'], ['support', 'sig.support']]) {
     const l = group[name];
     if (!l) continue;
     for (const lang of ['tr', 'en']) {

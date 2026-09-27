@@ -5,6 +5,17 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-09-28
+
+### Added
+- Rule `kabuk/anahatsiz-dugme` (warn): a chip, tab, sync/update badge, title-bar or window button drawn with an outline. CSS reports a solid border wider than 0 on those selectors; XAML reports `BorderThickness` above 0 in a Tab, Chip, Header, WindowControl or Caption style.
+
+### Changed
+- The `.tk-sync` and `.tk-update` chips (title bar, Electron badge, React update panel) and the Avalonia `BadgeButton` have no outline. On hover the text turns `renk-2-text` and a line opens under it, as the preview's Borderless Buttons rule says.
+
+### Removed
+- The `teknesyum.com` site chip, its `label.site` token, the `sig.site` label and the title bar's `links.site`. The domain is not ours.
+
 ### Added
 - `scaffold kur --kaynak yerel --adimlar <file>` builds a first-run panel that sets up the program in the folder it was unpacked to (for apps a store such as Teknesyum Base installs): no download, no Değiştir, the step names read from the project fragment.
 

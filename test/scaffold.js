@@ -205,8 +205,6 @@ function etiketler() {
     ['ImzaIpucu', 'sig.brandTitle'],
     ['DestekMetni', 'sig.support'],
     ['DestekIpucu', 'sig.supportTitle'],
-    ['SiteMetni', 'sig.site'],
-    ['SiteIpucu', 'sig.siteTitle'],
     ['RozetMetni', 'update.label'],
     ['RozetIpucu', 'update.download'],
     ['RozetHazirIpucu', 'update.install'],
@@ -218,18 +216,21 @@ function etiketler() {
   if (panel.Baslik !== tr['update.label']) farkli.push('GuncellemePaneli.Baslik="' + panel.Baslik + '" / update.label="' + tr['update.label'] + '"');
   L.ok('Avalonia template defaults equal labels.tr.json', farkli.length === 0, farkli.join('; '));
   L.ok(
-    'Avalonia template addresses equal links.json and the site',
-    bar.ImzaAdresi === links.github && bar.DestekAdresi === links.sponsor && bar.SiteAdresi === 'https://teknesyum.com',
-    [bar.ImzaAdresi, bar.DestekAdresi, bar.SiteAdresi].join(' ')
+    'Avalonia template addresses equal links.json',
+    bar.ImzaAdresi === links.github && bar.DestekAdresi === links.sponsor,
+    [bar.ImzaAdresi, bar.DestekAdresi].join(' ')
   );
+  L.ok('Avalonia template has no site chip', bar.SiteAdresi === undefined, String(bar.SiteAdresi));
 
   const axaml = fs.readFileSync(path.join(L.UI, 'templates', 'ustcubuk', 'avalonia', 'TitleBar.axaml'), 'utf8');
-  const sira = ['Name="Senkron"', 'Name="Rozet"', 'Name="ImzaDugmesi"', 'Name="DestekDugmesi"', 'Name="SiteDugmesi"', 'Name="KucultDugmesi"'].map((s) => axaml.indexOf(s));
-  L.ok('Avalonia title bar order is sync, badge, brand, support, site, window', sira.every((v, i) => v >= 0 && (i === 0 || v > sira[i - 1])), sira.join(' '));
+  const sira = ['Name="Senkron"', 'Name="Rozet"', 'Name="ImzaDugmesi"', 'Name="DestekDugmesi"', 'Name="KucultDugmesi"'].map((s) => axaml.indexOf(s));
+  L.ok('Avalonia title bar order is sync, badge, brand, support, window', sira.every((v, i) => v >= 0 && (i === 0 || v > sira[i - 1])), sira.join(' '));
+  L.ok('Avalonia template has no site button', !/SiteDugmesi/.test(axaml), axaml.match(/SiteDugmesi/) ? 'found' : '');
 
   const tsx = fs.readFileSync(path.join(L.UI, 'templates', 'ustcubuk', 'react', 'TitleBar.tsx'), 'utf8');
-  const rsira = ['className={\'tk-sync\'', 'tk-titlebar__chip--brand', 'tk-titlebar__chip--support', 'href={links.site}', 'tk-titlebar__window"'].map((s) => tsx.indexOf(s));
-  L.ok('React title bar order is sync, brand, support, site, window', rsira.every((v, i) => v >= 0 && (i === 0 || v > rsira[i - 1])), rsira.join(' '));
+  const rsira = ['className={\'tk-sync\'', 'tk-titlebar__chip--brand', 'tk-titlebar__chip--support', 'tk-titlebar__window"'].map((s) => tsx.indexOf(s));
+  L.ok('React title bar order is sync, brand, support, window', rsira.every((v, i) => v >= 0 && (i === 0 || v > rsira[i - 1])), rsira.join(' '));
+  L.ok('React title bar has no site chip', !/links\.site|labels\.site/.test(tsx), tsx.match(/links\.site|labels\.site/) ? 'found' : '');
 }
 
 module.exports = function scaffoldSuite() {

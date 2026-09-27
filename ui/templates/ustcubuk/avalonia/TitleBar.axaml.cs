@@ -70,12 +70,6 @@ namespace {{AD}}.Kabuk
             AvaloniaProperty.Register<TitleBar, string>(nameof(DestekAdresi), "https://github.com/sponsors/Teknesyum");
         public static readonly StyledProperty<string> DestekIpucuProperty =
             AvaloniaProperty.Register<TitleBar, string>(nameof(DestekIpucu), "Projeyi desteklemek için tıkla");
-        public static readonly StyledProperty<string> SiteMetniProperty =
-            AvaloniaProperty.Register<TitleBar, string>(nameof(SiteMetni), "teknesyum.com");
-        public static readonly StyledProperty<string> SiteAdresiProperty =
-            AvaloniaProperty.Register<TitleBar, string>(nameof(SiteAdresi), "https://teknesyum.com");
-        public static readonly StyledProperty<string> SiteIpucuProperty =
-            AvaloniaProperty.Register<TitleBar, string>(nameof(SiteIpucu), "Teknesyum sitesini aç");
         public static readonly StyledProperty<string> KucultMetniProperty =
             AvaloniaProperty.Register<TitleBar, string>(nameof(KucultMetni), "Küçült");
         public static readonly StyledProperty<string> BuyutMetniProperty =
@@ -109,9 +103,6 @@ namespace {{AD}}.Kabuk
         public string DestekMetni { get => GetValue(DestekMetniProperty); set => SetValue(DestekMetniProperty, value); }
         public string DestekAdresi { get => GetValue(DestekAdresiProperty); set => SetValue(DestekAdresiProperty, value); }
         public string DestekIpucu { get => GetValue(DestekIpucuProperty); set => SetValue(DestekIpucuProperty, value); }
-        public string SiteMetni { get => GetValue(SiteMetniProperty); set => SetValue(SiteMetniProperty, value); }
-        public string SiteAdresi { get => GetValue(SiteAdresiProperty); set => SetValue(SiteAdresiProperty, value); }
-        public string SiteIpucu { get => GetValue(SiteIpucuProperty); set => SetValue(SiteIpucuProperty, value); }
         public string KucultMetni { get => GetValue(KucultMetniProperty); set => SetValue(KucultMetniProperty, value); }
         public string BuyutMetni { get => GetValue(BuyutMetniProperty); set => SetValue(BuyutMetniProperty, value); }
         public string GeriAlMetni { get => GetValue(GeriAlMetniProperty); set => SetValue(GeriAlMetniProperty, value); }
@@ -148,7 +139,6 @@ namespace {{AD}}.Kabuk
             };
             ImzaDugmesi.Click += (_, _) => Ac(ImzaAdresi);
             DestekDugmesi.Click += (_, _) => Ac(DestekAdresi);
-            SiteDugmesi.Click += (_, _) => Ac(SiteAdresi);
             KucultDugmesi.Click += (_, _) =>
             {
                 if (Pencere() is { } w)
@@ -261,11 +251,6 @@ namespace {{AD}}.Kabuk
             DestekDugmesi.IsVisible = !string.IsNullOrWhiteSpace(DestekMetni);
             ToolTip.SetTip(DestekDugmesi, DestekIpucu);
             AutomationPropertiesAd(DestekDugmesi, DestekIpucu);
-
-            SiteDugmesi.Content = SiteMetni;
-            SiteDugmesi.IsVisible = !string.IsNullOrWhiteSpace(SiteMetni);
-            ToolTip.SetTip(SiteDugmesi, SiteIpucu);
-            AutomationPropertiesAd(SiteDugmesi, SiteIpucu);
 
             ToolTip.SetTip(KucultDugmesi, KucultMetni);
             AutomationPropertiesAd(KucultDugmesi, KucultMetni);

@@ -98,4 +98,4 @@ function girdi(fn) {
   });
 }
 
-module.exports = { PLUGIN, UI_FILE, read, gitRoot, kendisi, ayar, uiVar, duzen, raf, komut, girdi };
+module.exports = { PLUGIN, UI_FILE, configRoot, read, gitRoot, kendisi, ayar, uiVar, duzen, raf, komut, girdi };

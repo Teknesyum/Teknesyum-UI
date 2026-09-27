@@ -50,7 +50,7 @@ function project() {
 }
 
 function env(shelfDir, cfgDir) {
-  return { ...process.env, TEKNESYUM_PRIVATE: shelfDir, CLAUDE_CONFIG_DIR: cfgDir, NO_COLOR: '1' };
+  return { ...process.env, TEKNESYUM_PRIVATE: shelfDir, CLAUDE_CONFIG_DIR: cfgDir, TEKNESYUM_UI_TOPLU_KOK: L.tmp('tkui-toplu-bos-'), NO_COLOR: '1' };
 }
 
 function cfg() {

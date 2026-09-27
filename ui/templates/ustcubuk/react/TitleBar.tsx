@@ -2,13 +2,24 @@
 import type { KeyboardEvent, ReactNode } from 'react';
 import './titlebar.css';
 
-export type TitleBarLinks = { sponsor?: string; brand: string };
+export type TitleBarLinks = { sponsor?: string; brand: string; site?: string };
 
 export type TitleBarTab = { id: string; label: string; disabled?: boolean };
 
+export type TitleBarSync = {
+  state: 'syncing' | 'synced' | 'offline';
+  text: string;
+  title?: string;
+  onClick?: () => void;
+};
+
 export type TitleBarLabels = {
   sponsor: string;
+  sponsorTitle?: string;
   brand: string;
+  brandTitle?: string;
+  site?: string;
+  siteTitle?: string;
   minimize: string;
   maximize: string;
   restore?: string;
@@ -22,6 +33,7 @@ type Props = {
   links: TitleBarLinks;
   labels: TitleBarLabels;
   language?: ReactNode;
+  sync?: TitleBarSync;
   tabs?: TitleBarTab[];
   current?: string;
   maximized?: boolean;
@@ -50,7 +62,7 @@ function CoffeeIcon() {
   );
 }
 
-export function TitleBar({ first, second, links, labels, language, tabs, current, maximized, onTab, onMinimize, onMaximize, onClose }: Props) {
+export function TitleBar({ first, second, links, labels, language, sync, tabs, current, maximized, onTab, onMinimize, onMaximize, onClose }: Props) {
   const toggle = maximized ? labels.restore ?? labels.maximize : labels.maximize;
   const open = (tabs ?? []).filter((t) => !t.disabled);
   const onKey = (e: KeyboardEvent<HTMLElement>) => {
@@ -93,10 +105,31 @@ export function TitleBar({ first, second, links, labels, language, tabs, current
       )}
       <div className="tk-titlebar__tools">
         {language ? <div className="tk-titlebar__language">{language}</div> : null}
+        {sync?.text ? (
+          <button
+            type="button"
+            className={'tk-sync' + (sync.state === 'syncing' ? ' tk-sync-progress' : '')}
+            data-state={sync.state}
+            title={sync.title}
+            onClick={sync.onClick}
+          >
+            {sync.text}
+          </button>
+        ) : null}
+        <a
+          className="tk-titlebar__chip tk-titlebar__chip--brand"
+          href={links.brand}
+          title={labels.brandTitle}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {labels.brand}
+        </a>
         {links.sponsor ? (
           <a
             className="tk-titlebar__chip tk-titlebar__chip--support"
             href={links.sponsor}
+            title={labels.sponsorTitle}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -104,9 +137,11 @@ export function TitleBar({ first, second, links, labels, language, tabs, current
             {labels.sponsor}
           </a>
         ) : null}
-        <a className="tk-titlebar__chip" href={links.brand} target="_blank" rel="noopener noreferrer">
-          {labels.brand}
-        </a>
+        {links.site && labels.site ? (
+          <a className="tk-titlebar__chip" href={links.site} title={labels.siteTitle} target="_blank" rel="noopener noreferrer">
+            {labels.site}
+          </a>
+        ) : null}
         <div className="tk-titlebar__window">
           <button
             type="button"

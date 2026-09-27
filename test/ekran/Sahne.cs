@@ -19,10 +19,10 @@ public static class Sahne
         });
 
     public static TitleBar UstCubuk() =>
-        new() { Ad1 = "Dusty", Ad2 = "Bytes", RozetDurumu = RozetDurumu.Var, VerticalAlignment = VerticalAlignment.Top };
+        new() { Ad1 = "Dusty", Ad2 = "Bytes", RozetDurumu = RozetDurumu.Var, SenkronDurumu = SenkronDurumu.Esitlendi, SenkronZamani = "14:32", VerticalAlignment = VerticalAlignment.Top };
 
     public static GuncellemePaneli Guncelleme() =>
-        new() { Logo = Logo(), Surum = "1.4.0", Durum = GuncellemeDurumu.Var, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+        new() { Logo = Logo(), Surum = "1.4.0", Durum = GuncellemeDurumu.Var };
 
     public static KurulumEkrani Kurulum()
     {
@@ -59,13 +59,9 @@ public class SinamaPenceresi : Window
         Height = 900;
         Background = (IBrush)Sahne.Kaynak("AppBg")!;
         Classes.Add("anim");
-        var govde = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,*") };
-        var g = Sahne.Guncelleme();
-        g.Margin = new Thickness((double)Sahne.Kaynak("Space5")!);
-        govde.Children.Add(g);
-        var k = Sahne.Kurulum();
-        Grid.SetColumn(k, 1);
-        govde.Children.Add(k);
+        var govde = new Panel();
+        govde.Children.Add(Sahne.Kurulum());
+        govde.Children.Add(Sahne.Guncelleme());
         var dock = new DockPanel();
         var ust = Sahne.UstCubuk();
         DockPanel.SetDock(ust, Dock.Top);

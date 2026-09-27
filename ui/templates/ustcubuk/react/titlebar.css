@@ -102,6 +102,12 @@
   font-weight: var(--tk-label-site-fw, var(--tk-fw-semi));
 }
 
+.tk-titlebar__chip--brand {
+  color: var(--tk-label-brand-color, var(--tk-renk-1));
+  font-size: min(var(--tk-label-brand-fs, var(--tk-fs-1)), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
+  font-weight: var(--tk-label-brand-fw, var(--tk-fw-semi));
+}
+
 .tk-titlebar__chip--support {
   color: var(--tk-label-support-color, var(--tk-renk-3-text));
   font-size: min(var(--tk-label-support-fs, var(--tk-fs-1)), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
@@ -313,9 +319,90 @@
   border-radius: 0;
 }
 
+.tk-titlebar .tk-sync {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  gap: var(--tk-sp-2);
+  min-height: var(--tk-target-min);
+  padding: 0 var(--tk-sp-2);
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-chip);
+  background: transparent;
+  color: var(--tk-label-sync-color, var(--tk-text));
+  font: inherit;
+  font-size: min(var(--tk-label-sync-fs, var(--tk-fs-1)), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
+  font-weight: var(--tk-label-sync-fw, var(--tk-fw-semi));
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  transition:
+    color var(--tk-t-fast) var(--tk-e-out),
+    border-color var(--tk-t-fast) var(--tk-e-out),
+    transform var(--tk-t-instant) var(--tk-e-out);
+}
+
+.tk-titlebar .tk-sync::before {
+  content: '';
+  flex: none;
+  width: var(--tk-sp-2);
+  height: var(--tk-sp-2);
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.tk-titlebar .tk-sync:hover {
+  border-color: var(--tk-border-strong);
+  transform: scale(var(--tk-scale-hover));
+}
+
+.tk-titlebar .tk-sync:focus-visible {
+  outline: var(--tk-focus-w) solid var(--tk-renk-1);
+  outline-offset: var(--tk-focus-offset);
+  box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg-from);
+}
+
+.tk-titlebar .tk-sync:active {
+  border-color: var(--tk-border-strong);
+  transform: scale(var(--tk-scale-press));
+}
+
+.tk-titlebar .tk-sync:disabled {
+  color: var(--tk-disabled);
+  cursor: not-allowed;
+}
+
+.tk-titlebar .tk-sync[data-state='syncing'] {
+  color: var(--tk-text-label);
+}
+
+.tk-titlebar .tk-sync[data-state='synced'] {
+  color: var(--tk-success);
+}
+
+.tk-titlebar .tk-sync[data-state='offline'] {
+  color: var(--tk-warning);
+  border-color: var(--tk-warning-border);
+}
+
+.tk-titlebar .tk-sync-progress {
+  animation: tk-titlebar-sync var(--tk-loading-loop-min) var(--tk-e-out) infinite;
+}
+
+@keyframes tk-titlebar-sync {
+  50% {
+    transform: scale(var(--tk-scale-hover));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tk-titlebar__tab::after,
   .tk-titlebar__chip::after {
     transition: none;
+  }
+
+  .tk-titlebar .tk-sync-progress {
+    animation: none;
   }
 }

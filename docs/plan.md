@@ -1,26 +1,27 @@
-# Plan: Every Preview Choice Reaches The App (Issue #1)
+# Plan: One Source For Signature Texts, Automatic Bulk Uc (0.19.0)
 
-## Problem
+## Automatic Bulk Uc
 
-The preview saved eight choice groups as notes, not tokens. Setup copied the notes into the
-config, and the generator hard-coded what those choices should drive. A project bound to the
-owner's layout looked like the public default.
+- `ui/hooks/baslangic.js`: on SessionStart, compare the plugin version with
+  `<config>/teknesyum-ui/toplu.json`. On change, run `uc.toplu(parent of git root, true)`,
+  save the version, report the written projects in `systemMessage` only.
+- Test: a new version writes the ledger lines once; the same version does nothing.
 
-## Steps
+## Signature Texts
 
-1. `ui/scripts/esle.js` — one mapping from preview state to tokens, shared by the browser and
-   Node: `ilkDurum(T)`, `tokenFarki(T, su, ilk)`, `durumdan(T, fark)`, the key table, and the
-   layout-match gate (`--denetle`) plus a rewrite of the saved tokens (`--yaz`).
-2. Tokens: `derived.bg-gradient` gains `type`, `angle`, `rotate`; `derived.glass` gains `blur`;
-   new `derived.scrollbar-thumb`, `shape.window-edge`, `metric.btn-h`, `metric.btn-px`,
-   `metric.scrollbar-style`, `metric.scroll-behavior`. Same in `neon.tokens.json` and the
-   assets copy.
-3. `kaydet.dogrula` accepts every new field; notes are gone.
-4. `generate.js`: CSS, WPF, Avalonia and the C# palette read every token above; no literal
-   radius, border, padding, blur, shadow, height or easing is left in a component rule.
-5. The preview uses `esle.js` for export and state; `disaAktar` writes no `_` notes.
-6. `setup.js`: no `notlar` in the config; generated files refresh when the plugin version
-   changes; `--apply` runs the gate and prints its result.
-7. `uc.js` and the private `ui-denetim` book: "düzen eşleşmesi 0 fark" is a finish criterion;
-   usability evidence is preview and app screenshots side by side.
-8. Tests, docs, release 0.12.0, DustyBytes re-apply, close issue #1.
+- `setup.js`: the default signature keeps only `off`, `github`, `sponsor`; `--apply` drops
+  `text` and `supportText` from an existing config.
+- `links.json`: drop `signatureText` and `supportText`.
+- New rule `rules/etiket.js` (warning): a string literal equal to a signature label
+  (brand, support, site, tr and en) or the legacy `by <brand>` in a UI file, code file or
+  locale JSON outside `teknesyum-ui/`. The message points to `labels.*.json`.
+
+## Palette In Project Config
+
+- `setup.js`: the `neon` and `benim` templates no longer copy the palette into
+  `.claude/teknesyum-ui.json`; `--apply` removes it. Only `custom` keeps it (the project's own
+  colours). The status line reads the palette from the tokens file.
+
+## Release
+
+- CHANGELOG, version 0.19.0, tests, tag, gh release, plugin update.

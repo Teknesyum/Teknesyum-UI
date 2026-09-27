@@ -4,7 +4,5 @@
   "github": "https://github.com/Teknesyum",
   "sponsor": "https://github.com/sponsors/Teknesyum",
   "sponsorEnabled": true,
-  "signatureText": "by Teknesyum",
-  "supportText": "Buy me a coffee",
   "_note": "This file holds the defaults. The user overrides it with ~/.claude/teknesyum-ui.json; the /uisetup command edits that file."
 }

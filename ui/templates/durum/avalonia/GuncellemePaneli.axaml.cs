@@ -44,6 +44,10 @@ namespace {{AD}}.Kabuk
             AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(IptalMetni), "İptal");
         public static readonly StyledProperty<string> YukleMetniProperty =
             AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(YukleMetni), "Yükle");
+        public static readonly StyledProperty<string> KapatMetniProperty =
+            AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(KapatMetni), "Kapat");
+        public static readonly StyledProperty<ICommand?> KapatKomutuProperty =
+            AvaloniaProperty.Register<GuncellemePaneli, ICommand?>(nameof(KapatKomutu));
         public static readonly StyledProperty<ICommand?> IndirKomutuProperty =
             AvaloniaProperty.Register<GuncellemePaneli, ICommand?>(nameof(IndirKomutu));
         public static readonly StyledProperty<ICommand?> IndirVeYukleKomutuProperty =
@@ -66,6 +70,8 @@ namespace {{AD}}.Kabuk
         public string IndirVeYukleMetni { get => GetValue(IndirVeYukleMetniProperty); set => SetValue(IndirVeYukleMetniProperty, value); }
         public string IptalMetni { get => GetValue(IptalMetniProperty); set => SetValue(IptalMetniProperty, value); }
         public string YukleMetni { get => GetValue(YukleMetniProperty); set => SetValue(YukleMetniProperty, value); }
+        public string KapatMetni { get => GetValue(KapatMetniProperty); set => SetValue(KapatMetniProperty, value); }
+        public ICommand? KapatKomutu { get => GetValue(KapatKomutuProperty); set => SetValue(KapatKomutuProperty, value); }
         public ICommand? IndirKomutu { get => GetValue(IndirKomutuProperty); set => SetValue(IndirKomutuProperty, value); }
         public ICommand? IndirVeYukleKomutu { get => GetValue(IndirVeYukleKomutuProperty); set => SetValue(IndirVeYukleKomutuProperty, value); }
         public ICommand? IptalKomutu { get => GetValue(IptalKomutuProperty); set => SetValue(IptalKomutuProperty, value); }
@@ -75,10 +81,18 @@ namespace {{AD}}.Kabuk
         public event EventHandler? IndirVeYukle;
         public event EventHandler? Iptal;
         public event EventHandler? Yukle;
+        public event EventHandler? Kapat;
 
         public GuncellemePaneli()
         {
             InitializeComponent();
+            if (Application.Current?.TryFindResource("ToastInset", out var bosluk) == true && bosluk is double b)
+                Margin = new Thickness(b);
+            KapatDugmesi.Click += (_, _) =>
+            {
+                Calistir(Kapat, KapatKomutu);
+                IsVisible = false;
+            };
             IndirDugmesi.Click += (_, _) => Calistir(Indir, IndirKomutu);
             IndirVeYukleDugmesi.Click += (_, _) => Calistir(IndirVeYukle, IndirVeYukleKomutu);
             IptalDugmesi.Click += (_, _) => Calistir(Iptal, IptalKomutu);
@@ -108,6 +122,9 @@ namespace {{AD}}.Kabuk
             LogoResmi.Source = Logo;
             LogoResmi.IsVisible = Logo is not null;
             BaslikYazisi.Text = Baslik;
+            Kutu.Classes.Set("hazir", Durum == GuncellemeDurumu.Hazir);
+            ToolTip.SetTip(KapatDugmesi, KapatMetni);
+            Avalonia.Automation.AutomationProperties.SetName(KapatDugmesi, KapatMetni);
             SurumEtiketiYazisi.Text = SurumEtiketi;
             SurumYazisi.Text = Surum;
             SurumEtiketiYazisi.IsVisible = SurumYazisi.IsVisible = !string.IsNullOrWhiteSpace(Surum);

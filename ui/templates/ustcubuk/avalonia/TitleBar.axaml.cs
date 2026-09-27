@@ -20,6 +20,14 @@ namespace {{AD}}.Kabuk
         Hazir
     }
 
+    public enum SenkronDurumu
+    {
+        Yok,
+        Esitleniyor,
+        Esitlendi,
+        Cevrimdisi
+    }
+
     public partial class TitleBar : UserControl
     {
         public static readonly StyledProperty<string> Ad1Property =
@@ -29,7 +37,23 @@ namespace {{AD}}.Kabuk
         public static readonly StyledProperty<string> RozetMetniProperty =
             AvaloniaProperty.Register<TitleBar, string>(nameof(RozetMetni), "Güncelleme");
         public static readonly StyledProperty<string> RozetIpucuProperty =
-            AvaloniaProperty.Register<TitleBar, string>(nameof(RozetIpucu), "Yeni sürüm var, indirmek için tıkla");
+            AvaloniaProperty.Register<TitleBar, string>(nameof(RozetIpucu), "Yeni sürüm var, indirmek için tıklayın");
+        public static readonly StyledProperty<string> RozetHazirIpucuProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(RozetHazirIpucu), "İndirildi, kurmak için tıklayın");
+        public static readonly StyledProperty<SenkronDurumu> SenkronDurumuProperty =
+            AvaloniaProperty.Register<TitleBar, SenkronDurumu>(nameof(SenkronDurumu));
+        public static readonly StyledProperty<string> SenkronMetniProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(SenkronMetni), "Eşitlendi");
+        public static readonly StyledProperty<string> CevrimdisiMetniProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(CevrimdisiMetni), "Çevrimdışı");
+        public static readonly StyledProperty<string> EsitleniyorMetniProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(EsitleniyorMetni), "Eşitleniyor…");
+        public static readonly StyledProperty<string> SenkronIpucuProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(SenkronIpucu), "Şimdi eşitle");
+        public static readonly StyledProperty<string> SenkronZamaniProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(SenkronZamani), "");
+        public static readonly StyledProperty<ICommand?> SenkronKomutuProperty =
+            AvaloniaProperty.Register<TitleBar, ICommand?>(nameof(SenkronKomutu));
         public static readonly StyledProperty<RozetDurumu> RozetDurumuProperty =
             AvaloniaProperty.Register<TitleBar, RozetDurumu>(nameof(RozetDurumu));
         public static readonly StyledProperty<ICommand?> RozetKomutuProperty =
@@ -41,15 +65,21 @@ namespace {{AD}}.Kabuk
         public static readonly StyledProperty<string> ImzaIpucuProperty =
             AvaloniaProperty.Register<TitleBar, string>(nameof(ImzaIpucu), "Teknesyum GitHub sayfasını aç");
         public static readonly StyledProperty<string> DestekMetniProperty =
-            AvaloniaProperty.Register<TitleBar, string>(nameof(DestekMetni), "Destek");
+            AvaloniaProperty.Register<TitleBar, string>(nameof(DestekMetni), "Destek Ol");
         public static readonly StyledProperty<string> DestekAdresiProperty =
             AvaloniaProperty.Register<TitleBar, string>(nameof(DestekAdresi), "https://github.com/sponsors/Teknesyum");
         public static readonly StyledProperty<string> DestekIpucuProperty =
             AvaloniaProperty.Register<TitleBar, string>(nameof(DestekIpucu), "Projeyi desteklemek için tıkla");
+        public static readonly StyledProperty<string> SiteMetniProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(SiteMetni), "teknesyum.com");
+        public static readonly StyledProperty<string> SiteAdresiProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(SiteAdresi), "https://teknesyum.com");
+        public static readonly StyledProperty<string> SiteIpucuProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(SiteIpucu), "Teknesyum sitesini aç");
         public static readonly StyledProperty<string> KucultMetniProperty =
-            AvaloniaProperty.Register<TitleBar, string>(nameof(KucultMetni), "Simge durumuna küçült");
+            AvaloniaProperty.Register<TitleBar, string>(nameof(KucultMetni), "Küçült");
         public static readonly StyledProperty<string> BuyutMetniProperty =
-            AvaloniaProperty.Register<TitleBar, string>(nameof(BuyutMetni), "Ekranı kapla");
+            AvaloniaProperty.Register<TitleBar, string>(nameof(BuyutMetni), "Büyüt");
         public static readonly StyledProperty<string> GeriAlMetniProperty =
             AvaloniaProperty.Register<TitleBar, string>(nameof(GeriAlMetni), "Önceki boyuta getir");
         public static readonly StyledProperty<string> KapatMetniProperty =
@@ -63,6 +93,14 @@ namespace {{AD}}.Kabuk
         public string Ad2 { get => GetValue(Ad2Property); set => SetValue(Ad2Property, value); }
         public string RozetMetni { get => GetValue(RozetMetniProperty); set => SetValue(RozetMetniProperty, value); }
         public string RozetIpucu { get => GetValue(RozetIpucuProperty); set => SetValue(RozetIpucuProperty, value); }
+        public string RozetHazirIpucu { get => GetValue(RozetHazirIpucuProperty); set => SetValue(RozetHazirIpucuProperty, value); }
+        public SenkronDurumu SenkronDurumu { get => GetValue(SenkronDurumuProperty); set => SetValue(SenkronDurumuProperty, value); }
+        public string SenkronMetni { get => GetValue(SenkronMetniProperty); set => SetValue(SenkronMetniProperty, value); }
+        public string CevrimdisiMetni { get => GetValue(CevrimdisiMetniProperty); set => SetValue(CevrimdisiMetniProperty, value); }
+        public string EsitleniyorMetni { get => GetValue(EsitleniyorMetniProperty); set => SetValue(EsitleniyorMetniProperty, value); }
+        public string SenkronIpucu { get => GetValue(SenkronIpucuProperty); set => SetValue(SenkronIpucuProperty, value); }
+        public string SenkronZamani { get => GetValue(SenkronZamaniProperty); set => SetValue(SenkronZamaniProperty, value); }
+        public ICommand? SenkronKomutu { get => GetValue(SenkronKomutuProperty); set => SetValue(SenkronKomutuProperty, value); }
         public RozetDurumu RozetDurumu { get => GetValue(RozetDurumuProperty); set => SetValue(RozetDurumuProperty, value); }
         public ICommand? RozetKomutu { get => GetValue(RozetKomutuProperty); set => SetValue(RozetKomutuProperty, value); }
         public string ImzaMetni { get => GetValue(ImzaMetniProperty); set => SetValue(ImzaMetniProperty, value); }
@@ -71,6 +109,9 @@ namespace {{AD}}.Kabuk
         public string DestekMetni { get => GetValue(DestekMetniProperty); set => SetValue(DestekMetniProperty, value); }
         public string DestekAdresi { get => GetValue(DestekAdresiProperty); set => SetValue(DestekAdresiProperty, value); }
         public string DestekIpucu { get => GetValue(DestekIpucuProperty); set => SetValue(DestekIpucuProperty, value); }
+        public string SiteMetni { get => GetValue(SiteMetniProperty); set => SetValue(SiteMetniProperty, value); }
+        public string SiteAdresi { get => GetValue(SiteAdresiProperty); set => SetValue(SiteAdresiProperty, value); }
+        public string SiteIpucu { get => GetValue(SiteIpucuProperty); set => SetValue(SiteIpucuProperty, value); }
         public string KucultMetni { get => GetValue(KucultMetniProperty); set => SetValue(KucultMetniProperty, value); }
         public string BuyutMetni { get => GetValue(BuyutMetniProperty); set => SetValue(BuyutMetniProperty, value); }
         public string GeriAlMetni { get => GetValue(GeriAlMetniProperty); set => SetValue(GeriAlMetniProperty, value); }
@@ -79,6 +120,7 @@ namespace {{AD}}.Kabuk
         public object? Ek { get => GetValue(EkProperty); set => SetValue(EkProperty, value); }
 
         public event EventHandler? RozetTiklandi;
+        public event EventHandler? SenkronTiklandi;
 
         const uint WmNcHitTest = 0x0084;
         static readonly Geometry BuyutCizimi = Geometry.Parse("M0.5 0.5H13.5V13.5H0.5Z");
@@ -98,8 +140,15 @@ namespace {{AD}}.Kabuk
                 if (RozetKomutu is { } komut && komut.CanExecute(null))
                     komut.Execute(null);
             };
+            Senkron.Click += (_, _) =>
+            {
+                SenkronTiklandi?.Invoke(this, EventArgs.Empty);
+                if (SenkronKomutu is { } komut && komut.CanExecute(null))
+                    komut.Execute(null);
+            };
             ImzaDugmesi.Click += (_, _) => Ac(ImzaAdresi);
             DestekDugmesi.Click += (_, _) => Ac(DestekAdresi);
+            SiteDugmesi.Click += (_, _) => Ac(SiteAdresi);
             KucultDugmesi.Click += (_, _) =>
             {
                 if (Pencere() is { } w)
@@ -184,8 +233,24 @@ namespace {{AD}}.Kabuk
             Rozet.IsVisible = RozetDurumu != RozetDurumu.Yok && !string.IsNullOrWhiteSpace(RozetMetni);
             Rozet.Classes.Set("hazir", RozetDurumu == RozetDurumu.Hazir);
             Rozet.Classes.Set("iniyor", RozetDurumu == RozetDurumu.Iniyor);
-            ToolTip.SetTip(Rozet, RozetIpucu);
+            ToolTip.SetTip(Rozet, RozetDurumu == RozetDurumu.Hazir ? RozetHazirIpucu : RozetIpucu);
             AutomationPropertiesAd(Rozet, RozetMetni);
+
+            var senkronMetni = SenkronDurumu switch
+            {
+                SenkronDurumu.Esitleniyor => EsitleniyorMetni,
+                SenkronDurumu.Cevrimdisi => CevrimdisiMetni,
+                _ => SenkronMetni
+            };
+            if (SenkronDurumu != SenkronDurumu.Esitleniyor && !string.IsNullOrWhiteSpace(SenkronZamani))
+                senkronMetni += " · " + SenkronZamani;
+            SenkronYazisi.Text = senkronMetni;
+            Senkron.IsVisible = SenkronDurumu != SenkronDurumu.Yok && !string.IsNullOrWhiteSpace(senkronMetni);
+            Senkron.Classes.Set("esitleniyor", SenkronDurumu == SenkronDurumu.Esitleniyor);
+            Senkron.Classes.Set("esitlendi", SenkronDurumu == SenkronDurumu.Esitlendi);
+            Senkron.Classes.Set("cevrimdisi", SenkronDurumu == SenkronDurumu.Cevrimdisi);
+            ToolTip.SetTip(Senkron, SenkronIpucu);
+            AutomationPropertiesAd(Senkron, senkronMetni);
 
             ImzaDugmesi.Content = ImzaMetni;
             ImzaDugmesi.IsVisible = !string.IsNullOrWhiteSpace(ImzaMetni);
@@ -196,6 +261,11 @@ namespace {{AD}}.Kabuk
             DestekDugmesi.IsVisible = !string.IsNullOrWhiteSpace(DestekMetni);
             ToolTip.SetTip(DestekDugmesi, DestekIpucu);
             AutomationPropertiesAd(DestekDugmesi, DestekIpucu);
+
+            SiteDugmesi.Content = SiteMetni;
+            SiteDugmesi.IsVisible = !string.IsNullOrWhiteSpace(SiteMetni);
+            ToolTip.SetTip(SiteDugmesi, SiteIpucu);
+            AutomationPropertiesAd(SiteDugmesi, SiteIpucu);
 
             ToolTip.SetTip(KucultDugmesi, KucultMetni);
             AutomationPropertiesAd(KucultDugmesi, KucultMetni);

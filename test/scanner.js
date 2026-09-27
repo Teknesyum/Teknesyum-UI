@@ -497,7 +497,25 @@ function tokenizeColour() {
   L.ok('tokenizeColour leaves custom property definitions', y('  --x: #abcdef;', ctx) === '  --x: #abcdef;');
 }
 
+function signatureText() {
+  const env = L.cleanEnv();
+  const root = cleanProject();
+  const eol = String.fromCharCode(10);
+  L.write(path.join(root, 'src', 'locale', 'tr.json'), JSON.stringify({ app: { first: 'Teknesyum ' }, titlebar: { sponsor: 'Buy me a coffee', brand: 'by Teknesyum' } }, null, 2) + eol);
+  L.write(path.join(root, 'src', 'Bar.tsx'), 'export const B = () => <a title="x">Teknesyum</a>;' + eol);
+  L.write(path.join(root, 'src', 'Yol.cs'), 'var d = Path.Combine(app, "Teknesyum");' + eol);
+  L.write(path.join(root, 'teknesyum-ui', 'css', 'labels.en.json'), JSON.stringify({ 'sig.brand': 'Teknesyum' }) + eol);
+  let list = [];
+  try {
+    list = JSON.parse(L.node(L.SCAN, [root, '--json', '--rules', 'etiket'], { env }).stdout);
+  } catch {}
+  const at = list.filter((x) => x.rule === 'etiket/signature-text').map((x) => x.file + ':' + x.line);
+  L.ok('hand-written signature texts are reported in locale and UI files', at.includes('src/locale/tr.json:6') && at.includes('src/locale/tr.json:7') && at.includes('src/Bar.tsx:1'), at.join(','));
+  L.ok('an app title piece, a code path and the generated labels are left alone', !at.includes('src/locale/tr.json:3') && !at.some((a) => /Yol\.cs|teknesyum-ui\//.test(a)), at.join(','));
+}
+
 module.exports = function scanner() {
+  signatureText();
   tokenizeColour();
   listRules();
   shape();

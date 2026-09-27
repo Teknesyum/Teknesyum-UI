@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const O = require('./ortak');
@@ -55,16 +56,35 @@ function uiNotu(root, a) {
   };
 }
 
+function topluNotu(root) {
+  const U = require(path.join(O.PLUGIN, 'scripts', 'uc.js'));
+  const surum = U.surum();
+  if (!surum) return null;
+  const durum = path.join(O.configRoot(), 'teknesyum-ui', 'toplu.json');
+  const onceki = O.read(durum);
+  if (onceki && onceki.surum === surum) return null;
+  const kok = process.env.TEKNESYUM_UI_TOPLU_KOK || path.dirname(root);
+  const yazilan = U.toplu(kok, true).filter((s) => s.yazildi).map((s) => s.ad);
+  try {
+    fs.mkdirSync(path.dirname(durum), { recursive: true });
+    fs.writeFileSync(durum, JSON.stringify({ surum, kok, tarih: new Date().toISOString(), yazilan }, null, 2) + '\n');
+  } catch {}
+  return yazilan.length ? 'teknesyum-ui ' + surum + ': ' + yazilan.length + ' projenin defterine uc satırı yazıldı — ' + yazilan.join(', ') : null;
+}
+
 O.girdi((g) => {
   if (g.source === 'compact') return null;
   const root = O.gitRoot(g.cwd || process.cwd());
-  if (!root || O.kendisi(root)) return null;
+  if (!root) return null;
+  const toplu = topluNotu(root);
+  const sadeceToplu = toplu ? { systemMessage: toplu } : null;
+  if (O.kendisi(root)) return sadeceToplu;
   const a = O.ayar(root);
-  if (!a.var || a.off) return null;
+  if (!a.var || a.off) return sadeceToplu;
   const notlar = [rafNotu(root), uiNotu(root, a)].filter(Boolean);
-  if (!notlar.length) return null;
+  if (!notlar.length) return sadeceToplu;
   const o = { hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: notlar.map((n) => n.baglam).join('\n\n') } };
-  const mesaj = notlar.map((n) => n.mesaj).filter(Boolean).join(' · ');
+  const mesaj = [toplu].concat(notlar.map((n) => n.mesaj)).filter(Boolean).join(' · ');
   if (mesaj) o.systemMessage = mesaj;
   return o;
 });

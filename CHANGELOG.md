@@ -5,6 +5,17 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-09-27
+
+### Added
+- The first session after a plugin update runs `uc.js --toplu --yaz` on its own: every project in the parent folder whose last `uc` is older gets one ledger line. The version is kept in `<config>/teknesyum-ui/toplu.json`; the result is a `systemMessage` only, no context.
+- Rule `etiket/signature-text` (warn): a brand, support or site text, its hint, or the legacy `by <brand>` written by hand in a UI file, code file or locale JSON. Read it from `labels.<lang>.json` so every app shows the same text. Files carrying a template signature line are skipped.
+- `artik.js [root] [--sil]` measures build output, caches, logs and temp files. `--sil` deletes only what git ignores and does not track; `node_modules` and `trash/` are only reported. The `uc` instruction carries the step.
+
+### Changed
+- The default signature no longer holds `text` and `supportText`; `--apply` removes them from an existing config. `links.json` drops `signatureText` and `supportText`.
+- The `neon` and `benim` templates no longer copy the palette into `.claude/teknesyum-ui.json`, and `--apply` removes it. Only `custom` keeps its own colours.
+
 ## [0.18.0] - 2026-09-27
 
 ### Added

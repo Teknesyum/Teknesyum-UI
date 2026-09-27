@@ -577,13 +577,9 @@ function apply(answers) {
   };
   if (flag('sans')) cfg.typography.sans = flag('sans');
   if (flag('mono')) cfg.typography.mono = flag('mono');
-  cfg.signature = prev.signature || {
-    off: false,
-    text: 'by Teknesyum',
-    github: 'https://github.com/Teknesyum',
-    sponsor: 'https://github.com/sponsors/Teknesyum',
-    supportText: 'Buy me a coffee',
-  };
+  cfg.signature = Object.assign({ off: false, github: 'https://github.com/Teknesyum', sponsor: 'https://github.com/sponsors/Teknesyum' }, prev.signature || {});
+  delete cfg.signature.text;
+  delete cfg.signature.supportText;
   if (answers.signature !== undefined) cfg.signature.off = answers.signature === false;
   if (answers.note !== undefined && answers.note !== '') cfg.note = answers.note;
   if (cfg.note === undefined) cfg.note = '';
@@ -605,13 +601,7 @@ function apply(answers) {
   } else if (template === 'benim') {
     tokensFile = kayit.dosya;
     const T = read(tokensFile);
-    cfg.palette = {
-      primary: T.brand['renk-1'].value,
-      secondary: T.brand['renk-2'].value,
-      tertiary: T.brand['renk-3'].value,
-      surface: T.brand.surface.value,
-      dark: T.meta.dark !== false,
-    };
+    delete cfg.palette;
     cfg.duzen = kayit.duzen;
     delete cfg.notlar;
     const copy = path.join(out, 'theme.tokens.json');
@@ -622,14 +612,7 @@ function apply(answers) {
   } else {
     tokensFile = templateFile('neon');
     if (!tokensFile) throw new Error('neon template not found under ' + path.join(pluginDir(), 'templates'));
-    const neon = read(tokensFile);
-    cfg.palette = {
-      primary: neon.brand['renk-1'].value,
-      secondary: neon.brand['renk-2'].value,
-      tertiary: neon.brand['renk-3'].value,
-      surface: neon.brand.surface.value,
-      dark: neon.meta.dark !== false,
-    };
+    delete cfg.palette;
     const copy = path.join(out, 'theme.tokens.json');
     if (!fs.existsSync(copy) || force) {
       fs.mkdirSync(out, { recursive: true });
@@ -721,11 +704,9 @@ function status() {
     '',
     '  template   ' + (config.template || 'neon'),
     '  palette    ' +
-      [config.palette && config.palette.primary, config.palette && config.palette.secondary, config.palette && config.palette.tertiary]
-        .filter(Boolean)
-        .join(' ') +
-      '  on ' +
-      ((config.palette && config.palette.surface) || '?'),
+      (config.palette
+        ? [config.palette.primary, config.palette.secondary, config.palette.tertiary].filter(Boolean).join(' ') + '  on ' + (config.palette.surface || '?')
+        : 'from the tokens (teknesyum-ui/theme.tokens.json)'),
     '  typography ' + ((config.typography && config.typography.sans) || '?'),
     '  signature  ' + (config.signature && config.signature.off ? 'off' : 'on'),
     '  targets    ' + (config.targets || []).map((t) => t + ' (' + state[t].length + ')').join('  '),

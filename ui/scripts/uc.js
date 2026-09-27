@@ -161,6 +161,7 @@ function metin(secenek) {
   satirlar.push(
     'Tarama: `' + js('scan.js') + ' "' + kok + '"`. Web kontrastı: `' + js('denetim.js') + ' --snippet` çıktısını sayfada koş. Avalonia/WPF: `' + js('scaffold.js') + ' denetim <Ad>`. Her yazıyı her durumda gerçek zeminine karşı ölç.'
   );
+  satirlar.push('Artık: proje gereksiz yer tutmaz. `' + js('artik.js') + ' "' + kok + '"` derleme çıktısı, önbellek, log ve geçici dosyaları ölçer; `--sil` yalnız git\'in yok saydığı ve izlemediği, yeniden üretilebilen kalemleri siler. Ölçümü rapora yaz; izlenen büyük dosya ya da `.gitignore`\'da eksik kalem varsa düzelt; `node_modules` ve `trash/` yalnız raporlanır.');
   const onceki = artim(kok, ayar(kok));
   if (onceki) satirlar.push(onceki);
   const bekleyen = raf.bekleyen(kok);
@@ -206,6 +207,6 @@ function main(argv) {
   return 0;
 }
 
-module.exports = { metin, bitti, degisiklikler, toplu };
+module.exports = { metin, bitti, degisiklikler, toplu, surum };
 
 if (require.main === module) process.exitCode = main(process.argv);

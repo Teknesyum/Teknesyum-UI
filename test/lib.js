@@ -52,7 +52,11 @@ function tmp(prefix) {
 }
 
 function cleanup() {
-  for (const dir of temps) fs.rmSync(dir, { recursive: true, force: true });
+  for (const dir of temps) {
+    try {
+      fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+    } catch {}
+  }
   temps.length = 0;
 }
 

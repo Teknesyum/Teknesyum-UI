@@ -127,7 +127,52 @@ function rafNotu() {
   L.ok('ustcubuk points at the layout book', /raf\.js ui-duzeni/.test(bar.stdout), bar.stdout);
 }
 
+function varsayilanlar(file, sinif) {
+  const out = {};
+  const re = new RegExp('Register<' + sinif + ', string>\\(nameof\\((\\w+)\\), "([^"]*)"\\)', 'g');
+  for (const m of fs.readFileSync(file, 'utf8').matchAll(re)) out[m[1]] = m[2];
+  return out;
+}
+
+function etiketler() {
+  const tr = L.readJson(path.join(L.ASSETS, 'labels.tr.json'));
+  const links = L.readJson(path.join(L.ASSETS, 'links.json'));
+  const bar = varsayilanlar(path.join(L.UI, 'templates', 'ustcubuk', 'avalonia', 'TitleBar.axaml.cs'), 'TitleBar');
+  const panel = varsayilanlar(path.join(L.UI, 'templates', 'durum', 'avalonia', 'GuncellemePaneli.axaml.cs'), 'GuncellemePaneli');
+  const esler = [
+    ['ImzaMetni', 'sig.brand'],
+    ['ImzaIpucu', 'sig.brandTitle'],
+    ['DestekMetni', 'sig.support'],
+    ['DestekIpucu', 'sig.supportTitle'],
+    ['SiteMetni', 'sig.site'],
+    ['SiteIpucu', 'sig.siteTitle'],
+    ['RozetMetni', 'update.label'],
+    ['RozetIpucu', 'update.download'],
+    ['RozetHazirIpucu', 'update.install'],
+    ['SenkronMetni', 'sync.synced'],
+    ['CevrimdisiMetni', 'sync.offline'],
+    ['SenkronIpucu', 'sync.now'],
+  ];
+  const farkli = esler.filter(([p, k]) => bar[p] !== tr[k]).map(([p, k]) => p + '="' + bar[p] + '" / ' + k + '="' + tr[k] + '"');
+  if (panel.Baslik !== tr['update.label']) farkli.push('GuncellemePaneli.Baslik="' + panel.Baslik + '" / update.label="' + tr['update.label'] + '"');
+  L.ok('Avalonia template defaults equal labels.tr.json', farkli.length === 0, farkli.join('; '));
+  L.ok(
+    'Avalonia template addresses equal links.json and the site',
+    bar.ImzaAdresi === links.github && bar.DestekAdresi === links.sponsor && bar.SiteAdresi === 'https://teknesyum.com',
+    [bar.ImzaAdresi, bar.DestekAdresi, bar.SiteAdresi].join(' ')
+  );
+
+  const axaml = fs.readFileSync(path.join(L.UI, 'templates', 'ustcubuk', 'avalonia', 'TitleBar.axaml'), 'utf8');
+  const sira = ['Name="Senkron"', 'Name="Rozet"', 'Name="ImzaDugmesi"', 'Name="DestekDugmesi"', 'Name="SiteDugmesi"', 'Name="KucultDugmesi"'].map((s) => axaml.indexOf(s));
+  L.ok('Avalonia title bar order is sync, badge, brand, support, site, window', sira.every((v, i) => v >= 0 && (i === 0 || v > sira[i - 1])), sira.join(' '));
+
+  const tsx = fs.readFileSync(path.join(L.UI, 'templates', 'ustcubuk', 'react', 'TitleBar.tsx'), 'utf8');
+  const rsira = ['className={\'tk-sync\'', 'tk-titlebar__chip--brand', 'tk-titlebar__chip--support', 'href={links.site}', 'tk-titlebar__window"'].map((s) => tsx.indexOf(s));
+  L.ok('React title bar order is sync, brand, support, site, window', rsira.every((v, i) => v >= 0 && (i === 0 || v > rsira[i - 1])), rsira.join(' '));
+}
+
 module.exports = function scaffoldSuite() {
+  etiketler();
   kur();
   copies();
   avalonia();

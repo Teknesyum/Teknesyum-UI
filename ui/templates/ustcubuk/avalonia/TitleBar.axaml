@@ -16,9 +16,16 @@
     <ContentControl Name="OrtaAlani" Grid.Column="1" VerticalAlignment="Center"
                     HorizontalContentAlignment="Stretch" Margin="{StaticResource InputPadding}"/>
 
-    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{StaticResource Space2}"
+    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{StaticResource Space1}"
                 VerticalAlignment="Center" ClipToBounds="False">
       <ContentControl Name="EkAlani" VerticalAlignment="Center"/>
+      <Button Name="Senkron" Theme="{StaticResource BadgeButton}" Classes="senkron" IsVisible="False" AutomationProperties.Name="{Binding #SenkronYazisi.Text}">
+        <StackPanel Orientation="Horizontal" Spacing="{StaticResource Space2}">
+          <Ellipse Width="{StaticResource Space2}" Height="{StaticResource Space2}" VerticalAlignment="Center"
+                   Fill="{Binding $parent[Button].Foreground}"/>
+          <TextBlock Name="SenkronYazisi" VerticalAlignment="Center"/>
+        </StackPanel>
+      </Button>
       <Button Name="Rozet" Theme="{StaticResource BadgeButton}" IsVisible="False" AutomationProperties.Name="{Binding #RozetYazisi.Text}">
         <StackPanel Orientation="Horizontal" Spacing="{StaticResource Space2}">
           <Ellipse Width="{StaticResource Space2}" Height="{StaticResource Space2}" VerticalAlignment="Center"
@@ -26,8 +33,9 @@
           <TextBlock Name="RozetYazisi" VerticalAlignment="Center"/>
         </StackPanel>
       </Button>
+      <Button Name="ImzaDugmesi" Theme="{StaticResource SigChip}" Classes="sigchip marka" AutomationProperties.Name="{Binding $self.Content}"/>
       <Button Name="DestekDugmesi" Theme="{StaticResource SigChip}" Classes="sigchip destek" AutomationProperties.Name="{Binding $self.Content}"/>
-      <Button Name="ImzaDugmesi" Theme="{StaticResource SigChip}" Classes="sigchip" AutomationProperties.Name="{Binding $self.Content}"/>
+      <Button Name="SiteDugmesi" Theme="{StaticResource SigChip}" Classes="sigchip site" AutomationProperties.Name="{Binding $self.Content}"/>
     </StackPanel>
 
     <Border Grid.Column="3" Width="{StaticResource Space3}" IsHitTestVisible="False"/>

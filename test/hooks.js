@@ -33,6 +33,7 @@ function hookEnv(configDir, shelfDir) {
     ...process.env,
     CLAUDE_CONFIG_DIR: configDir,
     TEKNESYUM_PRIVATE: shelfDir || path.join(configDir, 'yok-boyle-raf'),
+    TEKNESYUM_UI_TOPLU_KOK: L.tmp('tkui-toplu-bos-'),
     NO_COLOR: '1',
   };
 }
@@ -123,7 +124,25 @@ function onceIgnoresMarkdown() {
   L.ok('a Markdown write is never denied', String(r.stdout || '').trim() === '', JSON.stringify(r.stdout));
 }
 
+function newVersionRunsBulkUc() {
+  const kok = L.tmp('tkui-toplu-kok-');
+  const root = path.join(kok, 'Burasi');
+  fs.mkdirSync(path.join(root, '.git'), { recursive: true });
+  const eski = path.join(kok, 'Eski');
+  L.write(path.join(eski, '.claude', 'teknesyum-ui.json'), JSON.stringify({ uc: { surum: '0.1.0' } }));
+  const cfg = tmpConfigDir(false);
+  const env = { ...hookEnv(cfg), TEKNESYUM_UI_TOPLU_KOK: '' };
+  let r = runHook(BASLANGIC, { cwd: root, source: 'startup' }, env);
+  const out = parseOut(r);
+  L.ok('a new plugin version writes the bulk uc lines at session start', !!out && /1 projenin defterine uc satırı yazıldı — Eski/.test(out.systemMessage || '') && !(out.hookSpecificOutput || {}).additionalContext, r.stdout + r.stderr);
+  L.ok('the bulk uc state records the version', !!L.readJson(path.join(cfg, 'teknesyum-ui', 'toplu.json')));
+  r = runHook(BASLANGIC, { cwd: root, source: 'startup' }, env);
+  const defter = fs.readFileSync(path.join(eski, '.claude', 'acik.md'), 'utf8');
+  L.ok('the same version does not run the bulk uc again', String(r.stdout || '').trim() === '' && (defter.match(/uc çalıştır/g) || []).length === 1, r.stdout);
+}
+
 module.exports = function hooks() {
+  newVersionRunsBulkUc();
   noUiNoProjectConfig();
   noUiWithProjectConfig();
   uiFileNoProjectConfig();

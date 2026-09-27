@@ -5,6 +5,6 @@ Tests: `npm test`.
 
 Logs about this plugin land in `logs/openlogs/` (gitignored), written by Core's
 `log.js write` when the title or symptom names teknesyum-ui or one of its scripts, or with
-`--to ui`. List them with Core's `log.js list`; close with `log.js archive --id <slug>`,
+`--to ui`; a prompt such as `ui'a raporla` in any project brings that recipe. List them with Core's `log.js list`; close with `log.js archive --id <slug>`,
 which moves the log to `logs/openlogs/closed/`. A routed log also adds a `Logu oku` line
 to `.claude/acik.md`; archiving it ticks that line.

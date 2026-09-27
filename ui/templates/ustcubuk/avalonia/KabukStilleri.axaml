@@ -248,8 +248,8 @@
         <Setter Property="Foreground" Value="{StaticResource OnRenk3x10}"/>
       </Style>
       <Style Selector="^:pressed">
-        <Setter Property="Background" Value="{StaticResource Renk3x30}"/>
-        <Setter Property="Foreground" Value="{StaticResource OnRenk3x30}"/>
+        <Setter Property="Background" Value="{StaticResource Renk3x20}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk3x20}"/>
       </Style>
       <Style Selector="^:pressed /template/ Border#bd">
         <Setter Property="RenderTransform" Value="scale(0.98)"/>

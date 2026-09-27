@@ -5,6 +5,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-09-27
+
+### Fixed
+- `GhostButton` pressed state uses `Renk3x20`/`OnRenk3x20` like hover instead of `Renk3x30`: on darker owner palettes the best On colour on `Renk3x30` fell below 7:1. Pressed stays distinct through the press scale.
+
 ## [0.16.0] - 2026-09-27
 
 ### Fixed

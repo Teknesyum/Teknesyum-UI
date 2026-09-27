@@ -5,6 +5,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.26.0] - 2026-09-27
+
+### Changed
+- `uc renk` lets a project keep the extra palettes it offers its users; only the default theme must read the layout keys instead of holding a copy.
+
 ## [0.25.0] - 2026-09-27
 
 ### Changed

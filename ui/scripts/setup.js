@@ -403,9 +403,10 @@ function appProject(root, target) {
     if (/<IsTestProject>\s*true|Include="xunit|Include="Avalonia\.Headless/i.test(text)) continue;
     const exe = /<OutputType>\s*(Win)?Exe\s*<\/OutputType>/i.test(text);
     const asm = /<AssemblyName>\s*([^<\s]+)\s*<\/AssemblyName>/.exec(text);
-    found.push({ file, text, exe, assembly: asm ? asm[1] : path.basename(file, path.extname(file)) });
+    const held = fs.existsSync(path.join(path.dirname(file), 'Assets', 'Fonts', FONT_FILES[0]));
+    found.push({ file, text, exe, held, assembly: asm ? asm[1] : path.basename(file, path.extname(file)) });
   }
-  found.sort((a, b) => Number(b.exe) - Number(a.exe));
+  found.sort((a, b) => Number(b.held) - Number(a.held) || Number(b.exe) - Number(a.exe));
   return found[0] || null;
 }
 

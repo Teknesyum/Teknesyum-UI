@@ -5,6 +5,9 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+- `setup.js` keeps the font in the project that already holds `Assets/Fonts`, so a shared UI library is no longer passed over for the app head and a colour refresh stays one command.
+
 ## [0.26.0] - 2026-09-27
 
 ### Changed

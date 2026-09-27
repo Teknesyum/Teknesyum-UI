@@ -5,6 +5,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.25.0] - 2026-09-27
+
+### Changed
+- `uc renk` says how a project keeps the layout: the generated `teknesyum-ui/` files are the single source, and each platform wires them in one way (Avalonia `ResourceInclude`, WPF merged dictionary, React `theme.css` with `var(--tk-*)`, WinForms `Palette.cs`). A saved theme choice stores only the theme name, and an unknown name falls back to the layout theme.
+
 ## [0.24.0] - 2026-09-27
 
 ### Added

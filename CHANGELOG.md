@@ -5,6 +5,14 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-09-27
+
+### Fixed
+- Title bar, maximized: the top-right screen pixel now hits Close instead of a resize edge. Avalonia answers `WM_NCHITTEST` for the bar itself while maximized (client for the buttons, `MaxButton` for maximize, never an edge) and pads the bar by `OffScreenMargin` so the buttons sit flush with the screen. React drops the `.tk-window` border and radius when maximized.
+- Title bar: the maximize button follows the window state. Avalonia swaps to the restore glyph and the new `GeriAlMetni` text (default "Önceki boyuta getir") for its tooltip and automation name, subscribing to the window after attach and unsubscribing on detach. React takes `maximized` and a `restore` label and sets `data-window` on the bar.
+- Title bar: nothing in the bar has an outline. The Avalonia support and signature chips and the update badge are text with an underline that opens from the centre on hover and focus (Renk2 when pressed, support chip in `LabelSupportBrush`), matching `.tk-titlebar__chip`; `GhostButton` is borderless at `ButtonHeight`/`ButtonPadding` with On-pair fills. The window buttons' pressed fill no longer drops the icon below 7:1.
+- Signature assets (`Signature.axaml`, `.xaml`, `.tsx`): the support and brand chips have no border. Size and padding come from `TargetMin` and `InputPadding` instead of fixed `10,3`/`24`, and hover opens a `FocusWidth` underline from the centre instead of scaling a framed button.
+
 ## [0.14.0] - 2026-09-27
 
 ### Added

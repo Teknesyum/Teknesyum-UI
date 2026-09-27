@@ -6,15 +6,16 @@ export type Translate = (key: string) => string;
 type Props = { t: Translate };
 
 const BASE =
-  'inline-flex items-center justify-center min-h-6 min-w-6 no-underline select-none ' +
-  'tracking-[var(--tk-tr-label)] ' +
-  'rounded-[var(--tk-r)] border bg-transparent ' +
-  'px-2.5 py-1 ease-[--tk-e-out] duration-[--tk-t-instant] hover:scale-[1.02] ' +
-  'transition-[transform]';
+  'relative inline-flex items-center justify-center min-h-[var(--tk-target-min)] min-w-[var(--tk-target-min)] no-underline select-none ' +
+  'tracking-[var(--tk-tr-label)] rounded-[var(--tk-r)] border-0 bg-transparent px-[var(--tk-input-padding-x)] ' +
+  'ease-[--tk-e-out] duration-[--tk-t-instant] transition-[transform] active:scale-[var(--tk-scale-press)] ' +
+  "after:content-[''] after:absolute after:left-[var(--tk-input-padding-x)] after:right-[var(--tk-input-padding-x)] after:bottom-0 " +
+  'after:h-[var(--tk-focus-w)] after:bg-current after:scale-x-0 after:origin-center ' +
+  'after:transition-transform after:duration-[--tk-t-instant] after:ease-[--tk-e-out] hover:after:scale-x-100';
 
-const SUPPORT = `${BASE} gap-1.5 text-[length:var(--tk-label-support-fs)] font-[var(--tk-label-support-fw)] text-[var(--tk-label-support-color)] border-[var(--tk-label-support-color)]`;
+const SUPPORT = `${BASE} gap-1.5 text-[length:var(--tk-label-support-fs)] font-[var(--tk-label-support-fw)] text-[var(--tk-label-support-color)]`;
 
-const BRAND = `${BASE} text-[length:var(--tk-label-brand-fs)] font-[var(--tk-label-brand-fw)] text-[var(--tk-label-brand-color)] border-[var(--tk-label-brand-color)]`;
+const BRAND = `${BASE} text-[length:var(--tk-label-brand-fs)] font-[var(--tk-label-brand-fw)] text-[var(--tk-label-brand-color)]`;
 
 function CoffeeIcon() {
   return (

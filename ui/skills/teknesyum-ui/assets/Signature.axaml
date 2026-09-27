@@ -7,41 +7,56 @@
 
     <ControlTheme x:Key="SigChip" TargetType="Button">
       <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+      <Setter Property="BorderThickness" Value="0"/>
       <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
-      <Setter Property="Padding" Value="10,3"/>
-      <Setter Property="MinHeight" Value="24"/>
-      <Setter Property="MinWidth" Value="24"/>
+      <Setter Property="Padding" Value="{StaticResource InputPadding}"/>
+      <Setter Property="MinHeight" Value="{StaticResource TargetMin}"/>
+      <Setter Property="MinWidth" Value="{StaticResource TargetMin}"/>
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="HorizontalContentAlignment" Value="Center"/>
       <Setter Property="VerticalContentAlignment" Value="Center"/>
       <Setter Property="Template">
         <ControlTemplate TargetType="Button">
-          <Border Name="bd"
-                  Background="{TemplateBinding Background}"
-                  BorderBrush="{TemplateBinding BorderBrush}"
-                  BorderThickness="{TemplateBinding BorderThickness}"
-                  CornerRadius="{TemplateBinding CornerRadius}"
-                  Padding="{TemplateBinding Padding}"
-                  RenderTransformOrigin="50%,50%">
-            <Border.Transitions>
-              <Transitions>
-                <TransformOperationsTransition Property="RenderTransform"
-                                               Duration="{StaticResource TInstant}"
-                                               Easing="{StaticResource EOut}"/>
-              </Transitions>
-            </Border.Transitions>
-            <ContentPresenter Name="PART_ContentPresenter"
-                              Content="{TemplateBinding Content}"
-                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                              HorizontalContentAlignment="Center"
-                              VerticalContentAlignment="Center"/>
-          </Border>
+          <Panel>
+            <Border Name="bd"
+                    Background="{TemplateBinding Background}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Padding="{TemplateBinding Padding}"
+                    RenderTransformOrigin="50%,50%">
+              <Border.Transitions>
+                <Transitions>
+                  <TransformOperationsTransition Property="RenderTransform"
+                                                 Duration="{StaticResource TInstant}"
+                                                 Easing="{StaticResource EOut}"/>
+                </Transitions>
+              </Border.Transitions>
+              <ContentPresenter Name="PART_ContentPresenter"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"/>
+            </Border>
+            <Border Name="ul"
+                    Height="{StaticResource FocusWidth}"
+                    VerticalAlignment="Bottom"
+                    Margin="{TemplateBinding Padding}"
+                    Background="{TemplateBinding Foreground}"
+                    RenderTransformOrigin="50%,50%"
+                    RenderTransform="scaleX(0)">
+              <Border.Transitions>
+                <Transitions>
+                  <TransformOperationsTransition Property="RenderTransform"
+                                                 Duration="{StaticResource TInstant}"
+                                                 Easing="{StaticResource EOut}"/>
+                </Transitions>
+              </Border.Transitions>
+            </Border>
+          </Panel>
         </ControlTemplate>
       </Setter>
 
-      <Style Selector="^:pointerover /template/ Border#bd">
-        <Setter Property="RenderTransform" Value="scale(1.02)"/>
+      <Style Selector="^:pointerover /template/ Border#ul">
+        <Setter Property="RenderTransform" Value="scaleX(1)"/>
       </Style>
     </ControlTheme>
 
@@ -53,7 +68,7 @@
   </StackPanel.Resources>
 
   <Button Theme="{StaticResource SigChip}" Classes="sigchip"
-          BorderBrush="{StaticResource LabelSupportBrush}"
+          Foreground="{StaticResource LabelSupportBrush}"
           Margin="0,0,8,0"
           Tag="https://github.com/sponsors/Teknesyum"
           Click="OnSignatureNavigate"
@@ -73,7 +88,7 @@
   </Button>
 
   <Button Theme="{StaticResource SigChip}" Classes="sigchip"
-          BorderBrush="{StaticResource LabelBrandBrush}"
+          Foreground="{StaticResource LabelBrandBrush}"
           Tag="https://github.com/Teknesyum"
           Click="OnSignatureNavigate"
           ToolTip.Tip="{loc:Str sig.brandTitle}">

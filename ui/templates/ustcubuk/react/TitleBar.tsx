@@ -11,6 +11,7 @@ export type TitleBarLabels = {
   brand: string;
   minimize: string;
   maximize: string;
+  restore?: string;
   close: string;
   tabs?: string;
 };
@@ -24,6 +25,7 @@ type Props = {
   language?: ReactNode;
   tabs?: TitleBarTab[];
   current?: string;
+  maximized?: boolean;
   onTab?: (id: string) => void;
   onMinimize: () => void;
   onMaximize: () => void;
@@ -49,19 +51,21 @@ function CoffeeIcon() {
   );
 }
 
-export function TitleBar({ first, second, logo, links, labels, language, tabs, current, onTab, onMinimize, onMaximize, onClose }: Props) {
+export function TitleBar({ first, second, logo, links, labels, language, tabs, current, maximized, onTab, onMinimize, onMaximize, onClose }: Props) {
+  const toggle = maximized ? labels.restore ?? labels.maximize : labels.maximize;
   const open = (tabs ?? []).filter((t) => !t.disabled);
   const onKey = (e: KeyboardEvent<HTMLElement>) => {
     const i = open.findIndex((t) => t.id === current);
     const n = open.length;
     const next = e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : -1;
-    if (next < 0 || !n) return;
+    const target = next < 0 ? undefined : open[next];
+    if (!target) return;
     e.preventDefault();
-    onTab?.(open[next].id);
-    e.currentTarget.querySelector<HTMLElement>('[data-tab="' + open[next].id + '"]')?.focus();
+    onTab?.(target.id);
+    e.currentTarget.querySelector<HTMLElement>('[data-tab="' + target.id + '"]')?.focus();
   };
   return (
-    <header className="tk-titlebar" data-tauri-drag-region>
+    <header className="tk-titlebar" data-window={maximized ? 'maximized' : 'normal'} data-tauri-drag-region>
       <div className="tk-titlebar__brand" data-tauri-drag-region>
         {logo ? <img className="tk-titlebar__logo" src={logo} alt="" /> : null}
         <span className="tk-titlebar__name" data-tauri-drag-region>
@@ -118,11 +122,11 @@ export function TitleBar({ first, second, logo, links, labels, language, tabs, c
           <button
             type="button"
             className="tk-titlebar__control"
-            aria-label={labels.maximize}
-            title={labels.maximize}
+            aria-label={toggle}
+            title={toggle}
             onClick={onMaximize}
           >
-            <span className="tk-titlebar__maximize" aria-hidden="true" />
+            <span className={maximized ? 'tk-titlebar__restore' : 'tk-titlebar__maximize'} aria-hidden="true" />
           </button>
           <button
             type="button"

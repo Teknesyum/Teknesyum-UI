@@ -2,10 +2,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="{{AD}}.Kabuk.TitleBar"
-             Height="{StaticResource TitleBarHeightMax}"
              ClipToBounds="False">
 
-  <Grid Name="Kap" Background="Transparent" ClipToBounds="False"
+  <Grid Name="Kap" Height="{StaticResource TitleBarHeightMax}" Background="Transparent" ClipToBounds="False"
         ColumnDefinitions="Auto,*,Auto,Auto,Auto">
 
     <Border Grid.Column="0" Padding="{StaticResource InputPadding}" IsHitTestVisible="False">
@@ -41,7 +40,7 @@
               Width="{StaticResource IconSize1}" Height="{StaticResource IconSize1}" VerticalAlignment="Center"/>
       </Button>
       <Button Name="BuyutDugmesi" Theme="{StaticResource WindowButton}" AutomationProperties.Name="{Binding $self.(ToolTip.Tip)}">
-        <Path Data="M0.5 0.5H13.5V13.5H0.5Z" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"
+        <Path Name="BuyutSimgesi" Data="M0.5 0.5H13.5V13.5H0.5Z" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1"
               Width="{StaticResource IconSize1}" Height="{StaticResource IconSize1}"/>
       </Button>
       <Button Name="KapatDugmesi" Theme="{StaticResource WindowButton}" Classes="close" AutomationProperties.Name="{Binding $self.(ToolTip.Tip)}">

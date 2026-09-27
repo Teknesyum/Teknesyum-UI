@@ -7,39 +7,44 @@
   <StackPanel.Resources>
     <Style x:Key="SigChip" TargetType="Border">
       <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+      <Setter Property="BorderThickness" Value="0"/>
       <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
-      <Setter Property="Padding" Value="10,3"/>
-      <Setter Property="MinHeight" Value="24"/>
+      <Setter Property="Padding" Value="{StaticResource InputPadding}"/>
+      <Setter Property="MinHeight" Value="{StaticResource TargetMin}"/>
+      <Setter Property="MinWidth" Value="{StaticResource TargetMin}"/>
       <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+
+    <Style x:Key="SigLine" TargetType="Border">
+      <Setter Property="Height" Value="{StaticResource FocusWidth}"/>
+      <Setter Property="VerticalAlignment" Value="Bottom"/>
       <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+      <Setter Property="RenderTransform">
+        <Setter.Value>
+          <ScaleTransform ScaleX="0" ScaleY="1"/>
+        </Setter.Value>
+      </Setter>
       <Style.Triggers>
-        <Trigger Property="IsMouseOver" Value="True">
-          <Trigger.EnterActions>
-            <BeginStoryboard>
-              <Storyboard>
-                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.02"
-                                 Duration="{StaticResource TInstant}"
-                                 EasingFunction="{StaticResource EOut}"/>
-                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.02"
-                                 Duration="{StaticResource TInstant}"
-                                 EasingFunction="{StaticResource EOut}"/>
-              </Storyboard>
-            </BeginStoryboard>
-          </Trigger.EnterActions>
-          <Trigger.ExitActions>
+        <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Grid}}" Value="True">
+          <DataTrigger.EnterActions>
             <BeginStoryboard>
               <Storyboard>
                 <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1"
                                  Duration="{StaticResource TInstant}"
-                                 EasingFunction="{StaticResource EIn}"/>
-                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1"
+                                 EasingFunction="{StaticResource EOut}"/>
+              </Storyboard>
+            </BeginStoryboard>
+          </DataTrigger.EnterActions>
+          <DataTrigger.ExitActions>
+            <BeginStoryboard>
+              <Storyboard>
+                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="0"
                                  Duration="{StaticResource TInstant}"
                                  EasingFunction="{StaticResource EIn}"/>
               </Storyboard>
             </BeginStoryboard>
-          </Trigger.ExitActions>
-        </Trigger>
+          </DataTrigger.ExitActions>
+        </DataTrigger>
       </Style.Triggers>
     </Style>
 
@@ -49,11 +54,9 @@
     </Style>
   </StackPanel.Resources>
 
-  <Border Style="{StaticResource SigChip}" BorderBrush="{StaticResource LabelSupportBrush}"
+  <Border Style="{StaticResource SigChip}"
           Margin="0,0,8,0" ToolTip="{loc:Str sig.supportTitle}">
-    <Border.RenderTransform>
-      <ScaleTransform ScaleX="1" ScaleY="1"/>
-    </Border.RenderTransform>
+    <Grid Background="Transparent">
     <StackPanel Orientation="Horizontal">
       <Canvas Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0">
         <Path Stroke="{StaticResource LabelSupportBrush}" StrokeThickness="2" StrokeLineJoin="Round"
@@ -70,13 +73,13 @@
         </Hyperlink>
       </TextBlock>
     </StackPanel>
+    <Border Style="{StaticResource SigLine}" Background="{StaticResource LabelSupportBrush}"/>
+    </Grid>
   </Border>
 
-  <Border Style="{StaticResource SigChip}" BorderBrush="{StaticResource LabelBrandBrush}"
+  <Border Style="{StaticResource SigChip}"
           ToolTip="{loc:Str sig.brandTitle}">
-    <Border.RenderTransform>
-      <ScaleTransform ScaleX="1" ScaleY="1"/>
-    </Border.RenderTransform>
+    <Grid Background="Transparent">
     <TextBlock Style="{StaticResource SigText}">
       <Hyperlink NavigateUri="https://github.com/Teknesyum"
                  TextDecorations="None" Foreground="{StaticResource LabelBrandBrush}" FontSize="{StaticResource LabelBrandSize}" FontWeight="{StaticResource LabelBrandWeight}"
@@ -84,6 +87,8 @@
         <Run Text="{loc:Str sig.brand}"/>
       </Hyperlink>
     </TextBlock>
+    <Border Style="{StaticResource SigLine}" Background="{StaticResource LabelBrandBrush}"/>
+    </Grid>
   </Border>
 </StackPanel>
 

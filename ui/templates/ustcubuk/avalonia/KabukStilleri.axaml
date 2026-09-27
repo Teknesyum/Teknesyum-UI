@@ -29,7 +29,7 @@
         <Setter Property="Background" Value="{StaticResource Renk1x20}"/>
       </Style>
       <Style Selector="^:pressed /template/ Border#bd">
-        <Setter Property="Background" Value="{StaticResource Renk1x30}"/>
+        <Setter Property="Background" Value="{StaticResource Renk1x20}"/>
       </Style>
       <Style Selector="^.close:pointerover /template/ Border#bd">
         <Setter Property="Background" Value="{StaticResource DangerText}"/>
@@ -51,13 +51,10 @@
     <ControlTheme x:Key="BadgeButton" TargetType="Button">
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="Foreground" Value="{StaticResource Warning}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource Warning50}"/>
-      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
-      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+      <Setter Property="BorderThickness" Value="0"/>
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
       <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
       <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
-      <Setter Property="Padding" Value="{StaticResource InputPadding}"/>
       <Setter Property="MinHeight" Value="{StaticResource TargetMin}"/>
       <Setter Property="MinWidth" Value="{StaticResource TargetMin}"/>
       <Setter Property="Cursor" Value="Hand"/>
@@ -67,70 +64,68 @@
       <Setter Property="VerticalContentAlignment" Value="Center"/>
       <Setter Property="Template">
         <ControlTemplate TargetType="Button">
-          <Border Name="bd"
-                  Background="{TemplateBinding Background}"
-                  BorderBrush="{TemplateBinding BorderBrush}"
-                  BorderThickness="{TemplateBinding BorderThickness}"
-                  CornerRadius="{TemplateBinding CornerRadius}"
-                  Padding="{TemplateBinding Padding}"
-                  RenderTransformOrigin="50%,50%">
+          <Border Name="bd" Background="{TemplateBinding Background}" RenderTransformOrigin="50%,50%">
             <Border.Transitions>
               <Transitions>
                 <TransformOperationsTransition Property="RenderTransform" Duration="{StaticResource TInstant}" Easing="{StaticResource EOut}"/>
               </Transitions>
             </Border.Transitions>
-            <ContentPresenter Name="PART_ContentPresenter"
-                              Content="{TemplateBinding Content}"
-                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                              Foreground="{TemplateBinding Foreground}"
-                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            <DockPanel>
+              <Border DockPanel.Dock="Left" Width="{StaticResource Space3}"/>
+              <Border DockPanel.Dock="Right" Width="{StaticResource Space3}"/>
+              <StackPanel VerticalAlignment="Center" Spacing="{StaticResource Space1}">
+                <Border Height="{StaticResource FocusWidth}"/>
+                <ContentPresenter Name="PART_ContentPresenter"
+                                  Content="{TemplateBinding Content}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  Foreground="{TemplateBinding Foreground}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                <Border Name="cizgi" Height="{StaticResource FocusWidth}" Background="{TemplateBinding Foreground}"
+                        RenderTransformOrigin="50%,50%" RenderTransform="scaleX(0)">
+                  <Border.Transitions>
+                    <Transitions>
+                      <TransformOperationsTransition Property="RenderTransform" Duration="{StaticResource TBase}" Easing="{StaticResource EOut}"/>
+                    </Transitions>
+                  </Border.Transitions>
+                </Border>
+              </StackPanel>
+            </DockPanel>
           </Border>
         </ControlTemplate>
       </Setter>
-      <Style Selector="^:pointerover /template/ Border#bd">
-        <Setter Property="BorderBrush" Value="{StaticResource Warning}"/>
+      <Style Selector="^:pointerover /template/ Border#cizgi">
+        <Setter Property="RenderTransform" Value="scaleX(1)"/>
       </Style>
-      <Style Selector="^:focus-visible /template/ Border#bd">
-        <Setter Property="BorderBrush" Value="{StaticResource Warning}"/>
+      <Style Selector="^:focus-visible /template/ Border#cizgi">
+        <Setter Property="RenderTransform" Value="scaleX(1)"/>
+      </Style>
+      <Style Selector="^:pressed /template/ Border#cizgi">
+        <Setter Property="RenderTransform" Value="scaleX(1)"/>
       </Style>
       <Style Selector="^:pressed /template/ Border#bd">
         <Setter Property="RenderTransform" Value="scale(0.98)"/>
       </Style>
       <Style Selector="^.hazir">
         <Setter Property="Foreground" Value="{StaticResource Success}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource Success}"/>
-      </Style>
-      <Style Selector="^.hazir:pointerover /template/ Border#bd">
-        <Setter Property="Background" Value="{StaticResource Success}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource Success}"/>
-      </Style>
-      <Style Selector="^.hazir:pointerover">
-        <Setter Property="Foreground" Value="{StaticResource OnSuccess}"/>
-      </Style>
-      <Style Selector="^.hazir:focus-visible /template/ Border#bd">
-        <Setter Property="BorderBrush" Value="{StaticResource Success}"/>
       </Style>
       <Style Selector="^:disabled">
         <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
         <Setter Property="Cursor" Value="No"/>
       </Style>
-      <Style Selector="^:disabled /template/ Border#bd">
-        <Setter Property="BorderBrush" Value="{StaticResource Disabled}"/>
-        <Setter Property="Background" Value="Transparent"/>
+      <Style Selector="^:disabled /template/ Border#cizgi">
+        <Setter Property="RenderTransform" Value="scaleX(0)"/>
       </Style>
     </ControlTheme>
 
     <ControlTheme x:Key="SigChip" TargetType="Button">
       <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource Renk1}"/>
-      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
-      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+      <Setter Property="Foreground" Value="{StaticResource LabelSiteBrush}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource LabelSiteBrush}"/>
+      <Setter Property="BorderThickness" Value="0"/>
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
       <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
       <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
-      <Setter Property="Padding" Value="{StaticResource InputPadding}"/>
       <Setter Property="MinHeight" Value="{StaticResource TargetMin}"/>
       <Setter Property="MinWidth" Value="{StaticResource TargetMin}"/>
       <Setter Property="Cursor" Value="Hand"/>
@@ -140,68 +135,84 @@
       <Setter Property="VerticalContentAlignment" Value="Center"/>
       <Setter Property="Template">
         <ControlTemplate TargetType="Button">
-          <Border Name="bd"
-                  Background="{TemplateBinding Background}"
-                  BorderBrush="{TemplateBinding BorderBrush}"
-                  BorderThickness="{TemplateBinding BorderThickness}"
-                  CornerRadius="{TemplateBinding CornerRadius}"
-                  Padding="{TemplateBinding Padding}"
-                  RenderTransformOrigin="50%,50%">
+          <Border Name="bd" Background="{TemplateBinding Background}" RenderTransformOrigin="50%,50%">
             <Border.Transitions>
               <Transitions>
                 <TransformOperationsTransition Property="RenderTransform" Duration="{StaticResource TInstant}" Easing="{StaticResource EOut}"/>
               </Transitions>
             </Border.Transitions>
-            <ContentPresenter Name="PART_ContentPresenter"
-                              Content="{TemplateBinding Content}"
-                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                              Foreground="{TemplateBinding Foreground}"
-                              HorizontalContentAlignment="Center"
-                              VerticalContentAlignment="Center"/>
+            <DockPanel>
+              <Border DockPanel.Dock="Left" Width="{StaticResource Space3}"/>
+              <Border DockPanel.Dock="Right" Width="{StaticResource Space3}"/>
+              <StackPanel VerticalAlignment="Center" Spacing="{StaticResource Space1}">
+                <Border Height="{StaticResource FocusWidth}"/>
+                <ContentPresenter Name="PART_ContentPresenter"
+                                  Content="{TemplateBinding Content}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  Foreground="{TemplateBinding Foreground}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                <Border Name="cizgi" Height="{StaticResource FocusWidth}" Background="{TemplateBinding BorderBrush}"
+                        RenderTransformOrigin="50%,50%" RenderTransform="scaleX(0)">
+                  <Border.Transitions>
+                    <Transitions>
+                      <TransformOperationsTransition Property="RenderTransform" Duration="{StaticResource TBase}" Easing="{StaticResource EOut}"/>
+                    </Transitions>
+                  </Border.Transitions>
+                </Border>
+              </StackPanel>
+            </DockPanel>
           </Border>
         </ControlTemplate>
       </Setter>
-      <Style Selector="^:not(.destek):pointerover">
-        <Setter Property="Background" Value="{StaticResource Renk1x20}"/>
-        <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
-      </Style>
-      <Style Selector="^:not(.destek):focus-visible">
-        <Setter Property="Background" Value="{StaticResource Renk1x10}"/>
-        <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
-      </Style>
-      <Style Selector="^:pressed /template/ Border#bd">
-        <Setter Property="RenderTransform" Value="scale(0.98)"/>
-      </Style>
       <Style Selector="^.destek">
+        <Setter Property="Foreground" Value="{StaticResource LabelSupportBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource LabelSupportBrush}"/>
+      </Style>
+      <Style Selector="^:pointerover">
         <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
         <Setter Property="BorderBrush" Value="{StaticResource Renk2Text}"/>
       </Style>
-      <Style Selector="^.destek:pointerover">
-        <Setter Property="Background" Value="{StaticResource Renk2x20}"/>
-        <Setter Property="Foreground" Value="{StaticResource OnRenk2x20}"/>
+      <Style Selector="^:focus-visible">
+        <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Renk2Text}"/>
       </Style>
-      <Style Selector="^.destek:focus-visible">
-        <Setter Property="Background" Value="{StaticResource Renk2x10}"/>
-        <Setter Property="Foreground" Value="{StaticResource OnRenk2x10}"/>
+      <Style Selector="^:pressed">
+        <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Renk2}"/>
+      </Style>
+      <Style Selector="^:pointerover /template/ Border#cizgi">
+        <Setter Property="RenderTransform" Value="scaleX(1)"/>
+      </Style>
+      <Style Selector="^:focus-visible /template/ Border#cizgi">
+        <Setter Property="RenderTransform" Value="scaleX(1)"/>
+      </Style>
+      <Style Selector="^:pressed /template/ Border#cizgi">
+        <Setter Property="RenderTransform" Value="scaleX(1)"/>
+      </Style>
+      <Style Selector="^:pressed /template/ Border#bd">
+        <Setter Property="RenderTransform" Value="scale(0.98)"/>
       </Style>
       <Style Selector="^:disabled">
         <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
         <Setter Property="BorderBrush" Value="{StaticResource Disabled}"/>
         <Setter Property="Cursor" Value="No"/>
       </Style>
+      <Style Selector="^:disabled /template/ Border#cizgi">
+        <Setter Property="RenderTransform" Value="scaleX(0)"/>
+      </Style>
     </ControlTheme>
 
     <ControlTheme x:Key="GhostButton" TargetType="Button">
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="Foreground" Value="{StaticResource Renk3Text}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
-      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+      <Setter Property="BorderThickness" Value="0"/>
       <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
       <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
       <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
-      <Setter Property="Padding" Value="{StaticResource InputPadding}"/>
-      <Setter Property="MinHeight" Value="{StaticResource InputHeight}"/>
+      <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
+      <Setter Property="MinHeight" Value="{StaticResource ButtonHeight}"/>
       <Setter Property="MinWidth" Value="{StaticResource TargetMin}"/>
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="ClipToBounds" Value="False"/>
@@ -211,8 +222,6 @@
         <ControlTemplate TargetType="Button">
           <Border Name="bd"
                   Background="{TemplateBinding Background}"
-                  BorderBrush="{TemplateBinding BorderBrush}"
-                  BorderThickness="{TemplateBinding BorderThickness}"
                   CornerRadius="{TemplateBinding CornerRadius}"
                   Padding="{TemplateBinding Padding}"
                   RenderTransformOrigin="50%,50%">
@@ -230,21 +239,25 @@
           </Border>
         </ControlTemplate>
       </Setter>
-      <Style Selector="^:pointerover /template/ Border#bd">
-        <Setter Property="BorderBrush" Value="{StaticResource Renk3Text}"/>
+      <Style Selector="^:pointerover">
+        <Setter Property="Background" Value="{StaticResource Renk3x20}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk3x20}"/>
       </Style>
-      <Style Selector="^:focus-visible /template/ Border#bd">
-        <Setter Property="BorderBrush" Value="{StaticResource Renk3Text}"/>
+      <Style Selector="^:focus-visible">
+        <Setter Property="Background" Value="{StaticResource Renk3x10}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk3x10}"/>
+      </Style>
+      <Style Selector="^:pressed">
+        <Setter Property="Background" Value="{StaticResource Renk3x30}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk3x30}"/>
       </Style>
       <Style Selector="^:pressed /template/ Border#bd">
         <Setter Property="RenderTransform" Value="scale(0.98)"/>
       </Style>
       <Style Selector="^:disabled">
+        <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
         <Setter Property="Cursor" Value="No"/>
-      </Style>
-      <Style Selector="^:disabled /template/ Border#bd">
-        <Setter Property="BorderBrush" Value="{StaticResource Disabled}"/>
       </Style>
     </ControlTheme>
 

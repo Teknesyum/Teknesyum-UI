@@ -52,6 +52,8 @@ namespace {{AD}}.Kabuk
             AvaloniaProperty.Register<TitleBar, string>(nameof(KucultMetni), "Simge durumuna küçült");
         public static readonly StyledProperty<string> BuyutMetniProperty =
             AvaloniaProperty.Register<TitleBar, string>(nameof(BuyutMetni), "Ekranı kapla");
+        public static readonly StyledProperty<string> GeriAlMetniProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(GeriAlMetni), "Önceki boyuta getir");
         public static readonly StyledProperty<string> KapatMetniProperty =
             AvaloniaProperty.Register<TitleBar, string>(nameof(KapatMetni), "Kapat");
         public static readonly StyledProperty<object?> OrtaProperty =
@@ -74,14 +76,23 @@ namespace {{AD}}.Kabuk
         public string DestekIpucu { get => GetValue(DestekIpucuProperty); set => SetValue(DestekIpucuProperty, value); }
         public string KucultMetni { get => GetValue(KucultMetniProperty); set => SetValue(KucultMetniProperty, value); }
         public string BuyutMetni { get => GetValue(BuyutMetniProperty); set => SetValue(BuyutMetniProperty, value); }
+        public string GeriAlMetni { get => GetValue(GeriAlMetniProperty); set => SetValue(GeriAlMetniProperty, value); }
         public string KapatMetni { get => GetValue(KapatMetniProperty); set => SetValue(KapatMetniProperty, value); }
         public object? Orta { get => GetValue(OrtaProperty); set => SetValue(OrtaProperty, value); }
         public object? Ek { get => GetValue(EkProperty); set => SetValue(EkProperty, value); }
 
         public event EventHandler? RozetTiklandi;
 
+        const uint WmNcHitTest = 0x0084;
+        static readonly Geometry BuyutCizimi = Geometry.Parse("M0.5 0.5H13.5V13.5H0.5Z");
+        static readonly Geometry GeriAlCizimi = Geometry.Parse("M0.5 3.5H10.5V13.5H0.5Z M3.5 3.5V0.5H13.5V10.5H10.5");
+
+        Window? _pencere;
+        readonly Win32Properties.CustomWndProcHookCallback _kanca;
+
         public TitleBar()
         {
+            _kanca = PencereKancasi;
             InitializeComponent();
             Kap.PointerPressed += KapBasildi;
             Rozet.Click += (_, _) =>
@@ -108,6 +119,55 @@ namespace {{AD}}.Kabuk
             base.OnPropertyChanged(change);
             if (change.Property.OwnerType == typeof(TitleBar))
                 Yenile();
+        }
+
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnAttachedToVisualTree(e);
+            _pencere = Pencere();
+            if (_pencere is null)
+                return;
+            _pencere.PropertyChanged += PencereDegisti;
+            Win32Properties.AddWndProcHookCallback(_pencere, _kanca);
+            Yenile();
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            if (_pencere is not null)
+            {
+                _pencere.PropertyChanged -= PencereDegisti;
+                Win32Properties.RemoveWndProcHookCallback(_pencere, _kanca);
+                _pencere = null;
+            }
+            base.OnDetachedFromVisualTree(e);
+        }
+
+        void PencereDegisti(object? sender, AvaloniaPropertyChangedEventArgs e)
+        {
+            if (e.Property == Window.WindowStateProperty || e.Property == Window.OffScreenMarginProperty)
+                Yenile();
+        }
+
+        bool Buyuk => _pencere?.WindowState is WindowState.Maximized or WindowState.FullScreen;
+
+        IntPtr PencereKancasi(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg != WmNcHitTest || _pencere is not { WindowState: WindowState.Maximized } w || !IsEffectivelyVisible)
+                return IntPtr.Zero;
+            var ham = lParam.ToInt64();
+            var ekran = new PixelPoint(unchecked((short)ham), unchecked((short)(ham >> 16)));
+            if (w.TranslatePoint(w.PointToClient(ekran), Kap) is not { } p)
+                return IntPtr.Zero;
+            var kutu = Kap.Bounds;
+            if (p.Y >= kutu.Height)
+                return IntPtr.Zero;
+            var ic = new Point(Math.Clamp(p.X, 0, kutu.Width - 1), Math.Clamp(p.Y, 0, kutu.Height - 1));
+            handled = true;
+            foreach (var d in new[] { KucultDugmesi, BuyutDugmesi, KapatDugmesi })
+                if (d.IsEffectivelyVisible && Kap.TranslatePoint(ic, d) is { } q && new Rect(d.Bounds.Size).Contains(q))
+                    return (IntPtr)(d == BuyutDugmesi ? (int)Win32Properties.Win32HitTestValue.MaxButton : (int)Win32Properties.Win32HitTestValue.Client);
+            return (IntPtr)(int)Win32Properties.Win32HitTestValue.Client;
         }
 
         void Yenile()
@@ -144,8 +204,13 @@ namespace {{AD}}.Kabuk
 
             ToolTip.SetTip(KucultDugmesi, KucultMetni);
             AutomationPropertiesAd(KucultDugmesi, KucultMetni);
-            ToolTip.SetTip(BuyutDugmesi, BuyutMetni);
-            AutomationPropertiesAd(BuyutDugmesi, BuyutMetni);
+            var buyuk = Buyuk;
+            var buyutMetni = buyuk ? GeriAlMetni : BuyutMetni;
+            ToolTip.SetTip(BuyutDugmesi, buyutMetni);
+            AutomationPropertiesAd(BuyutDugmesi, buyutMetni);
+            BuyutSimgesi.Data = buyuk ? GeriAlCizimi : BuyutCizimi;
+            var m = _pencere?.OffScreenMargin ?? default;
+            Kap.Margin = _pencere?.WindowState == WindowState.Maximized ? new Thickness(m.Left, m.Top, m.Right, 0) : default;
             ToolTip.SetTip(KapatDugmesi, KapatMetni);
             AutomationPropertiesAd(KapatDugmesi, KapatMetni);
         }

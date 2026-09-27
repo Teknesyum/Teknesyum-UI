@@ -19,6 +19,7 @@ const ARTIFACTS = {
   avalonia: ['Theme.axaml', 'Signature.axaml'],
   winforms: ['Palette.cs'],
 };
+for (const t of Object.keys(ARTIFACTS)) ARTIFACTS[t].push('labels.tr.json', 'labels.en.json');
 
 const FONT_FILES = [
   'AtkinsonHyperlegibleNext-Regular.ttf',
@@ -92,11 +93,7 @@ function benim() {
   const yol = require('./ozel').tokenYollari();
   if (!yol || !fs.existsSync(yol.tokenlar)) return null;
   const metin = fs.readFileSync(yol.tokenlar, 'utf8');
-  let notlar = [];
-  try {
-    notlar = JSON.parse(fs.readFileSync(yol.notlar, 'utf8')).notlar || [];
-  } catch {}
-  return { dosya: yol.tokenlar, duzen: require('crypto').createHash('sha256').update(metin).digest('hex').slice(0, 16), notlar };
+  return { dosya: yol.tokenlar, duzen: require('crypto').createHash('sha256').update(metin).digest('hex').slice(0, 16) };
 }
 
 function templateFile(name) {
@@ -107,6 +104,11 @@ function templateFile(name) {
     if (fs.existsSync(assets)) return assets;
   }
   return null;
+}
+
+function pluginVersion() {
+  const p = read(path.join(pluginDir(), '.claude-plugin', 'plugin.json'));
+  return (p && p.version) || null;
 }
 
 function generatorFile() {
@@ -465,104 +467,6 @@ function embedFont(root, target, outDir, force) {
   );
 }
 
-const TRANSFORM_ANIMATOR_REG = /RegisterCustomAnimator\s*<\s*ITransform\s*,/;
-const INITIALIZE_RE = /(public\s+override\s+void\s+Initialize\s*\(\s*\)\s*\r?\n?\s*\{)(\r\n|\n)/;
-
-function findAppCodeBehind(app) {
-  const dir = path.dirname(app.file);
-  for (const name of ['App.axaml.cs', 'App.xaml.cs']) {
-    const p = path.join(dir, name);
-    if (fs.existsSync(p)) return { file: p, dir };
-  }
-  return null;
-}
-
-function rootNamespace(app) {
-  const m = /<RootNamespace>\s*([^<\s]+)\s*<\/RootNamespace>/.exec(app.text);
-  return (m && m[1]) || app.assembly;
-}
-
-function transformAnimatorSource(ns) {
-  return [
-    'using Avalonia.Animation;',
-    'using Avalonia.Media.Transformation;',
-    '',
-    'namespace ' + ns + ';',
-    '',
-    'public sealed class TransformAnimator : InterpolatingAnimator<ITransform>',
-    '{',
-    '    public override ITransform Interpolate(double progress, ITransform oldValue, ITransform newValue) =>',
-    '        TransformOperations.Interpolate(oldValue as TransformOperations ?? TransformOperations.Identity,',
-    '            newValue as TransformOperations ?? TransformOperations.Identity, progress);',
-    '}',
-    '',
-  ].join('\n');
-}
-
-function ensureUsing(text, name) {
-  const re = new RegExp('^using\\s+' + name.replace(/\./g, '\\.') + '\\s*;\\s*$', 'm');
-  if (re.test(text)) return text;
-  const block = /^(using[^\n]*\r?\n)+/.exec(text);
-  if (block) return text.slice(0, block[0].length) + 'using ' + name + ';\r\n' + text.slice(block[0].length);
-  return 'using ' + name + ';\r\n' + text;
-}
-
-function installAnimator(root, target, outDir, force) {
-  if (target !== 'avalonia') return null;
-  const themeFile = path.join(outDir, THEME_FILE[target]);
-  let themeText;
-  try {
-    themeText = fs.readFileSync(themeFile, 'utf8');
-  } catch {
-    return null;
-  }
-  if (!/<Style\s+Selector="Window\.anim\b/.test(themeText)) return null;
-
-  const app = appProject(root, target);
-  if (!app) return '  animator no ' + target + ' app .csproj found; register Animation.RegisterCustomAnimator<ITransform, TransformAnimator>() by hand (pass --app <csproj>)';
-
-  const found = findAppCodeBehind(app);
-  if (!found)
-    return '  animator no App.axaml.cs found next to ' + app.file + '; register Animation.RegisterCustomAnimator<ITransform, TransformAnimator>() in Initialize() by hand';
-
-  let text;
-  try {
-    text = fs.readFileSync(found.file, 'utf8');
-  } catch (e) {
-    return '  animator could not read ' + found.file + ': ' + e.message;
-  }
-
-  if (TRANSFORM_ANIMATOR_REG.test(text)) return '  animator already registered in ' + found.file;
-
-  const animatorFile = path.join(found.dir, 'TransformAnimator.cs');
-  let wroteAnimator = true;
-  if (fs.existsSync(animatorFile) && !force) {
-    wroteAnimator = false;
-  } else {
-    fs.writeFileSync(animatorFile, transformAnimatorSource(rootNamespace(app)), 'utf8');
-  }
-
-  if (!INITIALIZE_RE.test(text))
-    return (
-      '  animator ' +
-      animatorFile +
-      (wroteAnimator ? ' written' : ' kept') +
-      ', but Initialize() was not found in ' +
-      found.file +
-      '; add `Animation.RegisterCustomAnimator<ITransform, TransformAnimator>();` as its first line by hand'
-    );
-
-  text = ensureUsing(text, 'Avalonia.Animation');
-  text = ensureUsing(text, 'Avalonia.Media.Transformation');
-  text = text.replace(
-    INITIALIZE_RE,
-    (all, head, eol) => head + eol + '        Animation.RegisterCustomAnimator<ITransform, TransformAnimator>();' + eol
-  );
-  fs.writeFileSync(found.file, text, 'utf8');
-
-  return '  animator ' + found.file + ' (registration added, ' + animatorFile + (wroteAnimator ? ' written' : ' kept') + ')';
-}
-
 function copyInto(fromDir, toDir, names, force) {
   const written = [];
   const skipped = [];
@@ -657,11 +561,13 @@ function apply(answers) {
   const kayit = benim();
   const template = answers.template || (kayit ? 'benim' : prev.template === 'benim' ? 'neon' : prev.template || 'neon');
   if (template === 'benim' && !kayit) throw new Error('benim template needs teknesyum-ui/benim.tokens.json on the private shelf; press Kaydet in the preview app first');
-  const tazele = force || (template === 'benim' && prev.duzen !== kayit.duzen);
+  const surum = pluginVersion();
+  const tazele = force || (template === 'benim' && prev.duzen !== kayit.duzen) || (!!surum && prev.plugin !== surum);
   const qs = questionsFor(template);
 
   const cfg = Object.assign({}, prev);
   cfg.version = VERSION;
+  if (surum) cfg.plugin = surum;
   cfg.template = template;
   cfg.off = false;
   cfg.targets = answers.targets || prev.targets || TARGETS.slice();
@@ -707,7 +613,7 @@ function apply(answers) {
       dark: T.meta.dark !== false,
     };
     cfg.duzen = kayit.duzen;
-    cfg.notlar = kayit.notlar;
+    delete cfg.notlar;
     const copy = path.join(out, 'theme.tokens.json');
     if (!fs.existsSync(copy) || tazele) {
       fs.mkdirSync(out, { recursive: true });
@@ -762,10 +668,6 @@ function apply(answers) {
           ')'
       );
       if (THEME_FILE[t]) lines.push(embedFont(root, t, dir, force));
-      if (t === 'avalonia') {
-        const animatorMsg = installAnimator(root, t, dir, force);
-        if (animatorMsg) lines.push(animatorMsg);
-      }
     }
   } finally {
     fs.rmSync(stage, { recursive: true, force: true });
@@ -773,6 +675,12 @@ function apply(answers) {
 
   cfg.installedAt = cfg.installedAt || new Date().toISOString();
   write(configFile(root), cfg);
+
+  let esles = '';
+  if (template === 'benim') {
+    const farklar = require('./esle').denetle({ proje: root, artifacts: ARTIFACTS });
+    esles = ['', 'düzen eşleşmesi ' + farklar.length + ' fark'].concat(farklar.map((x) => '  - ' + x)).join('\n');
+  }
 
   return [
     'Teknesyum UI is set up.',
@@ -785,7 +693,7 @@ function apply(answers) {
     lines.join('\n'),
     '',
     wrote + ' file(s) written, ' + skipped + ' kept. Existing files are never overwritten without --force.',
-  ].join('\n');
+  ].join('\n') + esles;
 }
 
 function setOff(value) {
@@ -929,4 +837,4 @@ function main() {
 }
 
 if (require.main === module) main();
-module.exports = { inspect, apply, status, benim, QUESTIONS, TARGETS };
+module.exports = { inspect, apply, status, benim, QUESTIONS, TARGETS, ARTIFACTS };

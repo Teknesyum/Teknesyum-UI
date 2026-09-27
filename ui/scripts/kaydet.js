@@ -33,8 +33,32 @@ const TAMSAYI = {
   'shape.r': [0, 24],
   'shape.r-window': [0, 32],
   'metric.scrollbar-w': [2, 24],
-  'derived.bg-gradient': [2, 64],
+  'shape.border-w': [0, 8],
+  'metric.titlebar-h-min': [24, 64],
+  'metric.titlebar-h-max': [24, 64],
+  'metric.btn-h': [24, 80],
+  'metric.btn-px': [4, 48],
+  'space.1': [0, 64],
+  'space.2': [0, 64],
+  'space.3': [0, 64],
+  'space.4': [0, 64],
+  'space.5': [0, 64],
 };
+const SECENEKLI = {
+  'metric.scrollbar-style': ['solid', 'thin', 'pill', 'hover', 'fade', 'shrink'],
+  'metric.scroll-behavior': ['auto', 'smooth'],
+};
+const ARKA_TURU = ['flat', 'gradient', 'glass', 'grid', 'halo'];
+
+function renkAdi(T, ad) {
+  return typeof ad === 'string' && ['brand', 'role', 'derived'].some((g) => T[g] && T[g][ad] && (T[g][ad].value !== undefined || T[g][ad].ref !== undefined));
+}
+
+function sayi(yer, v, alt, ust, tam) {
+  const n = Number(v);
+  if (!Number.isFinite(n) || n < alt || n > ust || (tam && !Number.isInteger(n))) throw new Error(yer + ': ' + alt + '–' + ust + ' arası ' + (tam ? 'tamsayı' : 'sayı') + ' bekleniyor.');
+  return tam ? n : Math.round(n * 100) / 100;
+}
 const SURELER = ['instant', 'fast', 'base', 'slow'];
 const PARLAMALAR = ['glow', 'glow-button', 'glow-hero'];
 
@@ -67,10 +91,59 @@ function dogrula(degisen, T) {
         out.push({ grup: 'size', ad, alan: 'value', deger: n });
         out.push({ grup: 'size', ad, alan: 'xaml', deger: AGIRLIK[n] });
       } else if (TAMSAYI[yer]) {
-        const n = Number(bolum === 'derived' ? v && v.stops : v && v.value);
         const [alt, ust] = TAMSAYI[yer];
-        if (!Number.isInteger(n) || n < alt || n > ust) throw new Error(yer + ': ' + alt + '–' + ust + ' arası tamsayı bekleniyor.');
-        out.push({ grup: bolum, ad, alan: bolum === 'derived' ? 'stops' : 'value', deger: n });
+        out.push({ grup: bolum, ad, alan: 'value', deger: sayi(yer, v && v.value, alt, ust, true) });
+      } else if (SECENEKLI[yer]) {
+        const d = v && v.value;
+        if (!SECENEKLI[yer].includes(d)) throw new Error(yer + ': ' + SECENEKLI[yer].join(', ') + ' bekleniyor.');
+        out.push({ grup: bolum, ad, alan: 'value', deger: d });
+      } else if (yer === 'derived.bg-gradient') {
+        const e = v || {};
+        if (!['stops', 'type', 'angle', 'rotate'].some((k) => e[k] !== undefined)) throw new Error(yer + ': stops, type, angle ya da rotate bekleniyor.');
+        if (e.stops !== undefined) out.push({ grup: bolum, ad, alan: 'stops', deger: sayi(yer + '.stops', e.stops, 2, 64, true) });
+        if (e.type !== undefined) {
+          if (!ARKA_TURU.includes(e.type)) throw new Error(yer + '.type: ' + ARKA_TURU.join(', ') + ' bekleniyor.');
+          out.push({ grup: bolum, ad, alan: 'type', deger: e.type });
+        }
+        if (e.angle !== undefined) out.push({ grup: bolum, ad, alan: 'angle', deger: sayi(yer + '.angle', e.angle, 0, 360, true) });
+        if (e.rotate !== undefined) {
+          if (typeof e.rotate !== 'boolean') throw new Error(yer + '.rotate: true ya da false bekleniyor.');
+          out.push({ grup: bolum, ad, alan: 'rotate', deger: e.rotate });
+        }
+      } else if (yer === 'derived.glass') {
+        out.push({ grup: bolum, ad, alan: 'blur', deger: sayi(yer + '.blur', v && v.blur, 0, 64, true) });
+      } else if (yer === 'derived.shadow-panel') {
+        const e = v || {};
+        if (e.alpha === undefined && e.blur === undefined) throw new Error(yer + ': alpha ya da blur bekleniyor.');
+        if (e.alpha !== undefined) out.push({ grup: bolum, ad, alan: 'alpha', deger: sayi(yer + '.alpha', e.alpha, 0, 1) });
+        if (e.blur !== undefined) out.push({ grup: bolum, ad, alan: 'blur', deger: sayi(yer + '.blur', e.blur, 0, 200, true) });
+      } else if (yer === 'derived.scrollbar-thumb') {
+        const e = v || {};
+        for (const k of ['ref', 'hover-ref']) {
+          if (e[k] === undefined) continue;
+          if (!renkAdi(T, e[k])) throw new Error(yer + '.' + k + ': renk token adı bekleniyor.');
+          out.push({ grup: bolum, ad, alan: k, deger: e[k] });
+        }
+      } else if (yer === 'shape.window-edge') {
+        const r = v && v.ref;
+        if (r !== 'none' && !renkAdi(T, r)) throw new Error(yer + ': none ya da renk token adı bekleniyor.');
+        out.push({ grup: bolum, ad, alan: 'ref', deger: r });
+      } else if (bolum === 'label') {
+        const once = T.label && T.label[ad];
+        if (!once || ad === '_') throw new Error(yer + ': token bulunamadı.');
+        for (const [k, d] of Object.entries(v || {})) {
+          if (!(k in once) || k === 'rationale') throw new Error(yer + '.' + k + ': bu alan kaydedilemez.');
+          if (k === 'ref' || k === 'accent-ref') {
+            if (!renkAdi(T, d)) throw new Error(yer + '.' + k + ': renk token adı bekleniyor.');
+          } else if (k === 'fs') {
+            if (!/^fs-[1-5]$/.test(d) || !T.size[d]) throw new Error(yer + '.fs: fs-1–fs-5 bekleniyor.');
+          } else if (k === 'weight') {
+            if (!/^fw-(body|semi|hero)$/.test(d)) throw new Error(yer + '.weight: fw-body, fw-semi ya da fw-hero bekleniyor.');
+          } else if (typeof d !== 'string' || !d.trim() || d.length > 80 || /[<>{}"\\\u0000-\u001f]/.test(d)) {
+            throw new Error(yer + '.' + k + ': 1–80 karakterlik düz metin bekleniyor.');
+          }
+          out.push({ grup: 'label', ad, alan: k, deger: typeof d === 'string' ? d.trim() : d });
+        }
       } else if (bolum === 'easing') {
         const b = v && v.bezier;
         if (!T.easing || !T.easing[ad]) throw new Error(yer + ': token bulunamadı.');

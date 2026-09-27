@@ -68,7 +68,7 @@ module.exports = function generate() {
   L.ok('generate.js exits 0', r.status === 0, r.stderr || r.stdout);
 
   const written = fs.readdirSync(out).sort();
-  L.ok('generate.js writes four files', written.length === 4, written.join(' '));
+  L.ok('generate.js writes the theme files and both label files', written.length === 6 && written.includes('labels.tr.json') && written.includes('labels.en.json'), written.join(' '));
   L.ok('generate.js writes the expected four names', OUTPUTS.every((n) => written.includes(n)), written.join(' '));
 
   const palette = tokenColours(L.readJson(tokensFile));

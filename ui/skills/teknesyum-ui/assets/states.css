@@ -19,7 +19,7 @@
    stops the transition, so `scale` snaps without travel and barely reads. */
 [data-tk='toggle']:active:not(:disabled) {
   border-color: var(--tk-border-strong);
-  transform: scale(0.98);
+  transform: scale(var(--tk-scale-press));
 }
 [data-tk='toggle']:disabled {
   border-color: var(--tk-disabled);
@@ -111,7 +111,7 @@
   color: var(--tk-renk-2-text);
   background-color: color-mix(in srgb, var(--tk-renk-2) 30%, transparent);
   border-color: var(--tk-renk-2);
-  transform: scale(0.98);
+  transform: scale(var(--tk-scale-press));
 }
 [data-tk='icon-button']:disabled {
   color: var(--tk-disabled);

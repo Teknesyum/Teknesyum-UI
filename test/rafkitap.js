@@ -178,7 +178,10 @@ function ucText(e) {
   L.ok('uc carries the scope', /Kapsam: ayarlar ekranı/.test(r.stdout), r.stdout);
   L.write(path.join(p, '.claude', 'teknesyum-ui.json'), JSON.stringify(CONFIG));
   r = run(UC, ['--project', p], e);
-  L.ok('uc skips setup on a bound project', !/setup\.js/.test(r.stdout) && !/Kapsam/.test(r.stdout), r.stdout);
+  L.ok('uc refreshes the layout on a bound project instead of checking', !/setup\.js" --check/.test(r.stdout) && /setup\.js" --apply --template benim/.test(r.stdout) && !/Kapsam/.test(r.stdout), r.stdout);
+  L.ok('uc is an order to convert and asks first when it will not', /dönüştürme emridir/.test(r.stdout) && /işe başlamadan ilk mesajında/.test(r.stdout), r.stdout);
+  L.ok('uc finishes on a zero layout match and side-by-side evidence', /düzen eşleşmesi 0 fark/.test(r.stdout) && /esle\.js" --denetle/.test(r.stdout) && /yan yana/.test(r.stdout), r.stdout);
+  L.ok('uc sends chrome text to the label files', /labels\.tr\.json/.test(r.stdout), r.stdout);
   r = run(UC, ['--project', p], { ...e, TEKNESYUM_PRIVATE: path.join(p, 'yok') });
   L.ok('without a shelf uc says only the scanner applies', /özel raf yok/.test(r.stdout) && !/raf\.js" ui-denetim/.test(r.stdout), r.stdout);
 }

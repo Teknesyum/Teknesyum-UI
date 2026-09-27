@@ -2,17 +2,17 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-  <sys:Double x:Key="TkInputMinHeight">40</sys:Double>
+  <StaticResource x:Key="TkInputMinHeight" ResourceKey="InputHeight"/>
 
   <Style x:Key="TkTextBox" TargetType="TextBox">
     <Setter Property="MinHeight" Value="{StaticResource TkInputMinHeight}"/>
     <Setter Property="Padding" Value="12"/>
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="FontSize" Value="16"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
     <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
     <Setter Property="Background" Value="{StaticResource Surface}"/>
     <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
-    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
     <Setter Property="VerticalContentAlignment" Value="Center"/>
     <Setter Property="CaretBrush" Value="{StaticResource Renk1}"/>
     <Setter Property="SelectionBrush" Value="{StaticResource Renk1x30}"/>
@@ -27,7 +27,7 @@
                   Background="{TemplateBinding Background}"
                   BorderBrush="{TemplateBinding BorderBrush}"
                   BorderThickness="{TemplateBinding BorderThickness}"
-                  CornerRadius="6"
+                  CornerRadius="{StaticResource Radius}"
                   SnapsToDevicePixels="True">
             <ScrollViewer x:Name="PART_ContentHost"
                           Margin="{TemplateBinding Padding}"
@@ -82,7 +82,7 @@
     <StackPanel Orientation="Vertical">
       <AdornedElementPlaceholder x:Name="ph"/>
       <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-        <Path Width="16" Height="16" Stretch="Uniform"
+        <Path Width="{StaticResource IconSize2}" Height="{StaticResource IconSize2}" Stretch="Uniform"
               Margin="0,1,8,0"
               AutomationProperties.IsOffscreenBehavior="Offscreen"
               Fill="{StaticResource DangerText}"
@@ -90,7 +90,7 @@
         <TextBlock Text="{Binding [0].ErrorContent}"
                    Foreground="{StaticResource DangerText}"
                    FontFamily="{StaticResource FontSans}"
-                   FontSize="14"
+                   FontSize="{StaticResource FontSize1}"
                    TextWrapping="Wrap"/>
       </StackPanel>
     </StackPanel>
@@ -99,7 +99,7 @@
   <Style x:Key="TkErrorText" TargetType="TextBlock">
     <Setter Property="Foreground" Value="{StaticResource DangerText}"/>
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="FontSize" Value="14"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
     <Setter Property="TextWrapping" Value="Wrap"/>
     <!-- Metne glow verilmez (SKILL §2); tek istisna hero sayidir. -->
     <Setter Property="Effect" Value="{x:Null}"/>
@@ -109,10 +109,10 @@
        3 · Modal / diyalog - desktop.md'nin MessageBox yasaginin ikamesi
        ====================================================================== -->
 
-  <sys:Double x:Key="TkModalMaxHeightRatio">0.85</sys:Double>
+  <StaticResource x:Key="TkModalMaxHeightRatio" ResourceKey="ModalMaxRatio"/>
 
   <Style x:Key="TkModalWindow" TargetType="Window">
-    <Setter Property="Width" Value="560"/>
+    <Setter Property="Width" Value="{StaticResource ModalWidth}"/>
     <Setter Property="SizeToContent" Value="Height"/>
     <Setter Property="WindowStartupLocation" Value="CenterOwner"/>
     <Setter Property="ShowInTaskbar" Value="False"/>
@@ -129,7 +129,7 @@
     <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
     <Setter Property="RenderTransform">
       <Setter.Value>
-        <ScaleTransform ScaleX="0.98" ScaleY="0.98"/>
+        <ScaleTransform ScaleX="{StaticResource ScalePress}" ScaleY="{StaticResource ScalePress}"/>
       </Setter.Value>
     </Setter>
   </Style>
@@ -140,11 +140,11 @@
                      Duration="{StaticResource TBase}"
                      EasingFunction="{StaticResource EOut}"/>
     <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                     From="0.98" To="1"
+                     From="{StaticResource ScalePress}" To="1"
                      Duration="{StaticResource TBase}"
                      EasingFunction="{StaticResource EOut}"/>
     <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                     From="0.98" To="1"
+                     From="{StaticResource ScalePress}" To="1"
                      Duration="{StaticResource TBase}"
                      EasingFunction="{StaticResource EOut}"/>
   </Storyboard>
@@ -155,11 +155,11 @@
                      Duration="{StaticResource TFast}"
                      EasingFunction="{StaticResource EIn}"/>
     <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                     To="0.98"
+                     To="{StaticResource ScalePress}"
                      Duration="{StaticResource TFast}"
                      EasingFunction="{StaticResource EIn}"/>
     <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                     To="0.98"
+                     To="{StaticResource ScalePress}"
                      Duration="{StaticResource TFast}"
                      EasingFunction="{StaticResource EIn}"/>
   </Storyboard>
@@ -186,7 +186,7 @@
   <Style x:Key="TkToastStack" TargetType="ItemsControl">
     <Setter Property="HorizontalAlignment" Value="Right"/>
     <Setter Property="VerticalAlignment" Value="Bottom"/>
-    <Setter Property="Margin" Value="24"/>
+    <Setter Property="Margin" Value="{StaticResource PanelPadding}"/>
     <Setter Property="IsHitTestVisible" Value="True"/>
     <Setter Property="ItemsPanel">
       <Setter.Value>
@@ -198,16 +198,16 @@
   </Style>
 
   <Style x:Key="TkToast" TargetType="Border" BasedOn="{StaticResource Panel}">
-    <Setter Property="Width" Value="360"/>
+    <Setter Property="Width" Value="{StaticResource ToastWidth}"/>
     <Setter Property="Margin" Value="0,12,0,0"/>
     <Setter Property="Padding" Value="12"/>
     <Setter Property="TextElement.Foreground" Value="{StaticResource TextBody}"/>
     <Setter Property="TextElement.FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="TextElement.FontSize" Value="14"/>
+    <Setter Property="TextElement.FontSize" Value="{StaticResource FontSize1}"/>
     <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
     <Setter Property="RenderTransform">
       <Setter.Value>
-        <TranslateTransform X="8"/>
+        <TranslateTransform X="{StaticResource EntryOffset}"/>
       </Setter.Value>
     </Setter>
   </Style>
@@ -238,8 +238,8 @@
   <!-- Kapat carpisi: hedef alan 24x24 (SKILL §5.3), simge 14.
        AutomationProperties.Name zorunlu: "Bildirimi kapat". -->
   <Style x:Key="TkToastClose" TargetType="Button">
-    <Setter Property="Width" Value="24"/>
-    <Setter Property="Height" Value="24"/>
+    <Setter Property="Width" Value="{StaticResource TargetMin}"/>
+    <Setter Property="Height" Value="{StaticResource TargetMin}"/>
     <Setter Property="Background" Value="Transparent"/>
     <Setter Property="BorderThickness" Value="0"/>
     <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
@@ -248,8 +248,8 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Button">
-          <Border x:Name="bd" Background="Transparent" CornerRadius="6">
-            <Path x:Name="ic" Width="14" Height="14" Stretch="Uniform"
+          <Border x:Name="bd" Background="Transparent" CornerRadius="{StaticResource Radius}">
+            <Path x:Name="ic" Width="{StaticResource IconSize1}" Height="{StaticResource IconSize1}" Stretch="Uniform"
                   HorizontalAlignment="Center" VerticalAlignment="Center"
                   Stroke="{TemplateBinding Foreground}" StrokeThickness="1.5"
                   Data="M1 1 L13 13 M13 1 L1 13"/>
@@ -270,7 +270,7 @@
                      Duration="{StaticResource TFast}"
                      EasingFunction="{StaticResource EOut}"/>
     <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
-                     From="8" To="0"
+                     From="{StaticResource EntryOffset}" To="0"
                      Duration="{StaticResource TFast}"
                      EasingFunction="{StaticResource EOut}"/>
   </Storyboard>
@@ -281,7 +281,7 @@
                      Duration="{StaticResource TInstant}"
                      EasingFunction="{StaticResource EIn}"/>
     <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
-                     To="8"
+                     To="{StaticResource EntryOffset}"
                      Duration="{StaticResource TInstant}"
                      EasingFunction="{StaticResource EIn}"/>
   </Storyboard>

@@ -23,6 +23,7 @@ const SUITES = [
   ['tema', require('./tema')],
   ['hooks', require('./hooks')],
   ['rafkitap', require('./rafkitap')],
+  ['esle', require('./esle')],
 ];
 
 function main() {

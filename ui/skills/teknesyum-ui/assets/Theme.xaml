@@ -16,10 +16,10 @@
   <SolidColorBrush x:Key="Surface"     Color="#F5101115"/>
   <SolidColorBrush x:Key="AppBg"       Color="#FF0A0B0E"/>
 
-  <!-- Window background: not a flat colour, an 11-stop soft gradient (SKILL §2). -->
-  <LinearGradientBrush x:Key="AppBgGradient" x:Shared="False"
-                       StartPoint="0,0" EndPoint="0.6,1"
-                       ColorInterpolationMode="ScRgbLinearInterpolation">
+  <!-- Window background: derived.bg-gradient (type gradient, angle 160). The
+       overlay carries the grid or the halo glows; the TkWindow template draws both. -->
+  <LinearGradientBrush x:Key="AppBackground" x:Shared="False"
+                       StartPoint="0.281,-0.102" EndPoint="0.719,1.102" ColorInterpolationMode="ScRgbLinearInterpolation">
     <GradientStop Offset="0.0" Color="#FF0A0B0E"/>
     <GradientStop Offset="0.1" Color="#FF0A0B0E"/>
     <GradientStop Offset="0.1" Color="#FF0B0C0F"/>
@@ -37,24 +37,11 @@
     <GradientStop Offset="0.9" Color="#FF101115"/>
     <GradientStop Offset="1.0" Color="#FF101115"/>
   </LinearGradientBrush>
-
-  <!-- MOTION GUARD. WPF has no prefers-reduced-motion; the Windows counterpart is
-       SystemParameters.ClientAreaAnimation and reading it is NOT optional. The consumer
-       starts this storyboard only when that property is true, and stops it when
-       SystemParameters.StaticPropertyChanged reports it turned false.
-       ANIMATION TARGET. A storyboard drives RenderTransform and Opacity only. The
-       earlier version animated Background.EndPoint: retargeting the brush leaves the
-       composition thread and repaints the whole window on every frame for 48 seconds.
-       The drift is now a RotateTransform on the background LAYER — a dedicated element
-       behind the content, named "bgLayer", oversized so the rotated corners stay off
-       screen. The sweep is motion.bg-sweep-max, the same 20
-       degrees the CSS keyframe walks. -->
-  <Storyboard x:Key="AppBgRotate" RepeatBehavior="Forever" AutoReverse="True">
-    <DoubleAnimation Storyboard.TargetName="bgLayer"
-                     Storyboard.TargetProperty="RenderTransform.(RotateTransform.Angle)"
-                     From="0" To="20"
-                     Duration="0:0:48"/>
-  </Storyboard>
+  <SolidColorBrush x:Key="AppBackgroundOverlay" Color="Transparent"/>
+  <SolidColorBrush x:Key="WindowEdge" Color="#B35AA8FF"/>
+  <SolidColorBrush x:Key="ScrollbarThumb" Color="#FFD4B3FF"/>
+  <SolidColorBrush x:Key="ScrollbarThumbHover" Color="#FFC82EE0"/>
+  <SolidColorBrush x:Key="ScrollbarTrack" Color="#4D0A0B0E"/>
 
   <SolidColorBrush x:Key="Renk2Text" Color="#FFF0ABFC"/>
   <SolidColorBrush x:Key="Renk3Text" Color="#FFD4B3FF"/>
@@ -165,8 +152,13 @@
   <DropShadowEffect x:Key="HeroGlow" x:Shared="False" Color="#FF5AA8FF"
                     BlurRadius="8" ShadowDepth="0" Opacity="0.8"/>
 
+  <DropShadowEffect x:Key="PanelShadow" x:Shared="False" Color="#FF0A0B0E"
+                    BlurRadius="40" ShadowDepth="0" Opacity="0.8"/>
+
   <CubicEase x:Key="EOut" EasingMode="EaseOut"/>
   <CubicEase x:Key="EIn" EasingMode="EaseIn"/>
+  <KeySpline x:Key="SplineOut" ControlPoint1="0.2,0" ControlPoint2="0,1"/>
+  <KeySpline x:Key="SplineIn" ControlPoint1="0.4,0" ControlPoint2="1,1"/>
 
   <!-- Numeric tokens: the same values as the CSS tk-* custom properties, in DIP.
        Tracking is em, line height a multiplier, ratios unitless. -->
@@ -237,18 +229,47 @@
   <Duration x:Key="FrameBudget">0:0:0.016</Duration>
   <Duration x:Key="BgRotateMin">0:0:40</Duration>
 
+  <SolidColorBrush x:Key="LabelBrandBrush" Color="#FF5AA8FF"/>
+  <sys:Double x:Key="LabelBrandSize">14</sys:Double>
+  <FontWeight x:Key="LabelBrandWeight">SemiBold</FontWeight>
+  <SolidColorBrush x:Key="LabelSupportBrush" Color="#FFD4B3FF"/>
+  <sys:Double x:Key="LabelSupportSize">14</sys:Double>
+  <FontWeight x:Key="LabelSupportWeight">SemiBold</FontWeight>
+  <SolidColorBrush x:Key="LabelSiteBrush" Color="#FF5AA8FF"/>
+  <sys:Double x:Key="LabelSiteSize">14</sys:Double>
+  <FontWeight x:Key="LabelSiteWeight">SemiBold</FontWeight>
+  <SolidColorBrush x:Key="LabelUpdateBrush" Color="#FFF2F3F6"/>
+  <sys:Double x:Key="LabelUpdateSize">14</sys:Double>
+  <FontWeight x:Key="LabelUpdateWeight">SemiBold</FontWeight>
+  <SolidColorBrush x:Key="LabelSyncBrush" Color="#FFF2F3F6"/>
+  <sys:Double x:Key="LabelSyncSize">14</sys:Double>
+  <FontWeight x:Key="LabelSyncWeight">SemiBold</FontWeight>
+  <SolidColorBrush x:Key="LabelTitleBrush" Color="#FFF2F3F6"/>
+  <SolidColorBrush x:Key="LabelTitleAccentBrush" Color="#FFF0ABFC"/>
+  <sys:Double x:Key="LabelTitleSize">20</sys:Double>
+  <FontWeight x:Key="LabelTitleWeight">SemiBold</FontWeight>
+  <sys:Double x:Key="ButtonHeight">50</sys:Double>
+  <Thickness x:Key="ButtonPadding">20,0</Thickness>
+  <sys:Double x:Key="GlassBlur">16</sys:Double>
+  <sys:Double x:Key="BgAngle">160</sys:Double>
+  <sys:String x:Key="BackgroundType">gradient</sys:String>
+  <sys:String x:Key="ScrollbarStyle">solid</sys:String>
+  <sys:String x:Key="ScrollBehavior">auto</sys:String>
+  <sys:Double x:Key="ScrollbarThickness">4</sys:Double>
+  <Thickness x:Key="ScrollbarThumbInset">0</Thickness>
+  <CornerRadius x:Key="ScrollbarThumbRadius">6</CornerRadius>
+  <Duration x:Key="TFadeOut">0:0:0.72</Duration>
+
   <Style x:Key="{x:Static SystemParameters.FocusVisualStyleKey}">
     <Setter Property="Control.Template">
       <Setter.Value>
         <ControlTemplate>
           <Grid Margin="-5" SnapsToDevicePixels="True" UseLayoutRounding="True">
-            <!-- The radii derive from the 6 DIP base: the inner layer sits 1 DIP
-                 outside the element (6+1=7), the outer 3 DIP outside (6+3=9).
-                 Not hand-picked numbers. -->
+            <!-- Derived from shape.r, shape.focus-offset and shape.focus-w. -->
             <Rectangle Margin="4" RadiusX="7" RadiusY="7"
-                       Stroke="#FF0A0B0E" StrokeThickness="2"/>
+                       Stroke="#FF0A0B0E" StrokeThickness="{StaticResource FocusWidth}"/>
             <Rectangle Margin="2" RadiusX="9" RadiusY="9"
-                       Stroke="#FF5AA8FF" StrokeThickness="2"/>
+                       Stroke="#FF5AA8FF" StrokeThickness="{StaticResource FocusWidth}"/>
           </Grid>
         </ControlTemplate>
       </Setter.Value>
@@ -267,35 +288,35 @@
 
   <Style x:Key="H2" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="FontSize" Value="24"/>
-    <Setter Property="FontWeight" Value="SemiBold"/>
-    <Setter Property="LineHeight" Value="29"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize4}"/>
+    <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+    <Setter Property="LineHeight" Value="30"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
   </Style>
 
   <Style x:Key="H3" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="FontSize" Value="20"/>
-    <Setter Property="FontWeight" Value="SemiBold"/>
-    <Setter Property="LineHeight" Value="24"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize3}"/>
+    <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+    <Setter Property="LineHeight" Value="25"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
   </Style>
 
   <Style x:Key="Label" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="FontSize" Value="14"/>
-    <Setter Property="FontWeight" Value="SemiBold"/>
-    <Setter Property="LineHeight" Value="17"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
+    <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+    <Setter Property="LineHeight" Value="17.5"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
   </Style>
 
   <Style x:Key="Body" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="FontSize" Value="16"/>
-    <Setter Property="LineHeight" Value="24"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+    <Setter Property="LineHeight" Value="25.6"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Typography.NumeralAlignment" Value="Tabular"/>
     <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
@@ -304,8 +325,8 @@
   <!-- Help / hint text. CSS counterpart .tk-hint. -->
   <Style x:Key="Hint" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="FontSize" Value="14"/>
-    <Setter Property="LineHeight" Value="21"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
+    <Setter Property="LineHeight" Value="22.4"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Typography.NumeralAlignment" Value="Tabular"/>
     <Setter Property="TextWrapping" Value="Wrap"/>
@@ -314,9 +335,9 @@
 
   <Style x:Key="Hero" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontMono}"/>
-    <Setter Property="FontSize" Value="30"/>
-    <Setter Property="FontWeight" Value="Black"/>
-    <Setter Property="LineHeight" Value="36"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize5}"/>
+    <Setter Property="FontWeight" Value="{StaticResource WeightHero}"/>
+    <Setter Property="LineHeight" Value="40"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
     <Setter Property="Effect" Value="{StaticResource HeroGlow}"/>
@@ -324,9 +345,9 @@
 
   <Style x:Key="MonoValue" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontMono}"/>
-    <Setter Property="FontSize" Value="16"/>
-    <Setter Property="FontWeight" Value="SemiBold"/>
-    <Setter Property="LineHeight" Value="22"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+    <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+    <Setter Property="LineHeight" Value="24"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
   </Style>
@@ -334,9 +355,10 @@
   <Style x:Key="Panel" TargetType="Border">
     <Setter Property="Background" Value="{StaticResource Surface}"/>
     <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
-    <Setter Property="BorderThickness" Value="1"/>
-    <Setter Property="CornerRadius" Value="6"/>
-    <Setter Property="Padding" Value="24"/>
+    <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+    <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+    <Setter Property="Padding" Value="{StaticResource PanelPadding}"/>
+    <Setter Property="Effect" Value="{StaticResource PanelShadow}"/>
   </Style>
 
   <!-- Warning surface. Derives from `Panel`; the only change is the border. The
@@ -357,24 +379,102 @@
     <Setter Property="Foreground" Value="{StaticResource DangerText}"/>
   </Style>
 
+  <!-- Window shell: edge (shape.window-edge), AppBackground, the overlay layer, then content. -->
   <Style x:Key="TkWindow" TargetType="Window">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
     <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+    <Setter Property="Background" Value="{StaticResource AppBackground}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource WindowEdge}"/>
+    <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Window">
+          <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{StaticResource WindowRadius}" Background="{TemplateBinding Background}">
+            <Grid ClipToBounds="True">
+              <Border Background="{StaticResource AppBackgroundOverlay}" IsHitTestVisible="False"/>
+              <AdornerDecorator>
+                <ContentPresenter/>
+              </AdornerDecorator>
+            </Grid>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="TkScrollThumb" TargetType="Thumb">
+    <Setter Property="Background" Value="{StaticResource ScrollbarThumb}"/>
+    <Setter Property="Margin" Value="{StaticResource ScrollbarThumbInset}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Thumb">
+          <Border x:Name="th" Background="{TemplateBinding Background}" CornerRadius="{StaticResource ScrollbarThumbRadius}"/>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="th" Property="Background" Value="{StaticResource ScrollbarThumbHover}"/>
+            </Trigger>
+            <Trigger Property="IsDragging" Value="True">
+              <Setter TargetName="th" Property="Background" Value="{StaticResource ScrollbarThumbHover}"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <ControlTemplate x:Key="TkScrollBarVertical" TargetType="ScrollBar">
+    <Border Background="{TemplateBinding Background}" CornerRadius="{StaticResource ScrollbarThumbRadius}">
+      <Track x:Name="PART_Track" Orientation="Vertical" IsDirectionReversed="True">
+        <Track.Thumb>
+          <Thumb x:Name="thumb" Style="{StaticResource TkScrollThumb}"/>
+        </Track.Thumb>
+      </Track>
+    </Border>
+  </ControlTemplate>
+
+  <ControlTemplate x:Key="TkScrollBarHorizontal" TargetType="ScrollBar">
+    <Border Background="{TemplateBinding Background}" CornerRadius="{StaticResource ScrollbarThumbRadius}">
+      <Track x:Name="PART_Track" Orientation="Horizontal">
+        <Track.Thumb>
+          <Thumb x:Name="thumb" Style="{StaticResource TkScrollThumb}"/>
+        </Track.Thumb>
+      </Track>
+    </Border>
+  </ControlTemplate>
+
+  <!-- metric.scrollbar-style solid: one implicit style per orientation. -->
+  <Style TargetType="ScrollBar">
+    <Setter Property="Background" Value="{StaticResource ScrollbarTrack}"/>
+    <Setter Property="MinWidth" Value="0"/>
+    <Setter Property="MinHeight" Value="0"/>
+    <Setter Property="Width" Value="{StaticResource ScrollbarThickness}"/>
+    <Setter Property="Template" Value="{StaticResource TkScrollBarVertical}"/>
+    <Style.Triggers>
+      <Trigger Property="Orientation" Value="Horizontal">
+        <Setter Property="Width" Value="NaN"/>
+        <Setter Property="Height" Value="{StaticResource ScrollbarThickness}"/>
+        <Setter Property="Template" Value="{StaticResource TkScrollBarHorizontal}"/>
+      </Trigger>
+    </Style.Triggers>
   </Style>
 
   <Style x:Key="PrimaryButton" TargetType="Button">
     <Setter Property="Background" Value="{StaticResource Renk1}"/>
     <Setter Property="Foreground" Value="Black"/>
-    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
     <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
-    <Setter Property="Padding" Value="20,14"/>
-    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="MinHeight" Value="{StaticResource ButtonHeight}"/>
+    <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
     <Setter Property="Cursor" Value="Hand"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Button">
-          <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6"
+          <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="{StaticResource Radius}"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                   Padding="{TemplateBinding Padding}" RenderTransformOrigin="0.5,0.5">
             <Border.RenderTransform>
               <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -389,9 +489,9 @@
               <Trigger.EnterActions>
                 <BeginStoryboard>
                   <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="1.02" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="{StaticResource ScaleHover}" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"/>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="1.02" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="{StaticResource ScaleHover}" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"/>
                   </Storyboard>
                 </BeginStoryboard>
@@ -399,9 +499,9 @@
               <Trigger.ExitActions>
                 <BeginStoryboard>
                   <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"/>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"/>
                   </Storyboard>
                 </BeginStoryboard>
@@ -411,9 +511,9 @@
               <Trigger.EnterActions>
                 <BeginStoryboard>
                   <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="0.98" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="{StaticResource ScalePress}" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"/>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="0.98" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="{StaticResource ScalePress}" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"/>
                   </Storyboard>
                 </BeginStoryboard>
@@ -421,9 +521,9 @@
               <Trigger.ExitActions>
                 <BeginStoryboard>
                   <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"/>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"/>
                   </Storyboard>
                 </BeginStoryboard>
@@ -432,7 +532,7 @@
             <Trigger Property="IsEnabled" Value="False">
               <Setter TargetName="bd" Property="Background" Value="Transparent"/>
               <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Disabled}"/>
-              <Setter TargetName="bd" Property="BorderThickness" Value="1"/>
+              <Setter TargetName="bd" Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
               <Setter TargetName="bd" Property="Effect" Value="{x:Null}"/>
               <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
               <Setter Property="Cursor" Value="No"/>

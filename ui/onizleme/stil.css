@@ -955,6 +955,33 @@ body[data-sihirbaz] .bilesen-liste { padding-bottom: calc(var(--tk-sp-4) * 2 + v
 
 .onizleme .tk-btn, .sihirbaz .tk-btn, .kaydet-pencere .tk-btn { border-width: var(--tk-border-w); min-height: var(--tk-btn-h); padding-block: 0; padding-inline: var(--tk-btn-px); }
 .onizleme .tk-panel { background: var(--tk-panel); box-shadow: var(--tk-shadow-panel); }
+.tk-titlebar__name:where(.onizleme [data-etiket='title']) {
+  color: var(--tk-label-title-color, var(--tk-text));
+  font-size: min(var(--tk-label-title-fs, var(--tk-fs-3)), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
+  font-weight: var(--tk-label-title-fw, var(--tk-fw-semi));
+}
+.tk-titlebar__accent:where(.onizleme [data-etiket='title'] *),
+.tk-installer__accent:where(.onizleme [data-etiket='title'] *) { color: var(--tk-label-title-accent, var(--tk-renk-2-text)); }
+.tk-installer__title:where(.onizleme [data-etiket='title']) { color: var(--tk-label-title-color, var(--tk-text)); font-weight: var(--tk-label-title-fw, var(--tk-fw-semi)); }
+.baslik-cubugu [data-etiket='brand'] { color: var(--tk-label-brand-color, var(--tk-renk-1)); font-weight: var(--tk-label-brand-fw, var(--tk-fw-semi)); }
+.baslik-cubugu [data-etiket='title'] { color: var(--tk-label-title-color, var(--tk-text)); font-weight: var(--tk-label-title-fw, var(--tk-fw-semi)); }
+.tk-titlebar__chip:where(.onizleme [data-etiket='brand']) {
+  color: var(--tk-label-brand-color, var(--tk-renk-1));
+  font-size: min(var(--tk-label-brand-fs, var(--tk-fs-1)), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
+  font-weight: var(--tk-label-brand-fw, var(--tk-fw-semi));
+}
+.tk-titlebar__chip:where(.onizleme [data-etiket='support']) {
+  color: var(--tk-label-support-color, var(--tk-renk-3-text));
+  font-size: min(var(--tk-label-support-fs, var(--tk-fs-1)), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
+  font-weight: var(--tk-label-support-fw, var(--tk-fw-semi));
+}
+.tk-titlebar__chip:where(.onizleme [data-etiket='site']) {
+  color: var(--tk-label-site-color, var(--tk-renk-1));
+  font-size: min(var(--tk-label-site-fs, var(--tk-fs-1)), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
+  font-weight: var(--tk-label-site-fw, var(--tk-fw-semi));
+}
+.tk-update:where(.onizleme [data-etiket='update']) { color: var(--tk-label-update-color, var(--tk-text)); font-size: var(--tk-label-update-fs, var(--tk-fs-1)); font-weight: var(--tk-label-update-fw, var(--tk-fw-semi)); }
+.tk-sync:where(.onizleme [data-etiket='sync']) { color: var(--tk-label-sync-color, var(--tk-text)); font-size: var(--tk-label-sync-fs, var(--tk-fs-1)); font-weight: var(--tk-label-sync-fw, var(--tk-fw-semi)); }
 .onizleme .tk-btn.s-uzerinde { transform: scale(var(--tk-scale-hover)); }
 .onizleme .tk-btn-ghost.s-uzerinde { background: var(--tk-renk-3-10); color: var(--tk-on-renk-3-10); }
 .onizleme .tk-btn.s-basili { transform: scale(var(--tk-scale-press)); border-color: var(--tk-border-strong); }

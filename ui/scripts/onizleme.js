@@ -11,6 +11,7 @@ const SAYFA = path.join(UI, 'onizleme');
 const TOKENS = path.join(UI, 'templates', 'neon.tokens.json');
 const KONTRAST = path.join(__dirname, 'kontrast.js');
 const SKOR = path.join(__dirname, 'skor.js');
+const ESLE = path.join(__dirname, 'esle.js');
 const KAYDET = require('./kaydet');
 const TEMA = require('./tema');
 const OZEL = require('./ozel');
@@ -45,7 +46,7 @@ const YOL = {
 };
 
 function tarayici(dosya, ad) {
-  const kaynak = fs.readFileSync(dosya, 'utf8');
+  const kaynak = fs.readFileSync(dosya, 'utf8').replace(/^#!.*/, '');
   return (
     '(function () {\nvar module = { exports: {} };\nvar exports = module.exports;\n' +
     kaynak +
@@ -70,6 +71,7 @@ function yanit(yol) {
   try {
     if (temiz === '/kontrast.js') return { status: 200, type: TUR['.js'], body: kontrastTarayici() };
     if (temiz === '/skor.js') return { status: 200, type: TUR['.js'], body: tarayici(SKOR, 'Skor') };
+    if (temiz === '/esle.js') return { status: 200, type: TUR['.js'], body: tarayici(ESLE, 'Esle') };
     if (temiz === '/temalar.json') return { status: 200, type: TUR['.json'], body: JSON.stringify(TEMA.sayfaVerisi()) };
     if (temiz === '/standart.css') return { status: 200, type: TUR['.css'], body: standartCss() };
     const dosya = YOL[temiz];

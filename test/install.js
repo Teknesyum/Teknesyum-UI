@@ -135,98 +135,6 @@ function embedsFont() {
   L.ok('a second --apply leaves the font and csproj alone', /\b0 file\(s\) written/.test(again.stdout) && fs.readFileSync(path.join(root, 'src', 'Deneme', 'Deneme.csproj'), 'utf8') === csproj, again.stdout);
 }
 
-function registersAnimator() {
-  const root = L.tmp('tkui-animator-');
-  const projDir = path.join(root, 'src', 'Deneme');
-  L.write(
-    path.join(projDir, 'Deneme.csproj'),
-    [
-      '<Project Sdk="Microsoft.NET.Sdk">',
-      '  <PropertyGroup>',
-      '    <OutputType>WinExe</OutputType>',
-      '    <AssemblyName>Deneme</AssemblyName>',
-      '  </PropertyGroup>',
-      '  <ItemGroup>',
-      '    <PackageReference Include="Avalonia" Version="11.3.20" />',
-      '  </ItemGroup>',
-      '</Project>',
-      '',
-    ].join('\r\n')
-  );
-  L.write(
-    path.join(projDir, 'App.axaml.cs'),
-    [
-      'using Avalonia;',
-      'using Avalonia.Markup.Xaml;',
-      '',
-      'namespace Deneme;',
-      '',
-      'public class App : Application',
-      '{',
-      '    public override void Initialize()',
-      '    {',
-      '        AvaloniaXamlLoader.Load(this);',
-      '    }',
-      '}',
-      '',
-    ].join('\r\n')
-  );
-
-  const r = setup(root, ['--apply', '--template', 'neon', '--targets', 'avalonia']);
-  L.ok('--apply with an unregistered Avalonia app exits 0', r.status === 0, r.stderr || r.stdout);
-
-  const animatorFile = path.join(projDir, 'TransformAnimator.cs');
-  L.ok('TransformAnimator.cs is written next to App.axaml.cs', fs.existsSync(animatorFile));
-  const animatorText = fs.existsSync(animatorFile) ? fs.readFileSync(animatorFile, 'utf8') : '';
-  L.ok('TransformAnimator.cs carries the app namespace', animatorText.includes('namespace Deneme;'), animatorText);
-  L.ok('TransformAnimator.cs derives ITransform', animatorText.includes('InterpolatingAnimator<ITransform>'), animatorText);
-
-  const appText = fs.readFileSync(path.join(projDir, 'App.axaml.cs'), 'utf8');
-  L.ok(
-    'the registration line lands as the first statement of Initialize()',
-    /Initialize\(\)\s*\r?\n\s*\{\r?\n\s*Animation\.RegisterCustomAnimator<ITransform, TransformAnimator>\(\);/.test(appText),
-    appText
-  );
-  L.ok('the using for Avalonia.Animation is added', appText.includes('using Avalonia.Animation;'), appText);
-
-  const again = setup(root, ['--apply', '--template', 'neon', '--targets', 'avalonia']);
-  const appAgain = fs.readFileSync(path.join(projDir, 'App.axaml.cs'), 'utf8');
-  L.ok(
-    'a second --apply does not register the animator twice',
-    (appAgain.match(/RegisterCustomAnimator/g) || []).length === 1,
-    appAgain
-  );
-  L.ok('a second --apply exits 0 for the animator step', again.status === 0, again.stderr || again.stdout);
-}
-
-function animatorSkipsOddStructure() {
-  const root = L.tmp('tkui-animator-odd-');
-  const projDir = path.join(root, 'src', 'Tuhaf');
-  L.write(
-    path.join(projDir, 'Tuhaf.csproj'),
-    [
-      '<Project Sdk="Microsoft.NET.Sdk">',
-      '  <PropertyGroup>',
-      '    <OutputType>WinExe</OutputType>',
-      '    <AssemblyName>Tuhaf</AssemblyName>',
-      '  </PropertyGroup>',
-      '  <ItemGroup>',
-      '    <PackageReference Include="Avalonia" Version="11.3.20" />',
-      '  </ItemGroup>',
-      '</Project>',
-      '',
-    ].join('\r\n')
-  );
-  L.write(
-    path.join(projDir, 'App.axaml.cs'),
-    ['using Avalonia;', '', 'namespace Tuhaf;', '', 'public class App : Application { }', ''].join('\r\n')
-  );
-
-  const r = setup(root, ['--apply', '--template', 'neon', '--targets', 'avalonia']);
-  L.ok('--apply does not stop the job when Initialize() is not found', r.status === 0, r.stderr || r.stdout);
-  L.ok('--apply prints a clear warning for the unexpected structure', /Initialize\(\) was not found/.test(r.stdout), r.stdout);
-}
-
 function switches(root) {
   const off = setup(root, ['--off']);
   L.ok('--off exits 0', off.status === 0, off.stderr);
@@ -274,7 +182,7 @@ function benimTemplate() {
     const kayit = S.benim();
     L.ok('benim() reports the token file once it exists', !!kayit && kayit.dosya === yol, JSON.stringify(kayit));
     L.ok('benim() derives a 16 hex char duzen from the file', /^[0-9a-f]{16}$/.test(kayit.duzen), kayit.duzen);
-    L.ok('benim() carries the notes array', Array.isArray(kayit.notlar) && kayit.notlar.length === 0, JSON.stringify(kayit.notlar));
+    L.ok('benim() carries no notes', !('notlar' in kayit), JSON.stringify(kayit));
 
     const root = L.tmp('tkui-benim-project-');
     const r = L.node(L.SETUP, ['--apply', '--template', 'benim', '--project', root], { env: L.cleanEnv({ TEKNESYUM_PRIVATE: raf }) });
@@ -282,6 +190,8 @@ function benimTemplate() {
 
     const cfg = L.readJson(path.join(root, '.claude', 'teknesyum-ui.json')) || {};
     L.ok('the config records the benim template and its duzen', cfg.template === 'benim' && cfg.duzen === kayit.duzen, JSON.stringify(cfg.template) + ' ' + cfg.duzen);
+    L.ok('the config records the plugin version and no notes', !!cfg.plugin && !('notlar' in cfg), JSON.stringify(cfg));
+    L.ok('--apply --template benim ends with the layout match line', /düzen eşleşmesi \d+ fark/.test(r.stdout), r.stdout);
 
     const copy = L.readJson(path.join(root, 'teknesyum-ui', 'theme.tokens.json'));
     L.ok('the private tokens are copied into the project as theme.tokens.json', !!copy && copy.brand['renk-1'].value === '#654321', copy && copy.brand['renk-1'].value);
@@ -300,8 +210,6 @@ module.exports = function install() {
   const root = applyNeon();
   applyCustom();
   embedsFont();
-  registersAnimator();
-  animatorSkipsOddStructure();
   switches(root);
   check(root);
   benimTemplate();

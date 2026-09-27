@@ -58,7 +58,10 @@ function dogrula(v) {
 }
 
 function gonder(kok, dosyalar) {
-  const bagil = [].concat(dosyalar).filter((d) => fs.existsSync(d)).map((d) => path.relative(kok, d).split(path.sep).join('/'));
+  const rel = (d) => path.relative(kok, d).split(path.sep).join('/');
+  const bagil = [].concat(dosyalar).filter((d) => fs.existsSync(d)).map(rel);
+  const giden = [].concat(dosyalar).filter((d) => !fs.existsSync(d)).map(rel);
+  const tum = bagil.concat(giden);
   const git = (args) => new Promise((r) => {
     const c = spawn('git', args, { cwd: kok, windowsHide: true, stdio: 'ignore' });
     c.on('error', () => r(1));
@@ -67,9 +70,10 @@ function gonder(kok, dosyalar) {
   const is = { durum: 'gonderiliyor' };
   (async () => {
     if (!fs.existsSync(path.join(kok, '.git'))) return (is.durum = 'git-yok');
+    if (giden.length) await git(['rm', '-q', '--cached', '--ignore-unmatch', '--', ...giden]);
     if ((await git(['add', '--sparse', '--', ...bagil])) !== 0 && (await git(['add', '--', ...bagil])) !== 0) return (is.durum = 'add-durdu');
-    const degisti = (await git(['diff', '--cached', '--quiet', '--', ...bagil])) !== 0;
-    if (degisti && (await git(['commit', '-q', '-m', 'teknesyum-ui: önizleme ayarı', '--', ...bagil])) !== 0) return (is.durum = 'commit-durdu');
+    const degisti = (await git(['diff', '--cached', '--quiet', '--', ...tum])) !== 0;
+    if (degisti && (await git(['commit', '-q', '-m', 'teknesyum-ui: önizleme ayarı', '--', ...tum])) !== 0) return (is.durum = 'commit-durdu');
     is.durum = (await git(['push', '-q'])) === 0 ? 'gonderildi' : 'push-durdu';
   })();
   return is;
@@ -87,12 +91,11 @@ function tokenYaz(degisen) {
   if (!yol || !degisen || typeof degisen !== 'object' || Array.isArray(degisen)) return null;
   const K = require('./kaydet');
   const d = Object.assign({}, degisen);
-  const notlar = Array.isArray(d._) ? d._.map(String) : [];
   delete d._;
   const metin = K.tokenMetni(fs.readFileSync(K.TOKENS, 'utf8'), d).metin;
   fs.mkdirSync(path.dirname(yol.tokenlar), { recursive: true });
   fs.writeFileSync(yol.tokenlar, metin);
-  fs.writeFileSync(yol.notlar, JSON.stringify({ notlar }, null, 2) + '\n');
+  fs.rmSync(yol.notlar, { force: true });
   return yol.tokenlar;
 }
 

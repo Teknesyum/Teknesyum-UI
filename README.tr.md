@@ -220,6 +220,7 @@ node <plugin>/scripts/scan.js <project-root> [--fix] [--json] [--files a.css,b.t
 ```bash
 node <plugin>/scripts/raf.js [book] | --uyan [root] | --uydu <book> --project <root>
 node <plugin>/scripts/uc.js [--project <root>] [scope]
+node <plugin>/scripts/esle.js --denetle [--project <root>] | --yaz
 ```
 
 ```bash
@@ -252,6 +253,8 @@ ui/scripts/scan.js        tarayıcı
 ui/scripts/rules/*.js     kurallar, alan başına bir modül
 ui/scripts/raf.js         özel rafı okur, uygulanan kitapları kaydeder
 ui/scripts/uc.js          Core `uc` işaretinin talimatını yazar
+ui/scripts/esle.js        önizleme seçimleri -> token'lar ve düzen eşleşmesi kapısı
+ui/scripts/etiket.js      etiket token'ları -> labels.tr.json, labels.en.json, CSS ve XAML
 ui/scripts/ozel.js        özel kayıt ve token dosyası
 ui/scripts/kaydet.js      yeni token değerlerinin kamuya açık yayımı
 ui/hooks/baslangic.js     SessionStart: gerektiğinde önce denetle

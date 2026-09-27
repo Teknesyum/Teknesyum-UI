@@ -7,14 +7,14 @@ type Props = { t: Translate };
 
 const BASE =
   'inline-flex items-center justify-center min-h-6 min-w-6 no-underline select-none ' +
-  'text-[length:var(--tk-fs-1)] font-semibold tracking-[var(--tk-tr-label)] ' +
+  'tracking-[var(--tk-tr-label)] ' +
   'rounded-[var(--tk-r)] border bg-transparent ' +
   'px-2.5 py-1 ease-[--tk-e-out] duration-[--tk-t-instant] hover:scale-[1.02] ' +
   'transition-[transform]';
 
-const SUPPORT = `${BASE} gap-1.5 text-[var(--tk-renk-2-text)] border-[var(--tk-renk-2-text)]`;
+const SUPPORT = `${BASE} gap-1.5 text-[length:var(--tk-label-support-fs)] font-[var(--tk-label-support-fw)] text-[var(--tk-label-support-color)] border-[var(--tk-label-support-color)]`;
 
-const BRAND = `${BASE} text-[var(--tk-renk-1)] border-[var(--tk-renk-1)]`;
+const BRAND = `${BASE} text-[length:var(--tk-label-brand-fs)] font-[var(--tk-label-brand-fw)] text-[var(--tk-label-brand-color)] border-[var(--tk-label-brand-color)]`;
 
 function CoffeeIcon() {
   return (

@@ -51,16 +51,16 @@
 }
 
 .tk-titlebar__name {
-  color: var(--tk-text);
-  font-size: min(var(--tk-fs-3), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
-  font-weight: var(--tk-fw-semi);
+  color: var(--tk-label-title-color, var(--tk-text));
+  font-size: min(var(--tk-label-title-fs, var(--tk-fs-3)), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
+  font-weight: var(--tk-label-title-fw, var(--tk-fw-semi));
   line-height: 1;
   letter-spacing: var(--tk-tr-h2);
   white-space: nowrap;
 }
 
 .tk-titlebar__accent {
-  color: var(--tk-renk-2-text);
+  color: var(--tk-label-title-accent, var(--tk-renk-2-text));
 }
 
 .tk-titlebar__tab,
@@ -101,8 +101,16 @@
   transition: transform var(--tk-t-base) var(--tk-e-emphasized);
 }
 
+.tk-titlebar__chip {
+  color: var(--tk-label-site-color, var(--tk-renk-1));
+  font-size: min(var(--tk-label-site-fs, var(--tk-fs-1)), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
+  font-weight: var(--tk-label-site-fw, var(--tk-fw-semi));
+}
+
 .tk-titlebar__chip--support {
-  color: var(--tk-renk-3-text);
+  color: var(--tk-label-support-color, var(--tk-renk-3-text));
+  font-size: min(var(--tk-label-support-fs, var(--tk-fs-1)), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
+  font-weight: var(--tk-label-support-fw, var(--tk-fw-semi));
 }
 
 .tk-titlebar__tab:hover,

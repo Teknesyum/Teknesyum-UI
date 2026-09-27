@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const K = require('./kontrast');
+const Et = require('./etiket');
 const assetsDir = path.resolve(__dirname, '..', 'skills', 'teknesyum-ui', 'assets');
 const tokensPath = process.argv[2] ? path.resolve(process.argv[2]) : path.join(assetsDir, 'theme.tokens.json');
 const outDir = process.argv[3] ? path.resolve(process.argv[3]) : assetsDir;
@@ -86,6 +87,287 @@ function gradientXaml(indent) {
   return gradientStops().map(s =>
     indent + '<GradientStop Offset="' + s.t.toFixed(1) + '" Color="#FF' + HK(s.r) + HK(s.g) + HK(s.b) + '"/>'
   ).join('\n');
+}
+
+function tk(group, name, field, fallback) {
+  const e = T[group] && T[group][name];
+  return e && e[field] !== undefined ? e[field] : fallback;
+}
+function bgSpec() {
+  const g = T.derived['bg-gradient'];
+  const sweep = T.motion && T.motion['bg-sweep-max'] ? T.motion['bg-sweep-max'].value : 20;
+  const type = g.type || 'gradient';
+  const angle = g.angle !== undefined ? g.angle : 160;
+  return {
+    type,
+    angle,
+    rotate: g.rotate === true && type !== 'flat',
+    from: angle - sweep / 2,
+    to: angle + sweep / 2,
+    halo: g['halo-alpha'] || [0.18, 0.14, 0.14],
+    gridAlpha: g['grid-alpha'] !== undefined ? g['grid-alpha'] : 0.08,
+    gridSize: g['grid-size'] || 32
+  };
+}
+function bgCss() {
+  const b = bgSpec();
+  if (b.type === 'flat') return 'var(--tk-surface)';
+  const lin = 'linear-gradient(\n    var(--tk-bg-angle, ' + b.angle + 'deg),\n' + gradientCss() + '\n  )';
+  if (b.type === 'glass' || b.type === 'halo')
+    return 'radial-gradient(circle at 15% 10%, ' + rgba('renk-1', b.halo[0]) + ', transparent 45%),\n' +
+      '    radial-gradient(circle at 85% 30%, ' + rgba('renk-2', b.halo[1]) + ', transparent 45%),\n' +
+      '    radial-gradient(circle at 50% 90%, ' + rgba('renk-3', b.halo[2]) + ', transparent 50%),\n    ' + lin;
+  if (b.type === 'grid') {
+    const c = rgba('renk-1', b.gridAlpha);
+    const z = b.gridSize + 'px ' + b.gridSize + 'px';
+    return 'linear-gradient(' + c + ' var(--tk-border-w), transparent var(--tk-border-w)) 0 0 / ' + z + ',\n' +
+      '    linear-gradient(90deg, ' + c + ' var(--tk-border-w), transparent var(--tk-border-w)) 0 0 / ' + z + ',\n    ' + lin;
+  }
+  return lin;
+}
+function windowEdgeRef() { return tk('shape', 'window-edge', 'ref', 'border-strong'); }
+function windowEdgeCss() {
+  const r = windowEdgeRef();
+  return r === 'none' ? 'transparent' : rgba(r);
+}
+function scrollbarStyle() { return tk('metric', 'scrollbar-style', 'value', 'solid'); }
+function scrollbarCss() {
+  const st = scrollbarStyle();
+  const on = ':is(:hover, [data-tk-scrolling])';
+  const rules = {
+    solid: '',
+    thin: '::-webkit-scrollbar { width: calc(var(--tk-scrollbar-w) / 2); height: calc(var(--tk-scrollbar-w) / 2); }\n',
+    pill: '::-webkit-scrollbar-thumb { border: var(--tk-focus-w) solid transparent; border-radius: 9999px; background-clip: padding-box; }\n::-webkit-scrollbar-track { background: transparent; }\n',
+    hover: '*:not(' + on + ')::-webkit-scrollbar-thumb { background: transparent; }\n',
+    fade: "@property --tk-thumb-a { syntax: '<percentage>'; inherits: true; initial-value: 0%; }\n* { --tk-thumb-a: 0%; transition: --tk-thumb-a calc(var(--tk-t-slow) * 2) var(--tk-e-out); }\n*" + on + ' { --tk-thumb-a: 100%; transition-duration: var(--tk-t-fast); }\n::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--tk-thumb) var(--tk-thumb-a), transparent); }\n',
+    shrink: "@property --tk-thumb-gap { syntax: '<length>'; inherits: true; initial-value: 0px; }\n* { --tk-thumb-gap: calc(var(--tk-scrollbar-w) / 3); transition: --tk-thumb-gap var(--tk-t-base) var(--tk-e-out); }\n*" + on + ' { --tk-thumb-gap: 0px; }\n::-webkit-scrollbar-thumb { border: var(--tk-thumb-gap) solid transparent; background-clip: padding-box; }\n'
+  };
+  return rules[st] || '';
+}
+
+function num(v) { return String(Math.round(v * 1000) / 1000 + 0); }
+function btnH() { return tk('metric', 'btn-h', 'value', 50); }
+function btnPx() { return tk('metric', 'btn-px', 'value', 20); }
+function glassBlur() { return tk('derived', 'glass', 'blur', 16); }
+function scrollBehavior() { return tk('metric', 'scroll-behavior', 'value', 'auto'); }
+function thumbRef() { return tk('derived', 'scrollbar-thumb', 'ref', 'renk-3-text'); }
+function thumbHoverRef() { return tk('derived', 'scrollbar-thumb', 'hover-ref', 'renk-2'); }
+function trackXa() { return T.derived['scrollbar-track'] ? xa('scrollbar-track') : xa('black', 0.3); }
+function trackArgb() { return T.derived['scrollbar-track'] ? argb('scrollbar-track') : argb('black', 0.3); }
+function windowEdgeXaml() {
+  const r = windowEdgeRef();
+  return r === 'none' ? 'Transparent' : xa(r);
+}
+function bgPoints(angle) {
+  const a = angle * Math.PI / 180;
+  const dx = Math.sin(a), dy = -Math.cos(a);
+  const L = (Math.abs(dx) + Math.abs(dy)) / 2;
+  return { sx: 0.5 - dx * L, sy: 0.5 - dy * L, ex: 0.5 + dx * L, ey: 0.5 + dy * L };
+}
+function bgPointAttrs(angle, ava) {
+  const p = bgPoints(angle);
+  const f = (X, Y) => ava ? num(X * 100) + '%,' + num(Y * 100) + '%' : num(X) + ',' + num(Y);
+  return 'StartPoint="' + f(p.sx, p.sy) + '" EndPoint="' + f(p.ex, p.ey) + '"';
+}
+function bgBrushXaml(ind, key, angle, ava) {
+  if (bgSpec().type === 'flat') return ind + '<SolidColorBrush x:Key="' + key + '" Color="' + x('surface') + '"/>';
+  return ind + '<LinearGradientBrush x:Key="' + key + '"' + (ava ? '' : ' x:Shared="False"') + '\n' +
+    ind + '                     ' + bgPointAttrs(angle, ava) + (ava ? '' : ' ColorInterpolationMode="ScRgbLinearInterpolation"') + '>\n' +
+    gradientXaml(ind + '  ') + '\n' + ind + '</LinearGradientBrush>';
+}
+function bgRotateScale() {
+  const b = bgSpec();
+  const t = Math.max(Math.abs(b.from - b.angle), Math.abs(b.to - b.angle)) * Math.PI / 180;
+  return Math.ceil((Math.cos(t) + 16 / 9 * Math.sin(t)) * 100) / 100;
+}
+function rectDrawing(ind, brush, rect) {
+  return ind + '<GeometryDrawing Brush="' + brush + '">\n' +
+    ind + '  <GeometryDrawing.Geometry><RectangleGeometry Rect="' + rect + '"/></GeometryDrawing.Geometry>\n' +
+    ind + '</GeometryDrawing>';
+}
+function radialDrawing(ind, base, alpha, cx, cy, r, ava) {
+  const pt = ava ? num(cx * 100) + '%,' + num(cy * 100) + '%' : num(cx) + ',' + num(cy);
+  const radius = ava ? 'RadiusX="' + num(r * 100) + '%" RadiusY="' + num(r * 100) + '%"' : 'RadiusX="' + num(r) + '" RadiusY="' + num(r) + '"';
+  return ind + '<GeometryDrawing>\n' +
+    ind + '  <GeometryDrawing.Brush>\n' +
+    ind + '    <RadialGradientBrush Center="' + pt + '" GradientOrigin="' + pt + '" ' + radius + '>\n' +
+    ind + '      <GradientStop Offset="0" Color="' + xa(base, alpha) + '"/>\n' +
+    ind + '      <GradientStop Offset="1" Color="' + xa(base, 0) + '"/>\n' +
+    ind + '    </RadialGradientBrush>\n' +
+    ind + '  </GeometryDrawing.Brush>\n' +
+    ind + '  <GeometryDrawing.Geometry><RectangleGeometry Rect="0,0,1,1"/></GeometryDrawing.Geometry>\n' +
+    ind + '</GeometryDrawing>';
+}
+function overlayXaml(ind, ava) {
+  const b = bgSpec();
+  const i2 = ind + '      ';
+  const open = attrs => ind + '<DrawingBrush x:Key="AppBackgroundOverlay" ' + attrs + '>\n' + ind + '  <DrawingBrush.Drawing>\n' + ind + '    <DrawingGroup>\n';
+  const close = '\n' + ind + '    </DrawingGroup>\n' + ind + '  </DrawingBrush.Drawing>\n' + ind + '</DrawingBrush>';
+  if (b.type === 'grid') {
+    const s = num(b.gridSize), w = m('shape.border-w'), c = xa('renk-1', b.gridAlpha);
+    const box = '0,0,' + s + ',' + s;
+    const tile = ava
+      ? 'TileMode="Tile" SourceRect="' + box + '" DestinationRect="' + box + '" Stretch="Fill"'
+      : 'TileMode="Tile" Viewbox="' + box + '" ViewboxUnits="Absolute" Viewport="' + box + '" ViewportUnits="Absolute" Stretch="Fill"';
+    return open(tile) + [
+      rectDrawing(i2, 'Transparent', box),
+      rectDrawing(i2, c, '0,0,' + s + ',' + w),
+      rectDrawing(i2, c, '0,0,' + w + ',' + s)
+    ].join('\n') + close;
+  }
+  if (b.type === 'glass' || b.type === 'halo') {
+    return open('Stretch="Fill"') + [
+      rectDrawing(i2, 'Transparent', '0,0,1,1'),
+      radialDrawing(i2, 'renk-1', b.halo[0], 0.15, 0.10, 0.45, ava),
+      radialDrawing(i2, 'renk-2', b.halo[1], 0.85, 0.30, 0.45, ava),
+      radialDrawing(i2, 'renk-3', b.halo[2], 0.50, 0.90, 0.50, ava)
+    ].join('\n') + close;
+  }
+  return ind + '<SolidColorBrush x:Key="AppBackgroundOverlay" Color="Transparent"/>';
+}
+function backgroundXaml(ind, ava) {
+  const b = bgSpec();
+  const out = [bgBrushXaml(ind, 'AppBackground', b.angle, ava)];
+  if (b.rotate) {
+    out.push(bgBrushXaml(ind, 'AppBackgroundFrom', b.from, ava));
+    out.push(bgBrushXaml(ind, 'AppBackgroundTo', b.to, ava));
+  }
+  out.push(overlayXaml(ind, ava));
+  return out.join('\n');
+}
+function scrollGeometry() {
+  const st = scrollbarStyle();
+  const w = Number(m('metric.scrollbar-w'));
+  const size = st === 'thin' ? w / 2 : w;
+  const inset = st === 'pill' ? Number(m('shape.focus-w')) : st === 'shrink' ? w / 3 : 0;
+  const radius = st === 'pill' ? size / 2 : Number(m('shape.r'));
+  return { st, size, inset, radius, hidden: st === 'hover' || st === 'fade' };
+}
+function tokenXaml(ind, ava) {
+  const d = (key, v) => ind + '<sys:Double x:Key="' + key + '">' + v + '</sys:Double>';
+  const s = (key, v) => ind + '<sys:String x:Key="' + key + '">' + v + '</sys:String>';
+  const g = scrollGeometry();
+  const slow2 = T.duration.slow.ms * 2 / 1000;
+  return [
+    d('ButtonHeight', btnH()),
+    ind + '<Thickness x:Key="ButtonPadding">' + btnPx() + ',0</Thickness>',
+    d('GlassBlur', glassBlur()),
+    d('BgAngle', bgSpec().angle),
+    s('BackgroundType', bgSpec().type),
+    s('ScrollbarStyle', g.st),
+    s('ScrollBehavior', scrollBehavior()),
+    d('ScrollbarThickness', num(g.size)),
+    ind + '<Thickness x:Key="ScrollbarThumbInset">' + num(g.inset) + '</Thickness>',
+    ind + '<CornerRadius x:Key="ScrollbarThumbRadius">' + num(g.radius) + '</CornerRadius>',
+    ind + (ava ? '<sys:TimeSpan x:Key="TFadeOut">0:0:' + slow2 + '</sys:TimeSpan>' : '<Duration x:Key="TFadeOut">0:0:' + slow2 + '</Duration>')
+  ].join('\n');
+}
+function focusGeometry() {
+  const o = Number(m('shape.focus-offset')), w = Number(m('shape.focus-w')), r = Number(m('shape.r'));
+  const outer = o + w + 1;
+  return { grid: -outer, inner: outer - (o - 1), outerM: outer - (o + 1), rIn: r + 1, rOut: r + o + 1, w };
+}
+function lineHeight(fs, lh) { return num(Number(m(fs)) * Number(m(lh))); }
+function scrollBarAxaml() {
+  const g = scrollGeometry();
+  const thumb = 'ScrollBar /template/ Thumb#thumb';
+  const on = 'ScrollViewer:pointerover /template/ ' + thumb;
+  const tr = [
+    '<BrushTransition Property="Background" Duration="{StaticResource TInstant}" Easing="{StaticResource EOut}"/>',
+    g.st === 'fade' ? '<DoubleTransition Property="Opacity" Duration="{StaticResource TFadeOut}" Easing="{StaticResource EOut}"/>' : '',
+    g.st === 'shrink' ? '<ThicknessTransition Property="Margin" Duration="{StaticResource TBase}" Easing="{StaticResource EOut}"/>' : ''
+  ].filter(Boolean).map(t => '          ' + t).join('\n');
+  const extra = [];
+  if (g.hidden) extra.push(`  <Style Selector="${on}">
+    <Setter Property="Opacity" Value="1"/>${g.st === 'fade' ? `
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="{StaticResource TInstant}" Easing="{StaticResource EOut}"/>
+        <DoubleTransition Property="Opacity" Duration="{StaticResource TFast}" Easing="{StaticResource EOut}"/>
+      </Transitions>
+    </Setter>` : ''}
+  </Style>`);
+  if (g.st === 'shrink') extra.push(`  <Style Selector="${on}">
+    <Setter Property="Margin" Value="0"/>
+  </Style>`);
+  return `  <!-- SCROLLBARS, metric.scrollbar-style ${g.st}. -->
+  <Style Selector="ScrollBar">
+    <Setter Property="Background" Value="${g.st === 'pill' ? 'Transparent' : '{StaticResource ScrollbarTrack}'}"/>
+    <Setter Property="MinWidth" Value="0"/>
+    <Setter Property="MinHeight" Value="0"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" CornerRadius="{StaticResource ScrollbarThumbRadius}">
+          <Track Name="track"
+                 Minimum="{TemplateBinding Minimum}"
+                 Maximum="{TemplateBinding Maximum}"
+                 Value="{TemplateBinding Value, Mode=TwoWay}"
+                 ViewportSize="{TemplateBinding ViewportSize}"
+                 Orientation="{TemplateBinding Orientation}">
+            <Thumb Name="thumb"/>
+          </Track>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="ScrollBar:vertical">
+    <Setter Property="Width" Value="{StaticResource ScrollbarThickness}"/>
+  </Style>
+  <Style Selector="ScrollBar:vertical /template/ Track#track">
+    <Setter Property="IsDirectionReversed" Value="True"/>
+  </Style>
+  <Style Selector="ScrollBar:horizontal">
+    <Setter Property="Height" Value="{StaticResource ScrollbarThickness}"/>
+  </Style>
+  <Style Selector="${thumb}">
+    <Setter Property="Background" Value="{StaticResource ScrollbarThumb}"/>
+    <Setter Property="CornerRadius" Value="{StaticResource ScrollbarThumbRadius}"/>
+    <Setter Property="Margin" Value="{StaticResource ScrollbarThumbInset}"/>${g.hidden ? `
+    <Setter Property="Opacity" Value="0"/>` : ''}
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"/>
+      </ControlTemplate>
+    </Setter>
+    <Setter Property="Transitions">
+      <Transitions>
+${tr}
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="${thumb}:pointerover">
+    <Setter Property="Background" Value="{StaticResource ScrollbarThumbHover}"/>
+  </Style>
+  <Style Selector="${thumb}:pressed">
+    <Setter Property="Background" Value="{StaticResource ScrollbarThumbHover}"/>
+  </Style>${extra.length ? '\n' + extra.join('\n') : ''}`;
+}
+function scrollBarXaml(orient) {
+  const g = scrollGeometry();
+  const on = '<DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" Value="True">';
+  const anim = (prop, kind, to, dur) => `<BeginStoryboard><Storyboard><${kind} Storyboard.TargetName="thumb" Storyboard.TargetProperty="${prop}" To="${to}" Duration="{StaticResource ${dur}}" EasingFunction="{StaticResource EOut}"/></Storyboard></BeginStoryboard>`;
+  const trig = (enter, exit) => `            ${on}
+              <DataTrigger.EnterActions>${enter}</DataTrigger.EnterActions>
+              <DataTrigger.ExitActions>${exit}</DataTrigger.ExitActions>
+            </DataTrigger>`;
+  let t = '';
+  if (g.st === 'hover') t = `            ${on}
+              <Setter TargetName="thumb" Property="Opacity" Value="1"/>
+            </DataTrigger>`;
+  if (g.st === 'fade') t = trig(anim('Opacity', 'DoubleAnimation', 1, 'TFast'), anim('Opacity', 'DoubleAnimation', 0, 'TFadeOut'));
+  if (g.st === 'shrink') t = trig(anim('Margin', 'ThicknessAnimation', 0, 'TBase'), anim('Margin', 'ThicknessAnimation', num(g.inset), 'TBase'));
+  return `  <ControlTemplate x:Key="TkScrollBar${orient}" TargetType="ScrollBar">
+    <Border Background="{TemplateBinding Background}" CornerRadius="{StaticResource ScrollbarThumbRadius}">
+      <Track x:Name="PART_Track" Orientation="${orient}"${orient === 'Vertical' ? ' IsDirectionReversed="True"' : ''}>
+        <Track.Thumb>
+          <Thumb x:Name="thumb" Style="{StaticResource TkScrollThumb}"${g.hidden ? ' Opacity="0"' : ''}/>
+        </Track.Thumb>
+      </Track>
+    </Border>${t ? `
+    <ControlTemplate.Triggers>
+${t}
+    </ControlTemplate.Triggers>` : ''}
+  </ControlTemplate>`;
 }
 
 function scaleXaml(indent) {
@@ -299,7 +581,10 @@ function metricXaml(indent, timeTag) {
     t('Stagger', 'motion.stagger'),
     t('LoadingLoopMin', 'motion.loading-loop-min'),
     t('FrameBudget', 'motion.frame-budget'),
-    t('BgRotateMin', 'motion.bg-rotate-min')
+    t('BgRotateMin', 'motion.bg-rotate-min'),
+    '',
+    Et.xaml(T, x, indent),
+    tokenXaml(indent, timeTag !== 'Duration')
   ].join('\n');
 }
 
@@ -347,10 +632,8 @@ function emitCss() {
   --tk-bg-rotate: ${durationCss('bg-rotate')};
   --tk-bg-from: ${h('black')};
   --tk-bg-to: ${h('surface')};
-  --tk-bg: linear-gradient(
-    var(--tk-bg-angle, 160deg),
-${gradientCss()}
-  );
+  --tk-bg: ${bgCss()};
+  --tk-bg-type: ${bgSpec().type};
   --tk-glass: ${rgba('glass')};
 
   --tk-renk-2-text: ${h('renk-2-text')};
@@ -464,6 +747,8 @@ ${onCss()}
 
   --tk-r-window: ${mcss('shape.r-window')};
   --tk-border-w: ${mcss('shape.border-w')};
+  --tk-window-edge: ${windowEdgeCss()};
+  --tk-glass-blur: ${tk('derived', 'glass', 'blur', 16)}px;
   /* The focus ring is two layers and never animates (SKILL §5.3). */
   --tk-focus-w: ${mcss('shape.focus-w')};
   --tk-focus-offset: ${mcss('shape.focus-offset')};
@@ -477,6 +762,13 @@ ${onCss()}
   --tk-sidebar-w: ${mcss('metric.sidebar-w')};
   --tk-sidebar-collapsed-w: ${mcss('metric.sidebar-collapsed-w')};
   --tk-input-h: ${mcss('metric.input-h')};
+  --tk-btn-h: ${tk('metric', 'btn-h', 'value', 50)}px;
+  --tk-btn-px: ${tk('metric', 'btn-px', 'value', 20)}px;
+  --tk-scrollbar-style: ${scrollbarStyle()};
+  --tk-scroll-behavior: ${tk('metric', 'scroll-behavior', 'value', 'auto')};
+  --tk-thumb: ${rgba(tk('derived', 'scrollbar-thumb', 'ref', 'renk-3-text'))};
+  --tk-thumb-hover: ${rgba(tk('derived', 'scrollbar-thumb', 'hover-ref', 'renk-2'))};
+  --tk-track: ${T.derived['scrollbar-track'] ? rgba('scrollbar-track') : rgba('black', 0.3)};
   --tk-modal-w: ${mcss('metric.modal-w')};
   --tk-modal-max-ratio: ${mcss('metric.modal-max-ratio')};
   --tk-toast-w: ${mcss('metric.toast-w')};
@@ -501,6 +793,7 @@ ${onCss()}
   --tk-frame-budget: ${mcss('motion.frame-budget')};
   --tk-bg-rotate-min: ${mcss('motion.bg-rotate-min')};
   --tk-bg-sweep-max: ${mcss('motion.bg-sweep-max')};
+${Et.css(T)}
 
   --tk-t-instant: ${durationCss('instant')};
   --tk-t-fast: ${durationCss('fast')};
@@ -530,13 +823,15 @@ ${onCss()}
 @property --tk-bg-angle {
   syntax: '<angle>';
   inherits: false;
-  initial-value: 160deg;
+  initial-value: ${bgSpec().angle}deg;
 }
 
 @keyframes tk-bg-rotate {
-  from { --tk-bg-angle: 150deg; }
-  to   { --tk-bg-angle: 170deg; }
+  from { --tk-bg-angle: ${bgSpec().from}deg; }
+  to   { --tk-bg-angle: ${bgSpec().to}deg; }
 }
+
+html { scroll-behavior: var(--tk-scroll-behavior); }
 
 body {
   margin: 0;
@@ -549,8 +844,7 @@ body {
   color: var(--tk-text);
   background: var(--tk-bg);
   background-attachment: fixed;
-  animation: tk-bg-rotate var(--tk-bg-rotate) linear infinite alternate;
-}
+${bgSpec().rotate ? '  animation: tk-bg-rotate var(--tk-bg-rotate) linear infinite alternate;\n' : ''}}
 
 /* --- typography --- */
 .tk-h2 {
@@ -586,47 +880,48 @@ body {
 /* Readable line length. A long block of text is wrapped in this class (§3.2). */
 .tk-prose { max-width: var(--tk-measure); line-height: var(--tk-lh-body); }
 /* The second signal separating h3 from a label — when size is not enough (§3). */
-.tk-h3-rule { border-bottom: 1px solid var(--tk-border-decorative); padding-bottom: 8px; }
+.tk-h3-rule { border-bottom: var(--tk-border-w) solid var(--tk-border-decorative); padding-bottom: var(--tk-sp-2); }
 
 /* --- surfaces --- */
 .tk-panel {
   background: ${rgba('panel')};
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--tk-border);
+  backdrop-filter: blur(var(--tk-glass-blur));
+  border: var(--tk-border-w) solid var(--tk-border);
   border-radius: var(--tk-r);
-  padding: 24px;
-  box-shadow: 0 0 40px ${rgba('black', 0.8)};
+  padding: var(--tk-panel-padding);
+  box-shadow: var(--tk-shadow-panel);
 }
-.tk-divider { border: 0; border-top: 1px solid var(--tk-border-decorative); margin: 24px 0; }
+.tk-window { border: var(--tk-border-w) solid var(--tk-window-edge); border-radius: var(--tk-r-window); }
+.tk-divider { border: 0; border-top: var(--tk-border-w) solid var(--tk-border-decorative); margin: var(--tk-section-gap) 0; }
 
 /* --- focus: two layers, no transition, keyboard modality only --- */
 :focus-visible {
-  outline: 2px solid var(--tk-renk-1);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 2px ${h('black')};
+  outline: var(--tk-focus-w) solid var(--tk-renk-1);
+  outline-offset: var(--tk-focus-offset);
+  box-shadow: 0 0 0 var(--tk-focus-w) ${h('black')};
   transition: none;
 }
 :focus:not(:focus-visible) { outline: none; }
-[data-tk-scroll-target] { scroll-margin-top: 40px; scroll-margin-bottom: 24px; }
+[data-tk-scroll-target] { scroll-margin-top: var(--tk-titlebar-h-max); scroll-margin-bottom: var(--tk-sp-5); }
 
 /* --- buttons --- */
 .tk-btn {
   font-weight: 600; letter-spacing: var(--tk-tr-h2);
   font-size: var(--tk-fs-2); line-height: var(--tk-lh-heading);
-  padding: 14px 20px; border-radius: var(--tk-r);
-  border: 1px solid transparent; cursor: pointer;
-  display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  min-height: var(--tk-btn-h); padding: 0 var(--tk-btn-px); border-radius: var(--tk-r);
+  border: var(--tk-border-w) solid transparent; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--tk-sp-3);
   transition: transform var(--tk-t-instant) var(--tk-e-out),
               background-color var(--tk-t-instant) var(--tk-e-out),
               border-color var(--tk-t-instant) var(--tk-e-out);
 }
-.tk-btn:hover { transform: scale(1.02); }
+.tk-btn:hover { transform: scale(var(--tk-scale-hover)); }
 /* The pressed state takes a SECOND carrier: under reduced motion \`theme.css\` stops the
    transition, so \`scale\` snaps without travel and 0.98 barely reads. The border carries it.
    Reduced motion never writes \`transform: none\`: positioning transforms
    (a modal centred with translate(-50%, -50%)) must stay where they are. */
 .tk-btn:active {
-  transform: scale(0.98);
+  transform: scale(var(--tk-scale-press));
   border-color: var(--tk-border-strong);
   transition-duration: var(--tk-t-instant);
 }
@@ -659,16 +954,17 @@ body {
 
 /* --- scrollbar --- */
 ::-webkit-scrollbar { width: var(--tk-scrollbar-w); height: var(--tk-scrollbar-w); }
-::-webkit-scrollbar-track { background: ${rgba('black', 0.3)}; border-radius: 4px; }
+::-webkit-scrollbar-track { background: var(--tk-track); border-radius: var(--tk-r); }
 ::-webkit-scrollbar-thumb {
-  background: var(--tk-renk-3-text); border-radius: 4px;
+  background: var(--tk-thumb); border-radius: var(--tk-r);
   /* No glow on the scrollbar: a halo on a thin moving bar smears and reads as noise
      (user feedback, 2026-09-26). Only the fill colour transitions. */
   transition: background-color var(--tk-t-instant) var(--tk-e-out);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--tk-renk-2-text);
+  background: var(--tk-thumb-hover);
 }
+${scrollbarCss()}
 
 /* --- title bar and signature (§4) --- */
 .tk-titlebar { -webkit-app-region: drag; }
@@ -727,31 +1023,25 @@ function emitXaml() {
   <SolidColorBrush x:Key="Surface"     Color="${xa('panel')}"/>
   <SolidColorBrush x:Key="AppBg"       Color="${x('black')}"/>
 
-  <!-- Window background: not a flat colour, an 11-stop soft gradient (SKILL §2). -->
-  <LinearGradientBrush x:Key="AppBgGradient" x:Shared="False"
-                       StartPoint="0,0" EndPoint="0.6,1"
-                       ColorInterpolationMode="ScRgbLinearInterpolation">
-${gradientXaml('    ')}
-  </LinearGradientBrush>
-
-  <!-- MOTION GUARD. WPF has no prefers-reduced-motion; the Windows counterpart is
-       SystemParameters.ClientAreaAnimation and reading it is NOT optional. The consumer
-       starts this storyboard only when that property is true, and stops it when
-       SystemParameters.StaticPropertyChanged reports it turned false.
-       ANIMATION TARGET. A storyboard drives RenderTransform and Opacity only. The
-       earlier version animated Background.EndPoint: retargeting the brush leaves the
-       composition thread and repaints the whole window on every frame for 48 seconds.
-       The drift is now a RotateTransform on the background LAYER — a dedicated element
-       behind the content, named "bgLayer", oversized so the rotated corners stay off
-       screen. The sweep is motion.bg-sweep-max, the same ${m('motion.bg-sweep-max')}
-       degrees the CSS keyframe walks. -->
+  <!-- Window background: derived.bg-gradient (type ${bgSpec().type}, angle ${bgSpec().angle}). The
+       overlay carries the grid or the halo glows; the TkWindow template draws both. -->
+${bgBrushXaml('  ', 'AppBackground', bgSpec().angle, false)}
+${overlayXaml('  ', false)}
+  <SolidColorBrush x:Key="WindowEdge" Color="${windowEdgeXaml()}"/>
+  <SolidColorBrush x:Key="ScrollbarThumb" Color="${xa(thumbRef())}"/>
+  <SolidColorBrush x:Key="ScrollbarThumbHover" Color="${xa(thumbHoverRef())}"/>
+  <SolidColorBrush x:Key="ScrollbarTrack" Color="${trackXa()}"/>
+${bgSpec().rotate ? `
+  <!-- MOTION GUARD. The TkWindow template starts this storyboard only while
+       SystemParameters.ClientAreaAnimation is true. It rotates the oversized
+       "bgLayer" element, never the brush, sweeping ${bgSpec().from} to ${bgSpec().to} degrees. -->
   <Storyboard x:Key="AppBgRotate" RepeatBehavior="Forever" AutoReverse="True">
     <DoubleAnimation Storyboard.TargetName="bgLayer"
-                     Storyboard.TargetProperty="RenderTransform.(RotateTransform.Angle)"
-                     From="0" To="${m('motion.bg-sweep-max')}"
+                     Storyboard.TargetProperty="RenderTransform.(TransformGroup.Children)[1].(RotateTransform.Angle)"
+                     From="${num(bgSpec().from - bgSpec().angle)}" To="${num(bgSpec().to - bgSpec().angle)}"
                      Duration="${durationXaml('bg-rotate')}"/>
   </Storyboard>
-
+` : ''}
   <SolidColorBrush x:Key="Renk2Text" Color="${x('renk-2-text')}"/>
   <SolidColorBrush x:Key="Renk3Text" Color="${x('renk-3-text')}"/>
 
@@ -820,8 +1110,13 @@ ${scaleXaml('  ')}
   <DropShadowEffect x:Key="HeroGlow" x:Shared="False" Color="${x('renk-1')}"
                     BlurRadius="${T.derived['glow-hero'].blur}" ShadowDepth="0" Opacity="${T.derived['glow-hero'].alpha}"/>
 
+  <DropShadowEffect x:Key="PanelShadow" x:Shared="False" Color="${x(T.derived['shadow-panel'].ref)}"
+                    BlurRadius="${T.derived['shadow-panel'].blur}" ShadowDepth="0" Opacity="${T.derived['shadow-panel'].alpha}"/>
+
   <CubicEase x:Key="EOut" EasingMode="EaseOut"/>
   <CubicEase x:Key="EIn" EasingMode="EaseIn"/>
+  <KeySpline x:Key="SplineOut" ControlPoint1="${T.easing.out.bezier[0]},${T.easing.out.bezier[1]}" ControlPoint2="${T.easing.out.bezier[2]},${T.easing.out.bezier[3]}"/>
+  <KeySpline x:Key="SplineIn" ControlPoint1="${T.easing.in.bezier[0]},${T.easing.in.bezier[1]}" ControlPoint2="${T.easing.in.bezier[2]},${T.easing.in.bezier[3]}"/>
 
 ${metricXaml('  ', 'Duration')}
 
@@ -829,14 +1124,12 @@ ${metricXaml('  ', 'Duration')}
     <Setter Property="Control.Template">
       <Setter.Value>
         <ControlTemplate>
-          <Grid Margin="-5" SnapsToDevicePixels="True" UseLayoutRounding="True">
-            <!-- The radii derive from the 6 DIP base: the inner layer sits 1 DIP
-                 outside the element (6+1=7), the outer 3 DIP outside (6+3=9).
-                 Not hand-picked numbers. -->
-            <Rectangle Margin="4" RadiusX="7" RadiusY="7"
-                       Stroke="${x('black')}" StrokeThickness="2"/>
-            <Rectangle Margin="2" RadiusX="9" RadiusY="9"
-                       Stroke="${x('renk-1')}" StrokeThickness="2"/>
+          <Grid Margin="${focusGeometry().grid}" SnapsToDevicePixels="True" UseLayoutRounding="True">
+            <!-- Derived from shape.r, shape.focus-offset and shape.focus-w. -->
+            <Rectangle Margin="${focusGeometry().inner}" RadiusX="${focusGeometry().rIn}" RadiusY="${focusGeometry().rIn}"
+                       Stroke="${x('black')}" StrokeThickness="{StaticResource FocusWidth}"/>
+            <Rectangle Margin="${focusGeometry().outerM}" RadiusX="${focusGeometry().rOut}" RadiusY="${focusGeometry().rOut}"
+                       Stroke="${x('renk-1')}" StrokeThickness="{StaticResource FocusWidth}"/>
           </Grid>
         </ControlTemplate>
       </Setter.Value>
@@ -855,35 +1148,35 @@ ${metricXaml('  ', 'Duration')}
 
   <Style x:Key="H2" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="FontSize" Value="24"/>
-    <Setter Property="FontWeight" Value="SemiBold"/>
-    <Setter Property="LineHeight" Value="29"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize4}"/>
+    <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+    <Setter Property="LineHeight" Value="${lineHeight('size.fs-4', 'size.lh-heading')}"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
   </Style>
 
   <Style x:Key="H3" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="FontSize" Value="20"/>
-    <Setter Property="FontWeight" Value="SemiBold"/>
-    <Setter Property="LineHeight" Value="24"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize3}"/>
+    <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+    <Setter Property="LineHeight" Value="${lineHeight('size.fs-3', 'size.lh-heading')}"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
   </Style>
 
   <Style x:Key="Label" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="FontSize" Value="14"/>
-    <Setter Property="FontWeight" Value="SemiBold"/>
-    <Setter Property="LineHeight" Value="17"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
+    <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+    <Setter Property="LineHeight" Value="${lineHeight('size.fs-1', 'size.lh-heading')}"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
   </Style>
 
   <Style x:Key="Body" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="FontSize" Value="16"/>
-    <Setter Property="LineHeight" Value="24"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+    <Setter Property="LineHeight" Value="${lineHeight('size.fs-2', 'size.lh-body')}"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Typography.NumeralAlignment" Value="Tabular"/>
     <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
@@ -892,8 +1185,8 @@ ${metricXaml('  ', 'Duration')}
   <!-- Help / hint text. CSS counterpart .tk-hint. -->
   <Style x:Key="Hint" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="FontSize" Value="14"/>
-    <Setter Property="LineHeight" Value="21"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
+    <Setter Property="LineHeight" Value="${lineHeight('size.fs-1', 'size.lh-body')}"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Typography.NumeralAlignment" Value="Tabular"/>
     <Setter Property="TextWrapping" Value="Wrap"/>
@@ -902,9 +1195,9 @@ ${metricXaml('  ', 'Duration')}
 
   <Style x:Key="Hero" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontMono}"/>
-    <Setter Property="FontSize" Value="30"/>
-    <Setter Property="FontWeight" Value="Black"/>
-    <Setter Property="LineHeight" Value="36"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize5}"/>
+    <Setter Property="FontWeight" Value="{StaticResource WeightHero}"/>
+    <Setter Property="LineHeight" Value="${lineHeight('size.fs-5', 'size.lh-heading')}"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
     <Setter Property="Effect" Value="{StaticResource HeroGlow}"/>
@@ -912,9 +1205,9 @@ ${metricXaml('  ', 'Duration')}
 
   <Style x:Key="MonoValue" TargetType="TextBlock">
     <Setter Property="FontFamily" Value="{StaticResource FontMono}"/>
-    <Setter Property="FontSize" Value="16"/>
-    <Setter Property="FontWeight" Value="SemiBold"/>
-    <Setter Property="LineHeight" Value="22"/>
+    <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+    <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+    <Setter Property="LineHeight" Value="${lineHeight('size.fs-2', 'size.lh-mono')}"/>
     <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
     <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
   </Style>
@@ -922,9 +1215,10 @@ ${metricXaml('  ', 'Duration')}
   <Style x:Key="Panel" TargetType="Border">
     <Setter Property="Background" Value="{StaticResource Surface}"/>
     <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
-    <Setter Property="BorderThickness" Value="1"/>
-    <Setter Property="CornerRadius" Value="6"/>
-    <Setter Property="Padding" Value="24"/>
+    <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+    <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+    <Setter Property="Padding" Value="{StaticResource PanelPadding}"/>
+    <Setter Property="Effect" Value="{StaticResource PanelShadow}"/>
   </Style>
 
   <!-- Warning surface. Derives from \`Panel\`; the only change is the border. The
@@ -945,24 +1239,104 @@ ${metricXaml('  ', 'Duration')}
     <Setter Property="Foreground" Value="{StaticResource DangerText}"/>
   </Style>
 
+  <!-- Window shell: edge (shape.window-edge), AppBackground, the overlay layer, then content. -->
   <Style x:Key="TkWindow" TargetType="Window">
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
     <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+    <Setter Property="Background" Value="{StaticResource AppBackground}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource WindowEdge}"/>
+    <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Window">
+          <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{StaticResource WindowRadius}" Background="{TemplateBinding Background}">
+            <Grid ClipToBounds="True">
+${bgSpec().rotate ? `              <Border x:Name="bgLayer" Background="{StaticResource AppBackground}" IsHitTestVisible="False" RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                  <TransformGroup>
+                    <ScaleTransform ScaleX="${bgRotateScale()}" ScaleY="${bgRotateScale()}"/>
+                    <RotateTransform Angle="0"/>
+                  </TransformGroup>
+                </Border.RenderTransform>
+              </Border>
+` : ''}              <Border Background="{StaticResource AppBackgroundOverlay}" IsHitTestVisible="False"/>
+              <AdornerDecorator>
+                <ContentPresenter/>
+              </AdornerDecorator>
+            </Grid>
+          </Border>
+${bgSpec().rotate ? `          <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding Path=(SystemParameters.ClientAreaAnimation)}" Value="True">
+              <DataTrigger.EnterActions>
+                <BeginStoryboard x:Name="bgSpin" Storyboard="{StaticResource AppBgRotate}"/>
+              </DataTrigger.EnterActions>
+              <DataTrigger.ExitActions>
+                <StopStoryboard BeginStoryboardName="bgSpin"/>
+              </DataTrigger.ExitActions>
+            </DataTrigger>
+          </ControlTemplate.Triggers>
+` : ''}        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="TkScrollThumb" TargetType="Thumb">
+    <Setter Property="Background" Value="{StaticResource ScrollbarThumb}"/>
+    <Setter Property="Margin" Value="{StaticResource ScrollbarThumbInset}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Thumb">
+          <Border x:Name="th" Background="{TemplateBinding Background}" CornerRadius="{StaticResource ScrollbarThumbRadius}"/>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="th" Property="Background" Value="{StaticResource ScrollbarThumbHover}"/>
+            </Trigger>
+            <Trigger Property="IsDragging" Value="True">
+              <Setter TargetName="th" Property="Background" Value="{StaticResource ScrollbarThumbHover}"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+${scrollBarXaml('Vertical')}
+
+${scrollBarXaml('Horizontal')}
+
+  <!-- metric.scrollbar-style ${scrollbarStyle()}: one implicit style per orientation. -->
+  <Style TargetType="ScrollBar">
+    <Setter Property="Background" Value="${scrollGeometry().st === 'pill' ? 'Transparent' : '{StaticResource ScrollbarTrack}'}"/>
+    <Setter Property="MinWidth" Value="0"/>
+    <Setter Property="MinHeight" Value="0"/>
+    <Setter Property="Width" Value="{StaticResource ScrollbarThickness}"/>
+    <Setter Property="Template" Value="{StaticResource TkScrollBarVertical}"/>
+    <Style.Triggers>
+      <Trigger Property="Orientation" Value="Horizontal">
+        <Setter Property="Width" Value="NaN"/>
+        <Setter Property="Height" Value="{StaticResource ScrollbarThickness}"/>
+        <Setter Property="Template" Value="{StaticResource TkScrollBarHorizontal}"/>
+      </Trigger>
+    </Style.Triggers>
   </Style>
 
   <Style x:Key="PrimaryButton" TargetType="Button">
     <Setter Property="Background" Value="{StaticResource Renk1}"/>
     <Setter Property="Foreground" Value="Black"/>
-    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
     <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
-    <Setter Property="Padding" Value="20,14"/>
-    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="MinHeight" Value="{StaticResource ButtonHeight}"/>
+    <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
     <Setter Property="Cursor" Value="Hand"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Button">
-          <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6"
+          <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="{StaticResource Radius}"
+                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                   Padding="{TemplateBinding Padding}" RenderTransformOrigin="0.5,0.5">
             <Border.RenderTransform>
               <ScaleTransform ScaleX="1" ScaleY="1"/>
@@ -977,9 +1351,9 @@ ${metricXaml('  ', 'Duration')}
               <Trigger.EnterActions>
                 <BeginStoryboard>
                   <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="1.02" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="{StaticResource ScaleHover}" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"/>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="1.02" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="{StaticResource ScaleHover}" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"/>
                   </Storyboard>
                 </BeginStoryboard>
@@ -987,9 +1361,9 @@ ${metricXaml('  ', 'Duration')}
               <Trigger.ExitActions>
                 <BeginStoryboard>
                   <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"/>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"/>
                   </Storyboard>
                 </BeginStoryboard>
@@ -999,9 +1373,9 @@ ${metricXaml('  ', 'Duration')}
               <Trigger.EnterActions>
                 <BeginStoryboard>
                   <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="0.98" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="{StaticResource ScalePress}" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"/>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="0.98" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="{StaticResource ScalePress}" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"/>
                   </Storyboard>
                 </BeginStoryboard>
@@ -1009,9 +1383,9 @@ ${metricXaml('  ', 'Duration')}
               <Trigger.ExitActions>
                 <BeginStoryboard>
                   <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"/>
-                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}"
+                    <DoubleAnimation Storyboard.TargetName="bd" To="1" Duration="{StaticResource TInstant}" EasingFunction="{StaticResource EOut}"
                                      Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"/>
                   </Storyboard>
                 </BeginStoryboard>
@@ -1020,7 +1394,7 @@ ${metricXaml('  ', 'Duration')}
             <Trigger Property="IsEnabled" Value="False">
               <Setter TargetName="bd" Property="Background" Value="Transparent"/>
               <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Disabled}"/>
-              <Setter TargetName="bd" Property="BorderThickness" Value="1"/>
+              <Setter TargetName="bd" Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
               <Setter TargetName="bd" Property="Effect" Value="{x:Null}"/>
               <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
               <Setter Property="Cursor" Value="No"/>
@@ -1069,25 +1443,16 @@ function emitAxaml() {
     <SolidColorBrush x:Key="Surface"     Color="${xa('panel')}"/>
     <SolidColorBrush x:Key="AppBg"       Color="${x('black')}"/>
 
-    <!-- Window background: not a flat colour, an 11-stop soft gradient (SKILL §2).
-         Two differences, both deliberate:
-         1) Avalonia has no x:Shared. The resource is shared as a single instance;
-            the background animation below moves the layer's RenderTransform rather
-            than the brush, so sharing causes no trouble.
-         2) Avalonia has no ColorInterpolationMode, sRGB interpolation is forced.
-            Not identical to WPF's ScRgbLinearInterpolation; the 11 stops exist to
-            close banding anyway, and no visible difference was measured
-            (assumed, not measured). -->
-    <LinearGradientBrush x:Key="AppBgGradient"
-                         StartPoint="0%,0%" EndPoint="60%,100%">
-${gradientXaml('      ')}
-    </LinearGradientBrush>
+    <!-- Window background from bg-gradient: AppBackground plus AppBackgroundOverlay.
+         Avalonia has no ColorInterpolationMode, sRGB interpolation is forced. With
+         rotate on, the Window template background animates between
+         AppBackgroundFrom and AppBackgroundTo. -->
+${backgroundXaml('    ', true)}
 
-    <!-- There is NO resource counterpart to WPF's AppBgRotate storyboard, and that
-         is deliberate. In Avalonia an Animation is not a resource, it lives inside
-         Style.Animations, and no animator exists that interpolates a brush
-         sub-property (Background.EndPoint). The counterpart is the
-         "Window.anim Panel.appbg" rule below. -->
+    <SolidColorBrush x:Key="WindowEdge" Color="${windowEdgeXaml()}"/>
+    <SolidColorBrush x:Key="ScrollbarThumb" Color="${xa(thumbRef())}"/>
+    <SolidColorBrush x:Key="ScrollbarThumbHover" Color="${xa(thumbHoverRef())}"/>
+    <SolidColorBrush x:Key="ScrollbarTrack" Color="${trackXa()}"/>
 
     <SolidColorBrush x:Key="Renk2Text" Color="${x('renk-2-text')}"/>
     <SolidColorBrush x:Key="Renk3Text" Color="${x('renk-3-text')}"/>
@@ -1164,25 +1529,25 @@ ${metricXaml('    ', 'sys:TimeSpan')}
 
     <ControlTheme x:Key="H2" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-      <Setter Property="FontSize" Value="24"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="LineHeight" Value="29"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize4}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+      <Setter Property="LineHeight" Value="${lineHeight('size.fs-4', 'size.lh-heading')}"/>
       <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
     </ControlTheme>
 
     <ControlTheme x:Key="H3" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-      <Setter Property="FontSize" Value="20"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="LineHeight" Value="24"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize3}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+      <Setter Property="LineHeight" Value="${lineHeight('size.fs-3', 'size.lh-heading')}"/>
       <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
     </ControlTheme>
 
     <ControlTheme x:Key="Label" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-      <Setter Property="FontSize" Value="14"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="LineHeight" Value="17"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+      <Setter Property="LineHeight" Value="${lineHeight('size.fs-1', 'size.lh-heading')}"/>
       <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
     </ControlTheme>
 
@@ -1197,25 +1562,25 @@ ${metricXaml('    ', 'sys:TimeSpan')}
 
     <ControlTheme x:Key="Body" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-      <Setter Property="FontSize" Value="16"/>
-      <Setter Property="LineHeight" Value="24"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+      <Setter Property="LineHeight" Value="${lineHeight('size.fs-2', 'size.lh-body')}"/>
       <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
     </ControlTheme>
 
     <!-- Help / hint text. CSS counterpart .tk-hint. -->
     <ControlTheme x:Key="Hint" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-      <Setter Property="FontSize" Value="14"/>
-      <Setter Property="LineHeight" Value="21"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
+      <Setter Property="LineHeight" Value="${lineHeight('size.fs-1', 'size.lh-body')}"/>
       <Setter Property="TextWrapping" Value="Wrap"/>
       <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
     </ControlTheme>
 
     <ControlTheme x:Key="Hero" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontMono}"/>
-      <Setter Property="FontSize" Value="30"/>
-      <Setter Property="FontWeight" Value="Black"/>
-      <Setter Property="LineHeight" Value="36"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize5}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightHero}"/>
+      <Setter Property="LineHeight" Value="${lineHeight('size.fs-5', 'size.lh-heading')}"/>
       <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
       <!-- This is the only role where text is given a glow (SKILL §2). -->
       <Setter Property="Effect" Value="{StaticResource HeroGlow}"/>
@@ -1223,18 +1588,19 @@ ${metricXaml('    ', 'sys:TimeSpan')}
 
     <ControlTheme x:Key="MonoValue" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontMono}"/>
-      <Setter Property="FontSize" Value="16"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="LineHeight" Value="22"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+      <Setter Property="LineHeight" Value="${lineHeight('size.fs-2', 'size.lh-mono')}"/>
       <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
     </ControlTheme>
 
     <ControlTheme x:Key="Panel" TargetType="Border">
       <Setter Property="Background" Value="{StaticResource Surface}"/>
       <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
-      <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="CornerRadius" Value="6"/>
-      <Setter Property="Padding" Value="24"/>
+      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+      <Setter Property="Padding" Value="{StaticResource PanelPadding}"/>
+      <Setter Property="BoxShadow" Value="0 0 ${T.derived['shadow-panel'].blur} 0 ${xa(T.derived['shadow-panel'].ref, T.derived['shadow-panel'].alpha)}"/>
     </ControlTheme>
 
     <!-- Warning surface. Derives from Panel; the only change is the border. The
@@ -1272,26 +1638,26 @@ ${metricXaml('    ', 'sys:TimeSpan')}
     <ControlTheme x:Key="PrimaryButton" TargetType="Button">
       <Setter Property="Background" Value="{StaticResource Renk1}"/>
       <Setter Property="Foreground" Value="Black"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
       <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
-      <Setter Property="Padding" Value="20,14"/>
-      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="MinHeight" Value="{StaticResource ButtonHeight}"/>
+      <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
+      <Setter Property="BorderBrush" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="HorizontalContentAlignment" Value="Center"/>
       <Setter Property="VerticalContentAlignment" Value="Center"/>
       <Setter Property="Template">
         <ControlTemplate TargetType="Button">
-          <!-- The glow is given to the box (SKILL §2). The WPF counterpart is
-               DropShadowEffect BlurRadius=20 Opacity=0.35; in BoxShadow opacity is
-               not a separate property but the colour alpha: 0.35 * 255 = 89 = 0x59.
-               The conversion was calculated, not measured. -->
+          <!-- The glow is given to the box (SKILL §2), from derived.glow-button. In
+               BoxShadow the opacity is the colour alpha. -->
           <Border Name="bd"
                   Background="{TemplateBinding Background}"
                   BorderBrush="{TemplateBinding BorderBrush}"
                   BorderThickness="{TemplateBinding BorderThickness}"
                   Padding="{TemplateBinding Padding}"
-                  CornerRadius="6"
+                  CornerRadius="{StaticResource Radius}"
                   RenderTransformOrigin="50%,50%"
                   BoxShadow="0 0 ${T.derived['glow-button'].blur} 0 ${gx('glow-button')}">
             <!-- Do NOT write keyframe animations for hover and press. Avalonia does
@@ -1321,17 +1687,17 @@ ${metricXaml('    ', 'sys:TimeSpan')}
            a single Easing. Separate curves for entry and exit are not possible; an
            accepted simplification, noted in the contract's Output section. -->
       <Style Selector="^:pointerover /template/ Border#bd">
-        <Setter Property="RenderTransform" Value="scale(1.02)"/>
+        <Setter Property="RenderTransform" Value="scale(${m('motion.scale-hover')})"/>
       </Style>
 
       <Style Selector="^:pressed /template/ Border#bd">
-        <Setter Property="RenderTransform" Value="scale(0.98)"/>
+        <Setter Property="RenderTransform" Value="scale(${m('motion.scale-press')})"/>
       </Style>
 
       <Style Selector="^:disabled /template/ Border#bd">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="{StaticResource Disabled}"/>
-        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
         <Setter Property="BoxShadow" Value="none"/>
       </Style>
       <Style Selector="^:disabled">
@@ -1358,58 +1724,54 @@ ${metricXaml('    ', 'sys:TimeSpan')}
        its counterpart is the FocusAdorner property on Control. Avalonia already
        draws the ring only in keyboard modality, so the CSS :focus-visible
        behaviour comes for free.
-       The radii derive from the 6 DIP base: the inner layer sits 1 DIP outside the
-       element (6+1=7), the outer 3 DIP outside (6+3=9). Not hand-picked numbers. -->
+       Geometry from shape.r, shape.focus-offset and shape.focus-w: the inner layer
+       sits 1 DIP outside the element, the outer layer focus-offset + 1 outside. -->
   <Style Selector="Control">
     <Setter Property="FocusAdorner">
       <FocusAdornerTemplate>
-        <Panel Margin="-5" UseLayoutRounding="True">
-          <Rectangle Margin="4" RadiusX="7" RadiusY="7"
-                     Stroke="${x('black')}" StrokeThickness="2"/>
-          <Rectangle Margin="2" RadiusX="9" RadiusY="9"
-                     Stroke="${x('renk-1')}" StrokeThickness="2"/>
+        <Panel Margin="${focusGeometry().grid}" UseLayoutRounding="True">
+          <Rectangle Margin="${focusGeometry().inner}" RadiusX="${focusGeometry().rIn}" RadiusY="${focusGeometry().rIn}"
+                     Stroke="${x('black')}" StrokeThickness="{StaticResource FocusWidth}"/>
+          <Rectangle Margin="${focusGeometry().outerM}" RadiusX="${focusGeometry().rOut}" RadiusY="${focusGeometry().rOut}"
+                     Stroke="${x('renk-1')}" StrokeThickness="{StaticResource FocusWidth}"/>
         </Panel>
       </FocusAdornerTemplate>
     </Setter>
   </Style>
 
-  <!-- APPLICATION BACKGROUND.
-       Not the window's own Background, but an EMPTY Panel filling the window:
-       <Panel Classes="appbg"/> sits behind the content as a sibling.
-       Do not put children inside the Panel; the rotating layer rotates its
-       children too. -->
-  <Style Selector="Panel.appbg">
-    <Setter Property="Background" Value="{StaticResource AppBgGradient}"/>
-    <Setter Property="RenderTransformOrigin" Value="50%,50%"/>
-    <Setter Property="IsHitTestVisible" Value="False"/>
+  <!-- WINDOW SHELL. The Window template's content host paints AppBackground and
+       the shape.window-edge border, so every window gets the background without
+       markup. The overlay (grid lines or halo glows) is drawn by an EMPTY
+       <Panel Classes="appbg"/> behind the content as a sibling. -->
+  <Style Selector=":is(Window) /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource AppBackground}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource WindowEdge}"/>
+    <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+    <Setter Property="CornerRadius" Value="{StaticResource WindowRadius}"/>
   </Style>
 
+  <Style Selector="Panel.appbg">
+    <Setter Property="Background" Value="{StaticResource AppBackgroundOverlay}"/>
+    <Setter Property="IsHitTestVisible" Value="False"/>
+  </Style>
+${bgSpec().rotate ? `
   <!-- BACKGROUND ROTATION, the one named exception to the infinite-loop ban
-       (SKILL §5.4). In WPF the EndPoint shifted from 0.5,1 to 0.7,1 with a static
-       value of 0.6,1. Avalonia cannot interpolate a gradient brush sub-property
-       (the brush animator only carries flat colour), so the same look is produced
-       by rotating the layer very slowly.
-       Angle maths, deviation from vertical: atan(0.5)=26.57, atan(0.6)=30.96,
-       atan(0.7)=34.99 degrees. Against the static 0.6 the ends are -4.39 and +4.03
-       degrees; total travel 8.42 degrees, under the 20-degree ceiling of motion.md
-       M10.
-       So the rotating rectangle leaves no corner gap the scale is 1.12; for 8.42
-       degrees in a 16:9 window the smallest required scale was calculated at 1.09,
-       and 1.12 leaves margin. All of these numbers were calculated, not measured on
-       screen (assumed, not measured). -->
-  <Style Selector="Window.anim Panel.appbg">
+       (SKILL §5.4): the gradient angle sweeps bg-gradient.from-angle to to-angle. -->
+  <Style Selector=":is(Window).anim /template/ ContentPresenter#PART_ContentPresenter">
     <Style.Animations>
       <Animation Duration="${durationXaml('bg-rotate')}" IterationCount="Infinite"
                  PlaybackDirection="Alternate" Easing="SineEaseInOut">
         <KeyFrame Cue="0%">
-          <Setter Property="RenderTransform" Value="scale(1.12) rotate(-4.39deg)"/>
+          <Setter Property="Background" Value="{StaticResource AppBackgroundFrom}"/>
         </KeyFrame>
         <KeyFrame Cue="100%">
-          <Setter Property="RenderTransform" Value="scale(1.12) rotate(4.03deg)"/>
+          <Setter Property="Background" Value="{StaticResource AppBackgroundTo}"/>
         </KeyFrame>
       </Animation>
     </Style.Animations>
   </Style>
+` : ''}
+${scrollBarAxaml()}
 
   <!-- REDUCED MOTION, applied in the template.
        A rule written in a file that the template does not apply is this standard's
@@ -1422,8 +1784,7 @@ ${metricXaml('    ', 'sys:TimeSpan')}
        The class lives in one place, on the window itself; the rules below look at
        it. The reading code is in references/avalonia.md, ready to copy.
        Without the "anim" class two things fall at once:
-         1) "Window.anim Panel.appbg" does not match and the background loop never
-            starts.
+         1) The window background rotation never starts.
          2) The rule below cancels the press scale.
        The opacity transition remains; the interface is not lifeless, but it does
        not make you dizzy (M4). -->
@@ -1586,6 +1947,18 @@ public static class Palette
     public const int    IconSize2 = ${m('metric.icon-2')};
     public const int    IconSize3 = ${m('metric.icon-3')};
     public const int    IconSize4 = ${m('metric.icon-4')};
+    public const double ButtonHeight   = ${btnH()};
+    public const double ButtonPaddingX = ${btnPx()};
+    public const double GlassBlur      = ${glassBlur()};
+    public const double BgAngle        = ${bgSpec().angle};
+    public const bool   BgRotate       = ${bgSpec().rotate ? 'true' : 'false'};
+    public const string BackgroundType = "${bgSpec().type}";
+    public const string ScrollbarStyle = "${scrollbarStyle()}";
+    public const string ScrollBehavior = "${scrollBehavior()}";
+    public static readonly Color WindowEdge          = ${windowEdgeRef() === 'none' ? 'Color.Transparent' : 'Color.FromArgb(' + argb(windowEdgeRef()) + ')'};
+    public static readonly Color ScrollbarThumb      = Color.FromArgb(${argb(thumbRef())});
+    public static readonly Color ScrollbarThumbHover = Color.FromArgb(${argb(thumbHoverRef())});
+    public static readonly Color ScrollbarTrack      = Color.FromArgb(${trackArgb()});
 
     public const double ScaleHover     = ${m('motion.scale-hover')};
     public const double ScalePress     = ${m('motion.scale-press')};
@@ -1682,7 +2055,8 @@ const outputs = [
   ['theme.css', emitCss()],
   ['Theme.xaml', xmlComments(emitXaml())],
   ['Theme.axaml', xmlComments(emitAxaml())],
-  ['Palette.cs', emitPalette()]
+  ['Palette.cs', emitPalette()],
+  ...Et.DILLER.map(dil => ['labels.' + dil + '.json', JSON.stringify(Et.locale(T, dil), null, 2) + '\n'])
 ];
 // MEASURED (2026-08-25, CI): pinning the line ending makes only the writing
 // platform agree — autocrlf pulls CRLF on Windows, LF on Unix, and every line of

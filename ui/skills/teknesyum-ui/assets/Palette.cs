@@ -141,6 +141,18 @@ public static class Palette
     public const int    IconSize2 = 16;
     public const int    IconSize3 = 22;
     public const int    IconSize4 = 56;
+    public const double ButtonHeight   = 50;
+    public const double ButtonPaddingX = 20;
+    public const double GlassBlur      = 16;
+    public const double BgAngle        = 160;
+    public const bool   BgRotate       = false;
+    public const string BackgroundType = "gradient";
+    public const string ScrollbarStyle = "solid";
+    public const string ScrollBehavior = "auto";
+    public static readonly Color WindowEdge          = Color.FromArgb(0xB3, 0x5A, 0xA8, 0xFF);
+    public static readonly Color ScrollbarThumb      = Color.FromArgb(0xFF, 0xD4, 0xB3, 0xFF);
+    public static readonly Color ScrollbarThumbHover = Color.FromArgb(0xFF, 0xC8, 0x2E, 0xE0);
+    public static readonly Color ScrollbarTrack      = Color.FromArgb(0x4D, 0x0A, 0x0B, 0x0E);
 
     public const double ScaleHover     = 1.02;
     public const double ScalePress     = 0.98;

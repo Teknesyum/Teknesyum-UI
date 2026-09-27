@@ -7,8 +7,8 @@
   <StackPanel.Resources>
     <Style x:Key="SigChip" TargetType="Border">
       <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
       <Setter Property="Padding" Value="10,3"/>
       <Setter Property="MinHeight" Value="24"/>
       <Setter Property="Cursor" Value="Hand"/>
@@ -45,20 +45,18 @@
 
     <Style x:Key="SigText" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-      <Setter Property="FontSize" Value="14"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
   </StackPanel.Resources>
 
-  <Border Style="{StaticResource SigChip}" BorderBrush="{StaticResource Renk2Text}"
+  <Border Style="{StaticResource SigChip}" BorderBrush="{StaticResource LabelSupportBrush}"
           Margin="0,0,8,0" ToolTip="{loc:Str sig.supportTitle}">
     <Border.RenderTransform>
       <ScaleTransform ScaleX="1" ScaleY="1"/>
     </Border.RenderTransform>
     <StackPanel Orientation="Horizontal">
       <Canvas Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0">
-        <Path Stroke="{StaticResource Renk2Text}" StrokeThickness="2" StrokeLineJoin="Round"
+        <Path Stroke="{StaticResource LabelSupportBrush}" StrokeThickness="2" StrokeLineJoin="Round"
               StrokeStartLineCap="Round" StrokeEndLineCap="Round"
               Data="M2 4.5 H8.5 V8 A2 2 0 0 1 6.5 10 H4 A2 2 0 0 1 2 8 Z
                     M8.5 5.5 H9.25 A1.25 1.25 0 0 1 9.25 8 H8.5
@@ -66,7 +64,7 @@
       </Canvas>
       <TextBlock Style="{StaticResource SigText}">
         <Hyperlink NavigateUri="https://github.com/sponsors/Teknesyum"
-                   TextDecorations="None" Foreground="{StaticResource Renk2Text}"
+                   TextDecorations="None" Foreground="{StaticResource LabelSupportBrush}" FontSize="{StaticResource LabelSupportSize}" FontWeight="{StaticResource LabelSupportWeight}"
                    RequestNavigate="OnSignatureNavigate">
           <Run Text="{loc:Str sig.support}"/>
         </Hyperlink>
@@ -74,14 +72,14 @@
     </StackPanel>
   </Border>
 
-  <Border Style="{StaticResource SigChip}" BorderBrush="{StaticResource Renk1}"
+  <Border Style="{StaticResource SigChip}" BorderBrush="{StaticResource LabelBrandBrush}"
           ToolTip="{loc:Str sig.brandTitle}">
     <Border.RenderTransform>
       <ScaleTransform ScaleX="1" ScaleY="1"/>
     </Border.RenderTransform>
     <TextBlock Style="{StaticResource SigText}">
       <Hyperlink NavigateUri="https://github.com/Teknesyum"
-                 TextDecorations="None" Foreground="{StaticResource Renk1}"
+                 TextDecorations="None" Foreground="{StaticResource LabelBrandBrush}" FontSize="{StaticResource LabelBrandSize}" FontWeight="{StaticResource LabelBrandWeight}"
                  RequestNavigate="OnSignatureNavigate">
         <Run Text="{loc:Str sig.brand}"/>
       </Hyperlink>

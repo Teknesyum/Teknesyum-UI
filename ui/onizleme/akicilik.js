@@ -1,16 +1,7 @@
 'use strict';
 
 (function () {
-  const EGRILER = [
-    ['out', 'Yumuşak Varış', [0.2, 0, 0, 1]],
-    ['in', 'Çıkış', [0.4, 0, 1, 1]],
-    ['spring', 'Yaylı', [0.34, 1.36, 0.64, 1]],
-    ['in-out', 'Yavaş-Hızlı-Yavaş', [0.4, 0, 0.2, 1]],
-    ['fast-slow-fast', 'Hızlı Başla-Yavaşla-Hızlı Bitir', [0.15, 0.85, 0.85, 0.15]],
-    ['emphasized', 'Vurgulu Varış', [0.05, 0.7, 0.1, 1]],
-    ['sharp', 'Keskin', [0.4, 0, 0.6, 1]],
-    ['linear', 'Doğrusal', [0, 0, 1, 1]],
-  ];
+  const EGRILER = window.Esle.EGRILER;
 
   const AD = Object.fromEntries(EGRILER.map(([k, a]) => [k, a]));
   const LISTE = 4;

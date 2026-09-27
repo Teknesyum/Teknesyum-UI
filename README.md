@@ -213,6 +213,7 @@ node <plugin>/scripts/scan.js <project-root> [--fix] [--json] [--files a.css,b.t
 ```bash
 node <plugin>/scripts/raf.js [book] | --uyan [root] | --uydu <book> --project <root>
 node <plugin>/scripts/uc.js [--project <root>] [scope]
+node <plugin>/scripts/esle.js --denetle [--project <root>] | --yaz
 ```
 
 ```bash
@@ -244,6 +245,8 @@ ui/scripts/scan.js        the scanner
 ui/scripts/rules/*.js     the rules, one module per domain
 ui/scripts/raf.js         reads the private shelf and records applied books
 ui/scripts/uc.js          writes the instruction for the Core `uc` mark
+ui/scripts/esle.js        preview choices -> tokens, and the layout-match gate
+ui/scripts/etiket.js      label tokens -> labels.tr.json, labels.en.json, CSS and XAML
 ui/scripts/ozel.js        private record and token file
 ui/scripts/kaydet.js      public release of new token values
 ui/hooks/baslangic.js     SessionStart: check first when needed

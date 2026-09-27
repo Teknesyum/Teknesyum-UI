@@ -5,6 +5,23 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-09-27
+
+### Added
+- `scripts/esle.js` is the one mapping from preview choices to tokens, shared by the preview and Node. `esle.js --denetle [--project <dir>]` is the layout gate: it prints `düzen eşleşmesi N fark` and exits 1 on any unmapped choice, setting that never reached the tokens, leftover notes file, project token copy that differs, or generated file that is not byte-equal to a fresh generation. It reports token paths only, never values. `esle.js --yaz` rewrites the private tokens from the saved preview settings.
+- A `label` token group: brand, support, site, update, sync and title each carry TR and EN text, hint and state texts, a colour, an accent, a size and a weight. `scripts/etiket.js` turns it into `labels.tr.json` / `labels.en.json` (written for every target), `--tk-label-*` CSS variables and `Label*` XAML resources. The signature assets and the React title bar read them.
+- The preview has a Yazılar section to edit every label, in both languages.
+- WPF, Avalonia and `Palette.cs` are generated from the tokens with no fixed numbers left: button height and padding, glass blur, background type and angle, scrollbar style, thumb, hover and track, window edge, the app background and its overlay.
+
+### Changed
+- `setup.js --apply --template benim` ends on the layout gate, and a plugin version change refreshes the layout on the next apply.
+- The `uc` instruction is an order to convert the whole interface, not an audit: when the agent will not convert something it asks in its first message. It refreshes the layout on a bound project and finishes on `düzen eşleşmesi 0 fark` plus side-by-side preview and app screenshots.
+- Neon defaults: background rotation off, scrollbar thumb hover `renk-2`, XAML button height 50, React support chip in `renk-3-text`.
+
+### Removed
+- The preview notes file (`benim.notlar.json`): every preview choice now has a token.
+- The Avalonia `TransformAnimator` registration: the background rotation is a brush animation and needs no custom animator.
+
 ## [0.12.0] - 2026-09-27
 
 ### Added

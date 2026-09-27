@@ -26,17 +26,12 @@
     <SolidColorBrush x:Key="Surface"     Color="#F5101115"/>
     <SolidColorBrush x:Key="AppBg"       Color="#FF0A0B0E"/>
 
-    <!-- Window background: not a flat colour, an 11-stop soft gradient (SKILL §2).
-         Two differences, both deliberate:
-         1) Avalonia has no x:Shared. The resource is shared as a single instance;
-            the background animation below moves the layer's RenderTransform rather
-            than the brush, so sharing causes no trouble.
-         2) Avalonia has no ColorInterpolationMode, sRGB interpolation is forced.
-            Not identical to WPF's ScRgbLinearInterpolation; the 11 stops exist to
-            close banding anyway, and no visible difference was measured
-            (assumed, not measured). -->
-    <LinearGradientBrush x:Key="AppBgGradient"
-                         StartPoint="0%,0%" EndPoint="60%,100%">
+    <!-- Window background from bg-gradient: AppBackground plus AppBackgroundOverlay.
+         Avalonia has no ColorInterpolationMode, sRGB interpolation is forced. With
+         rotate on, the Window template background animates between
+         AppBackgroundFrom and AppBackgroundTo. -->
+    <LinearGradientBrush x:Key="AppBackground"
+                         StartPoint="28.081%,-10.221%" EndPoint="71.919%,110.221%">
       <GradientStop Offset="0.0" Color="#FF0A0B0E"/>
       <GradientStop Offset="0.1" Color="#FF0A0B0E"/>
       <GradientStop Offset="0.1" Color="#FF0B0C0F"/>
@@ -54,12 +49,12 @@
       <GradientStop Offset="0.9" Color="#FF101115"/>
       <GradientStop Offset="1.0" Color="#FF101115"/>
     </LinearGradientBrush>
+    <SolidColorBrush x:Key="AppBackgroundOverlay" Color="Transparent"/>
 
-    <!-- There is NO resource counterpart to WPF's AppBgRotate storyboard, and that
-         is deliberate. In Avalonia an Animation is not a resource, it lives inside
-         Style.Animations, and no animator exists that interpolates a brush
-         sub-property (Background.EndPoint). The counterpart is the
-         "Window.anim Panel.appbg" rule below. -->
+    <SolidColorBrush x:Key="WindowEdge" Color="#B35AA8FF"/>
+    <SolidColorBrush x:Key="ScrollbarThumb" Color="#FFD4B3FF"/>
+    <SolidColorBrush x:Key="ScrollbarThumbHover" Color="#FFC82EE0"/>
+    <SolidColorBrush x:Key="ScrollbarTrack" Color="#4D0A0B0E"/>
 
     <SolidColorBrush x:Key="Renk2Text" Color="#FFF0ABFC"/>
     <SolidColorBrush x:Key="Renk3Text" Color="#FFD4B3FF"/>
@@ -230,6 +225,37 @@
     <sys:TimeSpan x:Key="FrameBudget">0:0:0.016</sys:TimeSpan>
     <sys:TimeSpan x:Key="BgRotateMin">0:0:40</sys:TimeSpan>
 
+    <SolidColorBrush x:Key="LabelBrandBrush" Color="#FF5AA8FF"/>
+    <sys:Double x:Key="LabelBrandSize">14</sys:Double>
+    <FontWeight x:Key="LabelBrandWeight">SemiBold</FontWeight>
+    <SolidColorBrush x:Key="LabelSupportBrush" Color="#FFD4B3FF"/>
+    <sys:Double x:Key="LabelSupportSize">14</sys:Double>
+    <FontWeight x:Key="LabelSupportWeight">SemiBold</FontWeight>
+    <SolidColorBrush x:Key="LabelSiteBrush" Color="#FF5AA8FF"/>
+    <sys:Double x:Key="LabelSiteSize">14</sys:Double>
+    <FontWeight x:Key="LabelSiteWeight">SemiBold</FontWeight>
+    <SolidColorBrush x:Key="LabelUpdateBrush" Color="#FFF2F3F6"/>
+    <sys:Double x:Key="LabelUpdateSize">14</sys:Double>
+    <FontWeight x:Key="LabelUpdateWeight">SemiBold</FontWeight>
+    <SolidColorBrush x:Key="LabelSyncBrush" Color="#FFF2F3F6"/>
+    <sys:Double x:Key="LabelSyncSize">14</sys:Double>
+    <FontWeight x:Key="LabelSyncWeight">SemiBold</FontWeight>
+    <SolidColorBrush x:Key="LabelTitleBrush" Color="#FFF2F3F6"/>
+    <SolidColorBrush x:Key="LabelTitleAccentBrush" Color="#FFF0ABFC"/>
+    <sys:Double x:Key="LabelTitleSize">20</sys:Double>
+    <FontWeight x:Key="LabelTitleWeight">SemiBold</FontWeight>
+    <sys:Double x:Key="ButtonHeight">50</sys:Double>
+    <Thickness x:Key="ButtonPadding">20,0</Thickness>
+    <sys:Double x:Key="GlassBlur">16</sys:Double>
+    <sys:Double x:Key="BgAngle">160</sys:Double>
+    <sys:String x:Key="BackgroundType">gradient</sys:String>
+    <sys:String x:Key="ScrollbarStyle">solid</sys:String>
+    <sys:String x:Key="ScrollBehavior">auto</sys:String>
+    <sys:Double x:Key="ScrollbarThickness">4</sys:Double>
+    <Thickness x:Key="ScrollbarThumbInset">0</Thickness>
+    <CornerRadius x:Key="ScrollbarThumbRadius">6</CornerRadius>
+    <sys:TimeSpan x:Key="TFadeOut">0:0:0.72</sys:TimeSpan>
+
     <!-- Scale 1.25 major third: 14 / 16 / 20 / 24 / 30 DIP.
          Avalonia has no LineStackingStrategy and does not need one: LineHeight
          already behaves like a box height here, closer to CSS than WPF.
@@ -244,25 +270,25 @@
 
     <ControlTheme x:Key="H2" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-      <Setter Property="FontSize" Value="24"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="LineHeight" Value="29"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize4}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+      <Setter Property="LineHeight" Value="30"/>
       <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
     </ControlTheme>
 
     <ControlTheme x:Key="H3" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-      <Setter Property="FontSize" Value="20"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="LineHeight" Value="24"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize3}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+      <Setter Property="LineHeight" Value="25"/>
       <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
     </ControlTheme>
 
     <ControlTheme x:Key="Label" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-      <Setter Property="FontSize" Value="14"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="LineHeight" Value="17"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+      <Setter Property="LineHeight" Value="17.5"/>
       <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
     </ControlTheme>
 
@@ -277,25 +303,25 @@
 
     <ControlTheme x:Key="Body" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-      <Setter Property="FontSize" Value="16"/>
-      <Setter Property="LineHeight" Value="24"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+      <Setter Property="LineHeight" Value="25.6"/>
       <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
     </ControlTheme>
 
     <!-- Help / hint text. CSS counterpart .tk-hint. -->
     <ControlTheme x:Key="Hint" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-      <Setter Property="FontSize" Value="14"/>
-      <Setter Property="LineHeight" Value="21"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
+      <Setter Property="LineHeight" Value="22.4"/>
       <Setter Property="TextWrapping" Value="Wrap"/>
       <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
     </ControlTheme>
 
     <ControlTheme x:Key="Hero" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontMono}"/>
-      <Setter Property="FontSize" Value="30"/>
-      <Setter Property="FontWeight" Value="Black"/>
-      <Setter Property="LineHeight" Value="36"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize5}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightHero}"/>
+      <Setter Property="LineHeight" Value="40"/>
       <Setter Property="Foreground" Value="{StaticResource Renk1}"/>
       <!-- This is the only role where text is given a glow (SKILL §2). -->
       <Setter Property="Effect" Value="{StaticResource HeroGlow}"/>
@@ -303,18 +329,19 @@
 
     <ControlTheme x:Key="MonoValue" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontMono}"/>
-      <Setter Property="FontSize" Value="16"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="LineHeight" Value="22"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+      <Setter Property="LineHeight" Value="24"/>
       <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
     </ControlTheme>
 
     <ControlTheme x:Key="Panel" TargetType="Border">
       <Setter Property="Background" Value="{StaticResource Surface}"/>
       <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
-      <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="CornerRadius" Value="6"/>
-      <Setter Property="Padding" Value="24"/>
+      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+      <Setter Property="Padding" Value="{StaticResource PanelPadding}"/>
+      <Setter Property="BoxShadow" Value="0 0 40 0 #CC0A0B0E"/>
     </ControlTheme>
 
     <!-- Warning surface. Derives from Panel; the only change is the border. The
@@ -352,26 +379,26 @@
     <ControlTheme x:Key="PrimaryButton" TargetType="Button">
       <Setter Property="Background" Value="{StaticResource Renk1}"/>
       <Setter Property="Foreground" Value="Black"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
       <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
-      <Setter Property="Padding" Value="20,14"/>
-      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="MinHeight" Value="{StaticResource ButtonHeight}"/>
+      <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
+      <Setter Property="BorderBrush" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="HorizontalContentAlignment" Value="Center"/>
       <Setter Property="VerticalContentAlignment" Value="Center"/>
       <Setter Property="Template">
         <ControlTemplate TargetType="Button">
-          <!-- The glow is given to the box (SKILL §2). The WPF counterpart is
-               DropShadowEffect BlurRadius=20 Opacity=0.35; in BoxShadow opacity is
-               not a separate property but the colour alpha: 0.35 * 255 = 89 = 0x59.
-               The conversion was calculated, not measured. -->
+          <!-- The glow is given to the box (SKILL §2), from derived.glow-button. In
+               BoxShadow the opacity is the colour alpha. -->
           <Border Name="bd"
                   Background="{TemplateBinding Background}"
                   BorderBrush="{TemplateBinding BorderBrush}"
                   BorderThickness="{TemplateBinding BorderThickness}"
                   Padding="{TemplateBinding Padding}"
-                  CornerRadius="6"
+                  CornerRadius="{StaticResource Radius}"
                   RenderTransformOrigin="50%,50%"
                   BoxShadow="0 0 20 0 #595AA8FF">
             <!-- Do NOT write keyframe animations for hover and press. Avalonia does
@@ -411,7 +438,7 @@
       <Style Selector="^:disabled /template/ Border#bd">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="{StaticResource Disabled}"/>
-        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
         <Setter Property="BoxShadow" Value="none"/>
       </Style>
       <Style Selector="^:disabled">
@@ -438,57 +465,86 @@
        its counterpart is the FocusAdorner property on Control. Avalonia already
        draws the ring only in keyboard modality, so the CSS :focus-visible
        behaviour comes for free.
-       The radii derive from the 6 DIP base: the inner layer sits 1 DIP outside the
-       element (6+1=7), the outer 3 DIP outside (6+3=9). Not hand-picked numbers. -->
+       Geometry from shape.r, shape.focus-offset and shape.focus-w: the inner layer
+       sits 1 DIP outside the element, the outer layer focus-offset + 1 outside. -->
   <Style Selector="Control">
     <Setter Property="FocusAdorner">
       <FocusAdornerTemplate>
         <Panel Margin="-5" UseLayoutRounding="True">
           <Rectangle Margin="4" RadiusX="7" RadiusY="7"
-                     Stroke="#FF0A0B0E" StrokeThickness="2"/>
+                     Stroke="#FF0A0B0E" StrokeThickness="{StaticResource FocusWidth}"/>
           <Rectangle Margin="2" RadiusX="9" RadiusY="9"
-                     Stroke="#FF5AA8FF" StrokeThickness="2"/>
+                     Stroke="#FF5AA8FF" StrokeThickness="{StaticResource FocusWidth}"/>
         </Panel>
       </FocusAdornerTemplate>
     </Setter>
   </Style>
 
-  <!-- APPLICATION BACKGROUND.
-       Not the window's own Background, but an EMPTY Panel filling the window:
-       <Panel Classes="appbg"/> sits behind the content as a sibling.
-       Do not put children inside the Panel; the rotating layer rotates its
-       children too. -->
+  <!-- WINDOW SHELL. The Window template's content host paints AppBackground and
+       the shape.window-edge border, so every window gets the background without
+       markup. The overlay (grid lines or halo glows) is drawn by an EMPTY
+       <Panel Classes="appbg"/> behind the content as a sibling. -->
+  <Style Selector=":is(Window) /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource AppBackground}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource WindowEdge}"/>
+    <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+    <Setter Property="CornerRadius" Value="{StaticResource WindowRadius}"/>
+  </Style>
+
   <Style Selector="Panel.appbg">
-    <Setter Property="Background" Value="{StaticResource AppBgGradient}"/>
-    <Setter Property="RenderTransformOrigin" Value="50%,50%"/>
+    <Setter Property="Background" Value="{StaticResource AppBackgroundOverlay}"/>
     <Setter Property="IsHitTestVisible" Value="False"/>
   </Style>
 
-  <!-- BACKGROUND ROTATION, the one named exception to the infinite-loop ban
-       (SKILL §5.4). In WPF the EndPoint shifted from 0.5,1 to 0.7,1 with a static
-       value of 0.6,1. Avalonia cannot interpolate a gradient brush sub-property
-       (the brush animator only carries flat colour), so the same look is produced
-       by rotating the layer very slowly.
-       Angle maths, deviation from vertical: atan(0.5)=26.57, atan(0.6)=30.96,
-       atan(0.7)=34.99 degrees. Against the static 0.6 the ends are -4.39 and +4.03
-       degrees; total travel 8.42 degrees, under the 20-degree ceiling of motion.md
-       M10.
-       So the rotating rectangle leaves no corner gap the scale is 1.12; for 8.42
-       degrees in a 16:9 window the smallest required scale was calculated at 1.09,
-       and 1.12 leaves margin. All of these numbers were calculated, not measured on
-       screen (assumed, not measured). -->
-  <Style Selector="Window.anim Panel.appbg">
-    <Style.Animations>
-      <Animation Duration="0:0:48" IterationCount="Infinite"
-                 PlaybackDirection="Alternate" Easing="SineEaseInOut">
-        <KeyFrame Cue="0%">
-          <Setter Property="RenderTransform" Value="scale(1.12) rotate(-4.39deg)"/>
-        </KeyFrame>
-        <KeyFrame Cue="100%">
-          <Setter Property="RenderTransform" Value="scale(1.12) rotate(4.03deg)"/>
-        </KeyFrame>
-      </Animation>
-    </Style.Animations>
+  <!-- SCROLLBARS, metric.scrollbar-style solid. -->
+  <Style Selector="ScrollBar">
+    <Setter Property="Background" Value="{StaticResource ScrollbarTrack}"/>
+    <Setter Property="MinWidth" Value="0"/>
+    <Setter Property="MinHeight" Value="0"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" CornerRadius="{StaticResource ScrollbarThumbRadius}">
+          <Track Name="track"
+                 Minimum="{TemplateBinding Minimum}"
+                 Maximum="{TemplateBinding Maximum}"
+                 Value="{TemplateBinding Value, Mode=TwoWay}"
+                 ViewportSize="{TemplateBinding ViewportSize}"
+                 Orientation="{TemplateBinding Orientation}">
+            <Thumb Name="thumb"/>
+          </Track>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="ScrollBar:vertical">
+    <Setter Property="Width" Value="{StaticResource ScrollbarThickness}"/>
+  </Style>
+  <Style Selector="ScrollBar:vertical /template/ Track#track">
+    <Setter Property="IsDirectionReversed" Value="True"/>
+  </Style>
+  <Style Selector="ScrollBar:horizontal">
+    <Setter Property="Height" Value="{StaticResource ScrollbarThickness}"/>
+  </Style>
+  <Style Selector="ScrollBar /template/ Thumb#thumb">
+    <Setter Property="Background" Value="{StaticResource ScrollbarThumb}"/>
+    <Setter Property="CornerRadius" Value="{StaticResource ScrollbarThumbRadius}"/>
+    <Setter Property="Margin" Value="{StaticResource ScrollbarThumbInset}"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"/>
+      </ControlTemplate>
+    </Setter>
+    <Setter Property="Transitions">
+      <Transitions>
+          <BrushTransition Property="Background" Duration="{StaticResource TInstant}" Easing="{StaticResource EOut}"/>
+      </Transitions>
+    </Setter>
+  </Style>
+  <Style Selector="ScrollBar /template/ Thumb#thumb:pointerover">
+    <Setter Property="Background" Value="{StaticResource ScrollbarThumbHover}"/>
+  </Style>
+  <Style Selector="ScrollBar /template/ Thumb#thumb:pressed">
+    <Setter Property="Background" Value="{StaticResource ScrollbarThumbHover}"/>
   </Style>
 
   <!-- REDUCED MOTION, applied in the template.
@@ -502,8 +558,7 @@
        The class lives in one place, on the window itself; the rules below look at
        it. The reading code is in references/avalonia.md, ready to copy.
        Without the "anim" class two things fall at once:
-         1) "Window.anim Panel.appbg" does not match and the background loop never
-            starts.
+         1) The window background rotation never starts.
          2) The rule below cancels the press scale.
        The opacity transition remains; the interface is not lifeless, but it does
        not make you dizzy (M4). -->

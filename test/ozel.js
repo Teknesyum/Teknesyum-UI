@@ -54,8 +54,7 @@ module.exports = function ozel() {
     L.ok('tokenYaz writes benim.tokens.json and returns its path', tokenYolu === yol.tokenlar && fs.existsSync(yol.tokenlar));
     const yaziTokens = JSON.parse(fs.readFileSync(yol.tokenlar, 'utf8'));
     L.ok('the written token file carries the changed colour', yaziTokens.brand['renk-1'].value === '#112233', yaziTokens.brand['renk-1'].value);
-    const yaziNotlar = JSON.parse(fs.readFileSync(yol.notlar, 'utf8'));
-    L.ok('benim.notlar.json carries the note array', JSON.stringify(yaziNotlar) === JSON.stringify({ notlar: ['renk-4 karşılığı yok'] }), JSON.stringify(yaziNotlar));
+    L.ok('tokenYaz writes no notes file: every choice is a token', !fs.existsSync(yol.notlar));
 
     L.ok('tokenYaz without an object returns null', O.tokenYaz(null) === null && O.tokenYaz([1, 2]) === null);
 

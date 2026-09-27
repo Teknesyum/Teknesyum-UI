@@ -7,8 +7,8 @@
 
     <ControlTheme x:Key="SigChip" TargetType="Button">
       <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
       <Setter Property="Padding" Value="10,3"/>
       <Setter Property="MinHeight" Value="24"/>
       <Setter Property="MinWidth" Value="24"/>
@@ -47,41 +47,38 @@
 
     <ControlTheme x:Key="SigText" TargetType="TextBlock">
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-      <Setter Property="FontSize" Value="14"/>
-      <!-- Agirlik 600, SKILL §3. 700 hero disi hicbir tipografi rolunde kalmadi. -->
-      <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
     </ControlTheme>
 
   </StackPanel.Resources>
 
   <Button Theme="{StaticResource SigChip}" Classes="sigchip"
-          BorderBrush="{StaticResource Renk2Text}"
+          BorderBrush="{StaticResource LabelSupportBrush}"
           Margin="0,0,8,0"
           Tag="https://github.com/sponsors/Teknesyum"
           Click="OnSignatureNavigate"
           ToolTip.Tip="{loc:Str sig.supportTitle}">
     <StackPanel Orientation="Horizontal">
       <Canvas Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0">
-        <Path Stroke="{StaticResource Renk2Text}" StrokeThickness="2"
+        <Path Stroke="{StaticResource LabelSupportBrush}" StrokeThickness="2"
               StrokeJoin="Round" StrokeLineCap="Round"
               Data="M2 4.5 H8.5 V8 A2 2 0 0 1 6.5 10 H4 A2 2 0 0 1 2 8 Z
                     M8.5 5.5 H9.25 A1.25 1.25 0 0 1 9.25 8 H8.5
                     M4 1.25 V2.25 M6 1.25 V2.25"/>
       </Canvas>
       <TextBlock Theme="{StaticResource SigText}"
-                 Foreground="{StaticResource Renk2Text}"
+                 Foreground="{StaticResource LabelSupportBrush}" FontSize="{StaticResource LabelSupportSize}" FontWeight="{StaticResource LabelSupportWeight}"
                  Text="{loc:Str sig.support}"/>
     </StackPanel>
   </Button>
 
   <Button Theme="{StaticResource SigChip}" Classes="sigchip"
-          BorderBrush="{StaticResource Renk1}"
+          BorderBrush="{StaticResource LabelBrandBrush}"
           Tag="https://github.com/Teknesyum"
           Click="OnSignatureNavigate"
           ToolTip.Tip="{loc:Str sig.brandTitle}">
     <TextBlock Theme="{StaticResource SigText}"
-               Foreground="{StaticResource Renk1}"
+               Foreground="{StaticResource LabelBrandBrush}" FontSize="{StaticResource LabelBrandSize}" FontWeight="{StaticResource LabelBrandWeight}"
                Text="{loc:Str sig.brand}"/>
   </Button>
 </StackPanel>

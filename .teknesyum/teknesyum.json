@@ -1,0 +1,68 @@
+{
+  "icon": ".teknesyum/icon.png",
+  "screenshot": ".teknesyum/shot.jpg",
+  "full": ".teknesyum/full.jpg",
+  "catalog": {
+    "category": "developer",
+    "tags": {
+      "tr": [
+        "claude-code",
+        "eklenti",
+        "arayüz",
+        "tasarım-token"
+      ],
+      "en": [
+        "claude-code",
+        "plugin",
+        "ui",
+        "design-tokens"
+      ]
+    },
+    "summary": {
+      "tr": "Claude Code için bir arayüz standardı eklentisi. Renk, yazı, köşe yarıçapı, hareket ve başlık çubuğu gibi bütün görsel kararları tek bir token dosyasında tutar ve her projenin arayüzünü bu dosyadan üretir. Yüzü aşkın kuraldan oluşan tarayıcı kodu token dışı renklere, kontrast ve odak halkası sorunlarına karşı denetler, çoğunu kendisi düzeltir. Düzen Electron tabanlı bir önizleme uygulamasında canlı olarak ayarlanır. Birden fazla projeyi aylarca aynı görünümde tutmak isteyen geliştiriciler için.",
+      "en": "A Claude Code plugin that keeps one interface standard across projects. Colours, type, radius, motion and the title bar live in a single token file, and every project builds its UI from it. A scanner with more than a hundred checks flags hard-coded colours, contrast and focus-ring problems and can fix many of them automatically. The layout itself is edited live in an Electron preview app. Aimed at developers who want several projects to look the same for months without repeating a style guide."
+    },
+    "points": {
+      "tr": [
+        "Tek token dosyasından üretilen tasarım sistemi",
+        "15 canlı panelli önizleme uygulaması",
+        "Kendi düzenini kaydeden kişisel token dosyası",
+        "Otomatik düzeltmeli 102 kurallı tarayıcı",
+        "0-100 arası okunurluk puanı",
+        "CSS, React, WPF, Avalonia, WinForms için kod üretir",
+        "Kurulum, başlık çubuğu ve güncelleme şablonları",
+        "9 tema, hepsi 7:1 kontrast"
+      ],
+      "en": [
+        "Design system generated from one token file",
+        "Preview app with 15 live panels",
+        "Personal token file that keeps your layout",
+        "102-rule scanner with auto-fix",
+        "0-100 readability score",
+        "Generates code for CSS, React, WPF, Avalonia, WinForms",
+        "Installer, title bar and update templates",
+        "9 themes, all at 7:1 contrast"
+      ]
+    },
+    "uses": {
+      "tr": [
+        "Tüm arayüzleri tek dosyadan üret",
+        "Tarayıcıyla sorunları bulup düzelt",
+        "Okunurluk puanını gör",
+        "Farklı çatılar için kod üret",
+        "Hazır temalardan birini seç"
+      ],
+      "en": [
+        "Build every UI from one file",
+        "Find and fix issues automatically",
+        "See a readability score",
+        "Generate code for several frameworks",
+        "Pick one of the ready themes"
+      ]
+    },
+    "lead": {
+      "tr": "Claude Code Arayüz Standardı, Tasarım Sistemi ve Denetleyici",
+      "en": "Claude Code Interface Standard, Design System and Scanner"
+    }
+  }
+}

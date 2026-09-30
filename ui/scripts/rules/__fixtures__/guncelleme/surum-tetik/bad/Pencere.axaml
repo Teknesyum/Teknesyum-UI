@@ -1,0 +1,5 @@
+<Window xmlns="https://github.com/avaloniaui">
+  <StackPanel>
+    <TextBlock Text="{Binding Version}"/>
+  </StackPanel>
+</Window>

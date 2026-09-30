@@ -196,6 +196,9 @@ function metin(secenek) {
   const bekleyen = raf.bekleyen(kok);
   if (bekleyen.length) satirlar.push('Bekleyen raf kitapları: ' + bekleyen.map((b) => b.ad).join(', ') + '. Denetimle birlikte uydur, `' + js('raf.js') + ' --uydu <ad> --project "' + kok + '"` ile kaydet.');
   satirlar.push(
+    'Okunurluk ölçeği: görüntüler 1200x780 pencerede %100/%125/%150 ile alınır; ayrıca 2560x1440, Windows ölçeği %100, ekranı kaplayan pencerede bir çekim al. Ölçü: gövde yazısı etkin ≥20 px, gezinme simgesi ≥ yazı boyutu. Tutmuyorsa uygulama içi ölçeği kur (Avalonia: `scaffold.js ustcubuk` içindeki `UygulamaOlcegi`; diğerlerinde eşdeğeri) ve `okunurluk/simge-taban` uyarılarını kapat; ToolTip ve açılır menü de ölçeği almalı.'
+  );
+  satirlar.push(
     'Rapor: `docs/ui-denetim/YYYY-MM-DD.md`. Bitiş: düzen eşleşmesi 0 fark (`' + js('esle.js') + ' --denetle --project "' + kok + '"`), sıfır kontrast hatası, sıfır tarayıcı hatası; "çalışıyor" başsız testle, "kullanılabilir" önizleme ile uygulamanın yan yana ekran görüntüsüyle, ayrı kanıt. Bitince kaydet: `' + js('uc.js') + ' --bitti --project "' + kok + '"`; sonraki uc yalnız bu sürümden sonraki değişikliklere bakar.'
   );
   satirlar.push(

@@ -18,6 +18,14 @@ const ARKAPLAN_DONGUSU = /\bsetInterval\s*\(/;
 const DURUM_GOSTERGESI = /role\s*=\s*["']?status|aria-live|badge|rozet|\bstate\b|\bdurum\b/i;
 const WEB_KOD = ['.ts', '.tsx', '.js', '.jsx'];
 const KOPRU_DOSYASI = /contextBridge\.exposeInMainWorld/;
+const SURUM_OGESI = />\s*(?:[Vv]ersion\s*:?\s*|v)\{[^{}]*[Vv]ersion[^{}]*\}\s*<\/([A-Za-z][\w.]*)\s*>/g;
+const SURUM_METNI = /(?:textContent|innerText|innerHTML)\s*=[^;\n]*(?:`v\$\{[^}]*[Vv]ersion|['"]v['"]\s*\+[^;\n]*[Vv]ersion)/g;
+const DUGME_ISARETI = /<button\b|createElement\(\s*['"]button['"]|role\s*=\s*["'{]?\s*['"]?button/;
+const XAML_SURUM_YAZISI = /<TextBlock\b[^>]*\bText="(?:v\d[^"]*|[^"]*\{Binding[^}]*[Vv]ersion[^}]*\}[^"]*)"[^>]*>/g;
+const XAML_SURUM_DUGMESI = /<Button\b[^>]*\bContent="[^"]*[Vv]ersion[^"]*"[^>]*>/g;
+const SURUM_WEB = ['.tsx', '.jsx', '.html', '.htm'];
+const SURUM_XAML = ['.axaml', '.xaml'];
+const SURUM_KOD = ['.ts', '.tsx', '.js', '.jsx'];
 
 const SABLON = /teknesyum-ui template ([\w./-]+)(?:\s*·\s*düzen (\d+))?/;
 const DUZENLI = new Set(['kur/kur.ps1', 'kur/avalonia/KurulumEkrani.axaml', 'kur/avalonia/KurulumEkrani.axaml.cs', 'durum/avalonia/GuncellemePaneli.axaml', 'durum/avalonia/GuncellemePaneli.axaml.cs']);
@@ -78,6 +86,46 @@ module.exports = {
   id: 'guncelleme',
 
   fileRules: [
+    {
+      id: 'surum-tetik',
+      severity: 'warn',
+      exts: [...SURUM_WEB, ...SURUM_XAML, ...SURUM_KOD],
+      check(file, text) {
+        const line = (i) => text.slice(0, i).split('\n').length;
+        const out = [];
+        const say = (i, why) =>
+          out.push({
+            line: line(i),
+            message: 'the version text is ' + why + ': make it a button named update.check that checks for an update on click.',
+          });
+        const ext = path.extname(file).toLowerCase();
+        if (SURUM_WEB.includes(ext)) {
+          for (const m of text.matchAll(SURUM_OGESI)) {
+            const tag = m[1];
+            const open = text.lastIndexOf('<' + tag, m.index);
+            const attrs = open < 0 ? '' : text.slice(open, m.index);
+            if (tag.toLowerCase() !== 'button') say(m.index, 'shown in a <' + tag + '>, not a button');
+            else if (!/\bon[cC]lick\s*=/.test(attrs)) say(m.index, 'a button with no click handler');
+            else if (!/\baria-label\s*=/.test(attrs)) say(m.index, 'a button with no accessible name');
+          }
+        }
+        if (SURUM_KOD.includes(ext) && !DUGME_ISARETI.test(text)) {
+          for (const m of text.matchAll(SURUM_METNI)) say(m.index, 'written as plain text');
+        }
+        if (SURUM_XAML.includes(ext)) {
+          for (const m of text.matchAll(XAML_SURUM_YAZISI)) {
+            const before = text.slice(0, m.index);
+            const inButton = (before.match(/<Button\b/g) || []).length > (before.match(/<\/Button>/g) || []).length;
+            if (!inButton) say(m.index, 'a TextBlock outside any Button');
+          }
+          for (const m of text.matchAll(XAML_SURUM_DUGMESI)) {
+            if (!/\b(?:Click|Command)\s*=/.test(m[0])) say(m.index, 'a button with no click handler');
+            else if (!/AutomationProperties\.Name\s*=/.test(m[0])) say(m.index, 'a button with no accessible name');
+          }
+        }
+        return out;
+      },
+    },
     {
       id: 'uzun-cagri-ilerlemesiz',
       severity: 'warn',

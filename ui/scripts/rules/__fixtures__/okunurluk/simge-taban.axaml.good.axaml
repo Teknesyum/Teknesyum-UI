@@ -1,0 +1,8 @@
+<UserControl xmlns="https://github.com/avaloniaui">
+  <StackPanel>
+    <Button Content="Ayarlar">
+      <PathIcon Data="M0,0 L10,10" Width="{DynamicResource IconSize3}" Height="{DynamicResource IconSize3}"/>
+    </Button>
+    <Image Source="avares://App/logo.png" Width="16" Height="16"/>
+  </StackPanel>
+</UserControl>

@@ -1,0 +1,7 @@
+<Window xmlns="https://github.com/avaloniaui">
+  <StackPanel>
+    <Button Command="{Binding Denetle}" AutomationProperties.Name="Güncellemeleri denetle">
+      <TextBlock Text="{Binding Version}"/>
+    </Button>
+  </StackPanel>
+</Window>

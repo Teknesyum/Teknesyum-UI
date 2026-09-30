@@ -314,6 +314,7 @@ function linkNote(target) {
     '  <Compile Include="' + dir + '/*.cs" Link="Kabuk/%(Filename)%(Extension)" />',
   ];
   if (target === 'ustcubuk') lines.push('  App.axaml Styles: <StyleInclude Source="avares://<Assembly>/Kabuk/KabukStilleri.axaml"/>');
+  if (target === 'ustcubuk') lines.push('  main window, once after InitializeComponent: UygulamaOlcegi.Bagla(this) - default scale from the logical screen height, Ctrl +/-/0, saved');
   lines.push('hover and press stay inside each button: do not add RenderTransform scale or a negative Margin to these files');
   return lines.join('\n');
 }

@@ -236,6 +236,9 @@
     <SolidColorBrush x:Key="LabelUpdateBrush" Color="#FFF2F3F6"/>
     <sys:Double x:Key="LabelUpdateSize">14</sys:Double>
     <FontWeight x:Key="LabelUpdateWeight">SemiBold</FontWeight>
+    <SolidColorBrush x:Key="LabelVersionBrush" Color="#FF5AA8FF"/>
+    <sys:Double x:Key="LabelVersionSize">14</sys:Double>
+    <FontWeight x:Key="LabelVersionWeight">Normal</FontWeight>
     <SolidColorBrush x:Key="LabelSyncBrush" Color="#FFF2F3F6"/>
     <sys:Double x:Key="LabelSyncSize">14</sys:Double>
     <FontWeight x:Key="LabelSyncWeight">SemiBold</FontWeight>

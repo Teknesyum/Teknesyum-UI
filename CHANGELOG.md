@@ -5,6 +5,24 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.29.0] - 2026-09-30
+
+### Added
+- The Avalonia title-bar scaffold ships `UygulamaOlcegi.cs`.
+  - It scales the whole window from the logical screen height: 1.25 at 1300 and above, 1.5 at 2000 and above.
+  - Ctrl +/−/0 moves the scale in 0.125 steps between 1.0 and 2.0, and the choice is saved.
+  - ToolTips and popups take the same scale.
+- Rule `okunurluk/simge-taban` (warn): an icon below 20 px, or one sized IconSize1/2, inside a button, tab, menu or nav item.
+- The version text becomes an update button in the Avalonia (`SurumDugmesi.cs`), React and Electron templates.
+  - One click checks for an update.
+  - If the app is current, a toast in the bottom-right corner says so and closes on its own.
+  - If there is a new version, it installs without asking. The `onayIste` setting brings back an Install/Later question.
+  - Errors show as a one-line toast.
+- Labels `update.check`, `update.current`, `update.confirmSetting` and `update.error`, from the new `version` label token.
+- Rule `guncelleme/surum-tetik` (warn): a shown version text that is not a named, clickable button.
+- `uc` audit adds a 2560x1440, 100 % maximized capture. Measure: body text at least 20 px on screen, and nav icons no smaller than the text.
+- SKILL.md gains two rules: "Okunurluk ölçeği" and "Sürüm yazısı".
+
 ## [0.28.0] - 2026-09-28
 
 ### Added

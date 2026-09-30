@@ -1496,10 +1496,76 @@ const pairContrast = {
   },
 };
 
+const ICON_HOST = /^(Button|ToggleButton|RepeatButton|RadioButton|ListBoxItem|TabItem|MenuItem|TreeViewItem|SplitButton|ToggleSwitch|NavigationViewItem)$/;
+const ICON_NODE = /^(PathIcon|Image|SymbolIcon|FontIcon|Icon|IconElement|Svg|Viewbox)$|Icon$/;
+const ICON_TOKEN = /^\{\s*(?:DynamicResource|StaticResource)\s+IconSize[12]\s*\}$/;
+const ICON_MIN = 20;
+
+function smallIconSize(value) {
+  const v = String(value).trim();
+  if (ICON_TOKEN.test(v)) return v;
+  if (/^\d+(\.\d+)?$/.test(v) && parseFloat(v) < ICON_MIN) return v;
+  return null;
+}
+
+function iconHost(node) {
+  for (let n = node.parent; n; n = n.parent) {
+    const nm = n.name ? local(n.name) : '';
+    if (ICON_HOST.test(nm)) return nm;
+    const cls = n.attrs ? String(n.attrs.Classes || '') + ' ' + String(n.attrs.Name || n.attrs['x:Name'] || '') : '';
+    if (/(^|\s)(nav|gezinme)|Nav/i.test(cls)) return 'nav';
+  }
+  return null;
+}
+
+function iconFloorXaml(text) {
+  const out = [];
+  const visit = (n) => {
+    const nm = n.name ? local(n.name) : '';
+    if (n.attrs && ICON_NODE.test(nm)) {
+      const host = iconHost(n);
+      if (host)
+        for (const a of ['Width', 'Height']) {
+          if (n.attrs[a] === undefined) continue;
+          const bad = smallIconSize(n.attrs[a]);
+          if (bad) out.push({ line: n.attrLines[a] || n.line, message: nm + ' in ' + host + ' is ' + a + '=' + bad + ' (under ' + ICON_MIN + ' px) - nav and button icons stay at IconSize3 or the text size, not smaller.' });
+        }
+    }
+    for (const c of n.children) visit(c);
+  };
+  visit(xmlNodes(text));
+  return out;
+}
+
+function iconFloorCss(text) {
+  const out = [];
+  const at = lineIndex(text);
+  for (const m of text.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const sel = m[1].replace(/\/\*[\s\S]*?\*\//g, '').trim();
+    const hit = sel.split(',').some((p) => /(\.tk-nav|button)/i.test(p) && /(\bsvg\b|\bimg\b|icon)/i.test(p));
+    if (!hit) continue;
+    for (const d of m[2].matchAll(/(?:^|[;\s])(width|height|inline-size|block-size)\s*:\s*(\d+(?:\.\d+)?)px\b/gi)) {
+      if (parseFloat(d[2]) >= ICON_MIN) continue;
+      out.push({ line: at(m.index + m[1].length + 1 + d.index), message: sel.split(',')[0].trim() + ' sets ' + d[1] + ': ' + d[2] + 'px (under ' + ICON_MIN + ' px) - nav and button icons stay at 20 px or the text size, not smaller.' });
+    }
+  }
+  return out;
+}
+
+const simgeTaban = {
+  id: 'simge-taban',
+  severity: 'warn',
+  exts: ['.css', '.xaml', '.axaml'],
+  check(file, text) {
+    const ext = path.extname(file).toLowerCase();
+    return ext === '.css' ? iconFloorCss(text) : iconFloorXaml(text);
+  },
+};
+
 module.exports = {
   id: 'okunurluk',
   lineRules: [],
-  fileRules: [pairContrast],
+  fileRules: [pairContrast, simgeTaban],
   projectRules: [],
   _internal: { csEval, csIndex, state, markupTree, xmlNodes, twClass, resolveCss },
 };

@@ -131,8 +131,9 @@ function avalonia() {
   const bar = scaffold(root, ['ustcubuk', 'Deneme']);
   L.ok('scaffold ustcubuk picks Avalonia from the .axaml in the project', bar.status === 0, bar.stderr || bar.stdout);
   const barDir = path.join(root, 'teknesyum-ui', 'ustcubuk');
-  const barFiles = ['TitleBar.axaml', 'TitleBar.axaml.cs', 'KabukStilleri.axaml'].map((n) => path.join(barDir, n));
-  L.ok('ustcubuk writes TitleBar and KabukStilleri', barFiles.every((f) => fs.existsSync(f)), fs.existsSync(barDir) ? fs.readdirSync(barDir).join(' ') : '');
+  const barFiles = ['TitleBar.axaml', 'TitleBar.axaml.cs', 'KabukStilleri.axaml', 'UygulamaOlcegi.cs'].map((n) => path.join(barDir, n));
+  L.ok('ustcubuk writes TitleBar, KabukStilleri and UygulamaOlcegi', barFiles.every((f) => fs.existsSync(f)), fs.existsSync(barDir) ? fs.readdirSync(barDir).join(' ') : '');
+  L.ok('ustcubuk UygulamaOlcegi carries the namespace and the scale steps', /namespace Deneme\.Kabuk/.test(fs.readFileSync(barFiles[3], 'utf8')) && /LayoutTransformControl/.test(fs.readFileSync(barFiles[3], 'utf8')));
   L.ok('ustcubuk says how to link the files', /AvaloniaXaml Include=/.test(bar.stdout) && /StyleInclude/.test(bar.stdout), bar.stdout);
 
   const panel = scaffold(root, ['durum', 'Deneme', '--avalonia']);

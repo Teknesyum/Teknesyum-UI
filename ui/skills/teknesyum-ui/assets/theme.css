@@ -252,6 +252,9 @@
   --tk-label-update-color: var(--tk-text);
   --tk-label-update-fs: var(--tk-fs-1);
   --tk-label-update-fw: var(--tk-fw-semi);
+  --tk-label-version-color: var(--tk-text-label);
+  --tk-label-version-fs: var(--tk-fs-1);
+  --tk-label-version-fw: var(--tk-fw-body);
   --tk-label-sync-color: var(--tk-text);
   --tk-label-sync-fs: var(--tk-fs-1);
   --tk-label-sync-fw: var(--tk-fw-semi);

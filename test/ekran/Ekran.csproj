@@ -28,6 +28,8 @@
     <SablonXaml Include="$(Sablonlar)durum/avalonia/GuncellemePaneli.axaml" Cikti="$(SablonCikti)Kabuk/GuncellemePaneli.axaml" Link="Kabuk/GuncellemePaneli.axaml" />
     <SablonXaml Include="$(Sablonlar)kur/avalonia/KurulumEkrani.axaml" Cikti="$(SablonCikti)Kabuk/KurulumEkrani.axaml" Link="Kabuk/KurulumEkrani.axaml" />
     <SablonCs Include="$(Sablonlar)ustcubuk/avalonia/TitleBar.axaml.cs" Cikti="$(SablonCikti)Kabuk/TitleBar.axaml.cs" Link="Kabuk/TitleBar.axaml.cs" />
+    <SablonCs Include="$(Sablonlar)ustcubuk/avalonia/UygulamaOlcegi.cs" Cikti="$(SablonCikti)Kabuk/UygulamaOlcegi.cs" Link="Kabuk/UygulamaOlcegi.cs" />
+    <SablonCs Include="$(Sablonlar)durum/avalonia/SurumDugmesi.cs" Cikti="$(SablonCikti)Kabuk/SurumDugmesi.cs" Link="Kabuk/SurumDugmesi.cs" />
     <SablonCs Include="$(Sablonlar)durum/avalonia/GuncellemePaneli.axaml.cs" Cikti="$(SablonCikti)Kabuk/GuncellemePaneli.axaml.cs" Link="Kabuk/GuncellemePaneli.axaml.cs" />
     <SablonCs Include="$(Sablonlar)kur/avalonia/KurulumEkrani.axaml.cs" Cikti="$(SablonCikti)Kabuk/KurulumEkrani.axaml.cs" Link="Kabuk/KurulumEkrani.axaml.cs" />
     <SablonCs Include="$(Sablonlar)denetim/avalonia/KabukTests.cs" Cikti="$(SablonCikti)Denetim/KabukTests.cs" Link="Denetim/KabukTests.cs" />

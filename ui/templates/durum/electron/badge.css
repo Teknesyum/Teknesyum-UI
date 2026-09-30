@@ -124,6 +124,47 @@
   color: var(--tk-success);
 }
 
+.tk-version {
+  min-height: var(--tk-target-min);
+  padding: 0 var(--tk-sp-2);
+  border: 0;
+  border-radius: var(--tk-r-chip);
+  background: transparent;
+  color: var(--tk-label-version-color, var(--tk-text-label));
+  font: inherit;
+  font-size: var(--tk-label-version-fs, var(--tk-fs-1));
+  font-weight: var(--tk-label-version-fw, var(--tk-fw-body));
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  transition: color var(--tk-t-fast) var(--tk-e-out);
+}
+
+.tk-version:hover,
+.tk-version:focus-visible {
+  color: var(--tk-renk-1);
+  text-decoration: underline;
+}
+
+.tk-version:focus-visible {
+  outline: var(--tk-focus-w) solid var(--tk-renk-1);
+  outline-offset: var(--tk-focus-offset);
+  box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg-from);
+}
+
+.tk-version:active {
+  color: var(--tk-renk-2-text);
+}
+
+.tk-version:disabled {
+  color: var(--tk-disabled);
+  cursor: not-allowed;
+}
+
+.tk-version[aria-busy="true"] {
+  cursor: progress;
+}
+
 @keyframes tk-sync-progress {
   50% {
     transform: scale(var(--tk-scale-hover));

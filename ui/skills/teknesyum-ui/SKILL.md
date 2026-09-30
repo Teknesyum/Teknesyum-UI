@@ -94,6 +94,26 @@ Unless the project's config sets `"pencere": "normal"`, the main window opens ma
 opening state is always maximized. Installers and small fixed-size tool windows are
 exempt. `scan.js` checks this as `kabuk/pencere-maximize`.
 
+### Okunurluk ölçeği
+
+Logical-pixel floors are not enough on a big screen at 100% Windows scale. At 2560x1440 and
+100%, body text must be at least 20 px effective and nav/button icons at least the text
+size (IconSize3 or larger, never IconSize1/2). Apps ship an in-app scale (Avalonia:
+`UygulamaOlcegi` from `scaffold.js ustcubuk`): default from the logical screen height
+(>=2000 -> 1.5, >=1300 -> 1.25, else 1.0), Ctrl +/-/0, saved, and applied to tooltips and
+popups too. `scan.js` checks icons as `okunurluk/simge-taban`; `uc` adds the 2560x1440 capture.
+
+### Sürüm yazısı
+
+The version text in a title bar is a button, never plain text: accessible name `update.check`,
+label colour (`--tk-text-label`), smallest type step, borderless; hover and focus turn
+`--tk-renk-1`. One click checks for an update: if current, a bottom-right auto-closing toast
+`update.current (vX.Y.Z)`; if new, it downloads, installs and restarts without asking, through
+the update panel. The user setting `onayIste` (`update.confirmSetting`, default off) asks
+Install/Later with the release notes first. A failed check shows a one-line bottom-right toast
+with the reason. Templates: `durum` (`VersionButton`, `mountVersionButton`, `SurumDugmesi`);
+`scan.js` checks this as `guncelleme/surum-tetik`.
+
 ## Precedence
 
 1. The config's `note:` field.

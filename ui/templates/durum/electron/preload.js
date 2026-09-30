@@ -8,3 +8,8 @@ contextBridge.exposeInMainWorld('sync', {
   state: () => ipcRenderer.invoke('sync:state'),
   onChange: (cb) => ipcRenderer.on('sync:changed', (_event, s) => cb(s)),
 });
+
+contextBridge.exposeInMainWorld('update', {
+  check: () => ipcRenderer.invoke('update:check'),
+  install: (found) => ipcRenderer.invoke('update:install', found),
+});

@@ -106,7 +106,7 @@ popups too. `scan.js` checks icons as `okunurluk/simge-taban`; `uc` adds the 256
 ### Sürüm yazısı
 
 The version text in a title bar is a button, never plain text: accessible name `update.check`,
-label colour (`--tk-text-label`), smallest type step, borderless; hover and focus turn
+quiet grey (`--tk-text-muted`, the only grey), smallest type step, borderless; hover and focus turn
 `--tk-renk-1`. One click checks for an update: if current, a bottom-right auto-closing toast
 `update.current (vX.Y.Z)`; if new, it downloads, installs and restarts without asking, through
 the update panel. The user setting `onayIste` (`update.confirmSetting`, default off) asks

@@ -29,7 +29,17 @@ function resolve(name, trail) {
     };
   }
   const base = resolve(t.ref, trail.concat(name));
-  return { r: base.r, g: base.g, b: base.b, a: t.alpha !== undefined ? t.alpha : base.a };
+  const a = t.alpha !== undefined ? t.alpha : base.a;
+  if (t.over) {
+    const z = resolve(t.over, trail.concat(name));
+    const m = (u, v) => Math.round(u * a + v * (1 - a));
+    return { r: m(base.r, z.r), g: m(base.g, z.g), b: m(base.b, z.b), a: 1 };
+  }
+  return { r: base.r, g: base.g, b: base.b, a };
+}
+
+function muted() {
+  try { find('text-muted'); return 'text-muted'; } catch (e) { return 'text-label'; }
 }
 
 const hk = n => n.toString(16).padStart(2, '0');
@@ -685,6 +695,7 @@ function emitCss() {
 
   --tk-text: ${h('text')};
   --tk-text-label: ${h('text-label')};
+  --tk-text-muted: ${h(muted())};
   /* A disabled control is exempt from 7:1 (SKILL §2) and that exemption has a
      price: a colour-blind user cannot see the grey. So \`--tk-disabled\` is never
      used alone — every disabled control carries a marker in addition to the grey:
@@ -1084,6 +1095,7 @@ ${bgSpec().rotate ? `
 
   <SolidColorBrush x:Key="TextBody"  Color="${x('text')}"/>
   <SolidColorBrush x:Key="TextLabel" Color="${x('text-label')}"/>
+  <SolidColorBrush x:Key="TextMuted" Color="${x(muted())}"/>
   <!-- A disabled control is exempt from 7:1 (SKILL §2) and there is a price: a
        colour-blind user cannot see the grey. This brush is never used alone —
        every disabled control carries a marker in addition to the grey: ToolTip
@@ -1472,6 +1484,7 @@ ${backgroundXaml('    ', true)}
 
     <SolidColorBrush x:Key="TextBody"  Color="${x('text')}"/>
     <SolidColorBrush x:Key="TextLabel" Color="${x('text-label')}"/>
+    <SolidColorBrush x:Key="TextMuted" Color="${x(muted())}"/>
     <!-- A disabled control is exempt from 7:1 (SKILL §2) and there is a price: a
          colour-blind user cannot see the grey. This brush is never used alone;
          every disabled control carries a marker in addition to the grey:
@@ -1879,6 +1892,7 @@ public static class Palette
 
     public static readonly Color TextBody   = ColorTranslator.FromHtml("${csx('text')}");
     public static readonly Color TextLabel  = ColorTranslator.FromHtml("${csx('text-label')}");
+    public static readonly Color TextMuted  = ColorTranslator.FromHtml("${csx(muted())}");
 
     /// A disabled control is exempt from 7:1 (SKILL §2) and there is a price: a
     /// colour-blind user cannot see the grey. This colour is never used alone —

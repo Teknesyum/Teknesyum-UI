@@ -109,6 +109,7 @@
 
   --tk-text: #f2f3f6;
   --tk-text-label: #5aa8ff;
+  --tk-text-muted: #a3a4a7;
   /* A disabled control is exempt from 7:1 (SKILL §2) and that exemption has a
      price: a colour-blind user cannot see the grey. So `--tk-disabled` is never
      used alone — every disabled control carries a marker in addition to the grey:
@@ -252,7 +253,7 @@
   --tk-label-update-color: var(--tk-text);
   --tk-label-update-fs: var(--tk-fs-1);
   --tk-label-update-fw: var(--tk-fw-semi);
-  --tk-label-version-color: var(--tk-text-label);
+  --tk-label-version-color: var(--tk-text-muted);
   --tk-label-version-fs: var(--tk-fs-1);
   --tk-label-version-fw: var(--tk-fw-body);
   --tk-label-sync-color: var(--tk-text);

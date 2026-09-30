@@ -69,6 +69,7 @@ public static class Palette
 
     public static readonly Color TextBody   = ColorTranslator.FromHtml("#F2F3F6");
     public static readonly Color TextLabel  = ColorTranslator.FromHtml("#5AA8FF");
+    public static readonly Color TextMuted  = ColorTranslator.FromHtml("#A3A4A7");
 
     /// A disabled control is exempt from 7:1 (SKILL §2) and there is a price: a
     /// colour-blind user cannot see the grey. This colour is never used alone —

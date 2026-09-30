@@ -5,6 +5,19 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.30.0] - 2026-09-30
+
+### Added
+- Role token `text-muted`: body text at 65 % over the surface, flattened to one opaque colour.
+  - It is the only grey, and only the version text uses it.
+  - It measures 7.57:1 on the public palette and 8.63:1 on the private one.
+  - Outputs: `--tk-text-muted`, the `TextMuted` brush and `Palette.TextMuted`.
+- A token can carry `over`, which blends its `alpha` over another token into an opaque colour.
+- If a project's tokens have no `text-muted`, the generator falls back to `text-label`.
+
+### Changed
+- The version button's resting colour is `text-muted`, where it was `text-label`. Hover and focus still turn `renk-1`.
+
 ## [0.29.0] - 2026-09-30
 
 ### Added

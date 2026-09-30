@@ -118,6 +118,37 @@ function artim(kok, cfg) {
   return satir.join('\n');
 }
 
+function bekliyor(cfg) {
+  const u = cfg && cfg.uc;
+  const simdi = surum();
+  if (!u || !u.surum || !simdi || cfg.off) return null;
+  return kiyas(simdi, u.surum) > 0 ? { eski: u.surum, yeni: simdi } : null;
+}
+
+function guncelle(kok, cfg) {
+  const b = bekliyor(cfg);
+  if (!b) return 'UI güncel: son uc ' + ((cfg && cfg.uc && cfg.uc.surum) || 'yok') + ', eklenti ' + surum() + '. Yapılacak güncelleme yok.';
+  return [
+    'UI güncellemesi (ucupdate) ' + b.eski + ' → ' + b.yeni + '. Tam uc değildir: ekran envanteri, baştan tarama, artık temizliği ve raf kitabı yok. Yalnız aşağıdaki sürüm notlarında bu projeye dokunan maddeleri uygula; projede karşılığı olmayan maddeyi tek satır gerekçeyle geç.',
+    ...degisiklikler(b.eski, b.yeni),
+    'Adımlar:',
+    '1. Tazele: `' + js('setup.js') + ' --apply --project "' + kok + '"`. Üretilmiş `teknesyum-ui/` dosyaları elle düzeltilmez.',
+    '2. Uygula: yeni şablon parçası gerekiyorsa `' + js('scaffold.js') + '` ile al, yeni kuralın bulgusunu kapat. Yalnız maddelerin etkilediği dosyalara dokun.',
+    '3. Tara: `' + js('scan.js') + ' "' + kok + '"`. Bu sürümlerde eklenen kurallarda açık bulgu kalmaz; eski bulgular bu işin konusu değil, sayısını rapora yaz.',
+    '4. Kapı: `' + js('esle.js') + ' --denetle --project "' + kok + '"` 0 fark. Derle ve projenin testlerini koş.',
+    '5. Kaydet: `' + js('uc.js') + ' --bitti --project "' + kok + '"`. Sonra projenin kendi sürüm ve yayın yolunu izle.',
+    'Sahibe sormadan yap; yalnız simge değişikliği ve geri alınamaz adımlar onay ister. Bitince kullanıcının istediği işe geç.',
+  ].join('\n');
+}
+
+function defterTikla(kok, surumNo) {
+  const defter = path.join(kok, '.claude', 'acik.md');
+  const onceki = oku(defter);
+  if (!onceki) return;
+  const yeni = onceki.replace(/^- \[ \] (uc çalıştır: UI|UI güncellemesi:) (\S+ → \S+)(.*?)( — teknesyum-ui)?$/gm, (_, ad, ok, orta) => '- [x] ' + ad + ' ' + ok + orta + ' — ' + surumNo + ' ile uygulandı');
+  if (yeni !== onceki) fs.writeFileSync(defter, yeni, 'utf8');
+}
+
 function bitti(kok) {
   const cfg = ayar(kok);
   if (!cfg) return { hata: 'proje bağlı değil: .claude/teknesyum-ui.json yok' };
@@ -125,6 +156,7 @@ function bitti(kok) {
   if (farklar.length) return { hata: 'düzen eşleşmesi ' + farklar.length + ' fark; kayıt yazılmadı\n' + farklar.map((f) => '  - ' + f).join('\n') };
   cfg.uc = { surum: surum(), duzen: cfg.duzen || null, commit: git(kok, ['rev-parse', 'HEAD']), tarih: new Date().toISOString().slice(0, 10) };
   fs.writeFileSync(path.join(kok, '.claude', 'teknesyum-ui.json'), JSON.stringify(cfg, null, 2) + '\n', 'utf8');
+  defterTikla(kok, cfg.uc.surum);
   return { uc: cfg.uc };
 }
 
@@ -149,8 +181,10 @@ function toplu(kok, yaz) {
       const onceki = oku(defter) || '';
       const t = new Date();
       const zaman = t.toISOString().slice(0, 10) + ' ' + String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
-      const is = '- [ ] uc çalıştır: UI ' + (eski || 'hiç') + ' → ' + simdi + ' (`' + js('uc.js') + '` çıktısını izle, bitince `--bitti`) — ' + zaman + ' — teknesyum-ui';
-      const acik = /^- \[ \] uc çalıştır: UI \S+ → (\S+) .*$/m.exec(onceki);
+      const is = eski
+        ? '- [ ] UI güncellemesi: ' + eski + ' → ' + simdi + ' (oturum başında kendiliğinden uygulanır: `' + js('uc.js') + ' guncelle`) — ' + zaman + ' — teknesyum-ui'
+        : '- [ ] uc çalıştır: UI hiç → ' + simdi + ' (`' + js('uc.js') + '` çıktısını izle, bitince `--bitti`) — ' + zaman + ' — teknesyum-ui';
+      const acik = /^- \[ \] (?:uc çalıştır: UI|UI güncellemesi:) \S+ → (\S+) .*$/m.exec(onceki);
       if (!acik) {
         fs.mkdirSync(path.dirname(defter), { recursive: true });
         fs.writeFileSync(defter, (onceki && !onceki.endsWith('\n') ? onceki + '\n' : onceki) + is + '\n', 'utf8');
@@ -170,6 +204,7 @@ function metin(secenek) {
   const s = secenek || {};
   const kok = gitKok(s.cwd) || path.resolve(s.cwd || process.cwd());
   if (/^renk$/i.test(String(s.kapsam || '').trim())) return renk(kok, ayar(kok));
+  if (/^(guncelle|güncelle|update|ucupdate)$/i.test(String(s.kapsam || '').trim())) return guncelle(kok, ayar(kok));
   const satirlar = [];
   if (raf.var()) {
     satirlar.push(
@@ -212,7 +247,7 @@ function metin(secenek) {
 function main(argv) {
   const args = argv.slice(2);
   if (args.includes('--help') || args.includes('-h')) {
-    process.stdout.write('Usage: node uc.js [--project root] [scope...]\n       node uc.js renk [--project root]\n       node uc.js --bitti [--project root]\n       node uc.js --toplu [root] [--yaz]\n\nPrints the UI check instruction that the `uc` mark puts into the turn.\n\n`renk` prints the short refresh path for a palette change: apply, gate,\nsaved theme choice, build, release; no full audit.\n\n--bitti records the finished uc (plugin version, layout, commit) once the\nlayout gate shows 0 differences; the next uc covers only what changed since.\n\n--toplu lists the projects under root (default: the parent folder) whose last\nuc is older than this plugin; --yaz adds one uc line to each project\'s\n.claude/acik.md, once.\n');
+    process.stdout.write('Usage: node uc.js [--project root] [scope...]\n       node uc.js renk [--project root]\n       node uc.js guncelle [--project root]\n       node uc.js --bitti [--project root]\n       node uc.js --toplu [root] [--yaz]\n\nPrints the UI check instruction that the `uc` mark puts into the turn.\n\n`renk` prints the short refresh path for a palette change: apply, gate,\nsaved theme choice, build, release; no full audit.\n\n`guncelle` prints only what changed since the project\'s last uc: the release\nnotes in between, refresh, new rules, gate, --bitti. The session-start hook\nputs it into the first turn by itself when the plugin is newer than that uc.\n\n--bitti records the finished uc (plugin version, layout, commit) once the\nlayout gate shows 0 differences; the next uc covers only what changed since.\n\n--toplu lists the projects under root (default: the parent folder) whose last\nuc is older than this plugin; --yaz adds one uc line to each project\'s\n.claude/acik.md, once.\n');
     return 0;
   }
   const i = args.indexOf('--project');
@@ -239,6 +274,6 @@ function main(argv) {
   return 0;
 }
 
-module.exports = { metin, renk, bitti, degisiklikler, toplu, surum };
+module.exports = { metin, renk, guncelle, bekliyor, bitti, degisiklikler, toplu, surum };
 
 if (require.main === module) process.exitCode = main(process.argv);

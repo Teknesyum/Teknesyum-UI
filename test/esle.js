@@ -93,11 +93,11 @@ function kapi() {
   L.ok('uc --toplu lists only the projects behind this version', /^Eski: 0\.1\.0 → /m.test(r.stdout) && !/Guncel|Bagsiz/.test(r.stdout), r.stdout + r.stderr);
   L.node(UC, ['--toplu', toplu, '--yaz'], { env });
   const defter = fs.readFileSync(path.join(eskiProje, '.claude', 'acik.md'), 'utf8');
-  L.ok('uc --toplu --yaz writes one uc line to the ledger, once', (defter.match(/^- \[ \] uc çalıştır: UI 0\.1\.0 → /gm) || []).length === 1, defter);
+  L.ok('uc --toplu --yaz writes one uc line to the ledger, once', (defter.match(/^- \[ \] UI güncellemesi: 0\.1\.0 → /gm) || []).length === 1, defter);
   fs.writeFileSync(path.join(eskiProje, '.claude', 'acik.md'), '- [ ] başka iş\n- [ ] uc çalıştır: UI hiç → 0.0.1 (`node "eski/uc.js"` çıktısını izle) — 2026-01-01 00:00 — teknesyum-ui\n');
   r = L.node(UC, ['--toplu', toplu, '--yaz'], { env });
   const tazelenen = fs.readFileSync(path.join(eskiProje, '.claude', 'acik.md'), 'utf8');
-  L.ok('an open uc line from an older version moves to this version', /tazelendi/.test(r.stdout) && !/eski\/uc\.js/.test(tazelenen) && (tazelenen.match(/uc çalıştır/g) || []).length === 1 && /başka iş/.test(tazelenen), tazelenen);
+  L.ok('an open uc line from an older version moves to this version', /tazelendi/.test(r.stdout) && !/eski\/uc\.js/.test(tazelenen) && (tazelenen.match(/uc çalıştır|UI güncellemesi/g) || []).length === 1 && /başka iş/.test(tazelenen), tazelenen);
   const A = require(path.join(L.UI, 'scripts', 'artik.js'));
   const art = L.tmp('tkui-artik-');
   require('child_process').spawnSync('git', ['init', '-q', art], { windowsHide: true });
@@ -124,6 +124,10 @@ function kapi() {
   L.ok('the gate catches a generated file that drifted', r.status === 1 && /css\/theme\.css tokenlardan üretilenle aynı değil/.test(r.stdout), r.stdout);
   r = L.node(UC, ['--bitti', '--project', root], { env });
   L.ok('uc --bitti refuses while the gate fails', r.status === 1 && /kayıt yazılmadı/.test(r.stderr), r.stdout + r.stderr);
+  const eskiCfg = { uc: { surum: '0.29.0' } };
+  const g = U.guncelle(root, eskiCfg);
+  L.ok('uc guncelle prints only the notes since the last uc and the short steps', /^UI güncellemesi \(ucupdate\) 0\.29\.0 → /.test(g) && /## \[0\.30\.0\]/.test(g) && !/## \[0\.29\.0\]/.test(g) && /--bitti/.test(g) && !/artik\.js/.test(g) && !/ekran envanterini/.test(g), g.slice(0, 300));
+  L.ok('uc guncelle is quiet work when the project is current', U.bekliyor({ uc: { surum: U.surum() } }) === null && U.bekliyor({ off: true, uc: { surum: '0.1.0' } }) === null && !!U.bekliyor(eskiCfg));
 }
 
 module.exports = function esle() {

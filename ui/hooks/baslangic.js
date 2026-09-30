@@ -56,6 +56,22 @@ function uiNotu(root, a) {
   };
 }
 
+function guncelNotu(root) {
+  const U = require(path.join(O.PLUGIN, 'scripts', 'uc.js'));
+  let cfg = null;
+  try {
+    cfg = JSON.parse(fs.readFileSync(path.join(root, '.claude', 'teknesyum-ui.json'), 'utf8'));
+  } catch {
+    return null;
+  }
+  const b = U.bekliyor(cfg);
+  if (!b) return null;
+  return {
+    baglam: 'teknesyum-ui: UI güncellemesi bekliyor (' + b.eski + ' → ' + b.yeni + '). Kullanıcının ilk isteğinden önce kendiliğinden uygula, tam uc yapma; talimat aşağıda.\n' + U.guncelle(root, cfg),
+    mesaj: 'teknesyum-ui: UI güncellemesi ' + b.eski + ' → ' + b.yeni + ' bu oturumda kendiliğinden uygulanacak',
+  };
+}
+
 function topluNotu(root) {
   const U = require(path.join(O.PLUGIN, 'scripts', 'uc.js'));
   const surum = U.surum();
@@ -81,7 +97,8 @@ O.girdi((g) => {
   if (O.kendisi(root)) return sadeceToplu;
   const a = O.ayar(root);
   if (!a.var || a.off) return sadeceToplu;
-  const notlar = [rafNotu(root), uiNotu(root, a)].filter(Boolean);
+  const guncel = guncelNotu(root);
+  const notlar = guncel ? [guncel] : [rafNotu(root), uiNotu(root, a)].filter(Boolean);
   if (!notlar.length) return sadeceToplu;
   const o = { hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: notlar.map((n) => n.baglam).join('\n\n') } };
   const mesaj = [toplu].concat(notlar.map((n) => n.mesaj)).filter(Boolean).join(' · ');

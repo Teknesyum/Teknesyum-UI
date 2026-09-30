@@ -5,6 +5,19 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.31.0] - 2026-09-30
+
+### Added
+- `uc.js guncelle` (ucupdate) prints only what changed since the project's last uc. It covers:
+  - the release notes in between;
+  - the steps: refresh, scaffold, new rules, gate and `--bitti`.
+  - It skips the screen inventory, the full scan, the leftover sweep and the shelf books.
+- The session-start hook starts the update by itself. When the plugin is newer than a project's last uc, it puts the update instructions into the first turn, before the owner's request. Nobody has to type `uc`.
+
+### Changed
+- The bulk pass writes `UI güncellemesi: X → Y` to the ledger for a project that has done a uc before. A project that never did one still gets `uc çalıştır`.
+- `uc.js --bitti` ticks the open `UI güncellemesi` or `uc çalıştır` line in the project's ledger.
+
 ## [0.30.0] - 2026-09-30
 
 ### Added

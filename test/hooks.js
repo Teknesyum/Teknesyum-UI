@@ -138,7 +138,7 @@ function newVersionRunsBulkUc() {
   L.ok('the bulk uc state records the version', !!L.readJson(path.join(cfg, 'teknesyum-ui', 'toplu.json')));
   r = runHook(BASLANGIC, { cwd: root, source: 'startup' }, env);
   const defter = fs.readFileSync(path.join(eski, '.claude', 'acik.md'), 'utf8');
-  L.ok('the same version does not run the bulk uc again', String(r.stdout || '').trim() === '' && (defter.match(/uc çalıştır/g) || []).length === 1, r.stdout);
+  L.ok('the same version does not run the bulk uc again', String(r.stdout || '').trim() === '' && (defter.match(/uc çalıştır|UI güncellemesi/g) || []).length === 1, r.stdout);
 }
 
 module.exports = function hooks() {

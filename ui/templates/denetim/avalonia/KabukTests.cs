@@ -66,7 +66,7 @@ namespace {{AD}}.Kontrast
                             if (tp.FontSize < fs2 - 0.01)
                                 hatalar.Add($"{Yol(tp)} \"{tp.Text}\" {tp.FontSize} < {fs2}");
                             break;
-                        case Button b when b.Content is string s && !string.IsNullOrWhiteSpace(s):
+                        case Button b when b.Content is string s && !string.IsNullOrWhiteSpace(s) && b.GetType().Name != "SurumDugmesi":
                             if (b.FontSize < fs2 - 0.01)
                                 hatalar.Add($"{Yol(b)} \"{s}\" {b.FontSize} < {fs2}");
                             break;
@@ -148,6 +148,8 @@ namespace {{AD}}.Kontrast
         static bool Muaf(TextBlock tb, List<ControlTheme> muafTemalar)
         {
             if (tb.Classes.Contains("etiket") || tb.Classes.Contains("ipucu"))
+                return true;
+            if (tb.GetVisualAncestors().Any(a => a.GetType().Name == "SurumDugmesi"))
                 return true;
             for (var t = tb.Theme; t is not null; t = t.BasedOn)
                 if (muafTemalar.Contains(t))

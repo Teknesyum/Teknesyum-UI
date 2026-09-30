@@ -37,7 +37,9 @@ namespace {{AD}}.Kabuk
             var yukseklik = ekran is null ? 0 : ekran.Bounds.Height / ekran.Scaling;
             ilk = Varsayilan(yukseklik);
             deger = Oku() ?? ilk;
-            var sarmal = new LayoutTransformControl { Child = pencere.Content as Control };
+            var ic = pencere.Content as Control;
+            pencere.Content = null;
+            var sarmal = new LayoutTransformControl { Child = ic };
             pencere.Content = sarmal;
             Degisti += d => sarmal.LayoutTransform = new ScaleTransform(d, d);
             sarmal.LayoutTransform = new ScaleTransform(deger, deger);

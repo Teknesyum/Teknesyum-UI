@@ -128,6 +128,7 @@ function kapi() {
   const g = U.guncelle(root, eskiCfg);
   L.ok('uc guncelle prints only the notes since the last uc and the short steps', /^UI güncellemesi \(ucupdate\) 0\.29\.0 → /.test(g) && /## \[0\.30\.0\]/.test(g) && !/## \[0\.29\.0\]/.test(g) && /--bitti/.test(g) && !/artik\.js/.test(g) && !/ekran envanterini/.test(g), g.slice(0, 300));
   L.ok('uc guncelle is quiet work when the project is current', U.bekliyor({ uc: { surum: U.surum() } }) === null && U.bekliyor({ off: true, uc: { surum: '0.1.0' } }) === null && !!U.bekliyor(eskiCfg));
+  L.ok('uc and ucupdate both carry the maximized main window rule', U.guncelle('x', eskiCfg).includes('kabuk/pencere-maximize') && U.metin({}).includes('kabuk/pencere-maximize'));
 }
 
 module.exports = function esle() {

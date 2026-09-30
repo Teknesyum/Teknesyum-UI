@@ -362,7 +362,7 @@ module.exports = {
   projectRules: [
     {
       id: 'pencere-maximize',
-      severity: 'warn',
+      severity: 'error',
       check(ctx) {
         if (pencereKapali(ctx)) return [];
         return [].concat(mainWindowFindings(ctx), electronWindowFindings(ctx), tauriWindowFindings(ctx));

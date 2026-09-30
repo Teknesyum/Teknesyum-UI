@@ -5,6 +5,13 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.32.0] - 2026-09-30
+
+### Changed
+
+- The main window opens maximized unless the project config says `"pencere": "normal"`: every ucupdate and full uc now carries this as a standing step, so projects apply it by themselves.
+- `kabuk/pencere-maximize` is now an error instead of a warning.
+
 ## [0.31.0] - 2026-09-30
 
 ### Added

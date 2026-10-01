@@ -1,0 +1,4 @@
+.ql-card-actions {
+  display: flex;
+  gap: var(--tk-sp-2);
+}

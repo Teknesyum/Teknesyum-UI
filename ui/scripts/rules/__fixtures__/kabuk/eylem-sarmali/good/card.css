@@ -1,0 +1,11 @@
+.ql-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: var(--tk-sp-2);
+}
+
+.side-buttons {
+  display: flex;
+  flex-direction: column;
+}

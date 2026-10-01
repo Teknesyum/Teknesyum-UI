@@ -224,13 +224,13 @@ function etiketler() {
   L.ok('Avalonia template has no site chip', bar.SiteAdresi === undefined, String(bar.SiteAdresi));
 
   const axaml = fs.readFileSync(path.join(L.UI, 'templates', 'ustcubuk', 'avalonia', 'TitleBar.axaml'), 'utf8');
-  const sira = ['Name="Senkron"', 'Name="Rozet"', 'Name="ImzaDugmesi"', 'Name="DestekDugmesi"', 'Name="KucultDugmesi"'].map((s) => axaml.indexOf(s));
-  L.ok('Avalonia title bar order is sync, badge, brand, support, window', sira.every((v, i) => v >= 0 && (i === 0 || v > sira[i - 1])), sira.join(' '));
+  const sira = ['Name="AdYazisi"', 'Name="SurumAlani"', 'Name="Senkron"', 'Name="Rozet"', 'Name="DestekDugmesi"', 'Name="ImzaDugmesi"', 'Name="KucultDugmesi"'].map((s) => axaml.indexOf(s));
+  L.ok('Avalonia title bar order is name, version, sync, badge, support, brand, window', sira.every((v, i) => v >= 0 && (i === 0 || v > sira[i - 1])), sira.join(' '));
   L.ok('Avalonia template has no site button', !/SiteDugmesi/.test(axaml), axaml.match(/SiteDugmesi/) ? 'found' : '');
 
   const tsx = fs.readFileSync(path.join(L.UI, 'templates', 'ustcubuk', 'react', 'TitleBar.tsx'), 'utf8');
-  const rsira = ['className={\'tk-sync\'', 'tk-titlebar__chip--brand', 'tk-titlebar__chip--support', 'tk-titlebar__window"'].map((s) => tsx.indexOf(s));
-  L.ok('React title bar order is sync, brand, support, window', rsira.every((v, i) => v >= 0 && (i === 0 || v > rsira[i - 1])), rsira.join(' '));
+  const rsira = ['tk-titlebar__accent', 'tk-titlebar__version', 'className={\'tk-sync\'', 'tk-titlebar__update', 'tk-titlebar__chip--support', 'tk-titlebar__chip--brand', 'tk-titlebar__window"'].map((s) => tsx.indexOf(s));
+  L.ok('React title bar order is name, version, sync, update, support, brand, window', rsira.every((v, i) => v >= 0 && (i === 0 || v > rsira[i - 1])), rsira.join(' '));
   L.ok('React title bar has no site chip', !/links\.site|labels\.site/.test(tsx), tsx.match(/links\.site|labels\.site/) ? 'found' : '');
 }
 

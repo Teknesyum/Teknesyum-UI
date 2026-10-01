@@ -110,5 +110,7 @@
 
 .tk-installer__actions {
   display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
   gap: var(--tk-sp-3);
 }

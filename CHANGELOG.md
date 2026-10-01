@@ -5,6 +5,26 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.33.0] - 2026-10-02
+
+### Added
+
+- Title bar `version` slot right after the app name (React `version`, Avalonia `Surum`) and a separate `update` slot for the update badge.
+- `scaffold.js ilerleme` writes the progress bar; `--electron` adds the main-process half: `work.ts` (ranged percent on one `work:progress` channel) and `fstree.ts` (async pooled `copyTree`/`removeTree`); `--tauri` adds `setup.rs`.
+- Rule `kabuk/eylem-sarmali`: a flex row of actions with no `flex-wrap` is flagged.
+- Rule `guncelleme/senkron-toplu-dosya`: recursive `cpSync`/`rmSync` in a file that reports progress is flagged.
+- `npm run test:tsx` type-checks the React and Electron templates under `strict` + `noUncheckedIndexedAccess`.
+
+### Changed
+
+- Title bar right part keeps one order everywhere: tools, sync, update, Destek Ol, Teknesyum, window buttons.
+- `ProgressBar.tsx` no longer exports `useSmoothPercent`; reduced motion runs through the same effect with no delay; return types are explicit.
+- Installer and modal action rows wrap.
+
+### Fixed
+
+- `UpdatePanel.tsx` focus trap compiles under `noUncheckedIndexedAccess`.
+
 ## [0.32.0] - 2026-09-30
 
 ### Changed

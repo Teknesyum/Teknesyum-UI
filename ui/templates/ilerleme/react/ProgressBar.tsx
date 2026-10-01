@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactElement } from 'react';
 import './progressbar.css';
 
 export type ProgressStatus = 'running' | 'done' | 'error';
@@ -21,24 +21,19 @@ function slowMs(): number {
   return raw.endsWith('ms') ? n : n * 1000;
 }
 
-export function useSmoothPercent(target: number): number {
+function useSmoothPercent(target: number): number {
   const [shown, setShown] = useState(0);
   const shownRef = useRef(0);
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      shownRef.current = target;
-      setShown(target);
-      return;
-    }
-    const tau = slowMs() / 2;
+    const tau = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : slowMs() / 2;
     let last = performance.now();
     let frame = 0;
-    const step = (now: number) => {
+    const step = (now: number): void => {
       const dt = Math.min(64, Math.max(0, now - last));
       last = now;
       const gap = target - shownRef.current;
-      const next = Math.abs(gap) < 0.05 ? target : shownRef.current + gap * (1 - Math.exp(-dt / tau));
+      const next = tau === 0 || Math.abs(gap) < 0.05 ? target : shownRef.current + gap * (1 - Math.exp(-dt / tau));
       shownRef.current = next;
       setShown(next);
       if (next !== target) frame = requestAnimationFrame(step);
@@ -50,7 +45,7 @@ export function useSmoothPercent(target: number): number {
   return shown;
 }
 
-export function ProgressBar({ percent, step, status = 'running', label }: Props) {
+export function ProgressBar({ percent, step, status = 'running', label }: Props): ReactElement {
   const clamped = Math.min(100, Math.max(0, percent));
   const shown = useSmoothPercent(clamped);
   const style: ProgressStyle = { '--tk-progress-value': shown / 100 };

@@ -317,6 +317,27 @@ module.exports = {
       },
     },
     {
+      id: 'eylem-sarmali',
+      severity: 'warn',
+      exts: ['.css'],
+      check(file, rawText) {
+        const out = [];
+        for (const block of outlineCssBlocks(outlineStripComments(rawText))) {
+          if (!/(?:actions|eylem|buttons|dugmeler)\b/i.test(block.selector) || /titlebar|pencere|window/i.test(block.selector)) continue;
+          const body = block.body;
+          if (!/(?:^|[;\s])display\s*:\s*(?:inline-)?flex\b/.test(body)) continue;
+          if (/flex-wrap\s*:|flex-flow\s*:[^;]*wrap|flex-direction\s*:\s*column/.test(body)) continue;
+          out.push({
+            line: block.line,
+            message:
+              block.selector.split(',')[0].trim() +
+              ' is a flex row of actions with no flex-wrap: on a narrow card or a large text scale the buttons push past the edge. Add flex-wrap: wrap; min-width: 0.',
+          });
+        }
+        return out;
+      },
+    },
+    {
       id: 'anahatsiz-dugme',
       severity: 'warn',
       exts: OUTLINE_EXTS,

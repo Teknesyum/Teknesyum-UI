@@ -40,6 +40,9 @@ const HELP = [
   '                            Avalonia: TitleBar + KabukStilleri, needs the namespace',
   '  durum [<Namespace>]     update badge and panel into teknesyum-ui/durum',
   '      --avalonia | --electron | --react  flavour (default as above); Avalonia: GuncellemePaneli',
+  '  ilerleme                progress bar into teknesyum-ui/ilerleme (React ProgressBar)',
+  '      --electron          also main-process work.ts (ranged percent) and fstree.ts (async pooled copy/remove)',
+  '      --tauri             also setup.rs (hidden launch)',
   '  denetim <Namespace>  headless contrast and shell tests into teknesyum-ui/denetim',
   '      --wpf | --avalonia  test flavour (default: avalonia when the project has .axaml)',
   '      --pencere <Class>   window to open (default MainWindow)',
@@ -353,6 +356,12 @@ const TARGETS = {
           to: f.to.replace(path.sep + 'react' + path.sep, path.sep),
         })),
   denetim: (root, args, name) => denetim(root, args, name),
+  ilerleme: (root, args) => {
+    const names = ['react/ProgressBar.tsx', 'react/progressbar.css'];
+    if (args.includes('--electron')) names.push('electron/work.ts', 'electron/fstree.ts');
+    if (args.includes('--tauri')) names.push('tauri/setup.rs');
+    return copies(root, 'ilerleme', names).map((f) => ({ ...f, to: f.to.replace(/[\\/](?:react|electron|tauri)[\\/]/, path.sep) }));
+  },
   durum: (root, args, name) => {
     const kind = args.includes('--avalonia') ? 'avalonia' : args.includes('--react') ? 'react' : args.includes('--electron') ? 'electron' : hasAxaml(root, 0) ? 'avalonia' : 'electron';
     if (kind === 'avalonia') return avaloniaShell(root, 'durum', name);

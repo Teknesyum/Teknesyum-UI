@@ -80,6 +80,8 @@ namespace {{AD}}.Kabuk
             AvaloniaProperty.Register<TitleBar, string>(nameof(KapatMetni), "Kapat");
         public static readonly StyledProperty<object?> OrtaProperty =
             AvaloniaProperty.Register<TitleBar, object?>(nameof(Orta));
+        public static readonly StyledProperty<object?> SurumProperty =
+            AvaloniaProperty.Register<TitleBar, object?>(nameof(Surum));
         public static readonly StyledProperty<object?> EkProperty =
             AvaloniaProperty.Register<TitleBar, object?>(nameof(Ek));
 
@@ -108,6 +110,7 @@ namespace {{AD}}.Kabuk
         public string GeriAlMetni { get => GetValue(GeriAlMetniProperty); set => SetValue(GeriAlMetniProperty, value); }
         public string KapatMetni { get => GetValue(KapatMetniProperty); set => SetValue(KapatMetniProperty, value); }
         public object? Orta { get => GetValue(OrtaProperty); set => SetValue(OrtaProperty, value); }
+        public object? Surum { get => GetValue(SurumProperty); set => SetValue(SurumProperty, value); }
         public object? Ek { get => GetValue(EkProperty); set => SetValue(EkProperty, value); }
 
         public event EventHandler? RozetTiklandi;
@@ -218,6 +221,8 @@ namespace {{AD}}.Kabuk
             OrtaAlani.Content = Orta;
             EkAlani.Content = Ek;
             EkAlani.IsVisible = Ek is not null;
+            SurumAlani.Content = Surum;
+            SurumAlani.IsVisible = Surum is not null;
 
             RozetYazisi.Text = RozetMetni;
             Rozet.IsVisible = RozetDurumu != RozetDurumu.Yok && !string.IsNullOrWhiteSpace(RozetMetni);

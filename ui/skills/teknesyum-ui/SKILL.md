@@ -80,8 +80,11 @@ with `scaffold.js kur <Name>` / `scaffold.js durum`. Never hand-write the panel 
 template already carries the step contract, the creeping ceiling and the 16 ms timer, and
 `scan.js --rules guncelleme` checks that what is in the project still matches.
 
-A determinate progress bar takes `templates/ilerleme/react/ProgressBar.tsx` +
-`progressbar.css`; a Tauri window checks `core/tauri-hidden-launch`,
+A determinate progress bar takes `scaffold.js ilerleme` (`ProgressBar.tsx` +
+`progressbar.css`); Electron adds `--electron` for the main-process half: `Work` (one channel
+`work:progress`, each stage its own fixed percent range, repeats suppressed, `finish(ok)`) and
+`fstree` (`copyTree`/`removeTree` through a 32-lane async pool). Never `cpSync`/`rmSync`
+recursive in work that reports progress (`guncelleme/senkron-toplu-dosya`); a Tauri window checks `core/tauri-hidden-launch`,
 `core/fixed-window-no-shrink` and `core/fixed-window-maximize-open`, a long `invoke`/`spawn`
 call with no feedback checks `guncelleme/uzun-cagri-ilerlemesiz`, and a silent background
 loop checks `guncelleme/sessiz-dongu`.
@@ -112,7 +115,21 @@ quiet grey (`--tk-text-muted`, the only grey), smallest type step, borderless; h
 the update panel. The user setting `onayIste` (`update.confirmSetting`, default off) asks
 Install/Later with the release notes first. A failed check shows a one-line bottom-right toast
 with the reason. Templates: `durum` (`VersionButton`, `mountVersionButton`, `SurumDugmesi`);
-`scan.js` checks this as `guncelleme/surum-tetik`.
+`scan.js` checks this as `guncelleme/surum-tetik`. The version sits right after the app name,
+in the title bar's `version` slot (React) / `Surum` (Avalonia), never in `language`/`Ek`.
+
+### Üst çubuk sırası
+
+Every app keeps one order in the title bar's right part, left to right: app tools (`language` /
+`Ek`), sync badge, the update badge (`update` slot / `Rozet`), Destek Ol, Teknesyum, window
+buttons. Destek is always left of Teknesyum; the update badge always sits just left of them.
+
+### Eylem satırı
+
+A row holding more than one button (card, panel, dialog footer) wraps: `flex-wrap: wrap;
+min-width: 0`, so a narrow card or a large text scale never pushes a button past the edge
+(`kabuk/eylem-sarmali`). A cover or decoration image shows only when it loads: `onError`
+hides it, no broken-image icon.
 
 ## Precedence
 

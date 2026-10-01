@@ -31,6 +31,8 @@ type Props = {
   links: TitleBarLinks;
   labels: TitleBarLabels;
   language?: ReactNode;
+  version?: ReactNode;
+  update?: ReactNode;
   sync?: TitleBarSync;
   tabs?: TitleBarTab[];
   current?: string;
@@ -60,7 +62,7 @@ function CoffeeIcon() {
   );
 }
 
-export function TitleBar({ first, second, links, labels, language, sync, tabs, current, maximized, onTab, onMinimize, onMaximize, onClose }: Props) {
+export function TitleBar({ first, second, links, labels, language, version, update, sync, tabs, current, maximized, onTab, onMinimize, onMaximize, onClose }: Props) {
   const toggle = maximized ? labels.restore ?? labels.maximize : labels.maximize;
   const open = (tabs ?? []).filter((t) => !t.disabled);
   const onKey = (e: KeyboardEvent<HTMLElement>) => {
@@ -80,6 +82,7 @@ export function TitleBar({ first, second, links, labels, language, sync, tabs, c
           {first}
           <span className="tk-titlebar__accent">{second}</span>
         </span>
+        {version ? <div className="tk-titlebar__version">{version}</div> : null}
       </div>
       {tabs?.length ? (
         <nav className="tk-titlebar__tabs" aria-label={labels.tabs} onKeyDown={onKey}>
@@ -114,15 +117,7 @@ export function TitleBar({ first, second, links, labels, language, sync, tabs, c
             {sync.text}
           </button>
         ) : null}
-        <a
-          className="tk-titlebar__chip tk-titlebar__chip--brand"
-          href={links.brand}
-          title={labels.brandTitle}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {labels.brand}
-        </a>
+        {update ? <div className="tk-titlebar__update">{update}</div> : null}
         {links.sponsor ? (
           <a
             className="tk-titlebar__chip tk-titlebar__chip--support"
@@ -135,6 +130,15 @@ export function TitleBar({ first, second, links, labels, language, sync, tabs, c
             {labels.sponsor}
           </a>
         ) : null}
+        <a
+          className="tk-titlebar__chip tk-titlebar__chip--brand"
+          href={links.brand}
+          title={labels.brandTitle}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {labels.brand}
+        </a>
         <div className="tk-titlebar__window">
           <button
             type="button"

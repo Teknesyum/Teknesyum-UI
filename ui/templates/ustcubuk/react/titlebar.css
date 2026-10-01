@@ -14,14 +14,18 @@
 .tk-titlebar a,
 .tk-titlebar button,
 .tk-titlebar select,
-.tk-titlebar__language {
+.tk-titlebar__language,
+.tk-titlebar__version,
+.tk-titlebar__update {
   -webkit-app-region: no-drag;
 }
 
 .tk-titlebar__brand,
 .tk-titlebar__tabs,
 .tk-titlebar__tools,
-.tk-titlebar__language {
+.tk-titlebar__language,
+.tk-titlebar__version,
+.tk-titlebar__update {
   display: flex;
   align-items: stretch;
   gap: var(--tk-sp-1);

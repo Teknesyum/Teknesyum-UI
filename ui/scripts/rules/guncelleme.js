@@ -18,6 +18,8 @@ const ARKAPLAN_DONGUSU = /\bsetInterval\s*\(/;
 const DURUM_GOSTERGESI = /role\s*=\s*["']?status|aria-live|badge|rozet|\bstate\b|\bdurum\b/i;
 const WEB_KOD = ['.ts', '.tsx', '.js', '.jsx'];
 const KOPRU_DOSYASI = /contextBridge\.exposeInMainWorld/;
+const TOPLU_SENKRON = /\b(cpSync|rmSync)\s*\([^)]*recursive\s*:\s*true/g;
+const ILERLEME_OLAYI = /webContents\.send|onProgress|\btick\s*\(|['"][\w:-]*progress['"]/;
 const SURUM_OGESI = />\s*(?:[Vv]ersion\s*:?\s*|v)\{[^{}]*[Vv]ersion[^{}]*\}\s*<\/([A-Za-z][\w.]*)\s*>/g;
 const SURUM_METNI = /(?:textContent|innerText|innerHTML)\s*=[^;\n]*(?:`v\$\{[^}]*[Vv]ersion|['"]v['"]\s*\+[^;\n]*[Vv]ersion)/g;
 const DUGME_ISARETI = /<button\b|createElement\(\s*['"]button['"]|role\s*=\s*["'{]?\s*['"]?button/;
@@ -141,6 +143,23 @@ module.exports = {
               'this file makes a call that can take a while (invoke/ipcRenderer.invoke/spawn/Command) with no progress, loading or busy state anywhere in it.',
           },
         ];
+      },
+    },
+    {
+      id: 'senkron-toplu-dosya',
+      severity: 'warn',
+      exts: WEB_KOD,
+      check(file, text) {
+        if (!ILERLEME_OLAYI.test(text)) return [];
+        const out = [];
+        for (const m of text.matchAll(TOPLU_SENKRON)) {
+          out.push({
+            line: text.slice(0, m.index).split('\n').length,
+            message:
+              m[1] + ' with recursive in a file that reports progress: a synchronous bulk file call blocks the event loop, so progress events never reach the screen. Walk the tree and run copyFile/rm through an async pool (templates/ilerleme/electron/fstree.ts).',
+          });
+        }
+        return out;
       },
     },
     {

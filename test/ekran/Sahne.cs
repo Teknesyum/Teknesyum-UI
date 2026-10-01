@@ -19,7 +19,7 @@ public static class Sahne
         });
 
     public static TitleBar UstCubuk() =>
-        new() { Ad1 = "Dusty", Ad2 = "Bytes", RozetDurumu = RozetDurumu.Var, SenkronDurumu = SenkronDurumu.Esitlendi, SenkronZamani = "14:32", VerticalAlignment = VerticalAlignment.Top };
+        new() { Ad1 = "Dusty", Ad2 = "Bytes", Logo = Logo(), Dil = "tr", Surum = new SurumDugmesi { Surum = "1.4.0" }, DestekMetni = "Destek Ol", ImzaMetni = "Teknesyum", RozetDurumu = RozetDurumu.Var, SenkronDurumu = SenkronDurumu.Esitlendi, SenkronZamani = "14:32", VerticalAlignment = VerticalAlignment.Top };
 
     public static GuncellemePaneli Guncelleme() =>
         new() { Logo = Logo(), Surum = "1.4.0", Durum = GuncellemeDurumu.Var };

@@ -80,6 +80,10 @@ namespace {{AD}}.Kabuk
             AvaloniaProperty.Register<TitleBar, string>(nameof(KapatMetni), "Kapat");
         public static readonly StyledProperty<object?> OrtaProperty =
             AvaloniaProperty.Register<TitleBar, object?>(nameof(Orta));
+        public static readonly StyledProperty<IImage?> LogoProperty =
+            AvaloniaProperty.Register<TitleBar, IImage?>(nameof(Logo));
+        public static readonly StyledProperty<string?> DilProperty =
+            AvaloniaProperty.Register<TitleBar, string?>(nameof(Dil));
         public static readonly StyledProperty<object?> SurumProperty =
             AvaloniaProperty.Register<TitleBar, object?>(nameof(Surum));
         public static readonly StyledProperty<object?> EkProperty =
@@ -110,9 +114,12 @@ namespace {{AD}}.Kabuk
         public string GeriAlMetni { get => GetValue(GeriAlMetniProperty); set => SetValue(GeriAlMetniProperty, value); }
         public string KapatMetni { get => GetValue(KapatMetniProperty); set => SetValue(KapatMetniProperty, value); }
         public object? Orta { get => GetValue(OrtaProperty); set => SetValue(OrtaProperty, value); }
+        public IImage? Logo { get => GetValue(LogoProperty); set => SetValue(LogoProperty, value); }
+        public string? Dil { get => GetValue(DilProperty); set => SetValue(DilProperty, value); }
         public object? Surum { get => GetValue(SurumProperty); set => SetValue(SurumProperty, value); }
         public object? Ek { get => GetValue(EkProperty); set => SetValue(EkProperty, value); }
 
+        public event EventHandler<string>? DilDegisti;
         public event EventHandler? RozetTiklandi;
         public event EventHandler? SenkronTiklandi;
 
@@ -142,6 +149,8 @@ namespace {{AD}}.Kabuk
             };
             ImzaDugmesi.Click += (_, _) => Ac(ImzaAdresi);
             DestekDugmesi.Click += (_, _) => Ac(DestekAdresi);
+            DilTr.Click += (_, _) => DilSec("tr");
+            DilEn.Click += (_, _) => DilSec("en");
             KucultDugmesi.Click += (_, _) =>
             {
                 if (Pencere() is { } w)
@@ -221,6 +230,11 @@ namespace {{AD}}.Kabuk
             OrtaAlani.Content = Orta;
             EkAlani.Content = Ek;
             EkAlani.IsVisible = Ek is not null;
+            LogoResmi.Source = Logo;
+            LogoResmi.IsVisible = Logo is not null;
+            DilAnahtari.IsVisible = Dil is "tr" or "en";
+            DilTr.Classes.Set("secili", Dil == "tr");
+            DilEn.Classes.Set("secili", Dil == "en");
             SurumAlani.Content = Surum;
             SurumAlani.IsVisible = Surum is not null;
 
@@ -295,6 +309,14 @@ namespace {{AD}}.Kabuk
                 return;
             }
             Pencere()?.BeginMoveDrag(e);
+        }
+
+        void DilSec(string dil)
+        {
+            if (Dil == dil)
+                return;
+            Dil = dil;
+            DilDegisti?.Invoke(this, dil);
         }
 
         static bool DugmeIcinde(Visual kaynak)

@@ -5,6 +5,20 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.34.0] - 2026-10-02
+
+### Added
+
+- Fixed title bar layout. Left: logo (`logo` / `Logo`), two-part name, grey version button. Right: sync, update badge, TR/EN switch, Destek Ol, Teknesyum, window buttons.
+- TR/EN switch in the title bar: React `LangSwitch` with `.tk-lang` styles, Avalonia `Dil` property and `DilDegisti` event.
+- Rule `kabuk/ad-iki-parca` (error): the name's second part must start with a capital (`QuizLoop`).
+- Rule `kabuk/ustcubuk-sirasi` (error): the right side keeps the order tools, TR/EN, Destek Ol, Teknesyum.
+- uc and ucupdate carry the title bar layout as a standing step: an old `teknesyum-ui/ustcubuk` copy is re-scaffolded and the project's additions moved onto it.
+
+### Changed
+
+- Avalonia title bar name takes `LabelTitleBrush` and `LabelTitleAccentBrush`; the language slot moved just left of Destek Ol.
+
 ## [0.33.0] - 2026-10-02
 
 ### Added

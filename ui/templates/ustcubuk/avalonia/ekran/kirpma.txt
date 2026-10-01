@@ -1,2 +1,2 @@
-bilesen: ustcubuk  pencere: 1024x640  dugme: 7  denetim: 40  tasma: 0
-dugmeler: Senkron, Rozet, ImzaDugmesi, DestekDugmesi, KucultDugmesi, BuyutDugmesi, KapatDugmesi
+bilesen: ustcubuk  pencere: 1024x640  dugme: 10  denetim: 50  tasma: 0
+dugmeler: 1.4.0, Senkron, Rozet, DilTr, DilEn, DestekDugmesi, ImzaDugmesi, KucultDugmesi, BuyutDugmesi, KapatDugmesi

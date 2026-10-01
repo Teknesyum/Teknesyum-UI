@@ -118,11 +118,17 @@ with the reason. Templates: `durum` (`VersionButton`, `mountVersionButton`, `Sur
 `scan.js` checks this as `guncelleme/surum-tetik`. The version sits right after the app name,
 in the title bar's `version` slot (React) / `Surum` (Avalonia), never in `language`/`Ek`.
 
-### Üst çubuk sırası
+### Üst çubuk düzeni
 
-Every app keeps one order in the title bar's right part, left to right: app tools (`language` /
-`Ek`), sync badge, the update badge (`update` slot / `Rozet`), Destek Ol, Teknesyum, window
-buttons. Destek is always left of Teknesyum; the update badge always sits just left of them.
+Every app has the same title bar; a project builds its own additions on top of it, never
+around it. Left: the app's own logo (`logo` / `Logo`), the two-part name, then the grey version
+button that checks for an update on click (`version` / `Surum`). Right, left to right: sync,
+update badge (`update` / `Rozet`), app tools (`Ek`), the TR/EN switch (`LangSwitch` / `Dil`),
+Destek Ol, Teknesyum, window buttons. `kabuk/ustcubuk-sirasi` fails a changed order.
+
+The name's second part starts with a capital and takes Renk 2 (`QuizLoop`; `kabuk/ad-iki-parca`).
+The logo is the project's existing icon. An old `teknesyum-ui/ustcubuk` copy is set aside and
+re-scaffolded, the project's additions moved onto it.
 
 ### Eylem satırı
 

@@ -317,6 +317,49 @@ module.exports = {
       },
     },
     {
+      id: 'ad-iki-parca',
+      severity: 'error',
+      exts: ['.tsx', '.jsx', '.axaml', '.xaml', '.cs'],
+      check(file, text) {
+        const out = [];
+        const re = /<TitleBar\b[^>]*?\bsecond\s*=\s*["']([^"']*)["']|\bAd2\s*=\s*"([^"]*)"/g;
+        for (const m of text.matchAll(re)) {
+          const ad = m[1] ?? m[2] ?? '';
+          if (!ad || ad[0] === ad[0].toLocaleUpperCase('tr')) continue;
+          out.push({
+            line: text.slice(0, m.index).split('\n').length,
+            message:
+              'the second part of the app name "' + ad + '" starts lower-case: the name is two parts, the second starts with a capital and takes the accent colour (QuizLoop, DustyBytes).',
+          });
+        }
+        return out;
+      },
+    },
+    {
+      id: 'ustcubuk-sirasi',
+      severity: 'error',
+      exts: ['.tsx', '.jsx', '.axaml'],
+      check(file, text) {
+        const sira = /\.axaml$/i.test(file)
+          ? ['Name="EkAlani"', 'Name="DilAnahtari"', 'Name="DestekDugmesi"', 'Name="ImzaDugmesi"']
+          : ['tk-titlebar__language', 'tk-titlebar__chip--support', 'tk-titlebar__chip--brand'];
+        const yer = sira.map((s) => text.indexOf(s)).filter((i) => i >= 0);
+        if (yer.length < 2) return [];
+        for (let i = 1; i < yer.length; i++) {
+          if (yer[i] < yer[i - 1]) {
+            return [
+              {
+                line: text.slice(0, yer[i]).split('\n').length,
+                message:
+                  'title bar right part is out of order: left to right it is tools, sync, update, TR/EN, Destek Ol, Teknesyum, window buttons. Take the order from scaffold.js ustcubuk.',
+              },
+            ];
+          }
+        }
+        return [];
+      },
+    },
+    {
       id: 'eylem-sarmali',
       severity: 'warn',
       exts: ['.css'],

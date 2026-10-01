@@ -4,12 +4,46 @@
              x:Class="{{AD}}.Kabuk.TitleBar"
              ClipToBounds="False">
 
+  <UserControl.Styles>
+    <Style Selector="Border#DilAnahtari">
+      <Setter Property="Background" Value="{StaticResource Renk1x10}"/>
+      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+    </Style>
+    <Style Selector="Border#DilAnahtari Button">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
+      <Setter Property="MinWidth" Value="{StaticResource TargetMin}"/>
+      <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Border#DilAnahtari Button:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
+    </Style>
+    <Style Selector="Border#DilAnahtari Button.secili">
+      <Setter Property="Background" Value="{StaticResource Renk1}"/>
+      <Setter Property="Foreground" Value="{StaticResource OnRenk1}"/>
+      <Setter Property="Cursor" Value="Arrow"/>
+    </Style>
+    <Style Selector="Border#DilAnahtari Button.secili:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource Renk1}"/>
+      <Setter Property="Foreground" Value="{StaticResource OnRenk1}"/>
+    </Style>
+  </UserControl.Styles>
+
   <Grid Name="Kap" Height="{StaticResource TitleBarHeightMax}" Background="Transparent" ClipToBounds="False"
         ColumnDefinitions="Auto,*,Auto,Auto,Auto">
 
     <Border Grid.Column="0" Padding="{StaticResource InputPadding}">
       <StackPanel Orientation="Horizontal" Spacing="{StaticResource Space2}" VerticalAlignment="Center">
-        <TextBlock Name="AdYazisi" Theme="{StaticResource H3}" VerticalAlignment="Center" IsHitTestVisible="False"><Run Foreground="{StaticResource Renk1}"/><Run Foreground="{StaticResource Renk2Text}"/></TextBlock>
+        <Image Name="LogoResmi" Width="{StaticResource IconSize3}" Height="{StaticResource IconSize3}" VerticalAlignment="Center" IsHitTestVisible="False" IsVisible="False"/>
+        <TextBlock Name="AdYazisi" Theme="{StaticResource H3}" VerticalAlignment="Center" IsHitTestVisible="False"><Run Foreground="{StaticResource LabelTitleBrush}"/><Run Foreground="{StaticResource LabelTitleAccentBrush}"/></TextBlock>
         <ContentControl Name="SurumAlani" VerticalAlignment="Center" IsVisible="False"/>
       </StackPanel>
     </Border>
@@ -19,7 +53,6 @@
 
     <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="{StaticResource Space1}"
                 VerticalAlignment="Center" ClipToBounds="False">
-      <ContentControl Name="EkAlani" VerticalAlignment="Center"/>
       <Button Name="Senkron" Theme="{StaticResource BadgeButton}" Classes="senkron" IsVisible="False" AutomationProperties.Name="{Binding #SenkronYazisi.Text}">
         <StackPanel Orientation="Horizontal" Spacing="{StaticResource Space2}">
           <Ellipse Width="{StaticResource Space2}" Height="{StaticResource Space2}" VerticalAlignment="Center"
@@ -34,6 +67,13 @@
           <TextBlock Name="RozetYazisi" VerticalAlignment="Center"/>
         </StackPanel>
       </Button>
+      <ContentControl Name="EkAlani" VerticalAlignment="Center"/>
+      <Border Name="DilAnahtari" VerticalAlignment="Center" IsVisible="False">
+        <StackPanel Orientation="Horizontal">
+          <Button Name="DilTr" Content="TR" AutomationProperties.Name="Türkçe"/>
+          <Button Name="DilEn" Content="EN" AutomationProperties.Name="English"/>
+        </StackPanel>
+      </Border>
       <Button Name="DestekDugmesi" Theme="{StaticResource SigChip}" Classes="sigchip destek" AutomationProperties.Name="{Binding $self.Content}"/>
       <Button Name="ImzaDugmesi" Theme="{StaticResource SigChip}" Classes="sigchip marka" AutomationProperties.Name="{Binding $self.Content}"/>
     </StackPanel>

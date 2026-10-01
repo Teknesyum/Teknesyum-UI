@@ -127,6 +127,8 @@ function bekliyor(cfg) {
 
 const PENCERE = 'Ana pencere: tersi istenmedikçe (config `pencere: "normal"` değilse) ekranı kaplayarak açılır — Avalonia/WPF `WindowState="Maximized"`, Electron `win.maximize()`, Tauri `"maximized": true`. Kayıtlı yerleşim yalnız normal boyut ve konumu geri yükler, açılış hep kaplayan. Kurulum ve küçük sabit araç pencereleri hariç. `kabuk/pencere-maximize` bulgusu kalmaz.';
 
+const USTCUBUK = 'Üst çubuk düzeni sabittir, bireysel ekler bunun üstüne kurulur. Sol: uygulamanın kendi logosu → iki parçalı ad (ikinci parça büyük harfle başlar ve Renk 2 ile yazılır: QuizLoop, DustyBytes) → gri sürüm düğmesi, tıklanınca güncelleme denetler. Sağ, soldan sağa: senkron → güncelleme rozeti → TR/EN anahtarı (`LangSwitch` / `Dil`) → Destek Ol → Teknesyum → pencere düğmeleri. Projedeki `teknesyum-ui/ustcubuk` kopyası eski sıradaysa kenara al, `scaffold.js ustcubuk` ile yeniden üret, projenin kendi eklerini (site, rozet, araçlar) yeni kopyaya taşı. Logo projede zaten olan simgedir; yeni simge çizilmez. `kabuk/ad-iki-parca` ve `kabuk/ustcubuk-sirasi` bulgusu kalmaz.';
+
 function guncelle(kok, cfg) {
   const b = bekliyor(cfg);
   if (!b) return 'UI güncel: son uc ' + ((cfg && cfg.uc && cfg.uc.surum) || 'yok') + ', eklenti ' + surum() + '. Yapılacak güncelleme yok.';
@@ -140,6 +142,7 @@ function guncelle(kok, cfg) {
     '4. Kapı: `' + js('esle.js') + ' --denetle --project "' + kok + '"` 0 fark. Derle ve projenin testlerini koş.',
     '5. Kaydet: `' + js('uc.js') + ' --bitti --project "' + kok + '"`. Sonra projenin kendi sürüm ve yayın yolunu izle.',
     PENCERE,
+    USTCUBUK,
     'Sahibe sormadan yap; yalnız simge değişikliği ve geri alınamaz adımlar onay ister. Bitince kullanıcının istediği işe geç.',
   ].join('\n');
 }
@@ -234,6 +237,7 @@ function metin(secenek) {
   const bekleyen = raf.bekleyen(kok);
   if (bekleyen.length) satirlar.push('Bekleyen raf kitapları: ' + bekleyen.map((b) => b.ad).join(', ') + '. Denetimle birlikte uydur, `' + js('raf.js') + ' --uydu <ad> --project "' + kok + '"` ile kaydet.');
   satirlar.push(PENCERE);
+  satirlar.push(USTCUBUK);
   satirlar.push(
     'Okunurluk ölçeği: görüntüler 1200x780 pencerede %100/%125/%150 ile alınır; ayrıca 2560x1440, Windows ölçeği %100, ekranı kaplayan pencerede bir çekim al. Ölçü: gövde yazısı etkin ≥20 px, gezinme simgesi ≥ yazı boyutu. Tutmuyorsa uygulama içi ölçeği kur (Avalonia: `scaffold.js ustcubuk` içindeki `UygulamaOlcegi`; diğerlerinde eşdeğeri) ve `okunurluk/simge-taban` uyarılarını kapat; ToolTip ve açılır menü de ölçeği almalı.'
   );

@@ -25,9 +25,12 @@ export type TitleBarLabels = {
   tabs?: string;
 };
 
+export type TitleBarLanguage = 'tr' | 'en';
+
 type Props = {
   first: string;
   second: string;
+  logo?: string;
   links: TitleBarLinks;
   labels: TitleBarLabels;
   language?: ReactNode;
@@ -62,7 +65,33 @@ function CoffeeIcon() {
   );
 }
 
-export function TitleBar({ first, second, links, labels, language, version, update, sync, tabs, current, maximized, onTab, onMinimize, onMaximize, onClose }: Props) {
+export function LangSwitch({ lang, label, onChange }: { lang: TitleBarLanguage; label: string; onChange: (lang: TitleBarLanguage) => void }) {
+  const options: [TitleBarLanguage, string][] = [
+    ['tr', 'TR'],
+    ['en', 'EN'],
+  ];
+  return (
+    <div
+      className="tk-lang"
+      data-lang={lang}
+      role="radiogroup"
+      aria-label={label}
+      onKeyDown={(e) => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        e.preventDefault();
+        onChange(lang === 'tr' ? 'en' : 'tr');
+      }}
+    >
+      {options.map(([o, text]) => (
+        <button key={o} type="button" role="radio" aria-checked={lang === o} tabIndex={lang === o ? 0 : -1} className="tk-lang__opt" lang={o} onClick={() => onChange(o)}>
+          {text}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export function TitleBar({ first, second, logo, links, labels, language, version, update, sync, tabs, current, maximized, onTab, onMinimize, onMaximize, onClose }: Props) {
   const toggle = maximized ? labels.restore ?? labels.maximize : labels.maximize;
   const open = (tabs ?? []).filter((t) => !t.disabled);
   const onKey = (e: KeyboardEvent<HTMLElement>) => {
@@ -78,6 +107,7 @@ export function TitleBar({ first, second, links, labels, language, version, upda
   return (
     <header className="tk-titlebar" data-window={maximized ? 'maximized' : 'normal'} data-tauri-drag-region>
       <div className="tk-titlebar__brand" data-tauri-drag-region>
+        {logo ? <img className="tk-titlebar__logo" src={logo} alt="" /> : null}
         <span className="tk-titlebar__name" data-tauri-drag-region>
           {first}
           <span className="tk-titlebar__accent">{second}</span>
@@ -105,7 +135,6 @@ export function TitleBar({ first, second, links, labels, language, version, upda
         <div className="tk-titlebar__tabs" data-tauri-drag-region />
       )}
       <div className="tk-titlebar__tools">
-        {language ? <div className="tk-titlebar__language">{language}</div> : null}
         {sync?.text ? (
           <button
             type="button"
@@ -118,6 +147,7 @@ export function TitleBar({ first, second, links, labels, language, version, upda
           </button>
         ) : null}
         {update ? <div className="tk-titlebar__update">{update}</div> : null}
+        {language ? <div className="tk-titlebar__language">{language}</div> : null}
         {links.sponsor ? (
           <a
             className="tk-titlebar__chip tk-titlebar__chip--support"

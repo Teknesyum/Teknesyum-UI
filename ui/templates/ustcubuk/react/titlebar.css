@@ -49,6 +49,80 @@
 }
 
 
+.tk-titlebar__logo {
+  width: var(--tk-icon-3);
+  height: var(--tk-icon-3);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.tk-lang {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  align-self: center;
+  padding: calc(var(--tk-sp-1) / 2);
+  border-radius: var(--tk-r-btn);
+  background: var(--tk-renk-1-10);
+  -webkit-app-region: no-drag;
+}
+
+.tk-lang::before {
+  content: '';
+  position: absolute;
+  inset-block: calc(var(--tk-sp-1) / 2);
+  inset-inline-start: calc(var(--tk-sp-1) / 2);
+  width: calc(50% - var(--tk-sp-1) / 2);
+  border-radius: var(--tk-r-btn);
+  background: var(--tk-renk-1);
+  transition: transform var(--tk-t-slow) var(--tk-e-spring);
+}
+
+.tk-lang[data-lang='en']::before {
+  transform: translateX(100%);
+}
+
+.tk-lang__opt {
+  position: relative;
+  min-width: calc(var(--tk-sp-5) + var(--tk-sp-2));
+  padding: 0 var(--tk-sp-2);
+  border: 0;
+  border-radius: var(--tk-r-btn);
+  background: transparent;
+  color: var(--tk-text-label);
+  font: inherit;
+  font-size: var(--tk-fs-1);
+  font-weight: var(--tk-fw-semi);
+  line-height: calc(var(--tk-titlebar-h-min) - var(--tk-sp-2));
+  cursor: pointer;
+  transition: color var(--tk-t-base) var(--tk-e-out);
+}
+
+.tk-lang__opt:hover:not([aria-checked='true']),
+.tk-lang__opt:focus-visible:not([aria-checked='true']) {
+  color: var(--tk-renk-2-text);
+}
+
+.tk-lang__opt:focus-visible {
+  outline: var(--tk-focus-w) solid var(--tk-renk-1);
+  outline-offset: var(--tk-focus-offset);
+  box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg);
+}
+
+.tk-lang__opt:active:not([aria-checked='true']) {
+  color: var(--tk-text);
+}
+
+.tk-lang__opt[aria-checked='true'] {
+  color: var(--tk-on-renk-1);
+  cursor: default;
+}
+
+.tk-lang__opt:disabled {
+  color: var(--tk-disabled);
+  cursor: not-allowed;
+}
+
 .tk-titlebar__name {
   color: var(--tk-label-title-color, var(--tk-text));
   font-size: min(var(--tk-label-title-fs, var(--tk-fs-3)), calc(var(--tk-titlebar-h-min) - var(--tk-sp-2)));
@@ -428,7 +502,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .tk-titlebar__tab::after,
-  .tk-titlebar__chip::after {
+  .tk-titlebar__chip::after,
+  .tk-lang::before {
     transition: none;
   }
 

@@ -35,6 +35,7 @@ node <plugin>/scripts/raf.js <book>
 |---|---|
 | Any interface: colour, motion, forms, text, desktop window, verification, report | `ui-duzeni` |
 | Update, auto-update, sync surface, installer window | `guncelleme-paneli` |
+| Theme list, theme picker, light theme (`scaffold.js temalar`) | `temalar` |
 | README or repository document | `readme-protokolu` |
 | Which preference books exist | no argument, it lists them |
 
@@ -112,8 +113,8 @@ The version text in a title bar is a button, never plain text: accessible name `
 quiet grey (`--tk-text-muted`, the only grey), smallest type step, borderless; hover and focus turn
 `--tk-renk-1`. One click checks for an update: if current, a bottom-right auto-closing toast
 `update.current (vX.Y.Z)`; if new, it downloads, installs and restarts without asking, through
-the update panel. The user setting `onayIste` (`update.confirmSetting`, default off) asks
-Install/Later with the release notes first. A failed check shows a one-line bottom-right toast
+the update panel. The user setting `onayIste` (`update.confirmSetting`, default off) asks first:
+the panel then shows two buttons only, `Güncelle` (primary) and `Sonra`, with the notes. A failed check shows a one-line bottom-right toast
 with the reason. Templates: `durum` (`VersionButton`, `mountVersionButton`, `SurumDugmesi`);
 `scan.js` checks this as `guncelleme/surum-tetik`. The version sits right after the app name,
 in the title bar's `version` slot (React) / `Surum` (Avalonia), never in `language`/`Ek`.
@@ -123,12 +124,11 @@ in the title bar's `version` slot (React) / `Surum` (Avalonia), never in `langua
 Every app has the same title bar; a project builds its own additions on top of it, never
 around it. Left: the app's own logo (`logo` / `Logo`), the two-part name, then the grey version
 button that checks for an update on click (`version` / `Surum`). Right, left to right: sync,
-update badge (`update` / `Rozet`), app tools (`Ek`), the TR/EN switch (`LangSwitch` / `Dil`),
-Destek Ol, Teknesyum, window buttons. `kabuk/ustcubuk-sirasi` fails a changed order.
-
+update badge (`update` / `Rozet`), app tools (`Ek`), scale (`ScaleSwitch` / `OlcekGoster`), the
+TR/EN switch (`LangSwitch` / `Dil`), Destek Ol, Teknesyum, window buttons. `kabuk/ustcubuk-sirasi`
+fails a changed order, `kabuk/olcek-elle` a hand-written scale control.
 The name's second part starts with a capital and takes Renk 2 (`QuizLoop`; `kabuk/ad-iki-parca`).
-The logo is the project's existing icon. An old `teknesyum-ui/ustcubuk` copy is set aside and
-re-scaffolded, the project's additions moved onto it.
+The logo is the project's icon. An old `ustcubuk` copy is re-scaffolded, additions moved onto it.
 
 ### Eylem satırı
 

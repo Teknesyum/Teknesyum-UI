@@ -12,6 +12,7 @@ const { yeniAdlar } = require('./ozel');
 const DIZIN = path.resolve(__dirname, '..', 'templates', 'temalar');
 const ALANLAR = ['renk-1', 'renk-2', 'renk-3', 'renk-2-text', 'renk-3-text', 'surface', 'black', 'glass-base', 'text', 'disabled', 'success', 'warning'];
 const HEX = /^#[0-9a-f]{6}$/;
+const ORTAK = 'temalar.json';
 
 function oku(dosya) {
   const t = JSON.parse(fs.readFileSync(dosya, 'utf8'));
@@ -49,7 +50,7 @@ function ozelListe() {
   const dizin = ozelDizin();
   if (!dizin || !fs.existsSync(dizin)) return [];
   const out = [];
-  for (const f of fs.readdirSync(dizin).filter((f) => f.endsWith('.json')).sort()) {
+  for (const f of fs.readdirSync(dizin).filter((f) => f.endsWith('.json') && f !== ORTAK).sort()) {
     try {
       out.push(oku(path.join(dizin, f)));
     } catch (e) {
@@ -57,6 +58,54 @@ function ozelListe() {
     }
   }
   return out;
+}
+
+function tabanTema(tokenDosyasi) {
+  const T = JSON.parse(fs.readFileSync(tokenDosyasi, 'utf8'));
+  const t = { id: 'standart', ad: 'Standart' };
+  for (const k of ALANLAR) {
+    const v = String((((T.brand || {})[k] || (T.role || {})[k] || {}).value) || '').toLocaleLowerCase('en');
+    if (!HEX.test(v)) throw new Error(tokenDosyasi + ': ' + k + ' #rrggbb olmalı.');
+    t[k] = v;
+  }
+  return t;
+}
+
+function acikListe(tokenDosyasi) {
+  return [tabanTema(tokenDosyasi || KAYDET.TOKENS)].concat(liste().map((t) => Object.assign({ id: t.ad, ad: t.baslik }, t.renk)));
+}
+
+function ortakListe(tokenDosyasi) {
+  const dizin = ozelDizin();
+  const dosya = dizin ? path.join(dizin, ORTAK) : null;
+  if (dosya && fs.existsSync(dosya)) {
+    const l = JSON.parse(fs.readFileSync(dosya, 'utf8'));
+    if (Array.isArray(l) && l.length) return { kaynak: 'raf', liste: l };
+  }
+  return { kaynak: 'eklenti', liste: acikListe(tokenDosyasi) };
+}
+
+function projeTokenlari(kok) {
+  const dosya = path.join(kok, 'teknesyum-ui', 'theme.tokens.json');
+  return fs.existsSync(dosya) ? dosya : null;
+}
+
+function projeListesi(kok) {
+  return path.join(kok, 'teknesyum-ui', 'temalar', 'themes.json');
+}
+
+function projeTazele(kok) {
+  const dosya = projeListesi(kok);
+  if (!fs.existsSync(dosya)) return null;
+  const o = ortakListe(projeTokenlari(kok));
+  const metin = ortakMetin(o.liste);
+  const ayni = fs.readFileSync(dosya, 'utf8').replace(/\r\n/g, '\n') === metin;
+  if (!ayni) fs.writeFileSync(dosya, metin, 'utf8');
+  return { dosya, sayi: o.liste.length, kaynak: o.kaynak, yazildi: !ayni };
+}
+
+function ortakMetin(l) {
+  return '[\n' + l.map((t) => '  ' + JSON.stringify(t)).join(',\n') + '\n]\n';
 }
 
 function degisim(T, renk, tur) {
@@ -129,4 +178,4 @@ if (require.main === module)
     process.exitCode = 1;
   }
 
-module.exports = { DIZIN, ALANLAR, oku, liste, ozelDizin, ozelListe, degisim, tokenlar, denetle, sayfaVerisi };
+module.exports = { DIZIN, ALANLAR, oku, liste, ozelDizin, ozelListe, acikListe, ortakListe, ortakMetin, projeTokenlari, projeListesi, projeTazele, degisim, tokenlar, denetle, sayfaVerisi };

@@ -10,9 +10,10 @@
     "exactOptionalPropertyTypes": false,
     "noEmit": true,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "types": ["node"],
     "typeRoots": ["./node_modules/@types"]
   },
   "files": ["css.d.ts"],
-  "include": ["../../ui/templates/**/react/*.tsx", "../../ui/templates/**/electron/*.ts"]
+  "include": ["../../ui/templates/**/react/*.tsx", "../../ui/templates/**/react/*.ts", "../../ui/templates/**/electron/*.ts"]
 }

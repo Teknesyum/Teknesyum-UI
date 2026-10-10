@@ -3,11 +3,15 @@
 using System;
 using System.Windows.Input;
 using Avalonia;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Styling;
 using Avalonia.VisualTree;
 
 namespace {{AD}}.Kabuk
@@ -84,6 +88,18 @@ namespace {{AD}}.Kabuk
             AvaloniaProperty.Register<TitleBar, IImage?>(nameof(Logo));
         public static readonly StyledProperty<string?> DilProperty =
             AvaloniaProperty.Register<TitleBar, string?>(nameof(Dil));
+        public static readonly StyledProperty<bool> OlcekGosterProperty =
+            AvaloniaProperty.Register<TitleBar, bool>(nameof(OlcekGoster));
+        public static readonly StyledProperty<string> OlcekAdiProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(OlcekAdi), "Arayüz ölçeği");
+        public static readonly StyledProperty<string> OlcekKucultMetniProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(OlcekKucultMetni), "Küçült");
+        public static readonly StyledProperty<string> OlcekBuyutMetniProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(OlcekBuyutMetni), "Büyüt");
+        public static readonly StyledProperty<string> OlcekAyarMetniProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(OlcekAyarMetni), "Ölçeği ayarla");
+        public static readonly StyledProperty<string> OlcekSifirlaMetniProperty =
+            AvaloniaProperty.Register<TitleBar, string>(nameof(OlcekSifirlaMetni), "Sıfırla");
         public static readonly StyledProperty<object?> SurumProperty =
             AvaloniaProperty.Register<TitleBar, object?>(nameof(Surum));
         public static readonly StyledProperty<object?> EkProperty =
@@ -116,6 +132,12 @@ namespace {{AD}}.Kabuk
         public object? Orta { get => GetValue(OrtaProperty); set => SetValue(OrtaProperty, value); }
         public IImage? Logo { get => GetValue(LogoProperty); set => SetValue(LogoProperty, value); }
         public string? Dil { get => GetValue(DilProperty); set => SetValue(DilProperty, value); }
+        public bool OlcekGoster { get => GetValue(OlcekGosterProperty); set => SetValue(OlcekGosterProperty, value); }
+        public string OlcekAdi { get => GetValue(OlcekAdiProperty); set => SetValue(OlcekAdiProperty, value); }
+        public string OlcekKucultMetni { get => GetValue(OlcekKucultMetniProperty); set => SetValue(OlcekKucultMetniProperty, value); }
+        public string OlcekBuyutMetni { get => GetValue(OlcekBuyutMetniProperty); set => SetValue(OlcekBuyutMetniProperty, value); }
+        public string OlcekAyarMetni { get => GetValue(OlcekAyarMetniProperty); set => SetValue(OlcekAyarMetniProperty, value); }
+        public string OlcekSifirlaMetni { get => GetValue(OlcekSifirlaMetniProperty); set => SetValue(OlcekSifirlaMetniProperty, value); }
         public object? Surum { get => GetValue(SurumProperty); set => SetValue(SurumProperty, value); }
         public object? Ek { get => GetValue(EkProperty); set => SetValue(EkProperty, value); }
 
@@ -149,6 +171,9 @@ namespace {{AD}}.Kabuk
             };
             ImzaDugmesi.Click += (_, _) => Ac(ImzaAdresi);
             DestekDugmesi.Click += (_, _) => Ac(DestekAdresi);
+            OlcekEksi.Click += (_, _) => UygulamaOlcegi.Ayarla(UygulamaOlcegi.Deger - UygulamaOlcegi.Adim);
+            OlcekArti.Click += (_, _) => UygulamaOlcegi.Ayarla(UygulamaOlcegi.Deger + UygulamaOlcegi.Adim);
+            OlcekDeger.Flyout = OlcekAcilir();
             DilTr.Click += (_, _) => DilSec("tr");
             DilEn.Click += (_, _) => DilSec("en");
             KucultDugmesi.Click += (_, _) =>
@@ -172,6 +197,7 @@ namespace {{AD}}.Kabuk
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnAttachedToVisualTree(e);
+            UygulamaOlcegi.Degisti += OlcekDegisti;
             _pencere = Pencere();
             if (_pencere is null)
                 return;
@@ -182,6 +208,7 @@ namespace {{AD}}.Kabuk
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
+            UygulamaOlcegi.Degisti -= OlcekDegisti;
             if (_pencere is not null)
             {
                 _pencere.PropertyChanged -= PencereDegisti;
@@ -235,6 +262,13 @@ namespace {{AD}}.Kabuk
             DilAnahtari.IsVisible = Dil is "tr" or "en";
             DilTr.Classes.Set("secili", Dil == "tr");
             DilEn.Classes.Set("secili", Dil == "en");
+            OlcekAnahtari.IsVisible = OlcekGoster;
+            OlcekDeger.Content = Yuzde(UygulamaOlcegi.Deger);
+            OlcekEksi.IsEnabled = UygulamaOlcegi.Deger > UygulamaOlcegi.En;
+            OlcekArti.IsEnabled = UygulamaOlcegi.Deger < UygulamaOlcegi.Cok;
+            ToolTip.SetTip(OlcekEksi, OlcekKucultMetni);
+            ToolTip.SetTip(OlcekArti, OlcekBuyutMetni);
+            ToolTip.SetTip(OlcekDeger, OlcekAyarMetni);
             SurumAlani.Content = Surum;
             SurumAlani.IsVisible = Surum is not null;
 
@@ -309,6 +343,53 @@ namespace {{AD}}.Kabuk
                 return;
             }
             Pencere()?.BeginMoveDrag(e);
+        }
+
+        static string Yuzde(double olcek) => Math.Round(olcek * 100) + "%";
+
+        void OlcekDegisti(double olcek) => Yenile();
+
+        Flyout OlcekAcilir()
+        {
+            var kaydirici = new Slider
+            {
+                Minimum = UygulamaOlcegi.En,
+                Maximum = UygulamaOlcegi.Cok,
+                TickFrequency = UygulamaOlcegi.Adim,
+                IsSnapToTickEnabled = true,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            var yuzde = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
+            var sifirla = new Button { VerticalAlignment = VerticalAlignment.Center };
+            var satir = new StackPanel { Orientation = Orientation.Horizontal, Children = { kaydirici, yuzde, sifirla } };
+            var acilir = new Flyout { Content = satir, Placement = PlacementMode.BottomEdgeAlignedRight };
+            kaydirici.PropertyChanged += (_, e) =>
+            {
+                if (e.Property == RangeBase.ValueProperty)
+                    yuzde.Text = Yuzde(kaydirici.Value);
+            };
+            kaydirici.AddHandler(PointerReleasedEvent, (_, _) => UygulamaOlcegi.Ayarla(kaydirici.Value), RoutingStrategies.Tunnel | RoutingStrategies.Bubble, true);
+            kaydirici.AddHandler(KeyUpEvent, (_, _) => UygulamaOlcegi.Ayarla(kaydirici.Value), RoutingStrategies.Tunnel | RoutingStrategies.Bubble, true);
+            sifirla.Click += (_, _) =>
+            {
+                UygulamaOlcegi.Sifirla();
+                kaydirici.Value = UygulamaOlcegi.Deger;
+            };
+            acilir.Opening += (_, _) =>
+            {
+                if (this.TryFindResource("Space5", out var b) && b is double bosluk)
+                {
+                    kaydirici.Width = bosluk * 6;
+                    satir.Spacing = bosluk / 2;
+                }
+                if (this.TryFindResource("GhostButton", out var t) && t is ControlTheme tema)
+                    sifirla.Theme = tema;
+                sifirla.Content = OlcekSifirlaMetni;
+                AutomationProperties.SetName(kaydirici, OlcekAdi);
+                kaydirici.Value = UygulamaOlcegi.Deger;
+                yuzde.Text = Yuzde(kaydirici.Value);
+            };
+            return acilir;
         }
 
         void DilSec(string dil)

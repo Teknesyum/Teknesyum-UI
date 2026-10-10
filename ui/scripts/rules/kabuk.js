@@ -341,8 +341,8 @@ module.exports = {
       exts: ['.tsx', '.jsx', '.axaml'],
       check(file, text) {
         const sira = /\.axaml$/i.test(file)
-          ? ['Name="EkAlani"', 'Name="DilAnahtari"', 'Name="DestekDugmesi"', 'Name="ImzaDugmesi"']
-          : ['tk-titlebar__language', 'tk-titlebar__chip--support', 'tk-titlebar__chip--brand'];
+          ? ['Name="EkAlani"', 'Name="OlcekAnahtari"', 'Name="DilAnahtari"', 'Name="DestekDugmesi"', 'Name="ImzaDugmesi"']
+          : ['tk-titlebar__scale', 'tk-titlebar__language', 'tk-titlebar__chip--support', 'tk-titlebar__chip--brand'];
         const yer = sira.map((s) => text.indexOf(s)).filter((i) => i >= 0);
         if (yer.length < 2) return [];
         for (let i = 1; i < yer.length; i++) {
@@ -351,12 +351,29 @@ module.exports = {
               {
                 line: text.slice(0, yer[i]).split('\n').length,
                 message:
-                  'title bar right part is out of order: left to right it is tools, sync, update, TR/EN, Destek Ol, Teknesyum, window buttons. Take the order from scaffold.js ustcubuk.',
+                  'title bar right part is out of order: left to right it is tools, sync, update, scale, TR/EN, Destek Ol, Teknesyum, window buttons. Take the order from scaffold.js ustcubuk.',
               },
             ];
           }
         }
         return [];
+      },
+    },
+    {
+      id: 'olcek-elle',
+      severity: 'warn',
+      exts: ['.tsx', '.jsx'],
+      check(file, text) {
+        const m = /className\s*=\s*["'](?!tk-)[\w-]*(?:scale|zoom|olcek)[\w-]*["']/i.exec(text);
+        if (!m) return [];
+        if (!/%/.test(text) || !/role\s*=\s*["']group["']|type\s*=\s*["']range["']/.test(text)) return [];
+        return [
+          {
+            line: text.slice(0, m.index).split('\n').length,
+            message:
+              'a hand-written interface scale control: take ScaleSwitch from scaffold.js ustcubuk and pass it to the title bar scale slot; the app only stores the value and applies the zoom.',
+          },
+        ];
       },
     },
     {

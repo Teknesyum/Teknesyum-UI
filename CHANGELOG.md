@@ -5,6 +5,26 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.35.0] - 2026-10-10
+
+### Added
+
+- Scale control in the title bar, left of the TR/EN switch: React `ScaleSwitch` (`scale` slot on `TitleBar`), Avalonia `OlcekGoster`. A `− 100% +` capsule; the percent opens a slider, the percent and Reset; the scale is applied on release.
+- `scaffold.js temalar`: `theme.ts` (role-to-token mapping, the 4.5:1 readability shift, `applyTheme`, `applyStoredTheme`), `ThemePicker` (radiogroup of swatches) and `themes.json`. The list comes from the private shelf (`teknesyum-ui/temalar/temalar.json`), or from the shipped themes when the shelf has none; `setup.js --apply` refreshes it.
+- Rule `kabuk/olcek-elle` (warn): a hand-written scale control is replaced by the template.
+- Tokens `--tk-panel` and the tone scale as fills (`--tk-renk-1-10` and the rest), so a runtime theme reaches panels and tints.
+
+### Changed
+
+- The update panel shows two buttons when a version is available: `Güncelle` and `Sonra`. React: `onUpdate` replaces `onDownload`, labels `update` and `later`. Avalonia: `SonraDugmesi` and `SonraMetni` replace the separate download button; the panel is layout 3.
+- `.tk-panel`, the modal scrim and the focus ring read tokens instead of fixed blacks: dark by default, a runtime theme arrives through tokens.
+- `kabuk/ustcubuk-sirasi` and the uc title bar step include the scale control.
+
+### Fixed
+
+- `.tk-lang` used `--tk-renk-1-10`, which no stylesheet defined.
+- The focus ring's inner gap used `--tk-bg`, which can be a gradient; it now takes `--tk-bg-from`.
+
 ## [0.34.0] - 2026-10-02
 
 ### Added

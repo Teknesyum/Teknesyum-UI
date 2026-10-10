@@ -12,7 +12,7 @@
   "meta": {
     "name": "neon",
     "dark": true,
-    "rationale": "The public standard is plain: black, white and grey, no glow, no tuned values. It is dark only — until a second theme is defined (SKILL §1)."
+    "rationale": "The public standard is plain: black, white and grey, no glow, no tuned values. It is dark by default; a runtime theme arrives through tokens, never through fixed colours (SKILL §1)."
   },
   "brand": {
     "renk-1": {

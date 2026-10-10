@@ -15,6 +15,7 @@
 .tk-titlebar button,
 .tk-titlebar select,
 .tk-titlebar__language,
+.tk-titlebar__scale,
 .tk-titlebar__version,
 .tk-titlebar__update {
   -webkit-app-region: no-drag;
@@ -24,6 +25,7 @@
 .tk-titlebar__tabs,
 .tk-titlebar__tools,
 .tk-titlebar__language,
+.tk-titlebar__scale,
 .tk-titlebar__version,
 .tk-titlebar__update {
   display: flex;
@@ -106,7 +108,7 @@
 .tk-lang__opt:focus-visible {
   outline: var(--tk-focus-w) solid var(--tk-renk-1);
   outline-offset: var(--tk-focus-offset);
-  box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg);
+  box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg-from);
 }
 
 .tk-lang__opt:active:not([aria-checked='true']) {
@@ -121,6 +123,84 @@
 .tk-lang__opt:disabled {
   color: var(--tk-disabled);
   cursor: not-allowed;
+}
+
+.tk-scale {
+  display: inline-flex;
+  align-self: center;
+  border-radius: var(--tk-r-btn);
+  background: var(--tk-renk-1-10);
+  -webkit-app-region: no-drag;
+}
+
+.tk-scale__btn {
+  min-width: var(--tk-sp-5);
+  padding: 0 var(--tk-sp-1);
+  border: 0;
+  border-radius: var(--tk-r-btn);
+  background: transparent;
+  color: var(--tk-text-label);
+  font: inherit;
+  font-size: var(--tk-fs-1);
+  font-weight: var(--tk-fw-semi);
+  line-height: calc(var(--tk-titlebar-h-min) - var(--tk-sp-2));
+  cursor: pointer;
+  transition: color var(--tk-t-base) var(--tk-e-out);
+}
+
+.tk-scale__value {
+  min-width: calc(var(--tk-sp-5) + var(--tk-sp-3));
+  color: var(--tk-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.tk-scale__btn:hover,
+.tk-scale__btn:focus-visible {
+  color: var(--tk-renk-2-text);
+}
+
+.tk-scale__btn:focus-visible,
+.tk-scale__range:focus-visible {
+  outline: var(--tk-focus-w) solid var(--tk-renk-1);
+  outline-offset: var(--tk-focus-offset);
+  box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg-from);
+}
+
+.tk-scale__btn:active {
+  color: var(--tk-text);
+}
+
+.tk-scale__btn[aria-expanded='true'] {
+  color: var(--tk-renk-2-text);
+}
+
+.tk-scale__btn:disabled {
+  color: var(--tk-disabled);
+  cursor: not-allowed;
+}
+
+.tk-scale__pop {
+  position: fixed;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  gap: var(--tk-sp-3);
+  margin-top: var(--tk-sp-1);
+  padding: var(--tk-sp-2) var(--tk-sp-3);
+  -webkit-app-region: no-drag;
+}
+
+.tk-scale__range {
+  width: calc(var(--tk-sp-5) * 6);
+  accent-color: var(--tk-renk-1);
+  cursor: pointer;
+}
+
+.tk-scale__pct {
+  min-width: calc(var(--tk-sp-5) + var(--tk-sp-4));
+  color: var(--tk-text);
+  text-align: end;
+  font-variant-numeric: tabular-nums;
 }
 
 .tk-titlebar__name {

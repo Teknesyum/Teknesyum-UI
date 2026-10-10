@@ -1,4 +1,4 @@
-<!-- teknesyum-ui template durum/avalonia/GuncellemePaneli.axaml · düzen 2 -->
+<!-- teknesyum-ui template durum/avalonia/GuncellemePaneli.axaml · düzen 3 -->
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="{{AD}}.Kabuk.GuncellemePaneli"
@@ -167,7 +167,7 @@
       </Grid>
 
       <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="{StaticResource Space2}" HorizontalAlignment="Right" ClipToBounds="False">
-        <Button Name="IndirDugmesi" Theme="{StaticResource KurIkincil}" AutomationProperties.Name="{Binding $self.Content}"/>
+        <Button Name="SonraDugmesi" Theme="{StaticResource KurIkincil}" AutomationProperties.Name="{Binding $self.Content}"/>
         <Button Name="IptalDugmesi" Theme="{StaticResource KurIkincil}" AutomationProperties.Name="{Binding $self.Content}"/>
         <Button Name="IndirVeYukleDugmesi" Theme="{StaticResource KurBirincil}" AutomationProperties.Name="{Binding $self.Content}"/>
         <Button Name="YukleDugmesi" Theme="{StaticResource KurBirincil}" AutomationProperties.Name="{Binding $self.Content}"/>

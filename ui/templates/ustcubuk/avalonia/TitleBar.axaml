@@ -5,11 +5,11 @@
              ClipToBounds="False">
 
   <UserControl.Styles>
-    <Style Selector="Border#DilAnahtari">
+    <Style Selector="Border#DilAnahtari, Border#OlcekAnahtari">
       <Setter Property="Background" Value="{StaticResource Renk1x10}"/>
       <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
     </Style>
-    <Style Selector="Border#DilAnahtari Button">
+    <Style Selector="Border#DilAnahtari Button, Border#OlcekAnahtari Button">
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="Foreground" Value="{StaticResource TextLabel}"/>
       <Setter Property="BorderThickness" Value="0"/>
@@ -22,7 +22,7 @@
       <Setter Property="VerticalContentAlignment" Value="Center"/>
       <Setter Property="Cursor" Value="Hand"/>
     </Style>
-    <Style Selector="Border#DilAnahtari Button:pointerover /template/ ContentPresenter">
+    <Style Selector="Border#DilAnahtari Button:pointerover /template/ ContentPresenter, Border#OlcekAnahtari Button:pointerover /template/ ContentPresenter">
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="Foreground" Value="{StaticResource Renk2Text}"/>
     </Style>
@@ -34,6 +34,16 @@
     <Style Selector="Border#DilAnahtari Button.secili:pointerover /template/ ContentPresenter">
       <Setter Property="Background" Value="{StaticResource Renk1}"/>
       <Setter Property="Foreground" Value="{StaticResource OnRenk1}"/>
+    </Style>
+    <Style Selector="Border#OlcekAnahtari Button">
+      <Setter Property="Padding" Value="{StaticResource InputPadding}"/>
+    </Style>
+    <Style Selector="Border#OlcekAnahtari Button#OlcekDeger">
+      <Setter Property="Foreground" Value="{StaticResource OnRenk1x10}"/>
+    </Style>
+    <Style Selector="Border#OlcekAnahtari Button:disabled /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
     </Style>
   </UserControl.Styles>
 
@@ -68,6 +78,13 @@
         </StackPanel>
       </Button>
       <ContentControl Name="EkAlani" VerticalAlignment="Center"/>
+      <Border Name="OlcekAnahtari" VerticalAlignment="Center" IsVisible="False">
+        <StackPanel Orientation="Horizontal">
+          <Button Name="OlcekEksi" Content="−" AutomationProperties.Name="{Binding $self.(ToolTip.Tip)}"/>
+          <Button Name="OlcekDeger" AutomationProperties.Name="{Binding $self.(ToolTip.Tip)}"/>
+          <Button Name="OlcekArti" Content="+" AutomationProperties.Name="{Binding $self.(ToolTip.Tip)}"/>
+        </StackPanel>
+      </Border>
       <Border Name="DilAnahtari" VerticalAlignment="Center" IsVisible="False">
         <StackPanel Orientation="Horizontal">
           <Button Name="DilTr" Content="TR" AutomationProperties.Name="Türkçe"/>

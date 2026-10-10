@@ -56,12 +56,14 @@ namespace {{AD}}.Kabuk
             Degisti?.Invoke(deger);
         }
 
+        public static void Sifirla() => Ayarla(ilk);
+
         static void AnahtarBasildi(object? gonderen, KeyEventArgs e)
         {
             if (!e.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
             if (e.Key == Key.OemPlus || e.Key == Key.Add) Ayarla(deger + Adim);
             else if (e.Key == Key.OemMinus || e.Key == Key.Subtract) Ayarla(deger - Adim);
-            else if (e.Key == Key.D0 || e.Key == Key.NumPad0) Ayarla(ilk);
+            else if (e.Key == Key.D0 || e.Key == Key.NumPad0) Sifirla();
             else return;
             e.Handled = true;
         }

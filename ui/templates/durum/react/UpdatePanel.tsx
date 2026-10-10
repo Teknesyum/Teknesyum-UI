@@ -24,8 +24,8 @@ export type UpdatePanelLabels = {
   ready: string;
   installing: string;
   failed: (reason: string) => string;
-  downloadInstall: string;
-  download: string;
+  update: string;
+  later: string;
   cancel: string;
   install: string;
   close: string;
@@ -38,13 +38,13 @@ export const UPDATE_PANEL_LABELS: UpdatePanelLabels = {
   versionLabel: 'Yeni sürüm',
   notesLabel: 'Notlar',
   dryRun: 'Prova kipi',
-  available: 'Yeni sürüm yayımlandı, indirmek ister misin?',
+  available: 'Yeni sürüm yayımlandı, şimdi güncellemek ister misin?',
   downloading: 'Yeni sürüm iniyor, çalışmana devam edebilirsin.',
   ready: 'Yeni sürüm indi, yüklemeye hazır.',
   installing: 'Yükleniyor…',
   failed: (reason) => 'Güncelleme başarısız oldu: ' + reason,
-  downloadInstall: 'İndir ve yükle',
-  download: 'İndir',
+  update: 'Güncelle',
+  later: 'Sonra',
   cancel: 'İptal',
   install: 'Yükle',
   close: 'Kapat',
@@ -194,13 +194,13 @@ type Props = {
   returnTo?: HTMLElement | null;
   labels?: Partial<UpdatePanelLabels>;
   onClose: () => void;
-  onDownload: (andInstall: boolean) => void;
+  onUpdate: () => void;
   onCancel: () => void;
   onInstall: () => void;
   onCheck: () => void;
 };
 
-export function UpdatePanel({ open, state, returnTo, labels, onClose, onDownload, onCancel, onInstall, onCheck }: Props) {
+export function UpdatePanel({ open, state, returnTo, labels, onClose, onUpdate, onCancel, onInstall, onCheck }: Props) {
   const t = { ...UPDATE_PANEL_LABELS, ...labels };
   const visible = open && !!state;
   const { mounted, entering, closing } = usePresence(visible);
@@ -269,14 +269,11 @@ export function UpdatePanel({ open, state, returnTo, labels, onClose, onDownload
         <div className="update-panel__actions">
           {p === 'available' ? (
             <>
-              <button ref={primaryRef} type="button" className="tk-btn tk-btn-primary" onClick={() => onDownload(true)}>
-                {t.downloadInstall}
-              </button>
-              <button type="button" className="tk-btn tk-btn-ghost" onClick={() => onDownload(false)}>
-                {t.download}
+              <button ref={primaryRef} type="button" className="tk-btn tk-btn-primary" onClick={onUpdate}>
+                {t.update}
               </button>
               <button type="button" className="tk-btn tk-btn-ghost" onClick={onClose}>
-                {t.cancel}
+                {t.later}
               </button>
             </>
           ) : p === 'downloading' ? (

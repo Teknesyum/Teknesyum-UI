@@ -1,4 +1,4 @@
-// teknesyum-ui template durum/avalonia/GuncellemePaneli.axaml.cs · düzen 2
+// teknesyum-ui template durum/avalonia/GuncellemePaneli.axaml.cs · düzen 3
 #nullable enable
 using System;
 using System.Globalization;
@@ -31,15 +31,15 @@ namespace {{AD}}.Kabuk
         public static readonly StyledProperty<string> SurumProperty =
             AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(Surum), "");
         public static readonly StyledProperty<string> VarMetniProperty =
-            AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(VarMetni), "Yeni sürüm yayımlandı, indirmek ister misin?");
+            AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(VarMetni), "Yeni sürüm yayımlandı, şimdi güncellemek ister misin?");
         public static readonly StyledProperty<string> IniyorMetniProperty =
             AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(IniyorMetni), "Yeni sürüm iniyor, çalışmana devam edebilirsin.");
         public static readonly StyledProperty<string> HazirMetniProperty =
             AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(HazirMetni), "Yeni sürüm indi, yüklemeye hazır.");
-        public static readonly StyledProperty<string> IndirMetniProperty =
-            AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(IndirMetni), "İndir");
+        public static readonly StyledProperty<string> SonraMetniProperty =
+            AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(SonraMetni), "Sonra");
         public static readonly StyledProperty<string> IndirVeYukleMetniProperty =
-            AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(IndirVeYukleMetni), "İndir ve yükle");
+            AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(IndirVeYukleMetni), "Güncelle");
         public static readonly StyledProperty<string> IptalMetniProperty =
             AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(IptalMetni), "İptal");
         public static readonly StyledProperty<string> YukleMetniProperty =
@@ -48,8 +48,6 @@ namespace {{AD}}.Kabuk
             AvaloniaProperty.Register<GuncellemePaneli, string>(nameof(KapatMetni), "Kapat");
         public static readonly StyledProperty<ICommand?> KapatKomutuProperty =
             AvaloniaProperty.Register<GuncellemePaneli, ICommand?>(nameof(KapatKomutu));
-        public static readonly StyledProperty<ICommand?> IndirKomutuProperty =
-            AvaloniaProperty.Register<GuncellemePaneli, ICommand?>(nameof(IndirKomutu));
         public static readonly StyledProperty<ICommand?> IndirVeYukleKomutuProperty =
             AvaloniaProperty.Register<GuncellemePaneli, ICommand?>(nameof(IndirVeYukleKomutu));
         public static readonly StyledProperty<ICommand?> IptalKomutuProperty =
@@ -66,18 +64,16 @@ namespace {{AD}}.Kabuk
         public string VarMetni { get => GetValue(VarMetniProperty); set => SetValue(VarMetniProperty, value); }
         public string IniyorMetni { get => GetValue(IniyorMetniProperty); set => SetValue(IniyorMetniProperty, value); }
         public string HazirMetni { get => GetValue(HazirMetniProperty); set => SetValue(HazirMetniProperty, value); }
-        public string IndirMetni { get => GetValue(IndirMetniProperty); set => SetValue(IndirMetniProperty, value); }
+        public string SonraMetni { get => GetValue(SonraMetniProperty); set => SetValue(SonraMetniProperty, value); }
         public string IndirVeYukleMetni { get => GetValue(IndirVeYukleMetniProperty); set => SetValue(IndirVeYukleMetniProperty, value); }
         public string IptalMetni { get => GetValue(IptalMetniProperty); set => SetValue(IptalMetniProperty, value); }
         public string YukleMetni { get => GetValue(YukleMetniProperty); set => SetValue(YukleMetniProperty, value); }
         public string KapatMetni { get => GetValue(KapatMetniProperty); set => SetValue(KapatMetniProperty, value); }
         public ICommand? KapatKomutu { get => GetValue(KapatKomutuProperty); set => SetValue(KapatKomutuProperty, value); }
-        public ICommand? IndirKomutu { get => GetValue(IndirKomutuProperty); set => SetValue(IndirKomutuProperty, value); }
         public ICommand? IndirVeYukleKomutu { get => GetValue(IndirVeYukleKomutuProperty); set => SetValue(IndirVeYukleKomutuProperty, value); }
         public ICommand? IptalKomutu { get => GetValue(IptalKomutuProperty); set => SetValue(IptalKomutuProperty, value); }
         public ICommand? YukleKomutu { get => GetValue(YukleKomutuProperty); set => SetValue(YukleKomutuProperty, value); }
 
-        public event EventHandler? Indir;
         public event EventHandler? IndirVeYukle;
         public event EventHandler? Iptal;
         public event EventHandler? Yukle;
@@ -95,7 +91,11 @@ namespace {{AD}}.Kabuk
                 Calistir(Kapat, KapatKomutu);
                 IsVisible = false;
             };
-            IndirDugmesi.Click += (_, _) => Calistir(Indir, IndirKomutu);
+            SonraDugmesi.Click += (_, _) =>
+            {
+                Calistir(Kapat, KapatKomutu);
+                IsVisible = false;
+            };
             IndirVeYukleDugmesi.Click += (_, _) => Calistir(IndirVeYukle, IndirVeYukleKomutu);
             IptalDugmesi.Click += (_, _) => Calistir(Iptal, IptalKomutu);
             YukleDugmesi.Click += (_, _) => Calistir(Yukle, YukleKomutu);
@@ -138,11 +138,11 @@ namespace {{AD}}.Kabuk
                 _ => VarMetni
             };
 
-            IndirDugmesi.Content = IndirMetni;
+            SonraDugmesi.Content = SonraMetni;
             IndirVeYukleDugmesi.Content = IndirVeYukleMetni;
             IptalDugmesi.Content = IptalMetni;
             YukleDugmesi.Content = YukleMetni;
-            IndirDugmesi.IsVisible = Durum == GuncellemeDurumu.Var;
+            SonraDugmesi.IsVisible = Durum == GuncellemeDurumu.Var;
             IndirVeYukleDugmesi.IsVisible = Durum == GuncellemeDurumu.Var;
             IptalDugmesi.IsVisible = Durum == GuncellemeDurumu.Iniyor;
             YukleDugmesi.IsVisible = Durum == GuncellemeDurumu.Hazir;

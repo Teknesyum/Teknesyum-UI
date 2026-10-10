@@ -1,0 +1,64 @@
+/* teknesyum-ui template temalar/react/themepicker.css */
+.tk-themes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--tk-sp-5) * 6), 1fr));
+  gap: var(--tk-sp-2);
+}
+
+.tk-theme {
+  display: flex;
+  align-items: center;
+  gap: var(--tk-sp-2);
+  min-height: var(--tk-target-min);
+  padding: var(--tk-sp-2) var(--tk-sp-3);
+  border: var(--tk-border-w) solid var(--tk-border);
+  border-radius: var(--tk-r-btn);
+  font: inherit;
+  font-size: var(--tk-fs-1);
+  text-align: start;
+  cursor: pointer;
+  transition: border-color var(--tk-t-base) var(--tk-e-out);
+}
+
+.tk-theme:hover {
+  border-color: var(--tk-border-strong);
+}
+
+.tk-theme:focus-visible {
+  outline: var(--tk-focus-w) solid var(--tk-renk-1);
+  outline-offset: var(--tk-focus-offset);
+  box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg-from);
+}
+
+.tk-theme:active {
+  transform: scale(var(--tk-scale-press));
+  border-color: var(--tk-renk-1);
+}
+
+.tk-theme[aria-checked='true'] {
+  border-color: var(--tk-renk-1);
+  box-shadow: inset 0 0 0 var(--tk-border-w) var(--tk-renk-1);
+}
+
+.tk-theme:disabled {
+  border-color: var(--tk-disabled);
+  cursor: not-allowed;
+}
+
+.tk-theme__dots {
+  display: inline-flex;
+  flex: none;
+  gap: var(--tk-sp-1);
+}
+
+.tk-theme__dot {
+  width: var(--tk-sp-2);
+  height: var(--tk-sp-2);
+  border-radius: 50%;
+}
+
+.tk-theme__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

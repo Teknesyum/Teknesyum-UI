@@ -443,6 +443,12 @@ function onCss() {
     '     carries no text. */\n' +
     rows.map(p => '  --tk-on-' + p.name + ': ' + h(p.on) + ';').join('\n') + '\n';
 }
+function tintCss() {
+  const tone = T.derived && T.derived['tone-scale'];
+  if (!tone) return '';
+  return '\n  /* Tone scale: each base at each step, as a fill. */\n' +
+    tone.bases.map(base => tone.steps.map(step => '  --tk-' + base + '-' + step + ': ' + rgba(base, step / 100) + ';').join('\n')).join('\n') + '\n';
+}
 function onXaml(indent) {
   const rows = onPairs().filter(p => p.on !== null);
   if (!rows.length) return '';
@@ -702,7 +708,7 @@ function emitCss() {
      \`title\`/\`ToolTip\` text is mandatory, plus \`cursor: not-allowed\` and, where
      possible, an icon. A merely dimmed control is an incomplete delivery. */
   --tk-disabled: ${h('disabled')};
-${onCss()}
+${onCss()}${tintCss()}
   --tk-border: ${rgba('border')};
   --tk-border-strong: ${rgba('border-strong')};
   --tk-border-decorative: ${rgba('border-decorative')};
@@ -833,6 +839,7 @@ ${Et.css(T)}
      and takes no brand colour. */
   --tk-shadow-panel: ${boxShadowCss('shadow-panel')};
   --tk-scrim: ${rgba('scrim')};
+  --tk-panel: ${rgba('panel')};
 }
 
 @property --tk-bg-angle {
@@ -899,7 +906,7 @@ ${bgSpec().rotate ? '  animation: tk-bg-rotate var(--tk-bg-rotate) linear infini
 
 /* --- surfaces --- */
 .tk-panel {
-  background: ${rgba('panel')};
+  background: var(--tk-panel);
   backdrop-filter: blur(var(--tk-glass-blur));
   border: var(--tk-border-w) solid var(--tk-border);
   border-radius: var(--tk-r);
@@ -913,7 +920,7 @@ ${bgSpec().rotate ? '  animation: tk-bg-rotate var(--tk-bg-rotate) linear infini
 :focus-visible {
   outline: var(--tk-focus-w) solid var(--tk-renk-1);
   outline-offset: var(--tk-focus-offset);
-  box-shadow: 0 0 0 var(--tk-focus-w) ${h('black')};
+  box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg-from);
   transition: none;
 }
 :focus:not(:focus-visible) { outline: none; }
@@ -956,7 +963,7 @@ ${bgSpec().rotate ? '  animation: tk-bg-rotate var(--tk-bg-rotate) linear infini
   border-color: var(--tk-renk-3-text);
   color: var(--tk-text);
 }
-.tk-btn-ghost:hover { background: ${rgba('renk-3', 0.1)}; color: var(--tk-on-renk-3-10); }
+.tk-btn-ghost:hover { background: var(--tk-renk-3-10); color: var(--tk-on-renk-3-10); }
 /* The disabled state does not end at dimming: \`title\` text is mandatory (§2). */
 .tk-btn:disabled {
   color: var(--tk-disabled);

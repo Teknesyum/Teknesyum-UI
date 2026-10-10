@@ -104,6 +104,13 @@ function copies() {
   const barDir = path.join(root, 'teknesyum-ui', 'ustcubuk');
   L.ok('ustcubuk writes TitleBar.tsx and titlebar.css', ['TitleBar.tsx', 'titlebar.css'].every((n) => fs.existsSync(path.join(barDir, n))));
 
+  L.ok('ustcubuk also writes ScaleSwitch.tsx', fs.existsSync(path.join(barDir, 'ScaleSwitch.tsx')));
+
+  const themes = scaffold(root, ['temalar']);
+  const themeDir = path.join(root, 'teknesyum-ui', 'temalar');
+  L.ok('scaffold temalar writes the theme code, the picker and the list', themes.status === 0 && ['theme.ts', 'ThemePicker.tsx', 'themepicker.css', 'themes.json'].every((n) => fs.existsSync(path.join(themeDir, n))), themes.stderr);
+  L.ok('temalar without a shelf lists the plugin themes, standard first', JSON.parse(fs.readFileSync(path.join(themeDir, 'themes.json'), 'utf8'))[0].id === 'standart' && /from the plugin/.test(themes.stdout));
+
   const sync = scaffold(root, ['durum']);
   L.ok('scaffold durum exits 0', sync.status === 0, sync.stderr);
   const syncDir = path.join(root, 'teknesyum-ui', 'durum');

@@ -36,6 +36,7 @@ type Props = {
   language?: ReactNode;
   version?: ReactNode;
   update?: ReactNode;
+  scale?: ReactNode;
   sync?: TitleBarSync;
   tabs?: TitleBarTab[];
   current?: string;
@@ -91,7 +92,7 @@ export function LangSwitch({ lang, label, onChange }: { lang: TitleBarLanguage; 
   );
 }
 
-export function TitleBar({ first, second, logo, links, labels, language, version, update, sync, tabs, current, maximized, onTab, onMinimize, onMaximize, onClose }: Props) {
+export function TitleBar({ first, second, logo, links, labels, language, version, update, scale, sync, tabs, current, maximized, onTab, onMinimize, onMaximize, onClose }: Props) {
   const toggle = maximized ? labels.restore ?? labels.maximize : labels.maximize;
   const open = (tabs ?? []).filter((t) => !t.disabled);
   const onKey = (e: KeyboardEvent<HTMLElement>) => {
@@ -147,6 +148,7 @@ export function TitleBar({ first, second, logo, links, labels, language, version
           </button>
         ) : null}
         {update ? <div className="tk-titlebar__update">{update}</div> : null}
+        {scale ? <div className="tk-titlebar__scale">{scale}</div> : null}
         {language ? <div className="tk-titlebar__language">{language}</div> : null}
         {links.sponsor ? (
           <a

@@ -658,6 +658,9 @@ function apply(answers) {
     fs.rmSync(stage, { recursive: true, force: true });
   }
 
+  const temalar = require('./tema').projeTazele(root);
+  if (temalar) lines.push((temalar.yazildi ? 'wrote  ' : 'kept   ') + 'teknesyum-ui/temalar/themes.json (' + temalar.sayi + ' themes)');
+
   cfg.installedAt = cfg.installedAt || new Date().toISOString();
   write(configFile(root), cfg);
 

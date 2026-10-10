@@ -139,6 +139,23 @@
   --tk-on-renk-3-50: #f2f3f6;
   --tk-on-renk-3-60: #f2f3f6;
 
+  /* Tone scale: each base at each step, as a fill. */
+  --tk-renk-1-10: rgba(90, 168, 255, 0.1);
+  --tk-renk-1-20: rgba(90, 168, 255, 0.2);
+  --tk-renk-1-30: rgba(90, 168, 255, 0.3);
+  --tk-renk-1-50: rgba(90, 168, 255, 0.5);
+  --tk-renk-1-60: rgba(90, 168, 255, 0.6);
+  --tk-renk-2-10: rgba(200, 46, 224, 0.1);
+  --tk-renk-2-20: rgba(200, 46, 224, 0.2);
+  --tk-renk-2-30: rgba(200, 46, 224, 0.3);
+  --tk-renk-2-50: rgba(200, 46, 224, 0.5);
+  --tk-renk-2-60: rgba(200, 46, 224, 0.6);
+  --tk-renk-3-10: rgba(148, 85, 234, 0.1);
+  --tk-renk-3-20: rgba(148, 85, 234, 0.2);
+  --tk-renk-3-30: rgba(148, 85, 234, 0.3);
+  --tk-renk-3-50: rgba(148, 85, 234, 0.5);
+  --tk-renk-3-60: rgba(148, 85, 234, 0.6);
+
   --tk-border: rgba(90, 168, 255, 0.55);
   --tk-border-strong: rgba(90, 168, 255, 0.7);
   --tk-border-decorative: rgba(90, 168, 255, 0.2);
@@ -287,6 +304,7 @@
      and takes no brand colour. */
   --tk-shadow-panel: 0 0 40px rgba(10, 11, 14, 0.8);
   --tk-scrim: rgba(10, 11, 14, 0.6);
+  --tk-panel: rgba(16, 17, 21, 0.96);
 }
 
 @property --tk-bg-angle {
@@ -353,7 +371,7 @@ body {
 
 /* --- surfaces --- */
 .tk-panel {
-  background: rgba(16, 17, 21, 0.96);
+  background: var(--tk-panel);
   backdrop-filter: blur(var(--tk-glass-blur));
   border: var(--tk-border-w) solid var(--tk-border);
   border-radius: var(--tk-r);
@@ -367,7 +385,7 @@ body {
 :focus-visible {
   outline: var(--tk-focus-w) solid var(--tk-renk-1);
   outline-offset: var(--tk-focus-offset);
-  box-shadow: 0 0 0 var(--tk-focus-w) #0a0b0e;
+  box-shadow: 0 0 0 var(--tk-focus-w) var(--tk-bg-from);
   transition: none;
 }
 :focus:not(:focus-visible) { outline: none; }
@@ -410,7 +428,7 @@ body {
   border-color: var(--tk-renk-3-text);
   color: var(--tk-text);
 }
-.tk-btn-ghost:hover { background: rgba(148, 85, 234, 0.1); color: var(--tk-on-renk-3-10); }
+.tk-btn-ghost:hover { background: var(--tk-renk-3-10); color: var(--tk-on-renk-3-10); }
 /* The disabled state does not end at dimming: `title` text is mandatory (§2). */
 .tk-btn:disabled {
   color: var(--tk-disabled);

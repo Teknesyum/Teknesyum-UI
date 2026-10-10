@@ -40,6 +40,9 @@ const HELP = [
   '                            Avalonia: TitleBar + KabukStilleri, needs the namespace',
   '  durum [<Namespace>]     update badge and panel into teknesyum-ui/durum',
   '      --avalonia | --electron | --react  flavour (default as above); Avalonia: GuncellemePaneli',
+  '  temalar                 theme list, role-to-token code and ThemePicker into teknesyum-ui/temalar (React);',
+  '                          themes.json comes from the private shelf (teknesyum-ui/temalar/temalar.json),',
+  '                          or from the shipped themes when the shelf has none; setup.js --apply refreshes it',
   '  ilerleme                progress bar into teknesyum-ui/ilerleme (React ProgressBar)',
   '      --electron          also main-process work.ts (ranged percent) and fstree.ts (async pooled copy/remove)',
   '      --tauri             also setup.rs (hidden launch)',
@@ -351,11 +354,23 @@ const TARGETS = {
   ustcubuk: (root, args, name) =>
     isAvalonia(root, args, 'react')
       ? avaloniaShell(root, 'ustcubuk', name)
-      : copies(root, 'ustcubuk', ['react/TitleBar.tsx', 'react/titlebar.css']).map((f) => ({
+      : copies(root, 'ustcubuk', ['react/TitleBar.tsx', 'react/ScaleSwitch.tsx', 'react/titlebar.css']).map((f) => ({
           ...f,
           to: f.to.replace(path.sep + 'react' + path.sep, path.sep),
         })),
   denetim: (root, args, name) => denetim(root, args, name),
+  temalar: (root) => {
+    const tema = require('./tema');
+    const o = tema.ortakListe(tema.projeTokenlari(root));
+    const plan = copies(root, 'temalar', ['react/theme.ts', 'react/ThemePicker.tsx', 'react/themepicker.css']).map((f) => ({
+      ...f,
+      to: f.to.replace(path.sep + 'react' + path.sep, path.sep),
+    }));
+    plan.push({ to: tema.projeListesi(root), text: tema.ortakMetin(o.liste) });
+    plan.note = '  themes.json: ' + o.liste.length + ' theme(s) from ' + (o.kaynak === 'raf' ? 'the private shelf' : 'the plugin') + '; the first one is the standard look\n' +
+      '  entry file, before render: applyStoredTheme(); settings: <ThemePicker value={id} onChange={(id) => applyTheme(id)} />';
+    return plan;
+  },
   ilerleme: (root, args) => {
     const names = ['react/ProgressBar.tsx', 'react/progressbar.css'];
     if (args.includes('--electron')) names.push('electron/work.ts', 'electron/fstree.ts');
@@ -393,7 +408,7 @@ function emit(root, plan) {
   return lines.join('\n');
 }
 
-const BOOKS = { kur: 'guncelleme-paneli', durum: 'guncelleme-paneli', ustcubuk: 'ui-duzeni' };
+const BOOKS = { kur: 'guncelleme-paneli', durum: 'guncelleme-paneli', ustcubuk: 'ui-duzeni', temalar: 'temalar' };
 
 function shelfNote(target) {
   const book = BOOKS[target];

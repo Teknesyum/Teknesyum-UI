@@ -7,5 +7,7 @@ Teknesyum-Base/
 ui/onizleme/ozel-ayar.json
 test/ekran/**/bin/
 test/ekran/**/obj/
+test/wpf/bin/
+test/wpf/obj/
 tmp/
 logs/openlogs/

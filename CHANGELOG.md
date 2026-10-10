@@ -5,6 +5,21 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.36.0] - 2026-10-10
+
+### Added
+
+- Theme switching while the app runs, for Avalonia and WPF: `scaffold.js temalar <Namespace> --avalonia` or `--wpf` writes `Temalar` (`Baslat`, `Uygula(id)`, `Degisti`, saved to `%AppData%/<Namespace>/tema.json`), the `TemaSecici` control and `TemaHesap`, the C# port of the role-to-token code. `themes.json` is embedded in the app. `--react` keeps the React flavour; without a flag an Avalonia project gets the Avalonia one.
+- WPF test harness in `test/wpf`: loads the generated theme, switches light, dark and back, and writes the screenshots.
+
+### Changed
+
+- WPF `Theme.xaml`, `States.xaml`, `Forms.xaml` and `Signature.xaml` read theme brushes with `DynamicResource`, so a new theme reaches every control. A WPF project's own XAML has to do the same for brushes.
+- The primary button text uses the `OnRenk1` pair in both generated themes.
+- `Güncelle` in the Avalonia update panel is a filled button (`Renk1` with `OnRenk1`, semi-bold).
+- The selected theme card carries an outer ring, a check mark and a semi-bold name, in React, Avalonia and WPF. The check mark keeps its place when hidden, so the cards do not move.
+- The `−` and `+` of the Avalonia scale control are larger and brighter.
+
 ## [0.35.0] - 2026-10-10
 
 ### Added

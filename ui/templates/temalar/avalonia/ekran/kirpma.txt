@@ -1,0 +1,2 @@
+bilesen: temalar  pencere: 848x480  dugme: 10  denetim: 50  tasma: 0
+dugmeler: Avalonia.Controls.Grid, Avalonia.Controls.Grid, Avalonia.Controls.Grid, Avalonia.Controls.Grid, Avalonia.Controls.Grid, Avalonia.Controls.Grid, Avalonia.Controls.Grid, Avalonia.Controls.Grid, Avalonia.Controls.Grid, Avalonia.Controls.Grid

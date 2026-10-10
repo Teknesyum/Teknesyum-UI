@@ -35,7 +35,7 @@ node <plugin>/scripts/raf.js <book>
 |---|---|
 | Any interface: colour, motion, forms, text, desktop window, verification, report | `ui-duzeni` |
 | Update, auto-update, sync surface, installer window | `guncelleme-paneli` |
-| Theme list, theme picker, light theme (`scaffold.js temalar`) | `temalar` |
+| Theme list, picker, light theme, switching while the app runs (`scaffold.js temalar [Ad] --react/--avalonia/--wpf`) | `temalar` |
 | README or repository document | `readme-protokolu` |
 | Which preference books exist | no argument, it lists them |
 

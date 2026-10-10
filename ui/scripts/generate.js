@@ -1346,7 +1346,7 @@ ${scrollBarXaml('Horizontal')}
 
   <Style x:Key="PrimaryButton" TargetType="Button">
     <Setter Property="Background" Value="{StaticResource Renk1}"/>
-    <Setter Property="Foreground" Value="Black"/>
+    <Setter Property="Foreground" Value="${onPrimary('StaticResource')}"/>
     <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
     <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
@@ -1661,7 +1661,7 @@ ${metricXaml('    ', 'sys:TimeSpan')}
          <Setter Property="RenderTransform"><ScaleTransform .../></Setter>. -->
     <ControlTheme x:Key="PrimaryButton" TargetType="Button">
       <Setter Property="Background" Value="{StaticResource Renk1}"/>
-      <Setter Property="Foreground" Value="Black"/>
+      <Setter Property="Foreground" Value="${onPrimary('StaticResource')}"/>
       <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
       <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
       <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
@@ -2078,9 +2078,19 @@ function xmlComments(text) {
     '<!--' + body.replace(/--(?=[a-z*])/gi, '').replace(/-{2,}/g, '-').replace(/-$/, '- ') + '-->');
 }
 
+function dynamicBrushes(text) {
+  const keys = new Set(['HeroGlow']);
+  for (const m of text.matchAll(/<(?:SolidColorBrush|LinearGradientBrush|DrawingBrush) x:Key="(\w+)"/g)) keys.add(m[1]);
+  return text.replace(/\b(Value|Background|BorderBrush|Foreground|Fill|Stroke)="\{StaticResource (\w+)\}"/g, (all, attr, key) =>
+    keys.has(key) ? attr + '="{DynamicResource ' + key + '}"' : all);
+}
+function onPrimary(kind) {
+  return T.on && T.on['renk-1'] && T.on['renk-1'].on ? '{' + kind + ' OnRenk1}' : 'Black';
+}
+
 const outputs = [
   ['theme.css', emitCss()],
-  ['Theme.xaml', xmlComments(emitXaml())],
+  ['Theme.xaml', dynamicBrushes(xmlComments(emitXaml()))],
   ['Theme.axaml', xmlComments(emitAxaml())],
   ['Palette.cs', emitPalette()],
   ...Et.DILLER.map(dil => ['labels.' + dil + '.json', JSON.stringify(Et.locale(T, dil), null, 2) + '\n'])

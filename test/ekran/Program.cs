@@ -21,6 +21,7 @@ var bilesenler = new (string klasor, Func<Control> yap, int genislik, int yuksek
     ("ustcubuk", () => Sahne.UstCubuk(), 1024, 640),
     ("durum", () => Sahne.Guncelleme(), 848, 640),
     ("kur", () => Sahne.Kurulum(), kurG, kurY),
+    ("temalar", () => Sahne.Secici(), 848, 480),
 };
 var durumlar = new (string ad, string[] sozde)[]
 {
@@ -80,6 +81,30 @@ foreach (var (klasor, yap, genislik, yukseklik) in bilesenler)
     File.WriteAllText(Path.Combine(cikti, "kirpma.txt"), sb.ToString(), new UTF8Encoding(false));
     Console.Write(sb.ToString());
     toplam += satirlar.Count;
+}
+{
+    var cikti = Path.Combine(kok, "ui", "templates", "temalar", "avalonia", "ekran");
+    var pencere = Sahne.Pencere(Sahne.TemaSahnesi(), 1024, 640);
+    pencere.Show();
+    Oturt();
+    var firca = (Avalonia.Media.SolidColorBrush)Sahne.Kaynak("Renk1")!;
+    var ilk = firca.Color;
+    var acik = Ekran.Kabuk.Temalar.Liste.First(t => Ekran.Kabuk.TemaHesap.AcikMi(t));
+    var koyu = Ekran.Kabuk.Temalar.Liste.Skip(1).First(t => !Ekran.Kabuk.TemaHesap.AcikMi(t));
+    Ekran.Kabuk.Temalar.Uygula(acik.Id, false);
+    Oturt();
+    pencere.CaptureRenderedFrame()?.Save(Path.Combine(cikti, "tema-acik.png"));
+    var acikRenk = firca.Color;
+    Ekran.Kabuk.Temalar.Uygula(koyu.Id, false);
+    Oturt();
+    pencere.CaptureRenderedFrame()?.Save(Path.Combine(cikti, "tema-koyu.png"));
+    Ekran.Kabuk.Temalar.Uygula(Ekran.Kabuk.Temalar.Liste[0].Id, false);
+    Oturt();
+    pencere.CaptureRenderedFrame()?.Save(Path.Combine(cikti, "tema-standart.png"));
+    var dondu = firca.Color == ilk;
+    pencere.Close();
+    Console.WriteLine($"tema: {Ekran.Kabuk.Temalar.Liste.Count} tema, acik={acik.Id} degisti={acikRenk != ilk} koyu={koyu.Id} standarta dondu={dondu}");
+    if (acikRenk == ilk || !dondu) toplam++;
 }
 Console.WriteLine("toplam tasma: " + toplam);
 return toplam == 0 ? 0 : 1;

@@ -9,13 +9,13 @@
     <Setter Property="Padding" Value="12"/>
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
     <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
-    <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
-    <Setter Property="Background" Value="{StaticResource Surface}"/>
-    <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
+    <Setter Property="Foreground" Value="{DynamicResource TextBody}"/>
+    <Setter Property="Background" Value="{DynamicResource Surface}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource BorderDefault}"/>
     <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
     <Setter Property="VerticalContentAlignment" Value="Center"/>
-    <Setter Property="CaretBrush" Value="{StaticResource Renk1}"/>
-    <Setter Property="SelectionBrush" Value="{StaticResource Renk1x30}"/>
+    <Setter Property="CaretBrush" Value="{DynamicResource Renk1}"/>
+    <Setter Property="SelectionBrush" Value="{DynamicResource Renk1x30}"/>
     <Setter Property="SelectionOpacity" Value="1"/>
     <!-- Varsayilan WPF hata anahati (kirmizi Adorner) KAPATILIR; palet disidir.
          Yerine asagidaki TkErrorTemplate cizer. -->
@@ -44,23 +44,23 @@
                 <Condition Property="IsEnabled" Value="True"/>
                 <Condition Property="IsReadOnly" Value="False"/>
               </MultiTrigger.Conditions>
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource BorderStrong}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource BorderStrong}"/>
             </MultiTrigger>
             <!-- odak. Halkayi FocusVisualStyle cizer (Theme.xaml, cift katman,
                  gecissiz); burada yalnizca cerceve guclenir. -->
             <Trigger Property="IsKeyboardFocused" Value="True">
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource BorderStrong}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource BorderStrong}"/>
             </Trigger>
             <Trigger Property="IsReadOnly" Value="True">
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource BorderDecorative}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource BorderDecorative}"/>
             </Trigger>
             <Trigger Property="Validation.HasError" Value="True">
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Danger}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource Danger}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
               <Setter TargetName="bd" Property="Background" Value="Transparent"/>
-              <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource Disabled}"/>
-              <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
+              <Setter TargetName="bd" Property="BorderBrush" Value="{DynamicResource Disabled}"/>
+              <Setter Property="Foreground" Value="{DynamicResource Disabled}"/>
               <Setter Property="Cursor" Value="No"/>
             </Trigger>
           </ControlTemplate.Triggers>
@@ -85,10 +85,10 @@
         <Path Width="{StaticResource IconSize2}" Height="{StaticResource IconSize2}" Stretch="Uniform"
               Margin="0,1,8,0"
               AutomationProperties.IsOffscreenBehavior="Offscreen"
-              Fill="{StaticResource DangerText}"
+              Fill="{DynamicResource DangerText}"
               Data="M8 1 L15 14 L1 14 Z M8 5.5 L8 10 M8 11.5 L8 12.5"/>
         <TextBlock Text="{Binding [0].ErrorContent}"
-                   Foreground="{StaticResource DangerText}"
+                   Foreground="{DynamicResource DangerText}"
                    FontFamily="{StaticResource FontSans}"
                    FontSize="{StaticResource FontSize1}"
                    TextWrapping="Wrap"/>
@@ -97,7 +97,7 @@
   </ControlTemplate>
 
   <Style x:Key="TkErrorText" TargetType="TextBlock">
-    <Setter Property="Foreground" Value="{StaticResource DangerText}"/>
+    <Setter Property="Foreground" Value="{DynamicResource DangerText}"/>
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
     <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
     <Setter Property="TextWrapping" Value="Wrap"/>
@@ -121,7 +121,7 @@
     <Setter Property="AllowsTransparency" Value="True"/>
     <Setter Property="Background" Value="Transparent"/>
     <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
-    <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
+    <Setter Property="Foreground" Value="{DynamicResource TextBody}"/>
     <Setter Property="KeyboardNavigation.TabNavigation" Value="Cycle"/>
   </Style>
 
@@ -167,7 +167,7 @@
   <SolidColorBrush x:Key="TkModalScrim" Color="#99000000"/>
 
   <Style x:Key="TkModalOverlay" TargetType="Grid">
-    <Setter Property="Background" Value="{StaticResource TkModalScrim}"/>
+    <Setter Property="Background" Value="{DynamicResource TkModalScrim}"/>
     <Setter Property="KeyboardNavigation.TabNavigation" Value="Cycle"/>
     <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Cycle"/>
     <Setter Property="KeyboardNavigation.ControlTabNavigation" Value="None"/>
@@ -201,7 +201,7 @@
     <Setter Property="Width" Value="{StaticResource ToastWidth}"/>
     <Setter Property="Margin" Value="0,12,0,0"/>
     <Setter Property="Padding" Value="12"/>
-    <Setter Property="TextElement.Foreground" Value="{StaticResource TextBody}"/>
+    <Setter Property="TextElement.Foreground" Value="{DynamicResource TextBody}"/>
     <Setter Property="TextElement.FontFamily" Value="{StaticResource FontSans}"/>
     <Setter Property="TextElement.FontSize" Value="{StaticResource FontSize1}"/>
     <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
@@ -213,25 +213,25 @@
   </Style>
 
   <Style x:Key="TkToastSuccess" TargetType="Border" BasedOn="{StaticResource TkToast}">
-    <Setter Property="BorderBrush" Value="{StaticResource Success}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Success}"/>
   </Style>
   <Style x:Key="TkToastWarning" TargetType="Border" BasedOn="{StaticResource TkToast}">
-    <Setter Property="BorderBrush" Value="{StaticResource Warning50}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Warning50}"/>
   </Style>
   <Style x:Key="TkToastDanger" TargetType="Border" BasedOn="{StaticResource TkToast}">
-    <Setter Property="BorderBrush" Value="{StaticResource Danger}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Danger}"/>
   </Style>
 
   <Style x:Key="TkToastTitleSuccess" TargetType="TextBlock">
-    <Setter Property="Foreground" Value="{StaticResource Success}"/>
+    <Setter Property="Foreground" Value="{DynamicResource Success}"/>
     <Setter Property="FontWeight" Value="SemiBold"/>
   </Style>
   <Style x:Key="TkToastTitleWarning" TargetType="TextBlock">
-    <Setter Property="Foreground" Value="{StaticResource Warning}"/>
+    <Setter Property="Foreground" Value="{DynamicResource Warning}"/>
     <Setter Property="FontWeight" Value="SemiBold"/>
   </Style>
   <Style x:Key="TkToastTitleDanger" TargetType="TextBlock">
-    <Setter Property="Foreground" Value="{StaticResource DangerText}"/>
+    <Setter Property="Foreground" Value="{DynamicResource DangerText}"/>
     <Setter Property="FontWeight" Value="SemiBold"/>
   </Style>
 
@@ -242,7 +242,7 @@
     <Setter Property="Height" Value="{StaticResource TargetMin}"/>
     <Setter Property="Background" Value="Transparent"/>
     <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
+    <Setter Property="Foreground" Value="{DynamicResource TextBody}"/>
     <Setter Property="Cursor" Value="Hand"/>
     <Setter Property="AutomationProperties.Name" Value="Bildirimi kapat"/>
     <Setter Property="Template">
@@ -256,7 +256,7 @@
           </Border>
           <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="ic" Property="Stroke" Value="{StaticResource Renk1}"/>
+              <Setter TargetName="ic" Property="Stroke" Value="{DynamicResource Renk1}"/>
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>

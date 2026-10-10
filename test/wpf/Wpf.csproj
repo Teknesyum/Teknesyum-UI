@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>WpfSinama</AssemblyName>
+    <RootNamespace>WpfSinama</RootNamespace>
+    <SablonAd>WpfSinama</SablonAd>
+    <TemaUret>true</TemaUret>
+  </PropertyGroup>
+
+  <Import Project="../ekran/Sablon.targets" />
+
+  <ItemGroup>
+    <SablonCs Include="$(Sablonlar)temalar/wpf/Temalar.cs" Cikti="$(SablonCikti)Kabuk/Temalar.cs" Link="Kabuk/Temalar.cs" />
+    <SablonCs Include="$(Sablonlar)temalar/wpf/TemaSecici.cs" Cikti="$(SablonCikti)Kabuk/TemaSecici.cs" Link="Kabuk/TemaSecici.cs" />
+    <SablonCs Include="$(Sablonlar)temalar/ortak/TemaHesap.cs" Cikti="$(SablonCikti)Kabuk/TemaHesap.cs" Link="Kabuk/TemaHesap.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="@(SablonCs->'%(Cikti)')" />
+    <Page Include="$(SablonCikti)ham/Theme.xaml" Link="Tema/Theme.xaml" />
+    <Page Include="$(KokDizin)ui/skills/teknesyum-ui/assets/States.xaml" Link="Tema/States.xaml" />
+    <EmbeddedResource Include="$(Sablonlar)temalar/react/themes.json" LogicalName="themes.json" />
+  </ItemGroup>
+
+</Project>

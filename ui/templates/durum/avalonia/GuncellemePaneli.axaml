@@ -69,6 +69,9 @@
     </ControlTheme>
 
     <ControlTheme x:Key="KurBirincil" TargetType="Button" BasedOn="{StaticResource KurIkincil}">
+      <Setter Property="Background" Value="{StaticResource Renk1}"/>
+      <Setter Property="Foreground" Value="{StaticResource OnRenk1}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightSemi}"/>
       <Setter Property="Template">
         <ControlTemplate TargetType="Button">
           <Border Name="bd"
@@ -91,6 +94,18 @@
           </Border>
         </ControlTemplate>
       </Setter>
+      <Style Selector="^:pointerover">
+        <Setter Property="Background" Value="{StaticResource Renk1}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk1}"/>
+      </Style>
+      <Style Selector="^:focus-visible">
+        <Setter Property="Background" Value="{StaticResource Renk1}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk1}"/>
+      </Style>
+      <Style Selector="^:pressed">
+        <Setter Property="Background" Value="{StaticResource Renk1}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk1}"/>
+      </Style>
       <Style Selector="^:pointerover /template/ Border#bd">
         <Setter Property="BoxShadow" Value="{DynamicResource KurParlamaGuclu}"/>
       </Style>

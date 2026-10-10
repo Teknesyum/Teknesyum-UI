@@ -59,7 +59,7 @@
     <Grid Background="Transparent">
     <StackPanel Orientation="Horizontal">
       <Canvas Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0">
-        <Path Stroke="{StaticResource LabelSupportBrush}" StrokeThickness="2" StrokeLineJoin="Round"
+        <Path Stroke="{DynamicResource LabelSupportBrush}" StrokeThickness="2" StrokeLineJoin="Round"
               StrokeStartLineCap="Round" StrokeEndLineCap="Round"
               Data="M2 4.5 H8.5 V8 A2 2 0 0 1 6.5 10 H4 A2 2 0 0 1 2 8 Z
                     M8.5 5.5 H9.25 A1.25 1.25 0 0 1 9.25 8 H8.5
@@ -67,13 +67,13 @@
       </Canvas>
       <TextBlock Style="{StaticResource SigText}">
         <Hyperlink NavigateUri="https://github.com/sponsors/Teknesyum"
-                   TextDecorations="None" Foreground="{StaticResource LabelSupportBrush}" FontSize="{StaticResource LabelSupportSize}" FontWeight="{StaticResource LabelSupportWeight}"
+                   TextDecorations="None" Foreground="{DynamicResource LabelSupportBrush}" FontSize="{StaticResource LabelSupportSize}" FontWeight="{StaticResource LabelSupportWeight}"
                    RequestNavigate="OnSignatureNavigate">
           <Run Text="{loc:Str sig.support}"/>
         </Hyperlink>
       </TextBlock>
     </StackPanel>
-    <Border Style="{StaticResource SigLine}" Background="{StaticResource LabelSupportBrush}"/>
+    <Border Style="{StaticResource SigLine}" Background="{DynamicResource LabelSupportBrush}"/>
     </Grid>
   </Border>
 
@@ -82,12 +82,12 @@
     <Grid Background="Transparent">
     <TextBlock Style="{StaticResource SigText}">
       <Hyperlink NavigateUri="https://github.com/Teknesyum"
-                 TextDecorations="None" Foreground="{StaticResource LabelBrandBrush}" FontSize="{StaticResource LabelBrandSize}" FontWeight="{StaticResource LabelBrandWeight}"
+                 TextDecorations="None" Foreground="{DynamicResource LabelBrandBrush}" FontSize="{StaticResource LabelBrandSize}" FontWeight="{StaticResource LabelBrandWeight}"
                  RequestNavigate="OnSignatureNavigate">
         <Run Text="{loc:Str sig.brand}"/>
       </Hyperlink>
     </TextBlock>
-    <Border Style="{StaticResource SigLine}" Background="{StaticResource LabelBrandBrush}"/>
+    <Border Style="{StaticResource SigLine}" Background="{DynamicResource LabelBrandBrush}"/>
     </Grid>
   </Border>
 </StackPanel>

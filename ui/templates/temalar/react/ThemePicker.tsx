@@ -58,6 +58,9 @@ export function ThemePicker({ value, label = 'Tema', themes = THEMES, disabled =
             ))}
           </span>
           <span className="tk-theme__name">{th.ad}</span>
+          <svg className="tk-theme__check" viewBox="0 0 11 9" aria-hidden="true" focusable="false">
+            <path d="M1 5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </button>
       ))}
     </div>

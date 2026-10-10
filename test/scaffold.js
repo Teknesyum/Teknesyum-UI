@@ -111,6 +111,27 @@ function copies() {
   L.ok('scaffold temalar writes the theme code, the picker and the list', themes.status === 0 && ['theme.ts', 'ThemePicker.tsx', 'themepicker.css', 'themes.json'].every((n) => fs.existsSync(path.join(themeDir, n))), themes.stderr);
   L.ok('temalar without a shelf lists the plugin themes, standard first', JSON.parse(fs.readFileSync(path.join(themeDir, 'themes.json'), 'utf8'))[0].id === 'standart' && /from the plugin/.test(themes.stdout));
 
+  for (const kind of ['avalonia', 'wpf']) {
+    const kok = L.tmp('tkui-tema-' + kind + '-');
+    const sonuc = scaffold(kok, ['temalar', 'Runly', '--' + kind]);
+    const dizin = path.join(kok, 'teknesyum-ui', 'temalar');
+    const beklenen = kind === 'avalonia' ? ['Temalar.cs', 'TemaSecici.axaml', 'TemaSecici.axaml.cs', 'TemaHesap.cs', 'themes.json'] : ['Temalar.cs', 'TemaSecici.cs', 'TemaHesap.cs', 'themes.json'];
+    L.ok('temalar --' + kind + ' writes the runtime switcher, the picker and the list', sonuc.status === 0 && beklenen.every((n) => fs.existsSync(path.join(dizin, n))), sonuc.stderr);
+    const kod = beklenen.filter((n) => n !== 'themes.json').map((n) => fs.readFileSync(path.join(dizin, n), 'utf8')).join('');
+    L.ok('temalar --' + kind + ' fills the namespace', !kod.includes('{{') && kod.includes('namespace Runly.Kabuk'));
+    L.ok('temalar --' + kind + ' tells how to embed the list', /EmbeddedResource.*LogicalName="themes.json"/.test(sonuc.stdout) && /Temalar\.Baslat\(\)/.test(sonuc.stdout));
+  }
+  const adsiz = scaffold(root, ['temalar', '--wpf']);
+  L.ok('temalar --wpf without a namespace is refused', adsiz.status !== 0 && /needs the application namespace/.test(adsiz.stderr + adsiz.stdout));
+
+  const hesap = fs.readFileSync(path.join(__dirname, '..', 'ui', 'templates', 'temalar', 'ortak', 'TemaHesap.cs'), 'utf8');
+  const anahtarlar = [...new Set([...hesap.matchAll(/\["([A-Za-z0-9]+)"\]\s*=/g)].map((m) => m[1]))];
+  const varlik = (n) => fs.readFileSync(path.join(__dirname, '..', 'ui', 'skills', 'teknesyum-ui', 'assets', n), 'utf8');
+  for (const [ad, metin] of [['Avalonia', varlik('Theme.axaml')], ['WPF', varlik('Theme.xaml') + varlik('Forms.xaml')]]) {
+    const eksik = anahtarlar.filter((k) => !metin.includes('x:Key="' + k + '"') && !(ad === 'Avalonia' && k === 'TkModalScrim'));
+    L.ok('every literal resource key TemaHesap writes exists in the ' + ad + ' theme', anahtarlar.length > 10 && eksik.length === 0, eksik.join(' '));
+  }
+
   const sync = scaffold(root, ['durum']);
   L.ok('scaffold durum exits 0', sync.status === 0, sync.stderr);
   const syncDir = path.join(root, 'teknesyum-ui', 'durum');

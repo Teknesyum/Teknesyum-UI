@@ -41,6 +41,11 @@
     <Style Selector="Border#OlcekAnahtari Button#OlcekDeger">
       <Setter Property="Foreground" Value="{StaticResource OnRenk1x10}"/>
     </Style>
+    <Style Selector="Border#OlcekAnahtari Button#OlcekEksi, Border#OlcekAnahtari Button#OlcekArti">
+      <Setter Property="Foreground" Value="{StaticResource OnRenk1x10}"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize3}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightHero}"/>
+    </Style>
     <Style Selector="Border#OlcekAnahtari Button:disabled /template/ ContentPresenter">
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="Foreground" Value="{StaticResource Disabled}"/>

@@ -24,6 +24,23 @@ public static class Sahne
     public static GuncellemePaneli Guncelleme() =>
         new() { Logo = Logo(), Surum = "1.4.0", Durum = GuncellemeDurumu.Var };
 
+    public static TemaSecici Secici() =>
+        new() { Margin = new Thickness((double)Kaynak("Space4")!), HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top };
+
+    public static Control TemaSahnesi()
+    {
+        var ust = UstCubuk();
+        var secici = Secici();
+        var panel = Guncelleme();
+        var dock = new DockPanel();
+        DockPanel.SetDock(ust, Dock.Top);
+        DockPanel.SetDock(secici, Dock.Top);
+        dock.Children.Add(ust);
+        dock.Children.Add(secici);
+        dock.Children.Add(panel);
+        return dock;
+    }
+
     public static KurulumEkrani Kurulum()
     {
         var k = new KurulumEkrani { Ad = "DustyBytes", KurulumYeri = @"C:\Users\ornek\AppData\Local\Programs\DustyBytes" };

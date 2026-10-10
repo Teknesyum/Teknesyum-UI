@@ -32,6 +32,10 @@
     <SablonCs Include="$(Sablonlar)durum/avalonia/SurumDugmesi.cs" Cikti="$(SablonCikti)Kabuk/SurumDugmesi.cs" Link="Kabuk/SurumDugmesi.cs" />
     <SablonCs Include="$(Sablonlar)durum/avalonia/GuncellemePaneli.axaml.cs" Cikti="$(SablonCikti)Kabuk/GuncellemePaneli.axaml.cs" Link="Kabuk/GuncellemePaneli.axaml.cs" />
     <SablonCs Include="$(Sablonlar)kur/avalonia/KurulumEkrani.axaml.cs" Cikti="$(SablonCikti)Kabuk/KurulumEkrani.axaml.cs" Link="Kabuk/KurulumEkrani.axaml.cs" />
+    <SablonXaml Include="$(Sablonlar)temalar/avalonia/TemaSecici.axaml" Cikti="$(SablonCikti)Kabuk/TemaSecici.axaml" Link="Kabuk/TemaSecici.axaml" />
+    <SablonCs Include="$(Sablonlar)temalar/avalonia/TemaSecici.axaml.cs" Cikti="$(SablonCikti)Kabuk/TemaSecici.axaml.cs" Link="Kabuk/TemaSecici.axaml.cs" />
+    <SablonCs Include="$(Sablonlar)temalar/avalonia/Temalar.cs" Cikti="$(SablonCikti)Kabuk/Temalar.cs" Link="Kabuk/Temalar.cs" />
+    <SablonCs Include="$(Sablonlar)temalar/ortak/TemaHesap.cs" Cikti="$(SablonCikti)Kabuk/TemaHesap.cs" Link="Kabuk/TemaHesap.cs" />
     <SablonCs Include="$(Sablonlar)denetim/avalonia/KabukTests.cs" Cikti="$(SablonCikti)Denetim/KabukTests.cs" Link="Denetim/KabukTests.cs" />
   </ItemGroup>
 
@@ -39,6 +43,7 @@
     <AvaloniaXaml Include="@(SablonXaml->'%(Cikti)')" />
     <Compile Include="@(SablonCs->'%(Cikti)')" />
     <AvaloniaXaml Include="$(SablonCikti)Tema/Theme.axaml" Link="Tema/Theme.axaml" />
+    <EmbeddedResource Include="$(Sablonlar)temalar/react/themes.json" LogicalName="themes.json" />
     <AvaloniaResource Include="$(KokDizin)ui/fonts/*.ttf" Link="Assets/Fonts/%(Filename)%(Extension)" />
   </ItemGroup>
 

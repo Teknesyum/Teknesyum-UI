@@ -40,7 +40,9 @@ const HELP = [
   '                            Avalonia: TitleBar + KabukStilleri, needs the namespace',
   '  durum [<Namespace>]     update badge and panel into teknesyum-ui/durum',
   '      --avalonia | --electron | --react  flavour (default as above); Avalonia: GuncellemePaneli',
-  '  temalar                 theme list, role-to-token code and ThemePicker into teknesyum-ui/temalar (React);',
+  '  temalar [<Namespace>]   theme list, role-to-token code and the picker into teknesyum-ui/temalar;',
+  '      --react | --avalonia | --wpf  flavour (default: avalonia when the project has .axaml, else React);',
+  '                          Avalonia and WPF switch the theme while the app runs and need the namespace;',
   '                          themes.json comes from the private shelf (teknesyum-ui/temalar/temalar.json),',
   '                          or from the shipped themes when the shelf has none; setup.js --apply refreshes it',
   '  ilerleme                progress bar into teknesyum-ui/ilerleme (React ProgressBar)',
@@ -336,6 +338,34 @@ function avaloniaShell(root, target, ns) {
   return plan;
 }
 
+const TEMA_FILES = {
+  avalonia: ['avalonia/Temalar.cs', 'avalonia/TemaSecici.axaml', 'avalonia/TemaSecici.axaml.cs', 'ortak/TemaHesap.cs'],
+  wpf: ['wpf/Temalar.cs', 'wpf/TemaSecici.cs', 'ortak/TemaHesap.cs'],
+};
+
+function temaShell(root, kind, ns, tema, o) {
+  if (!ns || !IDENT.test(ns)) throw new Error('temalar --' + kind + ' needs the application namespace as a C# name, e.g. temalar Runly --' + kind);
+  const plan = TEMA_FILES[kind].map((n) => ({
+    to: path.join(root, 'teknesyum-ui', 'temalar', path.basename(n)),
+    text: fill(template('temalar/' + n), { AD: ns }),
+    crlf: true,
+  }));
+  plan.push({ to: tema.projeListesi(root), text: tema.ortakMetin(o.liste) });
+  const dir = '../teknesyum-ui/temalar';
+  plan.note = [
+    '  themes.json: ' + o.liste.length + ' theme(s) from ' + (o.kaynak === 'raf' ? 'the private shelf' : 'the plugin') + '; the first one is the standard look',
+    'link into the app .csproj (paths relative to it):',
+    kind === 'avalonia' ? '  <AvaloniaXaml Include="' + dir + '/*.axaml" Link="Kabuk/%(Filename)%(Extension)" />' : null,
+    '  <Compile Include="' + dir + '/*.cs" Link="Kabuk/%(Filename)%(Extension)" />',
+    '  <EmbeddedResource Include="' + dir + '/themes.json" LogicalName="themes.json" />',
+    'at start-up, after the theme resources load: Temalar.Baslat(); settings page: new TemaSecici(); from code: Temalar.Uygula(id)',
+    kind === 'wpf'
+      ? 'WPF freezes brushes: your own XAML reads theme brushes with {DynamicResource Renk1}, not StaticResource; regenerate Theme.xaml and copy the new States.xaml, Forms.xaml, Signature.xaml'
+      : 'Avalonia: brushes change in place, {StaticResource Renk1} keeps working; a colour written as a literal does not follow the theme',
+  ].filter(Boolean).join('\n');
+  return plan;
+}
+
 function kurAll(root, args, name) {
   const plan = kur(root, args, name);
   if (!args.includes('--avalonia')) return plan;
@@ -359,9 +389,11 @@ const TARGETS = {
           to: f.to.replace(path.sep + 'react' + path.sep, path.sep),
         })),
   denetim: (root, args, name) => denetim(root, args, name),
-  temalar: (root) => {
+  temalar: (root, args, name) => {
     const tema = require('./tema');
     const o = tema.ortakListe(tema.projeTokenlari(root));
+    const kind = args.includes('--wpf') ? 'wpf' : args.includes('--react') ? 'react' : isAvalonia(root, args, 'react') ? 'avalonia' : 'react';
+    if (kind !== 'react') return temaShell(root, kind, name, tema, o);
     const plan = copies(root, 'temalar', ['react/theme.ts', 'react/ThemePicker.tsx', 'react/themepicker.css']).map((f) => ({
       ...f,
       to: f.to.replace(path.sep + 'react' + path.sep, path.sep),

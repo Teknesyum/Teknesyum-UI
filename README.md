@@ -68,6 +68,15 @@ one. What it does not do is keep ten projects on the same layout for months. Thi
 
 ## Install
 
+**Recommended on Windows: Teknesyum Base.**
+
+1. Download [`Teknesyum-Base.exe`](https://github.com/Teknesyum/Teknesyum-Base/releases/latest/download/Teknesyum-Base.exe) ([`.sha256`](https://github.com/Teknesyum/Teknesyum-Base/releases/latest/download/Teknesyum-Base.exe.sha256)) and run it. No admin rights are needed.
+2. Find **Teknesyum UI** in the list and install it. Base also updates and removes it later.
+
+Base is not code-signed yet, so Windows SmartScreen may warn on first launch: choose *More info*, then *Run anyway*. More: [Teknesyum Base](https://github.com/Teknesyum/Teknesyum-Base).
+
+**Other platforms, or manually:**
+
 ```bash
 /plugin marketplace add Teknesyum/Teknesyum-Core
 ```

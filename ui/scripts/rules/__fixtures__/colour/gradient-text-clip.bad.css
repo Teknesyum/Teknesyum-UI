@@ -1,0 +1,7 @@
+.hero-title {
+  background-image: linear-gradient(90deg, var(--tk-renk-1), var(--tk-renk-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1.1;
+}

@@ -26,7 +26,6 @@ Follow what either one says before continuing the user's request.
 
 The written standard is not in this file. It lives on the owner's private shelf and is
 read on demand:
-
 ```
 node <plugin>/scripts/raf.js <book>
 ```
@@ -36,6 +35,7 @@ node <plugin>/scripts/raf.js <book>
 | Any interface: colour, motion, forms, text, desktop window, verification, report | `ui-duzeni` |
 | Update, auto-update, sync surface, installer window | `guncelleme-paneli` |
 | Theme list, picker, light theme, switching while the app runs (`scaffold.js temalar [Ad] --react/--avalonia/--wpf`) | `temalar` |
+| "Bize ulaşın", feedback, bug report from inside the app (`scaffold.js bildirim [Ad] --react/--avalonia/--wpf`) | `bildirim` |
 | README or repository document | `readme-protokolu` |
 | Which preference books exist | no argument, it lists them |
 

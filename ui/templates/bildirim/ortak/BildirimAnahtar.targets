@@ -1,0 +1,27 @@
+<!-- teknesyum-ui template bildirim/ortak/BildirimAnahtar.targets -->
+<Project>
+
+  <Target Name="BildirimAnahtariYaz" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <_BildirimAnahtari>$(TEKNESYUM_BILDIRIM_KEY.Trim())</_BildirimAnahtari>
+      <BildirimAnahtarDosyasi>$(IntermediateOutputPath)BildirimAnahtar.g.cs</BildirimAnahtarDosyasi>
+    </PropertyGroup>
+    <Error Condition="$(_BildirimAnahtari.Length) &lt; 61"
+           Text="TEKNESYUM_BILDIRIM_KEY is not set (or too short). The build stops: a release without the key cannot send feedback." />
+    <PropertyGroup>
+      <_BildirimP1>$(_BildirimAnahtari.Substring(0, 13))</_BildirimP1>
+      <_BildirimP2>$(_BildirimAnahtari.Substring(13, 17))</_BildirimP2>
+      <_BildirimP3>$(_BildirimAnahtari.Substring(30, 19))</_BildirimP3>
+      <_BildirimP4>$(_BildirimAnahtari.Substring(49))</_BildirimP4>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(BildirimAnahtarDosyasi)"
+                      Lines="namespace {{AD}}.Kabuk { static class BildirimAnahtar { internal static readonly string[] Parcalar = { &quot;$(_BildirimP1)&quot;, &quot;$(_BildirimP2)&quot;, &quot;$(_BildirimP3)&quot;, &quot;$(_BildirimP4)&quot; }%3B } }"
+                      Overwrite="true"
+                      WriteOnlyWhenDifferent="true" />
+    <ItemGroup>
+      <Compile Include="$(BildirimAnahtarDosyasi)" />
+      <FileWrites Include="$(BildirimAnahtarDosyasi)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

@@ -947,6 +947,44 @@ const lineHeightDeclared = {
   },
 };
 
+const CLIP_TEXT = /(?:^|[;{\s])(?:-webkit-)?background-clip\s*:\s*text\b/i;
+const CLIP_LINE_MIN = 1.25;
+const CLIP_TAILWIND = /\bbg-clip-text\b/;
+const CLIP_TIGHT = /\bleading-(?:none|tight|snug|\[(0?\.\d+|1(?:\.[01]\d*|\.2[0-4]?\d*)?)\])(?![\w-])/;
+const CLIP_PAD = /(?:^|[\s"'`:])p[by]?-(?!0\b)[\w.[\]-]+/;
+
+const gradientTextClip = {
+  id: 'gradient-text-clip',
+  severity: 'warn',
+  exts: STYLE.concat(['.tsx', '.jsx']),
+  check(file, text) {
+    if (isTokenFile(file)) return [];
+    if (STYLE.indexOf(extOf(file)) < 0) {
+      const out = [];
+      lines(text).forEach((line, i) => {
+        if (!CLIP_TAILWIND.test(line) || !CLIP_TIGHT.test(line) || CLIP_PAD.test(line)) return;
+        out.push({
+          line: i + 1,
+          message: 'bg-clip-text with a tight line height clips g, y, p, ç, ş: use leading-[1.3] or add bottom padding',
+        });
+      });
+      return out;
+    }
+    return selectorFinding(file, text, STYLE, (block, out) => {
+      if (!CLIP_TEXT.test(block.body)) return;
+      const height = decl(block.body, 'line-height');
+      if (height === null || !/^\d*\.?\d+$/.test(height) || Number(height) >= CLIP_LINE_MIN) return;
+      const pad = decl(block.body, 'padding-bottom') || decl(block.body, 'padding-block-end') || decl(block.body, 'padding-block');
+      if (pad !== null && !/^0[a-z%]*$/i.test(pad)) return;
+      out.push({
+        line: lineOf(block, 'line-height'),
+        message:
+          'background-clip: text with line-height ' + height + ' clips g, y, p, ç, ş: use 1.3 or more, or padding-bottom of at least 0.12em',
+      });
+    });
+  },
+};
+
 const wpfLineStacking = {
   id: 'wpf-line-stacking',
   severity: 'error',
@@ -1092,6 +1130,7 @@ module.exports = {
     minFontSize,
     heroWeight,
     lineHeightDeclared,
+    gradientTextClip,
     wpfLineStacking,
     monoDataNumbers,
     uppercaseLabel,

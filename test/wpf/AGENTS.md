@@ -10,5 +10,7 @@ regenerated from `ui/templates/neon.tokens.json` with `ui/scripts/generate.js`.
   `tema-{standart,acik,koyu}.png` to `ui/templates/temalar/wpf/ekran/`.
 - The last line reads `tema: N tema, acik=... degisti=True ... standarta dondu=True`;
   exit code 1 when a brush does not change or does not come back.
+- The feedback form (`ui/templates/bildirim/wpf`) sends through a stub with the fake key in
+  `BildirimAnahtar.cs` and writes `dinlenik`, `hata`, `ulasti` PNGs; last line `bildirim: ... tamam=True`.
 - `Forms.xaml` is left out: it does not compile on its own (`MC1000` at the
   `StaticResource` alias on line 5).

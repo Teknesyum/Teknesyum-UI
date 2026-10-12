@@ -1,0 +1,139 @@
+<!-- teknesyum-ui template bildirim/avalonia/BizeUlasin.axaml -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="{{AD}}.Kabuk.BizeUlasin"
+             ClipToBounds="False">
+
+  <UserControl.Resources>
+    <StaticResource x:Key="TextControlBackground" ResourceKey="Surface"/>
+    <StaticResource x:Key="TextControlBackgroundPointerOver" ResourceKey="Surface"/>
+    <StaticResource x:Key="TextControlBackgroundFocused" ResourceKey="Surface"/>
+    <StaticResource x:Key="TextControlBackgroundDisabled" ResourceKey="Surface"/>
+    <StaticResource x:Key="TextControlForeground" ResourceKey="TextBody"/>
+    <StaticResource x:Key="TextControlForegroundPointerOver" ResourceKey="TextBody"/>
+    <StaticResource x:Key="TextControlForegroundFocused" ResourceKey="TextBody"/>
+    <StaticResource x:Key="TextControlForegroundDisabled" ResourceKey="Disabled"/>
+    <StaticResource x:Key="TextControlBorderBrush" ResourceKey="BorderDefault"/>
+    <StaticResource x:Key="TextControlBorderBrushPointerOver" ResourceKey="BorderStrong"/>
+    <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="Renk1"/>
+    <StaticResource x:Key="TextControlBorderBrushDisabled" ResourceKey="Disabled"/>
+    <StaticResource x:Key="TextControlSelectionHighlightColor" ResourceKey="Renk1x30"/>
+
+    <ControlTheme x:Key="BildirimIkincil" TargetType="Button">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
+      <Setter Property="BorderBrush" Value="{StaticResource BorderDefault}"/>
+      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+      <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize1}"/>
+      <Setter Property="FontWeight" Value="{StaticResource WeightBody}"/>
+      <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
+      <Setter Property="MinHeight" Value="{StaticResource TargetMin}"/>
+      <Setter Property="MinWidth" Value="{StaticResource TargetMin}"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Template">
+        <ControlTemplate TargetType="Button">
+          <Border Name="bd"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="{TemplateBinding CornerRadius}"
+                  Padding="{TemplateBinding Padding}">
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+      <Style Selector="^:pointerover">
+        <Setter Property="BorderBrush" Value="{StaticResource BorderStrong}"/>
+        <Setter Property="Background" Value="{StaticResource Renk1x10}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk1x10}"/>
+      </Style>
+      <Style Selector="^:focus-visible">
+        <Setter Property="BorderBrush" Value="{StaticResource BorderStrong}"/>
+        <Setter Property="Background" Value="{StaticResource Renk1x10}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk1x10}"/>
+      </Style>
+      <Style Selector="^:pressed">
+        <Setter Property="BorderBrush" Value="{StaticResource Renk1}"/>
+        <Setter Property="Background" Value="{StaticResource Renk1x10}"/>
+        <Setter Property="Foreground" Value="{StaticResource OnRenk1x10}"/>
+      </Style>
+      <Style Selector="^:disabled">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Disabled}"/>
+        <Setter Property="Foreground" Value="{StaticResource Disabled}"/>
+        <Setter Property="Cursor" Value="No"/>
+      </Style>
+    </ControlTheme>
+  </UserControl.Resources>
+
+  <UserControl.Styles>
+    <Style Selector="TextBox">
+      <Setter Property="FontFamily" Value="{StaticResource FontSans}"/>
+      <Setter Property="FontSize" Value="{StaticResource FontSize2}"/>
+      <Setter Property="Padding" Value="{StaticResource InputPadding}"/>
+      <Setter Property="MinHeight" Value="{StaticResource InputHeight}"/>
+      <Setter Property="CornerRadius" Value="{StaticResource Radius}"/>
+      <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}"/>
+      <Setter Property="CaretBrush" Value="{StaticResource TextBody}"/>
+      <Setter Property="ToolTip.ShowOnDisabled" Value="True"/>
+    </Style>
+    <Style Selector="Button">
+      <Setter Property="ToolTip.ShowOnDisabled" Value="True"/>
+    </Style>
+    <Style Selector="TextBlock#DurumYazisi">
+      <Setter Property="Foreground" Value="{StaticResource TextBody}"/>
+    </Style>
+    <Style Selector="TextBlock#DurumYazisi.ulasti">
+      <Setter Property="Foreground" Value="{StaticResource Success}"/>
+    </Style>
+    <Style Selector="TextBlock#DurumYazisi.hata">
+      <Setter Property="Foreground" Value="{StaticResource DangerText}"/>
+    </Style>
+  </UserControl.Styles>
+
+  <StackPanel Spacing="{StaticResource FieldStack}" ClipToBounds="False">
+
+    <TextBlock Name="BaslikYazisi" Theme="{StaticResource H2}"/>
+
+    <StackPanel Spacing="{StaticResource FieldGap}">
+      <TextBlock Name="NotEtiketi" Theme="{StaticResource Label}"/>
+      <TextBox Name="NotKutusu" AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top"
+               AutomationProperties.LabeledBy="{Binding #NotEtiketi}"/>
+      <TextBlock Name="NotIpucuYazisi" Theme="{StaticResource Hint}" TextWrapping="Wrap"/>
+    </StackPanel>
+
+    <StackPanel Spacing="{StaticResource FieldGap}">
+      <TextBlock Name="IletisimEtiketi" Theme="{StaticResource Label}"/>
+      <TextBox Name="IletisimKutusu" AutomationProperties.LabeledBy="{Binding #IletisimEtiketi}"/>
+      <TextBlock Name="IletisimIpucuYazisi" Theme="{StaticResource Hint}" TextWrapping="Wrap"/>
+    </StackPanel>
+
+    <WrapPanel Orientation="Horizontal" ClipToBounds="False">
+      <Button Name="GoruntuEkleDugmesi" Theme="{StaticResource BildirimIkincil}"
+              AutomationProperties.Name="{Binding $self.Content}"/>
+      <Button Name="GoruntuKaldirDugmesi" Theme="{StaticResource BildirimIkincil}" IsVisible="False"
+              AutomationProperties.Name="{Binding $self.Content}"/>
+      <TextBlock Name="GoruntuYazisi" Theme="{StaticResource Hint}" VerticalAlignment="Center" TextWrapping="Wrap"
+                 AutomationProperties.LiveSetting="Polite"/>
+    </WrapPanel>
+
+    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{StaticResource Space3}" ClipToBounds="False">
+      <TextBlock Name="DurumYazisi" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top"
+                 FontFamily="{StaticResource FontSans}" FontSize="{StaticResource FontSize1}"
+                 AutomationProperties.LiveSetting="Polite"/>
+      <Button Name="GonderDugmesi" Grid.Column="1" Theme="{StaticResource PrimaryButton}" VerticalAlignment="Top"
+              AutomationProperties.Name="{Binding $self.Content}"/>
+    </Grid>
+
+  </StackPanel>
+</UserControl>

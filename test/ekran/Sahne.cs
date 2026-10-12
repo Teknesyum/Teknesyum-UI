@@ -27,6 +27,9 @@ public static class Sahne
     public static TemaSecici Secici() =>
         new() { Margin = new Thickness((double)Kaynak("Space4")!), HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top };
 
+    public static BizeUlasin Ulasin() =>
+        new() { Uygulama = "Dusty Bytes", Surum = "1.4.0", Width = (double)Kaynak("ModalWidth")!, Margin = new Thickness((double)Kaynak("Space4")!), HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top };
+
     public static Control TemaSahnesi()
     {
         var ust = UstCubuk();

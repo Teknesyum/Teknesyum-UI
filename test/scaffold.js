@@ -124,6 +124,30 @@ function copies() {
   const adsiz = scaffold(root, ['temalar', '--wpf']);
   L.ok('temalar --wpf without a namespace is refused', adsiz.status !== 0 && /needs the application namespace/.test(adsiz.stderr + adsiz.stdout));
 
+  const BILDIRIM = {
+    react: ['bildirim.ts', 'BizeUlasin.tsx', 'bizeulasin.css', 'bildirim-anahtar.mjs', '.gitignore'],
+    avalonia: ['Bildirim.cs', 'BildirimAnahtar.targets', 'BizeUlasin.axaml', 'BizeUlasin.axaml.cs', 'Goruntu.cs'],
+    wpf: ['Bildirim.cs', 'BildirimAnahtar.targets', 'BizeUlasin.cs', 'Goruntu.cs'],
+  };
+  for (const kind of Object.keys(BILDIRIM)) {
+    const kok = L.tmp('tkui-bildirim-' + kind + '-');
+    const sonuc = scaffold(kok, ['bildirim', 'Runly', '--' + kind, '--depo', 'acme/geri']);
+    const dizin = path.join(kok, 'teknesyum-ui', 'bildirim');
+    L.ok('bildirim --' + kind + ' writes the form and the sender', sonuc.status === 0 && BILDIRIM[kind].every((n) => fs.existsSync(path.join(dizin, n))), sonuc.stderr);
+    const hepsi = BILDIRIM[kind].map((n) => fs.readFileSync(path.join(dizin, n), 'utf8')).join('\n');
+    L.ok('bildirim --' + kind + ' fills the repository and the namespace', !hepsi.includes('{{') && hepsi.includes('api.github.com/repos/acme/geri/issues'));
+    L.ok('bildirim --' + kind + ' never links a public issue page and carries no key', !/issues\/new/.test(hepsi) && !/github_pat_/.test(hepsi));
+    L.ok('bildirim --' + kind + ' says the build stops without the key', /TEKNESYUM_BILDIRIM_KEY/.test(sonuc.stdout));
+  }
+  const deposuz = scaffold(L.tmp('tkui-bildirim-x-'), ['bildirim', '--react', '--depo', 'geri']);
+  L.ok('bildirim refuses a repository that is not owner/repo', deposuz.status !== 0 && /owner\/repo/.test(deposuz.stderr + deposuz.stdout));
+  const adsizBildirim = scaffold(L.tmp('tkui-bildirim-y-'), ['bildirim', '--avalonia', '--depo', 'acme/geri']);
+  L.ok('bildirim --avalonia without a namespace is refused', adsizBildirim.status !== 0 && /needs the application namespace/.test(adsizBildirim.stderr + adsizBildirim.stdout));
+  const sablon = (n) => fs.readFileSync(path.join(__dirname, '..', 'ui', 'templates', 'bildirim', n), 'utf8');
+  L.ok('the three feedback forms carry the same Turkish texts', ['Bize ulaşın', 'Yeniden dene', 'Bildirimin ulaştı; görüntü eklenemedi.', 'Göndermek için önce notunu yaz.'].every((t) => sablon('react/BizeUlasin.tsx').includes(t) && sablon('ortak/Bildirim.cs').includes(t)));
+  L.ok('the image comment has the same fence in both senders', sablon('react/bildirim.ts').includes('```teknesyum-goruntu image/jpeg') && sablon('ortak/Bildirim.cs').includes('```teknesyum-goruntu image/jpeg'));
+  L.ok('the key target stops the build when the key is missing', /<Error Condition=/.test(sablon('ortak/BildirimAnahtar.targets')) && /process\.exit\(1\)|process\.exitCode = 1/.test(sablon('react/bildirim-anahtar.mjs')));
+
   const hesap = fs.readFileSync(path.join(__dirname, '..', 'ui', 'templates', 'temalar', 'ortak', 'TemaHesap.cs'), 'utf8');
   const anahtarlar = [...new Set([...hesap.matchAll(/\["([A-Za-z0-9]+)"\]\s*=/g)].map((m) => m[1]))];
   const varlik = (n) => fs.readFileSync(path.join(__dirname, '..', 'ui', 'skills', 'teknesyum-ui', 'assets', n), 'utf8');

@@ -36,6 +36,10 @@
     <SablonCs Include="$(Sablonlar)temalar/avalonia/TemaSecici.axaml.cs" Cikti="$(SablonCikti)Kabuk/TemaSecici.axaml.cs" Link="Kabuk/TemaSecici.axaml.cs" />
     <SablonCs Include="$(Sablonlar)temalar/avalonia/Temalar.cs" Cikti="$(SablonCikti)Kabuk/Temalar.cs" Link="Kabuk/Temalar.cs" />
     <SablonCs Include="$(Sablonlar)temalar/ortak/TemaHesap.cs" Cikti="$(SablonCikti)Kabuk/TemaHesap.cs" Link="Kabuk/TemaHesap.cs" />
+    <SablonXaml Include="$(Sablonlar)bildirim/avalonia/BizeUlasin.axaml" Cikti="$(SablonCikti)Kabuk/BizeUlasin.axaml" Link="Kabuk/BizeUlasin.axaml" />
+    <SablonCs Include="$(Sablonlar)bildirim/avalonia/BizeUlasin.axaml.cs" Cikti="$(SablonCikti)Kabuk/BizeUlasin.axaml.cs" Link="Kabuk/BizeUlasin.axaml.cs" />
+    <SablonCs Include="$(Sablonlar)bildirim/avalonia/Goruntu.cs" Cikti="$(SablonCikti)Kabuk/Goruntu.cs" Link="Kabuk/Goruntu.cs" />
+    <SablonCs Include="$(Sablonlar)bildirim/ortak/Bildirim.cs" Cikti="$(SablonCikti)Kabuk/Bildirim.cs" Link="Kabuk/Bildirim.cs" />
     <SablonCs Include="$(Sablonlar)denetim/avalonia/KabukTests.cs" Cikti="$(SablonCikti)Denetim/KabukTests.cs" Link="Denetim/KabukTests.cs" />
   </ItemGroup>
 

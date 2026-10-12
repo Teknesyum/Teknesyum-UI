@@ -1,0 +1,52 @@
+/* teknesyum-ui template bildirim/react/bizeulasin.css */
+.tk-feedback {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.tk-feedback__note {
+  min-height: calc(var(--tk-input-h) * 3);
+  resize: vertical;
+}
+
+.tk-feedback__image {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--tk-sp-2);
+  margin-bottom: var(--tk-field-stack);
+}
+
+.tk-feedback__image-note {
+  flex: 1;
+  min-width: 0;
+  min-height: calc(var(--tk-fs-1) * var(--tk-lh-body));
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.tk-feedback__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--tk-sp-3);
+}
+
+.tk-feedback__status {
+  flex: 1 1 calc(var(--tk-input-h) * 4);
+  min-width: 0;
+  min-height: calc(var(--tk-fs-1) * var(--tk-lh-body) * 2);
+  margin: 0;
+  color: var(--tk-text);
+  font-size: var(--tk-fs-1);
+  line-height: var(--tk-lh-body);
+}
+
+.tk-feedback__status[data-kind='sent'] {
+  color: var(--tk-success);
+}
+
+.tk-feedback__status[data-kind='failed'] {
+  color: var(--tk-danger-text);
+}

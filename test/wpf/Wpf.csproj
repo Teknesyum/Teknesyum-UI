@@ -18,6 +18,9 @@
     <SablonCs Include="$(Sablonlar)temalar/wpf/Temalar.cs" Cikti="$(SablonCikti)Kabuk/Temalar.cs" Link="Kabuk/Temalar.cs" />
     <SablonCs Include="$(Sablonlar)temalar/wpf/TemaSecici.cs" Cikti="$(SablonCikti)Kabuk/TemaSecici.cs" Link="Kabuk/TemaSecici.cs" />
     <SablonCs Include="$(Sablonlar)temalar/ortak/TemaHesap.cs" Cikti="$(SablonCikti)Kabuk/TemaHesap.cs" Link="Kabuk/TemaHesap.cs" />
+    <SablonCs Include="$(Sablonlar)bildirim/wpf/BizeUlasin.cs" Cikti="$(SablonCikti)Kabuk/BizeUlasin.cs" Link="Kabuk/BizeUlasin.cs" />
+    <SablonCs Include="$(Sablonlar)bildirim/wpf/Goruntu.cs" Cikti="$(SablonCikti)Kabuk/Goruntu.cs" Link="Kabuk/Goruntu.cs" />
+    <SablonCs Include="$(Sablonlar)bildirim/ortak/Bildirim.cs" Cikti="$(SablonCikti)Kabuk/Bildirim.cs" Link="Kabuk/Bildirim.cs" />
   </ItemGroup>
 
   <ItemGroup>

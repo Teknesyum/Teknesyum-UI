@@ -51,7 +51,49 @@ public static class Program
         var dondu = Renk() == ilk;
         pencere.Close();
         Console.WriteLine($"tema: {Temalar.Liste.Count} tema, acik={acik.Id} degisti={acikRenk != ilk} koyu={koyu.Id} standarta dondu={dondu}");
-        return acikRenk != ilk && dondu ? 0 : 1;
+        var bildirim = BildirimSinamasi(kok);
+        return acikRenk != ilk && dondu && bildirim ? 0 : 1;
+    }
+
+    static bool BildirimSinamasi(string kok)
+    {
+        var cikti = Path.Combine(kok, "ui", "templates", "bildirim", "wpf", "ekran");
+        Directory.CreateDirectory(cikti);
+        var form = new BizeUlasin { Uygulama = "Dusty Bytes", Surum = "1.4.0", Width = (double)Application.Current.FindResource("ModalWidth"), Margin = new Thickness(16), HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top };
+        var zemin = new Border { Child = form };
+        zemin.SetResourceReference(Border.BackgroundProperty, "AppBg");
+        var pencere = new Window { Width = 848, Height = 640, Content = zemin, WindowStyle = WindowStyle.None, ShowInTaskbar = false, Left = -20000, Top = -20000, ShowActivated = false };
+        pencere.Show();
+        Oturt();
+        Kaydet(zemin, Path.Combine(cikti, "dinlenik.png"));
+
+        var noktalar = new byte[3200 * 2000 * 3];
+        new Random(7).NextBytes(noktalar);
+        var kaynak = System.Windows.Media.Imaging.BitmapSource.Create(3200, 2000, 96, 96, PixelFormats.Bgr24, null, noktalar, 3200 * 3);
+        var png = new System.Windows.Media.Imaging.PngBitmapEncoder();
+        png.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(kaynak));
+        using var akis = new MemoryStream();
+        png.Save(akis);
+        var kucuk = Goruntu.Kucult(akis.ToArray());
+        var cozulen = kucuk is null ? null : System.Windows.Media.Imaging.BitmapFrame.Create(new MemoryStream(kucuk));
+        var goruntuTamam = kucuk is not null && kucuk.Length <= 150 * 1024 && Math.Max(cozulen!.PixelWidth, cozulen.PixelHeight) <= 1600;
+        var bozukTamam = Goruntu.Kucult(new byte[] { 1, 2, 3 }) is null;
+
+        BildirimGirdisi? giden = null;
+        form.Not = "Kaydet düğmesi ikinci tıklamada yanıt vermiyor.";
+        form.Gonderici = g => { giden = g; return Task.FromResult(new BildirimSonucu(false, 0, false, BildirimHatasi.Ag)); };
+        form.Gonder().GetAwaiter().GetResult();
+        Oturt();
+        var notDuruyor = form.Not.Length > 0;
+        Kaydet(zemin, Path.Combine(cikti, "hata.png"));
+        form.Gonderici = g => { giden = g; return Task.FromResult(new BildirimSonucu(true, 42, false, BildirimHatasi.Yok)); };
+        form.Gonder().GetAwaiter().GetResult();
+        Oturt();
+        Kaydet(zemin, Path.Combine(cikti, "ulasti.png"));
+        var tamam = goruntuTamam && bozukTamam && notDuruyor && giden is not null && form.Not.Length == 0;
+        pencere.Close();
+        Console.WriteLine($"bildirim: goruntu={kucuk?.Length} bayt/{cozulen?.PixelWidth}x{cozulen?.PixelHeight} bozuk reddedildi={bozukTamam} not duruyor={notDuruyor} gonderildi={giden is not null} tamam={tamam}");
+        return tamam;
     }
 
     static void Oturt() => Dispatcher.CurrentDispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);

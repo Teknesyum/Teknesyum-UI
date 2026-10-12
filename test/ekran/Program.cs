@@ -22,6 +22,7 @@ var bilesenler = new (string klasor, Func<Control> yap, int genislik, int yuksek
     ("durum", () => Sahne.Guncelleme(), 848, 640),
     ("kur", () => Sahne.Kurulum(), kurG, kurY),
     ("temalar", () => Sahne.Secici(), 848, 480),
+    ("bildirim", () => Sahne.Ulasin(), 848, 640),
 };
 var durumlar = new (string ad, string[] sozde)[]
 {
@@ -105,6 +106,59 @@ foreach (var (klasor, yap, genislik, yukseklik) in bilesenler)
     pencere.Close();
     Console.WriteLine($"tema: {Ekran.Kabuk.Temalar.Liste.Count} tema, acik={acik.Id} degisti={acikRenk != ilk} koyu={koyu.Id} standarta dondu={dondu}");
     if (acikRenk == ilk || !dondu) toplam++;
+}
+{
+    var cikti = Path.Combine(kok, "ui", "templates", "bildirim", "avalonia", "ekran");
+    var form = Sahne.Ulasin();
+    var pencere = Sahne.Pencere(form, 848, 640);
+    pencere.Show();
+    Oturt();
+    var kutular = form.GetVisualDescendants().OfType<TextBox>().ToList();
+    var durum = form.GetVisualDescendants().OfType<TextBlock>().First(t => t.Name == "DurumYazisi");
+    var gonder = form.GetVisualDescendants().OfType<Button>().First(b => b.Name == "GonderDugmesi");
+    var ekle = form.GetVisualDescendants().OfType<Button>().First(b => b.Name == "GoruntuEkleDugmesi");
+    var bosEdilgen = !gonder.IsEnabled;
+    var yukseklik = durum.Bounds.Height;
+
+    using var buyuk = new SkiaSharp.SKBitmap(3200, 2000);
+    var rastgele = new Random(7);
+    var noktalar = new byte[buyuk.ByteCount];
+    rastgele.NextBytes(noktalar);
+    System.Runtime.InteropServices.Marshal.Copy(noktalar, 0, buyuk.GetPixels(), noktalar.Length);
+    using var png = buyuk.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100);
+    var kucuk = Ekran.Kabuk.Goruntu.Kucult(png.ToArray());
+    using var cozulen = kucuk is null ? null : SkiaSharp.SKBitmap.Decode(kucuk);
+    var goruntuTamam = kucuk is not null && kucuk.Length <= 150 * 1024 && Math.Max(cozulen!.Width, cozulen.Height) <= 1600;
+    var bozukTamam = Ekran.Kabuk.Goruntu.Kucult(new byte[] { 1, 2, 3 }) is null;
+
+    form.GoruntuSecici = () => Task.FromResult<(string, byte[])?>(("ekran.png", png.ToArray()));
+    ekle.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+    var bekle = DateTime.UtcNow.AddSeconds(20);
+    while (DateTime.UtcNow < bekle && form.GetVisualDescendants().OfType<Button>().All(b => b.Name != "GoruntuKaldirDugmesi" || !b.IsVisible)) Oturt();
+
+    Ekran.Kabuk.BildirimGirdisi? giden = null;
+    kutular[0].Text = "Kaydet düğmesi ikinci tıklamada yanıt vermiyor.";
+    kutular[1].Text = "ornek@teknesyum.dev";
+    form.Gonderici = g => { giden = g; return Task.FromResult(new Ekran.Kabuk.BildirimSonucu(false, 0, false, Ekran.Kabuk.BildirimHatasi.Ag)); };
+    Oturt();
+    var doluEtkin = gonder.IsEnabled;
+    form.Gonder().GetAwaiter().GetResult();
+    Oturt();
+    var hataMetni = durum.Text;
+    var hataDugme = gonder.Content?.ToString();
+    var notDuruyor = kutular[0].Text!.Length > 0;
+    var hataYukseklik = durum.Bounds.Height;
+    pencere.CaptureRenderedFrame()?.Save(Path.Combine(cikti, "hata.png"));
+    form.Gonderici = g => { giden = g; return Task.FromResult(new Ekran.Kabuk.BildirimSonucu(true, 42, false, Ekran.Kabuk.BildirimHatasi.Yok)); };
+    form.Gonder().GetAwaiter().GetResult();
+    Oturt();
+    pencere.CaptureRenderedFrame()?.Save(Path.Combine(cikti, "ulasti.png"));
+    var tamam = bosEdilgen && doluEtkin && goruntuTamam && bozukTamam && giden?.Goruntu is not null && hataDugme == "Yeniden dene" && notDuruyor
+        && durum.Text == "Bildirimin ulaştı, teşekkürler." && string.IsNullOrEmpty(kutular[0].Text) && gonder.Content?.ToString() == "Gönder"
+        && yukseklik > 0 && Math.Abs(hataYukseklik - yukseklik) < 0.5 && Math.Abs(durum.Bounds.Height - yukseklik) < 0.5;
+    pencere.Close();
+    Console.WriteLine($"bildirim: bos edilgen={bosEdilgen} dolu etkin={doluEtkin} goruntu={kucuk?.Length} bayt/{cozulen?.Width}x{cozulen?.Height} bozuk reddedildi={bozukTamam} giden goruntu={giden?.Goruntu is not null} hata=\"{hataMetni}\" dugme={hataDugme} not duruyor={notDuruyor} son=\"{durum.Text}\" durum yuksekligi={yukseklik}/{hataYukseklik}/{durum.Bounds.Height} tamam={tamam}");
+    if (!tamam) toplam++;
 }
 Console.WriteLine("toplam tasma: " + toplam);
 return toplam == 0 ? 0 : 1;

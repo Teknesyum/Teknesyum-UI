@@ -5,6 +5,21 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.37.0] - 2026-10-13
+
+### Added
+
+- "Bize ulaşın", the shared feedback form: `scaffold.js bildirim [<Namespace>] --react`, `--avalonia` or `--wpf` writes the form and the sender into `teknesyum-ui/bildirim`. The user writes a note, may add a contact line and one image, and the app sends it as an issue to the feedback repository; no public issue page opens and no GitHub account is asked for. The image is shrunk to a JPEG of at most 1600 px and 150 KB and goes into the first comment. A failed send says why in a plain sentence, keeps the note and turns the button into `Yeniden dene`.
+- The feedback key is embedded at build time from `TEKNESYUM_BILDIRIM_KEY`, split into parts: `bildirim-anahtar.mjs` for React, `BildirimAnahtar.targets` for Avalonia and WPF. The build stops when the key is missing. The repository address comes from the shelf book `bildirim`, or from `--depo owner/repo`.
+- Scan rule `bildirim/public-issue-link` (error): a `github.com/<owner>/<repo>/issues/new` link in code or markup.
+- Scan rule `bildirim/key-in-source` (error): a GitHub token written in a source or configuration file.
+- Scan rule `colour/gradient-text-clip` (warning): text painted with `background-clip: text` (or `bg-clip-text`) on a line height under 1.25 with no bottom padding, where letters with a tail (g, y, p) get cut.
+- `denetim.js`: the page audit returns `kirpik`, the gradient texts whose glyphs reach past the painted box, with the number of pixels cut below and above.
+
+### Changed
+
+- `test/ekran` and `test/wpf` build the feedback form, send through a stub, shrink a 3200x2000 image and write `dinlenik`, `hata` and `ulasti` screenshots; the run fails when the status line changes height or the note is lost after a failed send.
+
 ## [0.36.0] - 2026-10-10
 
 ### Added

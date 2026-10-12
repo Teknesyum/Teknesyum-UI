@@ -10,7 +10,9 @@ const HELP = [
   '',
   '  Prints a standalone script that audits the page it runs in: every visible',
   '  text node against its effective background (transparency composited up the',
-  '  parent chain), and every clickable target smaller than the target size.',
+  '  parent chain), every clickable target smaller than the target size, and',
+  '  every gradient-painted text (background-clip: text) whose box is shorter',
+  '  than its glyphs: kirpik lists how many px are cut below (alt) and above (ust).',
   '  Run it in the embedded browser with javascript_tool; it returns JSON.',
   '',
   '  url               the page the audit is meant for; a different page is flagged',
@@ -158,6 +160,33 @@ function audit(options) {
       });
   }
 
+  const kirpik = [];
+  const olcer = document.createElement('canvas').getContext('2d');
+  for (const el of seen) {
+    const cs = getComputedStyle(el);
+    if (!/text/.test((cs.backgroundClip || '') + ' ' + (cs.webkitBackgroundClip || ''))) continue;
+    if (!visible(el)) continue;
+    let text = el.textContent.replace(/\s+/g, ' ').trim();
+    if (cs.textTransform === 'uppercase') text = text.toLocaleUpperCase(document.documentElement.lang || undefined);
+    olcer.font = [cs.fontStyle, cs.fontWeight, cs.fontSize, cs.fontFamily].join(' ');
+    const m = olcer.measureText(text);
+    const govde = m.fontBoundingBoxAscent + m.fontBoundingBoxDescent;
+    const satir = cs.lineHeight === 'normal' ? govde : parseFloat(cs.lineHeight);
+    const pay = (satir - govde) / 2;
+    const px = (v) => parseFloat(v) || 0;
+    const alt = m.actualBoundingBoxDescent - (pay + m.fontBoundingBoxDescent + px(cs.paddingBottom) + px(cs.borderBottomWidth));
+    const ust = m.actualBoundingBoxAscent - (pay + m.fontBoundingBoxAscent + px(cs.paddingTop) + px(cs.borderTopWidth));
+    if (alt > 0.5 || ust > 0.5)
+      kirpik.push({
+        text: text.slice(0, 60),
+        selector: selector(el),
+        fontSize: px(cs.fontSize),
+        lineHeight: Math.round((satir / px(cs.fontSize)) * 100) / 100,
+        alt: Math.max(0, Math.round(alt * 10) / 10),
+        ust: Math.max(0, Math.round(ust * 10) / 10),
+      });
+  }
+
   const out = {
     url: location.href,
     esik: options.esik,
@@ -165,6 +194,7 @@ function audit(options) {
     checked,
     pairs: pairs.sort((a, b) => a.ratio - b.ratio),
     targets,
+    kirpik,
   };
   if (options.url && location.href.replace(/\/$/, '') !== options.url.replace(/\/$/, '')) out.expected = options.url;
   return out;

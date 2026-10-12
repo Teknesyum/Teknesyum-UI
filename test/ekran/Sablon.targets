@@ -13,6 +13,7 @@
     <SablonDegisim Include="{{AD}}" Yeni="$(SablonAd)" />
     <SablonDegisim Include="{{PENCERE}}" Yeni="$(SablonPencere)" />
     <SablonDegisim Include="{{ESIK}}" Yeni="$(SablonEsik)" />
+    <SablonDegisim Include="{{DEPO}}" Yeni="teknesyum/deneme" />
     <TemaDegisim Include="&gt;Atkinson Hyperlegible Next, Segoe UI&lt;" Yeni="&gt;avares://$(SablonAd)/Assets/Fonts#Atkinson Hyperlegible Next, Segoe UI&lt;" />
   </ItemGroup>
 

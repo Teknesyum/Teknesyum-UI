@@ -45,6 +45,11 @@ const HELP = [
   '                          Avalonia and WPF switch the theme while the app runs and need the namespace;',
   '                          themes.json comes from the private shelf (teknesyum-ui/temalar/temalar.json),',
   '                          or from the shipped themes when the shelf has none; setup.js --apply refreshes it',
+  '  bildirim [<Namespace>]  the "Bize ulaşın" feedback form into teknesyum-ui/bildirim: a note, an optional',
+  '      --react | --avalonia | --wpf  contact line and one image, sent as an issue to the feedback repository;',
+  '                          Avalonia and WPF need the namespace; the key is embedded at build time from',
+  '                          TEKNESYUM_BILDIRIM_KEY and the build stops without it',
+  '      --depo <owner/repo> feedback repository (default: the one the shelf book bildirim.md names)',
   '  ilerleme                progress bar into teknesyum-ui/ilerleme (React ProgressBar)',
   '      --electron          also main-process work.ts (ranged percent) and fstree.ts (async pooled copy/remove)',
   '      --tauri             also setup.rs (hidden launch)',
@@ -366,6 +371,59 @@ function temaShell(root, kind, ns, tema, o) {
   return plan;
 }
 
+const BILDIRIM_FILES = {
+  react: ['react/bildirim.ts', 'react/BizeUlasin.tsx', 'react/bizeulasin.css', 'react/bildirim-anahtar.mjs'],
+  avalonia: ['ortak/Bildirim.cs', 'ortak/BildirimAnahtar.targets', 'avalonia/BizeUlasin.axaml', 'avalonia/BizeUlasin.axaml.cs', 'avalonia/Goruntu.cs'],
+  wpf: ['ortak/Bildirim.cs', 'ortak/BildirimAnahtar.targets', 'wpf/BizeUlasin.cs', 'wpf/Goruntu.cs'],
+};
+const DEPO = /^[A-Za-z0-9][A-Za-z0-9-]*\/[A-Za-z0-9._-]+$/;
+
+function bildirimDepo(args) {
+  const given = flag(args, 'depo');
+  if (given) {
+    if (!DEPO.test(given)) throw new Error('bildirim --depo needs owner/repo, e.g. --depo acme/feedback');
+    return given;
+  }
+  const book = raf.oku('bildirim');
+  const m = book ? /repos\/([A-Za-z0-9][A-Za-z0-9-]*\/[A-Za-z0-9._-]+)\/issues/.exec(book) : null;
+  if (!m) throw new Error('bildirim: the shelf book bildirim.md names no feedback repository; pass --depo owner/repo');
+  return m[1];
+}
+
+function bildirim(root, args, name) {
+  const kind = args.includes('--wpf') ? 'wpf' : args.includes('--react') ? 'react' : isAvalonia(root, args, 'react') ? 'avalonia' : 'react';
+  if (kind !== 'react' && (!name || !IDENT.test(name))) {
+    throw new Error('bildirim --' + kind + ' needs the application namespace as a C# name, e.g. bildirim Runly --' + kind);
+  }
+  const depo = bildirimDepo(args);
+  const plan = BILDIRIM_FILES[kind].map((n) => ({
+    to: path.join(root, 'teknesyum-ui', 'bildirim', path.basename(n)),
+    text: fill(template('bildirim/' + n), { AD: name, DEPO: depo }),
+    crlf: kind !== 'react',
+  }));
+  const dir = '../teknesyum-ui/bildirim';
+  if (kind === 'react') {
+    plan.push({ to: path.join(root, 'teknesyum-ui', 'bildirim', '.gitignore'), text: 'bildirim.anahtar.ts\n' });
+    plan.note = [
+      '  feedback goes to ' + depo + ' as an issue; the page never opens a public issue link',
+      'package.json, before every build: "prebuild": "node teknesyum-ui/bildirim/bildirim-anahtar.mjs" (stops without TEKNESYUM_BILDIRIM_KEY)',
+      "settings or help page: import { ANAHTAR } from './bildirim.anahtar'; <BizeUlasin app=\"Runly\" version={version} anahtar={ANAHTAR} />",
+      'bildirim.anahtar.ts is generated and git-ignored; never commit it, never log the key',
+    ].join('\n');
+    return plan;
+  }
+  plan.note = [
+    '  feedback goes to ' + depo + ' as an issue; the app never opens a public issue link',
+    'link into the app .csproj (paths relative to it):',
+    kind === 'avalonia' ? '  <AvaloniaXaml Include="' + dir + '/*.axaml" Link="Kabuk/%(Filename)%(Extension)" />' : null,
+    '  <Compile Include="' + dir + '/*.cs" Link="Kabuk/%(Filename)%(Extension)" />',
+    '  <Import Project="' + dir + '/BildirimAnahtar.targets" />  (after the item groups; the build stops without TEKNESYUM_BILDIRIM_KEY)',
+    'settings or help page: new BizeUlasin { Uygulama = "Runly", Surum = surum }',
+    kind === 'avalonia' ? 'Avalonia: the JPEG is made with SkiaSharp, which Avalonia.Skia already brings' : 'WPF: the JPEG is made with the built-in JpegBitmapEncoder, no package needed',
+  ].filter(Boolean).join('\n');
+  return plan;
+}
+
 function kurAll(root, args, name) {
   const plan = kur(root, args, name);
   if (!args.includes('--avalonia')) return plan;
@@ -403,6 +461,7 @@ const TARGETS = {
       '  entry file, before render: applyStoredTheme(); settings: <ThemePicker value={id} onChange={(id) => applyTheme(id)} />';
     return plan;
   },
+  bildirim: (root, args, name) => bildirim(root, args, name),
   ilerleme: (root, args) => {
     const names = ['react/ProgressBar.tsx', 'react/progressbar.css'];
     if (args.includes('--electron')) names.push('electron/work.ts', 'electron/fstree.ts');
@@ -440,7 +499,7 @@ function emit(root, plan) {
   return lines.join('\n');
 }
 
-const BOOKS = { kur: 'guncelleme-paneli', durum: 'guncelleme-paneli', ustcubuk: 'ui-duzeni', temalar: 'temalar' };
+const BOOKS = { kur: 'guncelleme-paneli', durum: 'guncelleme-paneli', ustcubuk: 'ui-duzeni', temalar: 'temalar', bildirim: 'bildirim' };
 
 function shelfNote(target) {
   const book = BOOKS[target];

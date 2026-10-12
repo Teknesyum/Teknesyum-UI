@@ -121,6 +121,7 @@ function snippet() {
   L.ok('denetim refuses a url without a scheme', L.node(DENETIM, ['localhost:3000']).status === 2);
   const r = L.node(DENETIM, ['http://localhost:5173', '--esik', '4.5']);
   L.ok('denetim prints a snippet', r.status === 0 && r.stdout.length > 500, r.stderr);
+  L.ok('the snippet measures clipped glyphs in gradient text', /kirpik/.test(r.stdout) && /actualBoundingBoxDescent/.test(r.stdout));
   let parsed = true;
   try {
     new vm.Script(r.stdout);

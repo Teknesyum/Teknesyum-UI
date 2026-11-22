@@ -5,6 +5,10 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- `docs/PATTERNS.md`: eleven behaviour patterns from HemsireNobet 1.6-1.7 (help bubble, green path, two-press button, long-press slots, drag eligibility colouring and others), using existing tokens only.
+
 ## [0.37.0] - 2026-10-13
 
 ### Added

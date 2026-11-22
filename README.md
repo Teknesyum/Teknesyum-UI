@@ -266,6 +266,7 @@ ui/templates/             installer, title bar, update surface, themes
 ui/skills/teknesyum-ui/   SKILL.md, references, assets
 docs/diagram.md           every flow diagram in this README
 docs/RULE-API.md          how to write a rule
+docs/PATTERNS.md          behaviour patterns from shipped apps
 docs/DECISIONS.md         why it is shaped this way
 ```
 
